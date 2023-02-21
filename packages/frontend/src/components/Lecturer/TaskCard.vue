@@ -6,7 +6,7 @@
       </p>
       <img
         class="w-6 h-6 rounded-full ml-3"
-        src="https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
+        :src="'/default_avatar.png'"
         alt="Avatar"
       >
     </div>
