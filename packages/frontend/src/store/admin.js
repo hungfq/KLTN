@@ -18,7 +18,7 @@ const actions = {
     commit('setListAdmins', listAdmins);
   },
 
-  async addAdmin ({ dispatch, commit }, payload) {
+  async addAdmin ({ dispatch }, payload) {
     try {
       const { token, value } = payload;
       await AdminApi.addAdmin(token, value);
@@ -27,7 +27,7 @@ const actions = {
       throw new Error(e.message);
     }
   },
-  async updateAdmin ({ dispatch, commit }, payload) {
+  async updateAdmin ({ dispatch }, payload) {
     const { token, value } = payload;
     await AdminApi.updateAdmin(token, value);
     dispatch('fetchListAdmins', token);
