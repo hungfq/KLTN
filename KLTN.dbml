@@ -1,0 +1,155 @@
+
+
+table admin [headercolor: #1E69FD] {
+  id ObjectId
+  code string
+  name string
+  email string
+  gender string
+  picture string
+  notificationIds Array [note: 'notificationIds include {_id, isBoolean}']
+  indexes {
+    code 
+  }
+}
+
+
+table lecturer [headercolor: #1E69FD] {
+  id ObjectId
+  code string
+  name string
+  email string
+  gender string
+  picture string
+  limit number
+  notificationIds Array [note: 'notificationIds include {_id, isBoolean}']
+  indexes {
+    code 
+  }
+}
+
+table student [headercolor: #990D0D] {
+  id ObjectId
+  code string
+  name string
+  email string
+  gender string
+  picture string
+  topicId string
+  notificationIds Array [note: 'notificationIds include {_id, isBoolean}']
+  indexes {
+    code 
+  }
+}
+
+table schedule [headercolor: #79AD51] {
+  id ObjectId
+  name string
+  code string
+  students array
+  description string
+  startProposalDate date
+  endProposalDate date
+  startApproveDate date
+  endApproveDate date
+  startRegisterDate date
+  endRegisterDate date
+  startDate datetime
+  deadline datetime
+  note: 
+  '''
+     startDate datetime
+     endDate datetime
+  '''
+}
+
+table topic [headercolor: #E4A62E] {
+  id ObjectId
+  code string
+  title string
+  description string
+  limit int
+  thesisDefenseDate datetime
+  lectureId ObjectId
+  criticalLecturerId ObjectId
+  students Array
+  scheduleId ObjectId
+  advisorLecturerGrade number
+  committeePresidentGrade number 
+  committeeSecretaryGrade number 
+  criticalLecturerGrade number 
+}
+
+table topic_proposal [headercolor: #EB801B] {
+  id ObjectId
+  title string
+  description string
+  limit int
+  students Array
+  lecturerId ObjectId
+  createdBy ObjectId
+  scheduleId ObjectId
+}
+
+table notification [headercolor: #8F8DD8] {
+  id ObjectId
+  from ObjectId
+  to Array
+  title string
+  message string
+}
+
+table task [headercolor: #CA4242] {
+  id ObjectId
+  topicId ObjectId
+  code string
+  title string
+  description string
+  status string
+  process string
+  startTime datetime
+  endTime datetime
+  comment Array
+  createdBy ObjectId
+  assignTo ObjectId
+}
+
+
+table comment [headercolor: #6724BB] {
+  id ObjectId
+  message string
+  time datetime
+  createdBy ObjectId
+}
+
+table socket [headercolor: #4B82B0] {
+  userId ObjectId
+  socketId Array
+}
+
+table committee {
+  id ObjectId
+  code string
+  name string
+  committeePresidentId ObjectId
+  committeeSecretaryId ObjectId
+  criticalLecturerId ObjectId
+  topics Array  
+}
+
+ref: admin.notificationIds <  notification.id
+ref: lecturer.notificationIds <  notification.id
+ref: student.notificationIds <  notification.id
+ref: topic.lectureId - lecturer.id
+ref: topic.criticalLecturerId - lecturer.id
+ref: topic.students < student.id
+ref: committee.topics > topic.id
+ref: task.comment > comment.id
+ref: topic_proposal.lecturerId > lecturer.id
+ref: student.id > schedule.students
+ref: topic.scheduleId < schedule.id  
+ref: topic_proposal.scheduleId < schedule.id 
+ref: topic.id < task.topicId
+ref: lecturer.id - committee.committeeSecretaryId
+ref: lecturer.id - committee.committeePresidentId
+ref: lecturer.id - committee.criticalLecturerId
