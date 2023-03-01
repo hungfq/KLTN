@@ -27,6 +27,7 @@
       <!-- Links -->
       <div class="flex-1 px-4 space-y-2 overflow-hidden hover:overflow-auto">
         <a
+          class="cursor-pointer"
           :class="[ isTopic ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('topic')"
         >
@@ -58,6 +59,13 @@
           @click="updateModule('topic_critical_approve')"
         >
           Phê duyệt đề tài phản biện
+        </a>
+        <a
+          class="cursor-pointer"
+          :class="[ isMark ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
+          @click="updateModule('topic_mark')"
+        >
+          Cho điểm đề tài
         </a>
       </div>
     </nav>
@@ -95,6 +103,9 @@ export default {
     },
     isTopicCriticalApprove () {
       return this.module === 'topic_critical_approve';
+    },
+    isMark () {
+      return this.module === 'topic_mark';
     },
   },
   mounted () {

@@ -52,6 +52,11 @@
                 v-if="section === 'topic_critical_approve-list'"
               />
             </template>
+            <template v-if="module === 'topic_mark'">
+              <ManageTopicMark
+                v-if="section === 'topic_mark-list'"
+              />
+            </template>
           </template>
           <template v-if="page === 'task'">
             <TaskDraggableVue />
@@ -80,6 +85,7 @@ import ManageTopicLecturerVue from '../components/Lecturer/ManageTopicLecturer.v
 import ManageApproveProposalLecturerVue from '../components/Lecturer/ManageApproveProposalLecturer.vue';
 import ManageTopicAdvisorLecturerVue from '../components/Lecturer/ManageTopicAdvisorLecturer.vue';
 import ManageTopicCriticalLecturerVue from '../components/Lecturer/ManageTopicCriticalLecturer.vue';
+import ManageTopicMark from '../components/Lecturer/ManageTopicMark.vue';
 // import FormTopicProposalVue from '../components/Lecturer/FormTopicProposal.vue';
 import FormTopicVue from '../components/Lecturer/FormTopic.vue';
 import FormApproveProposalVue from '../components/Lecturer/FormApproveProposal.vue';
@@ -106,6 +112,7 @@ export default {
     TaskDraggableVue,
     ManageTopicAdvisorLecturerVue,
     ManageTopicCriticalLecturerVue,
+    ManageTopicMark,
   },
   props: {
   },

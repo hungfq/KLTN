@@ -27,36 +27,42 @@
       <!-- Links -->
       <div class="flex-1 px-4 space-y-2 overflow-hidden hover:overflow-auto">
         <a
+          class="cursor-pointer"
           :class="[ isStudent ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('student')"
         >
           Quản lý sinh viên
         </a>
         <a
+          class="cursor-pointer"
           :class="[ isLecturer ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('lecturer')"
         >
           Quản lý giảng viên
         </a>
         <a
+          class="cursor-pointer"
           :class="[ isAdmin ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('admin')"
         >
           Quản lý admin
         </a>
         <a
+          class="cursor-pointer"
           :class="[ isCommittee ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('committee')"
         >
           Quản lý hội đồng
         </a>
         <a
+          class="cursor-pointer"
           :class="[ isTopic ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('topic')"
         >
           Quản lý đề tài
         </a>
         <a
+          class="cursor-pointer"
           :class="[ isSchedule ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2   items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule('schedule')"
         >

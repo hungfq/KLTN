@@ -38,7 +38,7 @@ const router = (app) => {
   // app.post('/v1/schedule/:id/topic', upload.single('xlsx'), importTopics);
   // // app.get('/v1/schedule/:id/topic', isAuth, listTopics);
   // app.get('/v1/schedule-topic-lecturer', isAuth, listScheduleTopicLecturer); // only lecturer call
-  // app.get('/v1/schedule-topic-lecturer/short', isAuth, listScheduleTopicLecturerShort); // only lecturer call
+  app.get('/v1/schedule-topic-lecturer/short', isAuth, listScheduleTopicLecturerShort); // only lecturer call
   // app.get('/v1/schedule/:id/topic-lecturer/:lecturerId', isAuth, listTopicLecturer);
   app.get('/v1/schedule-lecturer', isAuth, listScheduleApproveLecturer);
 
