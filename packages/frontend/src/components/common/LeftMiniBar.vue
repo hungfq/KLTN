@@ -39,6 +39,7 @@
       </button>
       <!-- Task button -->
       <button
+        v-if="userRole==='LECTURER' || userRole==='STUDENT'"
         class="p-2 transition-colors rounded-lg shadow-md hover:bg-indigo-800 hover:text-white focus:outline-none focus:ring focus:ring-indigo-600 focus:ring-offset-white focus:ring-offset-2"
         :class="[page === 'task' ? 'text-white bg-indigo-600' : '']"
         @click="updatePage('task')"
@@ -167,7 +168,7 @@
         >Settings</a> -->
 
         <a
-          class="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           role="menuitem"
           @click="signOut"
         >Đăng xuất</a>

@@ -1,4 +1,3 @@
-<!-- eslint-disable max-len -->
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'STUDENT')">
@@ -33,6 +32,14 @@
               />
               <FormTopicProposalVue
                 v-if="section === 'topic_proposal-update' || section === 'topic_proposal-import' || section === 'topic_proposal-view'"
+              />
+            </template>
+            <template v-if="module === 'topic_result'">
+              <ManageTopicResult
+                v-if="section==='topic_result-list'"
+              />
+              <FormResultVue
+                v-if="section === 'topic_result-view'"
               />
             </template>
             <template v-if="module === 'topic_result'">

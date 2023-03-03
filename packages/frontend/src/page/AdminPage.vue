@@ -5,7 +5,7 @@
     <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
       <div class="flex flex-shrink-0 transition-all">
         <LeftMiniBarVue />
-        <ManageBarVue />
+        <ManageBarVue :list-items="listItems" />
       </div>
       <div class="flex grow flex-col">
         <HeaderBarVue :username="userName" />
@@ -57,8 +57,8 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/Admin/LeftMiniBar.vue';
-import ManageBarVue from '../components/Admin/ManageBar.vue';
+import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
+import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import ManageStudentAdminVue from '../components/Admin/ManageStudentAdmin.vue';
 import ManageLecturerAdminVue from '../components/Admin/ManageLecturerAdmin.vue';
@@ -101,6 +101,36 @@ export default {
     return {
       showErrorModal: false,
       isSidebarOpen: true,
+      listItems: [
+        {
+          id: 'student',
+          value: 'Quản lý sinh viên',
+        },
+        {
+          id: 'lecturer',
+          value: 'Quản lý giảng viên',
+        },
+        {
+          id: 'admin',
+          value: 'Quản lý admin',
+        },
+        {
+          id: 'topic',
+          value: 'Quản lý đề tài',
+        },
+        {
+          id: 'schedule',
+          value: 'Quản lý lịch đăng ký',
+        },
+        {
+          id: 'topic_proposal',
+          value: 'Quản lý đề xuất đề tài',
+        },
+        {
+          id: 'committee',
+          value: 'Quản lý hội đồng',
+        },
+      ],
     };
   },
   computed: {

@@ -19,5 +19,6 @@
   "vueCompilerOptions": {
     "target": 3,
     "experimentalDisableTemplateSupport": true,
-  }
+  },
+  "allowJs": true
 }

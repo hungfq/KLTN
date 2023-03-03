@@ -5,7 +5,10 @@
     <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
       <div class="flex flex-shrink-0 transition-all">
         <LeftMiniBarVue />
-        <ManageBarLecturerVue v-if="page === 'management'" />
+        <ManageBarLecturerVue
+          v-if="page === 'management'"
+          :list-items="listItems"
+        />
         <TaskBarScheduleVue v-if="page === 'task'" />
         <TaskBarTopicVue v-if="page === 'task'" />
       </div>
@@ -26,15 +29,6 @@
                 v-if="section === 'topic-update' || section === 'topic-import' || section === 'topic-view'"
               />
             </template>
-            <!-- <template v-if="module === 'topic_proposal'">
-              <ManageTopicProposalLecturerVue
-                v-if="section === 'topic_proposal-list'"
-                :open="isScheduleApprove"
-              />
-              <FormTopicProposalVue
-                v-if="section === 'topic_proposal-update' || section === 'topic_proposal-import' || section === 'topic_proposal-view'"
-              />
-            </template> -->
             <template v-if="module === 'topic_proposal_approve'">
               <ManageApproveProposalLecturerVue
                 v-if="section === 'topic_proposal_approve-list'"
@@ -52,10 +46,8 @@
                 v-if="section === 'topic_critical_approve-list'"
               />
             </template>
-            <template v-if="module === 'topic_mark'">
-              <ManageTopicMark
-                v-if="section === 'topic_mark-list'"
-              />
+            <template v-if="module === 'advisor_mark'">
+              <AdvisorMarkPage />
             </template>
           </template>
           <template v-if="page === 'task'">
@@ -76,22 +68,20 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/Lecturer/LeftMiniBar.vue';
-import ManageBarLecturerVue from '../components/Lecturer/ManageBarLecturer.vue';
+import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
+import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import ManageTopicLecturerVue from '../components/Lecturer/ManageTopicLecturer.vue';
-// import ManageTopicProposalLecturerVue from '../components/Lecturer/ManageTopicProposalLecturer.vue';
 import ManageApproveProposalLecturerVue from '../components/Lecturer/ManageApproveProposalLecturer.vue';
 import ManageTopicAdvisorLecturerVue from '../components/Lecturer/ManageTopicAdvisorLecturer.vue';
 import ManageTopicCriticalLecturerVue from '../components/Lecturer/ManageTopicCriticalLecturer.vue';
-import ManageTopicMark from '../components/Lecturer/ManageTopicMark.vue';
-// import FormTopicProposalVue from '../components/Lecturer/FormTopicProposal.vue';
 import FormTopicVue from '../components/Lecturer/FormTopic.vue';
 import FormApproveProposalVue from '../components/Lecturer/FormApproveProposal.vue';
 import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
+import AdvisorMarkPage from '../lecturer_page/AdvisorMark/AdvisorMarkPage.vue';
 
 export default {
   name: 'LecturerPage',
@@ -103,8 +93,6 @@ export default {
     MiniHeaderBarVue,
     ManageTopicLecturerVue,
     FormTopicVue,
-    // ManageTopicProposalLecturerVue,
-    // FormTopicProposalVue,
     ManageApproveProposalLecturerVue,
     FormApproveProposalVue,
     TaskBarScheduleVue,
@@ -112,7 +100,7 @@ export default {
     TaskDraggableVue,
     ManageTopicAdvisorLecturerVue,
     ManageTopicCriticalLecturerVue,
-    ManageTopicMark,
+    AdvisorMarkPage,
   },
   props: {
   },
@@ -120,6 +108,17 @@ export default {
     return {
       showErrorModal: false,
       isSidebarOpen: true,
+      listItems: [
+        { id: 'topic', value: 'Quản lý đề tài hướng dẫn' },
+        { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
+        { id: 'topic_proposal_approve', value: 'Hướng dẫn đề tài' },
+        { id: 'topic_advisor_approve', value: 'Phê duyệt đề tài hướng dẫn ra hội đồng' },
+        { id: 'topic_critical_approve', value: 'Phê duyệt đề tài phản biện ra hội đồng' },
+        { id: 'advisor_mark', value: 'Giáo viên hướng dẫn cho điểm' },
+        { id: 'president_mark', value: 'Chủ tịch hội đồng cho điểm' },
+        { id: 'critical_mark', value: 'Giáo viên phản biện cho điểm' },
+        { id: 'secretary_mark', value: 'Thư ký hội đồng cho điểm' },
+      ],
     };
   },
   computed: {
