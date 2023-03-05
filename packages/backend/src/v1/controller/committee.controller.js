@@ -32,18 +32,18 @@ const updateCommittee = async (req, res, next) => {
   try {
     const { id } = req.params;
     const value = req.body;
-    if (!value.committeePresidentId) {
-      return res.status(422).send('President is required');
-    }
-    if (!value.committeeSecretaryId) {
-      return res.status(422).send('Secretary is required');
-    }
-    if (!value.criticalLecturerId) {
-      return res.status(422).send('Critical lecturer is required');
-    }
-    if (!value.code) {
-      return res.status(422).send('Committee code is required');
-    }
+    // if (!value.committeePresidentId) {
+    //   return res.status(422).send('President is required');
+    // }
+    // if (!value.committeeSecretaryId) {
+    //   return res.status(422).send('Secretary is required');
+    // }
+    // if (!value.criticalLecturerId) {
+    //   return res.status(422).send('Critical lecturer is required');
+    // }
+    // if (!value.code) {
+    //   return res.status(422).send('Committee code is required');
+    // }
     const cloneValue = { ...value };
     delete cloneValue.id;
     delete cloneValue.type;

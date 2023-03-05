@@ -8,6 +8,7 @@ const fileUtils = require('../utils/file');
 const _TopicProposal = require('../models/topic_proposal.model');
 const _Schedule = require('../models/schedule.model');
 const _Topic = require('../models/topic.model');
+const _Committee = require('../models/committee.model');
 
 const importTopics = async (req, res) => {
   try {
@@ -637,6 +638,67 @@ const listTopicCommitteeApprove = async (req, res, next) => {
   }
 };
 
+const listTopicToMark = async (req, res, next) => {
+  try {
+    const { type } = req.query;
+    const userId = req.user._id;
+    let topic;
+    let topicIds = [];
+    let committees;
+    switch (type) {
+      case 'ADVISOR':
+        topic = await _Topic.find({
+          lecturerId: userId,
+        })
+          .populate({ path: 'lecturerId', select: 'name _id' })
+          .populate({ path: 'criticalLecturerId', select: 'name _id' });
+        break;
+      case 'CRITICAL':
+        topic = await _Topic.find({
+          criticalLecturerId: userId,
+        })
+          .populate({ path: 'lecturerId', select: 'name _id' })
+          .populate({ path: 'criticalLecturerId', select: 'name _id' });
+        break;
+      case 'PRESIDENT':
+        committees = await _Committee.find({
+          committeePresidentId: userId,
+        });
+        committees.forEach((committee) => {
+          topicIds.push(...committee.topics);
+        });
+
+        topic = await _Topic.find({
+          _id: { $in: topicIds },
+        })
+          .populate({ path: 'lecturerId', select: 'name _id' })
+          .populate({ path: 'criticalLecturerId', select: 'name _id' });
+        break;
+      case 'SECRETARY':
+        committees = await _Committee.find({
+          committeeSecretaryId: userId,
+        });
+        committees.forEach((committee) => {
+          topicIds.push(...committee.topics);
+        });
+
+        topic = await _Topic.find({
+          _id: { $in: topicIds },
+        })
+          .populate({ path: 'lecturerId', select: 'name _id' })
+          .populate({ path: 'criticalLecturerId', select: 'name _id' });
+        break;
+      default:
+        topic = [];
+      // code block
+    }
+
+    return res.status(200).send(topic);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   importTopics,
   insertTopic,
@@ -669,4 +731,5 @@ module.exports = {
   topicAdvisorApprove,
   topicCriticalApprove,
   listTopicCommitteeApprove,
+  listTopicToMark,
 };

@@ -15,6 +15,7 @@ const {
   topicCriticalApprove,
   declineProposalTopic,
   listTopicCommitteeApprove,
+  listTopicToMark,
 } = require('../controller/topic.controller');
 
 const authMiddleware = require('../middlewares/auth.middleware');
@@ -57,7 +58,7 @@ const router = (app) => {
   app.get('/v1/topic-critical/approve/:id', isAuth, topicCriticalApprove);
 
   // Committee
-
+  app.get('/v1/topic-committee/', isAuth, listTopicToMark);
   app.get('/v1/topic-committee/:id', isAuth, listTopicCommitteeApprove);
 
   // Download template
