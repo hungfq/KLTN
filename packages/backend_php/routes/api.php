@@ -36,6 +36,8 @@ $api->version('v1', function ($api) {
 
         $modules = [
             'User',
+            'Schedule',
+            'Topic',
         ];
 
         foreach ($modules as $module) {

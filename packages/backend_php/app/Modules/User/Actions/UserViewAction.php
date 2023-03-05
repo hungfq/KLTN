@@ -15,7 +15,8 @@ class UserViewAction
     {
         $query = User::query()
             ->with(['createdBy', 'updatedBy'])
-            ->join('user_has_roles', 'user_has_roles.user_id', '=', 'users.id');
+            ->join('user_has_roles', 'user_has_roles.user_id', '=', 'users.id')
+            ->orderBy('created_at', 'DESC');
 
         if ($search = $dto->search) {
             $query->where('code', $search)
