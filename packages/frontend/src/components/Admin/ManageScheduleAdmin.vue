@@ -71,7 +71,7 @@
           >
             <a
               class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-              href="http://localhost:5000/template/User"
+              href="http://localhost:8001/api/v1/template?type=User"
             >Tải mẫu nhập sinh viên</a>
           </th>
         </tr>

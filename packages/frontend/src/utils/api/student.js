@@ -9,8 +9,9 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async addStudent (token, value) {
@@ -29,15 +30,16 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async updateStudent (token, value) {
     const {
-      email, code, name, gender,
+      email, code, name, gender, id,
     } = value;
-    const res = await axios.put(`/user/${code}`, {
+    const res = await axios.put(`/user/${id}`, {
       type: 'STUDENT',
       email,
       code,
@@ -48,6 +50,7 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
     return res.data;
   }
@@ -55,16 +58,17 @@ export default class StudentApi {
   static async importStudent (token, xlsx) {
     const formData = new FormData();
 
-    formData.append('xlsx', xlsx);
+    formData.append('file', xlsx);
     formData.append('type', 'STUDENT');
     const res = await axios.post(
-      '/user-import',
+      '/user/import',
       formData,
       {
         headers: {
           authorization: `bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
+        baseURL: 'http://localhost:8001/api/v1',
       },
     );
     return res;

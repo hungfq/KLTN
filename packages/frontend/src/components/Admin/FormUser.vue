@@ -172,7 +172,7 @@ export default {
     },
     async handleAddUserAdmin () {
       const value = {
-        code: this.code, name: this.name, email: this.email, gender: this.gender, type: 'STUDENT',
+        code: this.code, name: this.name, email: this.email, gender: this.gender, type: 'STUDENT', id: this.id
       };
       try {
         if (this.check()) {
