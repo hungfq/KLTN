@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Modules\User\Controllers;
+
+use App\Http\Controllers\ApiWithoutDataController;
+use App\Modules\User\Actions\UserStoreAction;
+use App\Modules\User\Actions\UserUpdateAction;
+use App\Modules\User\Actions\UserViewAction;
+use App\Modules\User\DTO\UserViewDTO;
+use App\Modules\User\Transformers\UserViewTransformer;
+use App\Modules\User\Validators\UserStoreValidator;
+use App\Modules\User\Validators\UserUpdateValidator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+class UserController extends ApiWithoutDataController
+{
+    public function view(UserViewAction $action, UserViewTransformer $transformer)
+    {
+        $results = $action->handle(UserViewDTO::fromRequest());
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
+    }
+
+    public function store( UserStoreValidator $validator, UserStoreAction $action)
+    {
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function update($id, UserUpdateValidator $validator, UserUpdateAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+}

@@ -17,17 +17,6 @@ class Authenticate extends BaseMiddleware
             return $this->responseError('Your account is inactive, please contact admin!');
         }
 
-        if ( app()->bound('sentry')) {
-            \Sentry\configureScope(function (Scope $scope) use($user): void {
-                $scope->setUser([
-                    'id' => $user->id,
-                    'email' => $user->email
-                ]);
-
-                $scope->setTag('app_name', env('APP_NAME'));
-            });
-        }
-
         $payload = $this->auth->getPayload()->toArray();
         if ( !(data_get($payload, 'token_type') == 'internal' && data_get($payload, 'sub') == $user->id) ) {
             return $this->responseError('Invalid token!', 402);
@@ -35,27 +24,12 @@ class Authenticate extends BaseMiddleware
 
         $route = $request->route();
         $permissionName = data_get($route, '1.as');
-        $addonPermissions = data_get($route, '1.addon_permissions');
-        $userPermissions = $user->getAllPermissions()->pluck('name');
 
-        if ( !$permissionName ) {
-            return $next($request);
+        if ( !$user->can($permissionName) ) {
+            throw new \Exception('Permission denies.');
         }
 
-        if ( $userPermissions->contains($permissionName) ) {
-            return $next($request);
-        }
-
-        if ( !$userPermissions->contains($permissionName) && $addonPermissions ) {
-            $addonPermissions = explode('|', $addonPermissions);
-            foreach($addonPermissions as $addonPermission) {
-                if ( $userPermissions->contains($addonPermission) ) {
-                    return $next($request);
-                }
-            }
-        }
-
-        return $this->responseError('Access denies!', 403);
+        return $next($request);
     }
 
     protected function responseError($message = '', $code = 400)

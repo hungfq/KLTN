@@ -29,6 +29,7 @@ return [
     ],
 
     'table_names' => [
+        'models' => 'users',
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which

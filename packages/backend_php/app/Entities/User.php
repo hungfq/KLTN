@@ -2,6 +2,8 @@
 
 namespace App\Entities;
 
+use App\Entities\Traits\CreatedByRelationshipTrait;
+use App\Entities\Traits\UpdatedByRelationshipTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -12,11 +14,13 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class User extends BaseSoftModel implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
+    protected $guarded = ['id'];
     protected $meta = [];
 
-    use Authenticatable, Authorizable, HasRoles;
+    use Authenticatable, Authorizable, HasRoles, CreatedByRelationshipTrait, UpdatedByRelationshipTrait;
 
     const STATUS_ACTIVE = 'AC';
+    const STATUS_INACTIVE = 'IA';
 
     public function getJWTIdentifier()
     {
@@ -44,7 +48,7 @@ class User extends BaseSoftModel implements AuthenticatableContract, Authorizabl
     {
         $this->setJWTCustomClaims([
             'token_type' => data_get($params, 'token_type', 'internal'),
-            'exp' => time() + 15 * 60,
+            'exp' => time() + 60 * 60 * 24,
             'email' => data_get($params, 'email', 'no_email'),
             'role' => data_get($params, 'role', 'no_role'),
         ]);

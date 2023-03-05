@@ -35,7 +35,7 @@ $api->version('v1', function ($api) {
         });
 
         $modules = [
-//            'Countries',
+            'User',
 //            'Documents',
 //            'Warehouse',
 //            'Language',
