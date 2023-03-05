@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Actions;
 use App\Entities\User;
 use App\Exceptions\UserException;
 use App\Modules\Auth\DTO\AuthLoginWithGoogleAccessTokenDTO;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class AuthLoginWithGoogleAccessTokenAction
@@ -24,7 +25,7 @@ class AuthLoginWithGoogleAccessTokenAction
 
         $this->getUserInfo()
             ->validateEmail()
-            ->updateUserPicture();
+            ->generateTokenAndUpdateUserPicture();
 
         return [
             'userInfo' => [
@@ -68,7 +69,7 @@ class AuthLoginWithGoogleAccessTokenAction
         return $this;
     }
 
-    private function updateUserPicture()
+    private function generateTokenAndUpdateUserPicture()
     {
         $this->token = $this->user->generateToken([
             'email' => $this->user->email,
@@ -77,7 +78,7 @@ class AuthLoginWithGoogleAccessTokenAction
 
         if ($picture = data_get($this->body, 'picture')) {
             $this->user->picture = $picture;
-            $this->user->updated_by = $this->user->id;
+            Auth::login($this->user);
             $this->user->save();
         }
     }
