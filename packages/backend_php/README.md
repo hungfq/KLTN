@@ -9,11 +9,11 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 
 ## Official Documentation
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs/8.x).
 
 ## Contributing
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/8.x/contributions).
 
 ## Security Vulnerabilities
 
@@ -22,3 +22,20 @@ If you discover a security vulnerability within Lumen, please send an e-mail to 
 ## License
 
 The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Requirements
+> php 7.4
+> 
+> composer 
+
+## Commands
+### To run the project
+    php -S localhost:8001 -t public
+
+### To get dependencies
+    composer install
+##### or
+    composer update
+
+### To migrate database
+    php aritan migrate
