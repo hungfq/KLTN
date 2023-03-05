@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Events\BeforeExport;
@@ -53,10 +52,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-
-        Validator::extend('uniqueSku', 'App\Modules\Items\Validators\UniqueSkuSizeColorPackCustomerCustomValidator@validate');
-        Validator::extend('validPackSize', 'App\Modules\Items\Validators\PackSizeValueCustomValidator@validate');
-
         if ( env('APP_ENV') === 'local' ) {
             app("db")->connection()->setEventDispatcher(app("events"));
 

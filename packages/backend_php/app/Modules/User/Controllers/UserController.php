@@ -3,11 +3,14 @@
 namespace App\Modules\User\Controllers;
 
 use App\Http\Controllers\ApiWithoutDataController;
+use App\Modules\User\Actions\UserImportAction;
 use App\Modules\User\Actions\UserStoreAction;
+use App\Modules\User\Actions\UserTemplateDownloadAction;
 use App\Modules\User\Actions\UserUpdateAction;
 use App\Modules\User\Actions\UserViewAction;
 use App\Modules\User\DTO\UserViewDTO;
 use App\Modules\User\Transformers\UserViewTransformer;
+use App\Modules\User\Validators\UserImportValidator;
 use App\Modules\User\Validators\UserStoreValidator;
 use App\Modules\User\Validators\UserUpdateValidator;
 use Illuminate\Support\Collection;
@@ -54,5 +57,16 @@ class UserController extends ApiWithoutDataController
         });
 
         return $this->responseSuccess();
+    }
+
+    public function import(UserImportAction $action, UserImportValidator $validator)
+    {
+        $validator->validate($this->request->all());
+
+        $result = DB::transaction(function () use ($action, $validator) {
+            return $action->handle($validator->toDTO());
+        });
+
+        return $result === true ? $this->responseSuccess() : $result;
     }
 }

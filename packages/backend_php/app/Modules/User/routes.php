@@ -19,4 +19,10 @@ $api->group([
         'as' => '',
         'uses' => 'UserController@update',
     ]);
+
+    $api->post('/import', [
+        'as' => '',
+        'uses' => 'UserController@import',
+    ]);
+
 });

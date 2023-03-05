@@ -7,22 +7,22 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
 
     $api->group([
-        'prefix' => 'auth',
+        'prefix' => 'v1',
         'middleware' => ['logApi'],
-        'namespace' => 'App\Modules\Auth\Controllers'
+        'namespace' => 'App\Modules'
     ], function ($api) {
         $api->get('/test', function () {
             return ['data' => 'API OK!'];
         });
 
-        $api->post('/login', [
+        $api->post('/auth/login', [
             'as' => '',
-            'uses' => 'AuthController@loginWithGoogleAccessToken',
+            'uses' => 'Auth\Controllers\AuthController@loginWithGoogleAccessToken',
         ]);
 
-        $api->get('/{locationTypeId:[0-9]+}', [
-            'as' => 'locationType.view',
-            'uses' => 'LocationTypeController@show',
+        $api->get('/template', [
+            'as' => '',
+            'uses' => 'Template\Controllers\TemplateController@download',
         ]);
     });
 
@@ -36,18 +36,6 @@ $api->version('v1', function ($api) {
 
         $modules = [
             'User',
-//            'Documents',
-//            'Warehouse',
-//            'Language',
-//            'Customer',
-//            'LocationTypes',
-//            'ZoneTypes',
-//            'Statuses',
-//            'Location',
-//            'Zone',
-//            'Items',
-//            'SpcHdl',
-//            'Pallets',
         ];
 
         foreach ($modules as $module) {
