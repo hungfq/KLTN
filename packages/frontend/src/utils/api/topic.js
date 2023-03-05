@@ -9,8 +9,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async getTopic (token, id) {
@@ -27,8 +28,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listAllTopicsByLecturerIdAndScheduleId (token, lecturerId, scheduleId) {
@@ -36,8 +38,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listAllTopicsByScheduleId (token, scheduleId) {
@@ -45,8 +48,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listTopicWithName (token, value, type) {
@@ -108,8 +112,9 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async updateTopicById (token, value) {
@@ -117,8 +122,9 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async deleteTopicById (token, id) {
@@ -126,8 +132,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v1',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listTopicAcceptRegisters (token) {
