@@ -17,8 +17,8 @@ class ScheduleViewAction
             ->orderBy('created_at', 'DESC');
 
         if ($search = $dto->search) {
-            $query->where('code', $search)
-                ->orWhere('name', $search);
+            $query->where('code', 'LIKE', "%$search%")
+                ->orWhere('name', 'LIKE', "%$search%");
         }
 
         if ($dto->limit) {
