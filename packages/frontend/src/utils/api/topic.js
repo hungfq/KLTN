@@ -248,15 +248,16 @@ export default class TopicApi {
   static async importTopic (token, xlsx) {
     const formData = new FormData();
 
-    formData.append('xlsx', xlsx);
+    formData.append('file', xlsx);
     const res = await axios.post(
-      '/topic-import',
+      '/topic/import',
       formData,
       {
         headers: {
           authorization: `bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
+        baseURL: 'http://localhost:8001/api/v1',
       },
     );
     return res;

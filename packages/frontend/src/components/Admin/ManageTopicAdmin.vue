@@ -52,7 +52,7 @@
     <div class="flex items-center justify-center mr-4">
       <a
         class=" rounded ml-auto mr-4 my-2 bg-gray-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        href="http://localhost:5000/template/Topic"
+        href="http://localhost:8001/api/v1/template?type=Topic"
       >Tải mẫu tệp excel</a>
     </div>
   </div>
