@@ -4,11 +4,13 @@ namespace App\Modules\Topic\Controllers;
 
 use App\Http\Controllers\ApiController;
 use App\Modules\Topic\Actions\TopicDeleteAction;
+use App\Modules\Topic\Actions\TopicImportAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
 use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
 use App\Modules\Topic\Transformers\TopicViewTransformer;
+use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
 use Illuminate\Support\Collection;
@@ -66,5 +68,16 @@ class TopicController extends ApiController
         });
 
         return $this->responseSuccess();
+    }
+
+    public function import(TopicImportAction $action, TopicImportValidator $validator)
+    {
+        $validator->validate($this->request->all());
+
+        $result = DB::transaction(function () use ($action, $validator) {
+            return $action->handle($validator->toDTO());
+        });
+
+        return $result === true ? $this->responseSuccess() : $result;
     }
 }

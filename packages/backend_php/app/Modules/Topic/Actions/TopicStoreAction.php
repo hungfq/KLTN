@@ -2,6 +2,7 @@
 
 namespace App\Modules\Topic\Actions;
 
+use App\Entities\Role;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -28,7 +29,7 @@ class TopicStoreAction
     protected function checkData()
     {
         foreach (data_get($this->dto, 'students', []) as $studentCode) {
-            $student = User::where('code', $studentCode)->first();
+            $student = User::role(Role::ROLE_STUDENT)->where('code', $studentCode)->first();
             if (!$student) {
                 throw new UserException("Student not found!");
             }
