@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiDest = 'http://localhost:5000/v1';
+const apiDest = 'http://localhost:8001/api/v2';
 axios.defaults.baseURL = apiDest;
 
 export default class CommitteeApi {
@@ -9,8 +9,9 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async addCommittee (token, value) {
@@ -18,8 +19,9 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async updateCommittee (token, id, value) {
@@ -27,8 +29,9 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async deleteCommittee (token, id) {
@@ -36,8 +39,9 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async importCommittee (token, xlsx) {
