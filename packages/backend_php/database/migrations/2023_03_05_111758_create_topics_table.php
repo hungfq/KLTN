@@ -21,6 +21,8 @@ class CreateTopicsTable extends Migration
             $table->tinyInteger('limit');
             $table->dateTime('thesis_defense_date')->nullable();
             $table->unsignedBigInteger('schedule_id')->nullable();
+            $table->unsignedBigInteger('committee_id')->nullable();
+            $table->integer('committee_ordinal')->nullable();
             $table->unsignedBigInteger('lecturer_id')->nullable();
             $table->unsignedBigInteger('critical_id')->nullable();
             $table->boolean('lecturer_approved')->default(false);
@@ -39,6 +41,11 @@ class CreateTopicsTable extends Migration
             $table->foreign('schedule_id')
                 ->references('id')
                 ->on('schedules')
+                ->onDelete('cascade');
+
+            $table->foreign('committee_id')
+                ->references('id')
+                ->on('committees')
                 ->onDelete('cascade');
         });
     }

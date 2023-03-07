@@ -57,4 +57,9 @@ class User extends BaseSoftModel implements AuthenticatableContract, Authorizabl
 
         return $token;
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'to_id');
+    }
 }
