@@ -9,7 +9,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -28,7 +28,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -38,7 +38,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -48,7 +48,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -112,7 +112,7 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -122,7 +122,7 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -132,7 +132,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -257,7 +257,7 @@ export default class TopicApi {
           authorization: `bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
-        baseURL: 'http://localhost:8001/api/v1',
+        baseURL: 'http://localhost:8001/api/v2',
       },
     );
     return res;

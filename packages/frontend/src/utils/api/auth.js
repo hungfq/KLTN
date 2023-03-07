@@ -13,7 +13,7 @@ import axios from 'axios';
 
 export const signInWithGoogle = (access_token, type) => axios({
   method: 'POST',
-  baseURL: 'http://localhost:8001/api/v1/auth',
+  baseURL: 'http://localhost:8001/api/v2/auth',
   url: 'login',
   data: {
     access_token, type,

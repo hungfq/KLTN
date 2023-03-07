@@ -4,10 +4,10 @@
 
 $api = app('Dingo\Api\Routing\Router');
 
-$api->version('v1', function ($api) {
+$api->version('v2', function ($api) {
 
     $api->group([
-        'prefix' => 'v1',
+        'prefix' => 'v2',
         'middleware' => ['logApi'],
         'namespace' => 'App\Modules'
     ], function ($api) {
@@ -27,7 +27,7 @@ $api->version('v1', function ($api) {
     });
 
     $api->group([
-        'prefix' => 'v1',
+        'prefix' => 'v2',
         'middleware' => ['auth', 'logApi']
     ], function ($api) {
         $api->get('/', function ($api) {

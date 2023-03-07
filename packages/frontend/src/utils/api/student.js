@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiDest = 'http://localhost:5000/v1';
+const apiDest = 'http://localhost:8001/api/v2';
 axios.defaults.baseURL = apiDest;
 
 export default class StudentApi {
@@ -9,7 +9,7 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -30,7 +30,7 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
   }
@@ -50,7 +50,7 @@ export default class StudentApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
@@ -68,7 +68,7 @@ export default class StudentApi {
           authorization: `bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
-        baseURL: 'http://localhost:8001/api/v1',
+        baseURL: 'http://localhost:8001/api/v2',
       },
     );
     return res;
