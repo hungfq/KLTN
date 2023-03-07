@@ -43,9 +43,9 @@ class TopicViewTransformer extends TransformerAbstract
             'thesisDefenseDate' => $model->thesis_defense_date,
             'students' => $students,
             'created_at' => $model->created_at,
-            'created_by_name' => data_get($model, 'createdBy.name'),
+            'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
-            'updated_by_name' => data_get($model, 'updatedBy.name'),
+            'updated_by_name' => data_get($model, 'created_by_name'),
         ];
     }
 }
