@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Modules\Topic\Actions;
+namespace App\Modules\Committee\Actions;
 
-use App\Entities\Topic;
+use App\Entities\Committee;
 use App\Exceptions\UserException;
 
-class TopicDeleteAction
+class CommitteeDeleteAction
 {
     public $id;
-    public $topic;
+    public $committee;
 
     /***
      * @return void
@@ -23,9 +23,9 @@ class TopicDeleteAction
 
     protected function checkData()
     {
-        $this->topic = Topic::find($this->id);
-        if (!$this->topic) {
-            throw new UserException("Topic not found!");
+        $this->committee = Committee::find($this->id);
+        if (!$this->committee) {
+            throw new UserException("Committee not found!");
         }
 
         return $this;
@@ -33,8 +33,7 @@ class TopicDeleteAction
 
     protected function delete()
     {
-        $this->topic->students()->sync([]);
-        $this->topic->delete();
+        $this->committee->delete();
         return $this;
     }
 }
