@@ -27,9 +27,9 @@ class ScheduleViewTransformer extends TransformerAbstract
             'startRegisterDate' => $model->register_start,
             'students' => $students,
             'created_at' => $model->created_at,
-            'created_by_name' => data_get($model, 'createdBy.name'),
+            'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
-            'updated_by_name' => data_get($model, 'updatedBy.name'),
+            'updated_by_name' => data_get($model, 'updated_by_name'),
         ];
     }
 }
