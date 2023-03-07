@@ -38,6 +38,6 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
     composer update
 
 ### To migrate database
-    php aritan migrate
+    php artisan migrate
 ### To seed database
     php artisan db:seed
