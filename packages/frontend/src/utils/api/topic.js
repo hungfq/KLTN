@@ -142,6 +142,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -151,6 +152,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -160,6 +162,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -169,6 +172,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -178,6 +182,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -187,6 +192,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -196,6 +202,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -205,6 +212,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -214,6 +222,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -223,6 +232,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -232,6 +242,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
@@ -241,6 +252,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }

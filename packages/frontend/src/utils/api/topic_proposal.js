@@ -18,6 +18,7 @@ export default class TopicProposalApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:5000/v1',
     });
     return res.data;
   }
