@@ -30,7 +30,7 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 
 ## Commands
 ### To run the project
-    php -S localhost:8001 -t public
+    php -t public -S localhost:8001
 
 ### To get dependencies
     composer install
@@ -39,3 +39,5 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 
 ### To migrate database
     php aritan migrate
+### To seed database
+    php artisan db:seed
