@@ -11,7 +11,7 @@
         <HeaderBarVue :username="userName" />
         <div class="bg-white mx-4 border rounded overflow-scroll">
           <template v-if="module === 'student'">
-            <ManageStudentAdminVue v-if="section === 'student-list'" />
+            <ManageStudentAdminVueV2 v-if="section === 'student-list'" />
             <FormUserVue
               v-if="section === 'student-update' || section === 'student-import' || section === 'student-view'"
             />
@@ -61,6 +61,7 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import ManageStudentAdminVue from '../components/Admin/ManageStudentAdmin.vue';
+import ManageStudentAdminVueV2 from '../components/Admin/ManageStudentAdminV2.vue';
 import ManageLecturerAdminVue from '../components/Admin/ManageLecturerAdmin.vue';
 import ManageAdminVue from '../components/Admin/ManageAdmin.vue';
 import ManageTopicAdminVue from '../components/Admin/ManageTopicAdmin.vue';
@@ -94,6 +95,7 @@ export default {
     ManageCommitteeAdminVue,
     FormCommitteeVue,
     FormTopicCommitteeVue,
+    ManageStudentAdminVueV2,
   },
   props: {
   },

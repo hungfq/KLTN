@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <!-- component -->
-  <div v-if="(isAuthenticated && userRole === 'LECTURER')">
+  <div v-if="true || (isAuthenticated && userRole === 'LECTURER')">
     <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
       <div class="flex flex-shrink-0 transition-all">
         <LeftMiniBarVue />
@@ -140,9 +140,9 @@ export default {
     },
   },
   async mounted () {
-    if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
-      this.showErrorModal = true;
-    }
+    // if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
+    //   this.showErrorModal = true;
+    // }
     const { page, module, section } = this.$store.state.url;
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');

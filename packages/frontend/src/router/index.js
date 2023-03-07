@@ -4,6 +4,7 @@ import DashBoardPage from '../page/DashboardPage.vue';
 import AdminPage from '../page/AdminPage.vue';
 import LecturerPage from '../page/LecturerPage.vue';
 import StudentPage from '../page/StudentPage.vue';
+import Test from '../page/Test.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: DashBoardPage,
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test,
   },
 ];
 const router = createRouter({
