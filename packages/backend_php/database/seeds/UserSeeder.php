@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Entities\Role;
 use App\Entities\User;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
@@ -15,20 +18,22 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'id' => 1,
-            'email' => 'quanghungpham07@gmail.com',
-            'code' => 'quanghungpham07',
-            'name' => '',
-            'status' => User::STATUS_ACTIVE,
-            'created_by' => 1,
-            'updated_by' => 1,
-        ]);
+        Auth::login(User::find(1));
 
-        DB::table('user_has_roles')->insert([
-            'user_id' => 1,
-            'role_id' => 1,
-            'model_type' => 'App\Entities\User',
-        ]);
+        DB::transaction(function () {
+            $roles = Role::all();
+            $oldUser = User::all();
+
+            $factory = new UserFactory();
+            $factory->count(10)->create();
+
+            User::whereNotIn('id', array_column($oldUser->toArray(), 'id'))
+                ->get()
+                ->each(function ($user) use ($roles) {
+                    $user->roles()->attach(
+                        $roles->random(1)->pluck('id')->toArray()
+                    );
+                });
+        });
     }
 }
