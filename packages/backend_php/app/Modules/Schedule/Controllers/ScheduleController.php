@@ -5,6 +5,7 @@ namespace App\Modules\Schedule\Controllers;
 use App\Http\Controllers\ApiController;
 use App\Modules\Schedule\Actions\ScheduleDeleteAction;
 use App\Modules\Schedule\Actions\ScheduleStoreAction;
+use App\Modules\Schedule\Actions\ScheduleStudentViewTodayAction;
 use App\Modules\Schedule\Actions\ScheduleUpdateAction;
 use App\Modules\Schedule\Actions\ScheduleViewAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
@@ -78,5 +79,10 @@ class ScheduleController extends ApiController
         });
 
         return $this->responseSuccess();
+    }
+
+    public function studentViewToday(ScheduleStudentViewTodayAction $action)
+    {
+        return $action->handle();
     }
 }

@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 const apiDest = 'http://localhost:5000/v1';
@@ -6,12 +5,11 @@ axios.defaults.baseURL = apiDest;
 
 export default class RegisterApi {
   static async registerTopic (token, studentId, topicId) {
-    const res = await axios.post('/register', {
-      topic_id: topicId,
-    }, {
+    const res = await axios.post(`/${topicId}/register`, { }, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
@@ -26,10 +24,11 @@ export default class RegisterApi {
   }
 
   static async studentCancelRegister (token, registerId) {
-    const res = await axios.delete(`/register/${registerId}`, {
+    const res = await axios.delete(`/${registerId}/register`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }

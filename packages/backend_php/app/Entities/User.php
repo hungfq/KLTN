@@ -48,7 +48,7 @@ class User extends BaseSoftModel implements AuthenticatableContract, Authorizabl
     {
         $this->setJWTCustomClaims([
             'token_type' => data_get($params, 'token_type', 'internal'),
-            'exp' => time() + 60 * 60 * 24,
+            'exp' => time() + 60 * 60 * 24 * 7,
             'email' => data_get($params, 'email', 'no_email'),
             'role' => data_get($params, 'role', 'no_role'),
         ]);

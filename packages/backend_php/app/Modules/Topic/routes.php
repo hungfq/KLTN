@@ -10,25 +10,48 @@ $api->group([
         'uses' => 'TopicController@view',
     ]);
 
+    $api->get('/student/result', [
+        'as' => '',
+        'uses' => 'TopicController@studentViewResult',
+    ]);
+
     $api->post('/', [
         'as' => '',
         'uses' => 'TopicController@store',
     ]);
 
-    $api->get('/{id:[0-9]+}/student', [
-        'as' => '',
-        'uses' => 'TopicController@viewStudent',
-    ]);
+    $api->group(['prefix' => '{id:[0-9]+}'], function ($api) {
 
-    $api->put('/{id:[0-9]+}', [
-        'as' => '',
-        'uses' => 'TopicController@update',
-    ]);
+        $api->get('/', [
+            'as' => '',
+            'uses' => 'TopicController@show',
+        ]);
 
-    $api->delete('/{id:[0-9]+}', [
-        'as' => '',
-        'uses' => 'TopicController@delete',
-    ]);
+        $api->get('/student', [
+            'as' => '',
+            'uses' => 'TopicController@viewStudent',
+        ]);
+
+        $api->put('/', [
+            'as' => '',
+            'uses' => 'TopicController@update',
+        ]);
+
+        $api->delete('/', [
+            'as' => '',
+            'uses' => 'TopicController@delete',
+        ]);
+
+        $api->post('/register', [
+            'as' => '',
+            'uses' => 'TopicController@studentRegister',
+        ]);
+
+        $api->delete('/register', [
+            'as' => '',
+            'uses' => 'TopicController@studentUnRegister',
+        ]);
+    });
 
     $api->post('/import', [
         'as' => '',

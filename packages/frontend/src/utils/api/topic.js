@@ -19,8 +19,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listAllTopicsByLecturerId (token, lecturerId) {
@@ -67,8 +68,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listAllTopicsWithMajor (token, majorId) {
@@ -158,21 +160,21 @@ export default class TopicApi {
   }
 
   static async addRegisterTopicNew (token, id) {
-    const res = await axios.post(`/register/${id}`, {}, {
+    const res = await axios.post(`/topic/${id}/register`, {}, {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
 
   static async removeRegisterTopicStudent (token, id) {
-    const res = await axios.delete(`/register/${id}`, {
+    const res = await axios.delete(`/topic/${id}/register`, {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
@@ -182,9 +184,9 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listTopicMember (token, topicId) {

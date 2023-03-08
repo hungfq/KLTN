@@ -15,11 +15,11 @@ export default class ScheduleApi {
   }
 
   static async listScheduleToday (token) {
-    const res = await axios.get('/schedule/today', {
+    const res = await axios.get('/schedule/student/today', {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }

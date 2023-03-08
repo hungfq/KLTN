@@ -27,14 +27,14 @@ const { isAuth } = authMiddleware;
 const { permit } = roleMiddleware;
 
 const router = (app) => {
-  app.post('/v1/schedule', isAuth, permit('ADMIN'), createOne);
+  app.post('/v1/schedule', isAuth, permit('ADMIN'), createOne); // done
   app.get('/v1/schedule/today', isAuth, getScheduleToday);
-  app.get('/v1/schedule', isAuth, listSchedules);
+  app.get('/v1/schedule', isAuth, listSchedules);// done
   // app.get('/v1/schedule/:id', isAuth, findOne);
-  app.put('/v1/schedule/:id', isAuth, permit('ADMIN'), updateOne);
-  app.delete('/v1/schedule/:id', isAuth, permit('ADMIN'), removeSchedule);
+  app.put('/v1/schedule/:id', isAuth, permit('ADMIN'), updateOne);// done
+  app.delete('/v1/schedule/:id', isAuth, permit('ADMIN'), removeSchedule);// done
   app.post('/v1/schedule/:id/student', upload.single('xlsx'), importStudents);
-  app.get('/v1/schedule/:id/student', isAuth, listStudents);
+  app.get('/v1/schedule/:id/student', isAuth, listStudents);// done
   // app.post('/v1/schedule/:id/topic', upload.single('xlsx'), importTopics);
   // // app.get('/v1/schedule/:id/topic', isAuth, listTopics);
   // app.get('/v1/schedule-topic-lecturer', isAuth, listScheduleTopicLecturer); // only lecturer call

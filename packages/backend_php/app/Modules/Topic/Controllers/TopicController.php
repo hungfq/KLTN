@@ -5,7 +5,11 @@ namespace App\Modules\Topic\Controllers;
 use App\Http\Controllers\ApiController;
 use App\Modules\Topic\Actions\TopicDeleteAction;
 use App\Modules\Topic\Actions\TopicImportAction;
+use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
+use App\Modules\Topic\Actions\TopicStudentRegisterAction;
+use App\Modules\Topic\Actions\TopicStudentShowResultAction;
+use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
 use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
@@ -42,6 +46,12 @@ class TopicController extends ApiController
         return $this->responseSuccess();
     }
 
+    public function show($id, TopicShowAction $action, TopicViewTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        return $this->response->item($results, $transformer);
+    }
 
     public function update($id, TopicUpdateValidator $validator, TopicUpdateAction $action)
     {
@@ -62,12 +72,36 @@ class TopicController extends ApiController
 
     public function delete($id, TopicDeleteAction $action)
     {
-
         DB::transaction(function () use ($action, $id) {
             $action->handle($id);
         });
 
         return $this->responseSuccess();
+    }
+
+    public function studentRegister($id, TopicStudentRegisterAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function studentUnRegister($id, TopicStudentUnRegisterAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function studentViewResult(TopicStudentShowResultAction $action, TopicViewTransformer $transformer)
+    {
+        $results = $action->handle();
+
+        return $this->response->collection($results, $transformer);
     }
 
     public function import(TopicImportAction $action, TopicImportValidator $validator)
