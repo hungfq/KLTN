@@ -39,6 +39,7 @@ $api->version('v2', function ($api) {
             'Schedule',
             'Topic',
             'Committee',
+            'Notification',
         ];
 
         foreach ($modules as $module) {
