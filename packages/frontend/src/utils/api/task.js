@@ -9,8 +9,9 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async getTaskDetail (token, taskId) {
@@ -18,8 +19,9 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async insertTask (token, value, topicId) {
@@ -32,8 +34,9 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async updateTask (token, value) {
@@ -46,8 +49,9 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async updateTaskStatus (token, value) {
@@ -65,24 +69,23 @@ export default class TaskApi {
   }
 
   static async insertComment (token, message, taskId) {
-    const res = await axios.post(`/task-comment/${taskId}`, {
+    const res = await axios.post(`/task/${taskId}/comment`, {
       message,
     }, {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async removeComment (token, commentId, taskId) {
-    const res = await axios.delete(`/task-comment/${taskId}`, {
+    const res = await axios.delete(`/task/${taskId}/comment/${commentId}`, {
       headers: {
         authorization: `bearer ${token}`,
       },
-      data: {
-        commentId,
-      },
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }

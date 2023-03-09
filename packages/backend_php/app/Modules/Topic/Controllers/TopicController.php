@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Modules\Topic\Actions\TopicDeleteAction;
 use App\Modules\Topic\Actions\TopicImportAction;
 use App\Modules\Topic\Actions\TopicShowAction;
+use App\Modules\Topic\Actions\TopicShowStudentAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
 use App\Modules\Topic\Actions\TopicStudentRegisterAction;
 use App\Modules\Topic\Actions\TopicStudentShowResultAction;
@@ -17,6 +18,7 @@ use App\Modules\Topic\Transformers\TopicViewTransformer;
 use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
+use App\Modules\User\Transformers\UserViewTransformer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -77,6 +79,17 @@ class TopicController extends ApiController
         });
 
         return $this->responseSuccess();
+    }
+
+    public function viewStudent($id, TopicShowStudentAction $action, UserViewTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
     }
 
     public function studentRegister($id, TopicStudentRegisterAction $action)

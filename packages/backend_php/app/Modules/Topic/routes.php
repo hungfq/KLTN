@@ -27,7 +27,7 @@ $api->group([
             'uses' => 'TopicController@show',
         ]);
 
-        $api->get('/student', [
+        $api->get('/students', [
             'as' => '',
             'uses' => 'TopicController@viewStudent',
         ]);

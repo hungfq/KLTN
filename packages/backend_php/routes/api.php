@@ -40,6 +40,7 @@ $api->version('v2', function ($api) {
             'Topic',
             'Committee',
             'Notification',
+            'Task',
         ];
 
         foreach ($modules as $module) {
