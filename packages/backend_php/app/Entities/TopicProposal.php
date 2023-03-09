@@ -11,6 +11,9 @@ class TopicProposal extends BaseSoftModel
 
     use CreatedByRelationshipTrait, UpdatedByRelationshipTrait;
 
+    const STATUS_LECTURER_PENDING = 'LECTURER';
+    const STATUS_LECTURER_APPROVE = 'ADMIN';
+
     public function schedule()
     {
         return $this->belongsTo(Schedule::class, 'schedule_id');
