@@ -26,30 +26,30 @@ const { isAuth } = authMiddleware;
 
 const router = (app) => {
   // Topic
-  app.post('/v1/topic-import/', upload.single('xlsx'), importTopics);
-  app.post('/v1/topic', isAuth, insertTopic);
-  app.get('/v1/topic/:id', isAuth, findOneTopic);
-  app.put('/v1/topic/:id', isAuth, updateOneTopic);
-  app.delete('/v1/topic/:id', isAuth, deleteOneTopic);
-  app.get('/v1/topic', listTopic); // public api in homepage
-  app.get('/v1/topic/:id/students', getTopicStudent);
+  app.post('/v1/topic-import/', upload.single('xlsx'), importTopics); // done
+  app.post('/v1/topic', isAuth, insertTopic); // done
+  app.get('/v1/topic/:id', isAuth, findOneTopic); // done
+  app.put('/v1/topic/:id', isAuth, updateOneTopic); // done
+  app.delete('/v1/topic/:id', isAuth, deleteOneTopic); // done
+  app.get('/v1/topic', listTopic); // public api in homepage // done
+  app.get('/v1/topic/:id/students', getTopicStudent); // done
 
   // Result register of student
-  app.get('/v1/topic/student/result', isAuth, getResultRegister);
+  app.get('/v1/topic/student/result', isAuth, getResultRegister); // done
 
   // Register
-  app.delete('/v1/register/:id', isAuth, removeRegisterTopicStudent);
-  app.post('/v1/register/:id', isAuth, addNewRegisterTopicStudentNew);
+  app.delete('/v1/register/:id', isAuth, removeRegisterTopicStudent); // done
+  app.post('/v1/register/:id', isAuth, addNewRegisterTopicStudentNew); // done
 
   // Proposal Topic
-  app.post('/v1/topic-proposal', isAuth, addProposalTopic);
+  app.post('/v1/topic-proposal', isAuth, addProposalTopic); // done
   app.post('/v1/topic-proposal/approve/:id', isAuth, approveProposalTopic);
   app.delete('/v1/topic-proposal/:id', isAuth, removeProposalTopic);
   app.delete('/v1/topic-proposal-decline/:id', isAuth, declineProposalTopic);
   app.put('/v1/topic-proposal/:id', isAuth, updateProposalByUser);
-  app.get('/v1/topic-proposal/lecturer', isAuth, listTopicReviewByLecturer);
-  app.get('/v1/topic-proposal/admin', isAuth, listTopicReviewByAdmin);
-  app.get('/v1/topic-proposal/created', isAuth, listTopicProposalByCreatedId);
+  app.get('/v1/topic-proposal/lecturer', isAuth, listTopicReviewByLecturer); // gom
+  app.get('/v1/topic-proposal/admin', isAuth, listTopicReviewByAdmin); // gom
+  app.get('/v1/topic-proposal/created', isAuth, listTopicProposalByCreatedId); // gom
 
   // Topic teacher
   app.get('/v1/topic-advisor', isAuth, listTopicAdvisorApprove);
