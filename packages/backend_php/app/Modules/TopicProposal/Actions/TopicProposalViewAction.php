@@ -38,8 +38,12 @@ class TopicProposalViewAction
             $query->where('schedule_id', $scheduleId);
         }
 
-        if ($dto->created) {
+        if ($dto->is_created) {
             $query->where('topic_proposals.created_by', Auth::id());
+        }
+
+        if ($dto->is_lecturer) {
+            $query->where('topic_proposals.lecturer_id', Auth::id());
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

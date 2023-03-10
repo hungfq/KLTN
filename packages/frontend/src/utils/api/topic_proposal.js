@@ -5,12 +5,13 @@ axios.defaults.baseURL = apiDest;
 
 export default class TopicProposalApi {
   static async listAllTopicsByLecturer (token, scheduleId) {
-    const res = await axios.get(`/topic-proposal/lecturer?scheduleId=${scheduleId}`, {
+    const res = await axios.get(`/topic-proposal?is_lecturer=1&scheduleId=${scheduleId}`, {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listAllTopicsByAdmin (token) {
@@ -24,7 +25,7 @@ export default class TopicProposalApi {
   }
 
   static async listAllTopicsByCreated (token, scheduleId) {
-    const res = await axios.get(`/topic-proposal?created=1&scheduleId=${scheduleId}`, {
+    const res = await axios.get(`/topic-proposal?is_created=1&scheduleId=${scheduleId}`, {
       headers: {
         authorization: `bearer ${token}`,
       },
@@ -64,19 +65,21 @@ export default class TopicProposalApi {
   }
 
   static async declineTopicProposal (token, id) {
-    const res = await axios.delete(`/topic-proposal-decline/${id}`, {
+    const res = await axios.post(`/topic-proposal/${id}/lecturer/decline`, {}, {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
 
   static async approveTopicProposalByLecturer (token, id) {
-    const res = await axios.get(`/approve/${id}`, {
+    const res = await axios.post(`/topic-proposal/${id}/lecturer/approve`, {}, {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }

@@ -124,10 +124,10 @@ export default {
           id: 'schedule',
           value: 'Quản lý lịch đăng ký',
         },
-        {
-          id: 'topic_proposal',
-          value: 'Quản lý đề xuất đề tài',
-        },
+        // {
+        //   id: 'topic_proposal',
+        //   value: 'Quản lý đề xuất đề tài',
+        // },
         {
           id: 'committee',
           value: 'Quản lý hội đồng',

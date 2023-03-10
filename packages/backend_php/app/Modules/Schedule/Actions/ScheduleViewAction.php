@@ -30,6 +30,11 @@ class ScheduleViewAction
                 ->orWhere('name', 'LIKE', "%$search%");
         }
 
+        if ($dto->is_approve_time) {
+            $query->whereDate('approve_start', '<=', date('Y-m-d H:i:s', time()))
+                ->whereDate('approve_end', '>=', date('Y-m-d H:i:s', time()));
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',

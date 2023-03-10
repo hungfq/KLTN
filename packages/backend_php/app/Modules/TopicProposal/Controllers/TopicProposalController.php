@@ -3,6 +3,8 @@
 namespace App\Modules\TopicProposal\Controllers;
 
 use App\Http\Controllers\ApiController;
+use App\Modules\TopicProposal\Actions\TopicProposalApproveAction;
+use App\Modules\TopicProposal\Actions\TopicProposalDeclineAction;
 use App\Modules\TopicProposal\Actions\TopicProposalDeleteAction;
 use App\Modules\TopicProposal\Actions\TopicProposalStoreAction;
 use App\Modules\TopicProposal\Actions\TopicProposalUpdateAction;
@@ -58,6 +60,24 @@ class TopicProposalController extends ApiController
     }
 
     public function delete($id, TopicProposalDeleteAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function lecturerApprove($id, TopicProposalApproveAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function lecturerDecline($id, TopicProposalDeclineAction $action)
     {
         DB::transaction(function () use ($action, $id) {
             $action->handle($id);

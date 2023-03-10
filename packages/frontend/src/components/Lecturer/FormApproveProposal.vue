@@ -230,6 +230,7 @@ export default {
         description: this.description,
         students: studentIds,
         lecturerId: this.userId,
+        scheduleId: this.scheduleId,
         status: 'ADMIN',
       };
       try {

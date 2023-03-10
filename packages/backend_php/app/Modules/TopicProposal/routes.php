@@ -24,4 +24,14 @@ $api->group([
         'as' => '',
         'uses' => 'TopicProposalController@delete',
     ]);
+
+    $api->post('/{id:[0-9]+}/lecturer/approve', [
+        'as' => '',
+        'uses' => 'TopicProposalController@lecturerApprove',
+    ]);
+
+    $api->post('/{id:[0-9]+}/lecturer/decline', [
+        'as' => '',
+        'uses' => 'TopicProposalController@lecturerDecline',
+    ]);
 });

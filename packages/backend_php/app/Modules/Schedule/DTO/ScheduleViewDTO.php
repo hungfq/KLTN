@@ -7,6 +7,7 @@ use Spatie\DataTransferObject\FlexibleDataTransferObject;
 class ScheduleViewDTO extends FlexibleDataTransferObject
 {
     public $search;
+    public $is_approve_time;
     public $limit;
     public $sort;
 
@@ -16,6 +17,7 @@ class ScheduleViewDTO extends FlexibleDataTransferObject
 
         return new self([
             'search' => $request->input('search'),
+            'is_approve_time' => $request->input('is_approve_time'),
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);

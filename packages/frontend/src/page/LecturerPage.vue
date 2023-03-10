@@ -110,8 +110,8 @@ export default {
       isSidebarOpen: true,
       listItems: [
         { id: 'topic', value: 'Quản lý đề tài hướng dẫn' },
-        { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
-        { id: 'topic_proposal_approve', value: 'Hướng dẫn đề tài' },
+        // { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
+        { id: 'topic_proposal_approve', value: 'Phê duyệt yêu cầu hướng dẫn' },
         { id: 'topic_advisor_approve', value: 'Phê duyệt đề tài hướng dẫn ra hội đồng' },
         { id: 'topic_critical_approve', value: 'Phê duyệt đề tài phản biện ra hội đồng' },
         { id: 'advisor_mark', value: 'Giáo viên hướng dẫn cho điểm' },

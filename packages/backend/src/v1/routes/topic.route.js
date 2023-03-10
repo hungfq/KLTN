@@ -44,9 +44,9 @@ const router = (app) => {
   // Proposal Topic
   app.post('/v1/topic-proposal', isAuth, addProposalTopic); // done
   app.post('/v1/topic-proposal/approve/:id', isAuth, approveProposalTopic);
-  app.delete('/v1/topic-proposal/:id', isAuth, removeProposalTopic);
+  app.delete('/v1/topic-proposal/:id', isAuth, removeProposalTopic); // done
   app.delete('/v1/topic-proposal-decline/:id', isAuth, declineProposalTopic);
-  app.put('/v1/topic-proposal/:id', isAuth, updateProposalByUser);
+  app.put('/v1/topic-proposal/:id', isAuth, updateProposalByUser); // dơn
   app.get('/v1/topic-proposal/lecturer', isAuth, listTopicReviewByLecturer); // gom
   app.get('/v1/topic-proposal/admin', isAuth, listTopicReviewByAdmin); // gom
   app.get('/v1/topic-proposal/created', isAuth, listTopicProposalByCreatedId); // gom

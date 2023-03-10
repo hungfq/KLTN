@@ -27,6 +27,7 @@ class TopicProposalViewTransformer extends TransformerAbstract
             ],
             'students' => $students,
             'created_at' => $model->created_at,
+            'createdBy' => $model->created_by,
             'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
             'updated_by_name' => data_get($model, 'created_by_name'),
