@@ -2,6 +2,7 @@
 
 namespace App\Modules\User\DTO;
 
+use App\Entities\User;
 use Spatie\DataTransferObject\FlexibleDataTransferObject;
 
 class UserUpdateDTO extends FlexibleDataTransferObject
@@ -25,7 +26,7 @@ class UserUpdateDTO extends FlexibleDataTransferObject
             'name' => $request->input('name'),
             'gender' => $request->input('gender'),
             'picture' => $request->input('picture'),
-            'status' => $request->input('status'),
+            'status' => $request->input('status') ?? User::STATUS_ACTIVE,
         ]);
     }
 }

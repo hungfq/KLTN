@@ -26,7 +26,7 @@ class UserStoreDTO extends FlexibleDataTransferObject
             'name' => $request->input('name'),
             'gender' => $request->input('gender'),
             'picture' => $request->input('picture'),
-            'status' => User::STATUS_ACTIVE,
+            'status' => $request->input('status') ?? User::STATUS_ACTIVE,
         ]);
     }
 }
