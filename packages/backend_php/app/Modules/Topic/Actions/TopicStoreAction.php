@@ -3,6 +3,7 @@
 namespace App\Modules\Topic\Actions;
 
 use App\Entities\Role;
+use App\Entities\Schedule;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -34,6 +35,15 @@ class TopicStoreAction
                 throw new UserException("Student not found!");
             }
             $this->studentIds[] = $student->id;
+        }
+
+        $schedule = Schedule::query()->find($this->dto->schedule_id);
+        if (!$schedule) {
+            throw new UserException("Schedule not found!");
+        }
+
+        if (!$this->dto->code) {
+            $this->dto->code = Topic::generateTopicCode($schedule);
         }
 
         return $this;

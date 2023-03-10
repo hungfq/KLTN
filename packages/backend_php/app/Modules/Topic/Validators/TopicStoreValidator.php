@@ -10,12 +10,12 @@ class TopicStoreValidator extends AbstractValidator
     public function rules($params = [])
     {
         return [
-            'code' => 'required',
+            'code' => 'nullable',
             'title' => 'required',
             'description' => 'nullable',
             'limit' => 'required',
             'thesisDefenseDate' => 'nullable',
-            'scheduleId' => 'nullable',
+            'scheduleId' => 'required',
             'lecturerId' => 'nullable',
             'criticalLecturerId' => 'nullable',
             'advisorLecturerGrade' => 'nullable',

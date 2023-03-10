@@ -20,7 +20,7 @@ class TaskStoreAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->createTopic();
+            ->createTask();
     }
 
     protected function checkData()
@@ -38,10 +38,14 @@ class TaskStoreAction
             throw new UserException('Code already exists');
         }
 
+        if (!$this->dto->code) {
+            $this->dto->code = Task::generateTaskCode($topic);
+        }
+
         return $this;
     }
 
-    protected function createTopic()
+    protected function createTask()
     {
         Task::create($this->dto->all());
         return $this;

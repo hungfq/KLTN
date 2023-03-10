@@ -3,6 +3,7 @@
 namespace App\Modules\Topic\Actions;
 
 use App\Entities\Role;
+use App\Entities\Schedule;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -39,6 +40,11 @@ class TopicUpdateAction
                 throw new UserException("Student not found!");
             }
             $this->studentIds[] = $student->id;
+        }
+
+        $schedule = Schedule::query()->find($this->dto->schedule_id);
+        if (!$schedule) {
+            throw new UserException("Schedule not found!");
         }
 
         return $this;

@@ -21,11 +21,9 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-//        $faker = new Faker();
-
         return [
             'email' => $this->faker->email,
-            'code' => $this->faker->text(10),
+            'code' => $this->faker->regexify('[A-Z]{5}'),
             'name' => $this->faker->name,
             'gender' => $this->faker->randomElement(['male', 'female']),
             'status' => User::STATUS_ACTIVE,

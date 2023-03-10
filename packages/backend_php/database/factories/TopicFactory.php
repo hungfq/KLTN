@@ -24,7 +24,7 @@ class TopicFactory extends Factory
     public function definition()
     {
         return [
-            'code' => $this->faker->text(10),
+            'code' => $this->faker->regexify('[A-Z]{5}'),
             'title' => $this->faker->sentence,
             'description' => $this->faker->text(50),
             'limit' => $this->faker->numberBetween(1, 3),

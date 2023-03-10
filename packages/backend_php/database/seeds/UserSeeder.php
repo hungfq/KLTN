@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         Auth::login(User::find(1));
 
         DB::transaction(function () {
-            $roles = Role::all();
+            $roles = Role::query()->where('name', '!=', Role::ROLE_ADMIN)->get();
             $oldUser = User::all();
 
             $factory = new UserFactory();

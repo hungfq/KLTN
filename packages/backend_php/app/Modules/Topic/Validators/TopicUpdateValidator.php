@@ -16,7 +16,7 @@ class TopicUpdateValidator extends AbstractValidator
             'description' => 'nullable',
             'limit' => 'required',
             'thesisDefenseDate' => 'nullable',
-            'scheduleId' => 'nullable',
+            'scheduleId' => 'required',
             'lecturerId' => 'nullable',
             'criticalLecturerId' => 'nullable',
             'advisorLecturerGrade' => 'nullable',
