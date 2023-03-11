@@ -31,7 +31,14 @@ class TopicProposalDeclineAction
 
     protected function addNotification()
     {
-        // TODO:
+        $title = data_get($this->topicProposal, 'title');
+
+        $this->topicProposal->students->each(function ($student) use ($title) {
+            $student->notifications()->create([
+                'title' => 'DUYỆT YÊU CẦU HƯỚNG DẪN',
+                'message' => "Đề tài $title đã bị từ chối.",
+            ]);
+        });
 
         return $this;
     }

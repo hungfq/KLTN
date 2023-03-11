@@ -20,7 +20,8 @@ class TopicStudentUnRegisterAction
         $this->id = $id;
 
         $this->checkData()
-            ->register();
+            ->register()
+            ->addNotification();
     }
 
     protected function checkData()
@@ -58,5 +59,19 @@ class TopicStudentUnRegisterAction
     protected function register()
     {
         $this->topic->students()->detach(Auth::id());
+
+        return $this;
+    }
+
+    protected function addNotification()
+    {
+        if ($lecturer = data_get($this->topic, 'lecturer')) {
+            $topicCode = data_get($this->topic, 'code');
+
+            $lecturer->notifications()->create([
+                'title' => 'ĐĂNG KÝ ĐỀ TÀI',
+                'message' => "Hủy đăng ký mới trong đề tài: $topicCode",
+            ]);
+        }
     }
 }

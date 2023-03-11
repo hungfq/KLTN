@@ -19,7 +19,8 @@ class TopicLecturerApproveAction
         $this->id = $id;
 
         $this->checkData()
-            ->approve();
+            ->approve()
+            ->addNotification();
     }
 
     protected function checkData()
@@ -44,5 +45,21 @@ class TopicLecturerApproveAction
     {
         $this->topic->lecturer_approved = true;
         $this->topic->save();
+
+        return $this;
+    }
+
+    protected function addNotification()
+    {
+        $title = data_get($this->topic, 'title');
+
+        $this->topic->students->each(function ($student) use ($title) {
+            $student->notifications()->create([
+                'title' => 'DUYỆT HỘI ĐỒNG',
+                'message' => "Đề tài $title đã GVHD chấp thuận.",
+            ]);
+        });
+
+        return $this;
     }
 }

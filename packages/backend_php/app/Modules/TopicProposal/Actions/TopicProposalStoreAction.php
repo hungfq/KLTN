@@ -13,6 +13,7 @@ class TopicProposalStoreAction
     public TopicProposalStoreDTO $dto;
     public $topic;
     public $studentIds;
+    public $lecturer;
 
     /***
      * @param TopicProposalStoreDTO $dto
@@ -23,7 +24,8 @@ class TopicProposalStoreAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->createTopic();
+            ->createTopic()
+            ->addNotification();
     }
 
     protected function checkData()
@@ -36,6 +38,13 @@ class TopicProposalStoreAction
             $this->studentIds[] = $student->id;
         }
 
+        if ($lecturerId = $this->dto->lecturer_id) {
+            $this->lecturer = User::role(Role::ROLE_LECTURER)->find($lecturerId);
+            if (!$this->lecturer) {
+                throw new UserException("Lecturer not found!");
+            }
+        }
+
         return $this;
     }
 
@@ -45,5 +54,15 @@ class TopicProposalStoreAction
         $this->topic->students()->sync($this->studentIds);
         $this->topic->save();
         return $this;
+    }
+
+    protected function addNotification()
+    {
+        if ($this->lecturer) {
+            $this->lecturer->notifications()->create([
+                'title' => 'YÊU CẦU HƯỚNG DẪN',
+                'message' => "Bạn được yêu cầu hướng dẫn trong một đề tài.",
+            ]);
+        }
     }
 }

@@ -59,7 +59,14 @@ class TopicProposalApproveAction
 
     protected function addNotification()
     {
-        // TODO:
+        $title = data_get($this->topicProposal, 'title');
+
+        $this->topicProposal->students->each(function ($student) use ($title) {
+            $student->notifications()->create([
+                'title' => 'DUYỆT YÊU CẦU',
+                'message' => "Đề tài $title đã được chấp thuận.",
+            ]);
+        });
 
         return $this;
     }

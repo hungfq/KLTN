@@ -90,7 +90,7 @@
       </button>
       <div
         v-show="notificationShow"
-        class="overflow-y-auto absolute w-80 max-h-[480px] py-1 mt-2 origin-bottom-left bg-white rounded-md shadow-lg mx-1 left-16 bottom-2 focus:outline-none"
+        class="overflow-y-auto absolute w-96 max-h-[480px] py-1 mt-2 origin-bottom-left bg-white rounded-md shadow-lg mx-1 left-16 bottom-2 focus:outline-none"
         role="menu"
         aria-orientation="vertical"
         aria-label="user menu"
