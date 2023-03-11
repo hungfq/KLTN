@@ -3,8 +3,10 @@
 namespace App\Modules\Topic\Controllers;
 
 use App\Http\Controllers\ApiController;
+use App\Modules\Topic\Actions\TopicCriticalApproveAction;
 use App\Modules\Topic\Actions\TopicDeleteAction;
 use App\Modules\Topic\Actions\TopicImportAction;
+use App\Modules\Topic\Actions\TopicLecturerApproveAction;
 use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicShowStudentAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
@@ -115,6 +117,24 @@ class TopicController extends ApiController
         $results = $action->handle();
 
         return $this->response->collection($results, $transformer);
+    }
+
+    public function lecturerApprove($id, TopicLecturerApproveAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function criticalApprove($id, TopicCriticalApproveAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
     }
 
     public function import(TopicImportAction $action, TopicImportValidator $validator)

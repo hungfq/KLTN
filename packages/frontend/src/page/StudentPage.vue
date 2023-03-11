@@ -42,14 +42,14 @@
                 v-if="section === 'topic_result-view'"
               />
             </template>
-            <template v-if="module === 'topic_result'">
+            <!-- <template v-if="module === 'topic_result'">
               <ManageTopicResult
                 v-if="section==='topic_result-list'"
               />
               <FormResultVue
                 v-if="section === 'topic_result-view'"
               />
-            </template>
+            </template> -->
           </template>
           <template v-if="page === 'task'">
             <TaskDraggableVue />

@@ -37,6 +37,10 @@ class Task extends BaseSoftModel
             ->orderBy('code', 'desc')
             ->first();
 
+        if (!$task) {
+            return $defaultNum;
+        }
+
         $arr = explode('-', $task->code);
 
         if (!isset($arr[2])) {

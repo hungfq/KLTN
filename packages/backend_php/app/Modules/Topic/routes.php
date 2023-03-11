@@ -51,6 +51,16 @@ $api->group([
             'as' => '',
             'uses' => 'TopicController@studentUnRegister',
         ]);
+
+        $api->post('/lecturer/approve', [
+            'as' => '',
+            'uses' => 'TopicController@lecturerApprove',
+        ]);
+
+        $api->post('/critical/approve', [
+            'as' => '',
+            'uses' => 'TopicController@criticalApprove',
+        ]);
     });
 
     $api->post('/import', [

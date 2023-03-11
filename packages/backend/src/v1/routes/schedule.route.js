@@ -28,7 +28,7 @@ const { permit } = roleMiddleware;
 
 const router = (app) => {
   app.post('/v1/schedule', isAuth, permit('ADMIN'), createOne); // done
-  app.get('/v1/schedule/today', isAuth, getScheduleToday);
+  app.get('/v1/schedule/today', isAuth, getScheduleToday); // done
   app.get('/v1/schedule', isAuth, listSchedules);// done
   // app.get('/v1/schedule/:id', isAuth, findOne);
   app.put('/v1/schedule/:id', isAuth, permit('ADMIN'), updateOne);// done
@@ -40,7 +40,7 @@ const router = (app) => {
   // app.get('/v1/schedule-topic-lecturer', isAuth, listScheduleTopicLecturer); // only lecturer call
   app.get('/v1/schedule-topic-lecturer/short', isAuth, listScheduleTopicLecturerShort); // only lecturer call
   // app.get('/v1/schedule/:id/topic-lecturer/:lecturerId', isAuth, listTopicLecturer);
-  app.get('/v1/schedule-lecturer', isAuth, listScheduleApproveLecturer);
+  app.get('/v1/schedule-lecturer', isAuth, listScheduleApproveLecturer); // done
 
   // app.post('/v1/schedule/:id/topic/:topicId/register', isAuth, register);
   // app.delete('/v1/schedule/:id/topic/:topicId/register', isAuth, cancelRegister);

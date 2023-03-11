@@ -10,6 +10,11 @@ $api->group([
         'uses' => 'ScheduleController@view',
     ]);
 
+    $api->get('/with-topic', [
+        'as' => '',
+        'uses' => 'ScheduleController@viewWithTopic',
+    ]);
+
     $api->get('/student/today', [
         'as' => '',
         'uses' => 'ScheduleController@studentViewToday',

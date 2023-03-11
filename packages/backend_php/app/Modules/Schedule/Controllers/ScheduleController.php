@@ -9,9 +9,12 @@ use App\Modules\Schedule\Actions\ScheduleStudentViewTodayAction;
 use App\Modules\Schedule\Actions\ScheduleUpdateAction;
 use App\Modules\Schedule\Actions\ScheduleViewAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
+use App\Modules\Schedule\Actions\ScheduleViewWithTopicAction;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
+use App\Modules\Schedule\DTO\ScheduleViewWithTopicDTO;
 use App\Modules\Schedule\Transformers\ScheduleViewStudentTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewTransformer;
+use App\Modules\Schedule\Transformers\ScheduleViewWithTopicTransformer;
 use App\Modules\Schedule\Validators\ScheduleStoreValidator;
 use App\Modules\Schedule\Validators\ScheduleUpdateValidator;
 use Illuminate\Support\Collection;
@@ -22,6 +25,17 @@ class ScheduleController extends ApiController
     public function view(ScheduleViewAction $action, ScheduleViewTransformer $transformer)
     {
         $results = $action->handle(ScheduleViewDTO::fromRequest());
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
+    }
+
+    public function viewWithTopic(ScheduleViewWithTopicAction $action, ScheduleViewWithTopicTransformer $transformer)
+    {
+        $results = $action->handle(ScheduleViewWithTopicDTO::fromRequest());
 
         if ($results instanceof Collection) {
             return $this->response->collection($results, $transformer);

@@ -74,12 +74,13 @@ export default class ScheduleApi {
   }
 
   static async lecturerListScheduleTopicShort (token) {
-    const res = await axios.get('/schedule-topic-lecturer/short', {
+    const res = await axios.get('/schedule/with-topic?is_lecturer=1', {
       headers: {
         authorization: `bearer ${token}`,
       },
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async importTopic (token, id, xlsx) {

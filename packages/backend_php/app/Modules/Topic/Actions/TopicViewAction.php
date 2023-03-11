@@ -5,6 +5,7 @@ namespace App\Modules\Topic\Actions;
 use App\Entities\Topic;
 use App\Libraries\Helpers;
 use App\Modules\Topic\DTO\TopicViewDTO;
+use Illuminate\Support\Facades\Auth;
 
 class TopicViewAction
 {
@@ -40,6 +41,16 @@ class TopicViewAction
 
         if ($criticalId = $dto->criticalId) {
             $query->where('critical_id', $criticalId);
+        }
+
+        if ($dto->is_lecturer_approve) {
+            $query->where('lecturer_id', Auth::id())
+                ->where('lecturer_approved', false);
+        }
+
+        if ($dto->is_critical_approve) {
+            $query->where('critical_id', Auth::id())
+                ->where('critical_approved', false);
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

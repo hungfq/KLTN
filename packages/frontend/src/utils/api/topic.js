@@ -210,41 +210,41 @@ export default class TopicApi {
   }
 
   static async listTopicAdvisorApprove (token) {
-    const res = await axios.get('/topic-advisor', {
+    const res = await axios.get('/topic?is_lecturer_approve=1', {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async listTopicCriticalApprove (token) {
-    const res = await axios.get('/topic-critical', {
+    const res = await axios.get('/topic?is_critical_approve=1', {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async topicAdvisorApprove (token, id) {
-    const res = await axios.get(`/topic-advisor/approve/${id}`, {
+    const res = await axios.post(`/topic/${id}/lecturer/approve`, {}, {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
 
   static async topicCriticalApprove (token, id) {
-    const res = await axios.get(`/topic-critical/approve/${id}`, {
+    const res = await axios.post(`/topic/${id}/critical/approve`, {}, {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data;
   }
