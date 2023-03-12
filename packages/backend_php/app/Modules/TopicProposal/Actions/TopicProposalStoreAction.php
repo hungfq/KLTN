@@ -6,6 +6,7 @@ use App\Entities\Role;
 use App\Entities\TopicProposal;
 use App\Entities\User;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 use App\Modules\TopicProposal\DTO\TopicProposalStoreDTO;
 
 class TopicProposalStoreAction
@@ -63,6 +64,7 @@ class TopicProposalStoreAction
                 'title' => 'YÊU CẦU HƯỚNG DẪN',
                 'message' => "Bạn được yêu cầu hướng dẫn trong một đề tài.",
             ]);
+            Socket::sendUpdateNotificationRequest([data_get($this->lecturer, 'id')]);
         }
     }
 }

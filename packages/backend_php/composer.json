@@ -10,15 +10,16 @@
   "type": "project",
   "require": {
     "php": ">=7.4",
+    "ext-json": "*",
     "api-ecosystem-for-laravel/dingo-api": "^3.0.0",
+    "elephantio/elephant.io": "^4.2",
     "guzzlehttp/guzzle": "^7.5",
     "laravel/lumen-framework": "^8.3.1",
     "maatwebsite/excel": "^3.1",
     "sentry/sentry-laravel": "2.x-dev",
     "spatie/data-transfer-object": "^2.8",
     "spatie/laravel-permission": "^5.5",
-    "tymon/jwt-auth": "dev-develop",
-    "ext-json": "*"
+    "tymon/jwt-auth": "dev-develop"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.9.1",

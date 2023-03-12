@@ -9,20 +9,25 @@ $api->version('v2', function ($api) {
     $api->group([
         'prefix' => 'v2',
         'middleware' => ['logApi'],
-        'namespace' => 'App\Modules'
+        'namespace' => 'App'
     ], function ($api) {
         $api->get('/test', function () {
             return ['data' => 'API OK!'];
         });
 
+        $api->get('/test-socket', [
+            'as' => '',
+            'uses' => 'Http\Controllers\TestDataController@testSocket',
+        ]);
+
         $api->post('/auth/login', [
             'as' => '',
-            'uses' => 'Auth\Controllers\AuthController@loginWithGoogleAccessToken',
+            'uses' => 'Modules\Auth\Controllers\AuthController@loginWithGoogleAccessToken',
         ]);
 
         $api->get('/template', [
             'as' => '',
-            'uses' => 'Template\Controllers\TemplateController@download',
+            'uses' => 'Modules\Template\Controllers\TemplateController@download',
         ]);
     });
 

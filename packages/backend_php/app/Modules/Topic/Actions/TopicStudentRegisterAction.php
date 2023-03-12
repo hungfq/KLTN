@@ -4,6 +4,7 @@ namespace App\Modules\Topic\Actions;
 
 use App\Entities\Topic;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 use Illuminate\Support\Facades\Auth;
 
 class TopicStudentRegisterAction
@@ -76,6 +77,8 @@ class TopicStudentRegisterAction
                 'title' => 'ĐĂNG KÝ ĐỀ TÀI',
                 'message' => "Có đăng ký mới trong đề tài: $topicCode",
             ]);
+
+            Socket::sendUpdateNotificationRequest([data_get($lecturer, 'id')]);
         }
     }
 }

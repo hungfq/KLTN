@@ -5,6 +5,7 @@ namespace App\Modules\TopicProposal\Actions;
 use App\Entities\Topic;
 use App\Entities\TopicProposal;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 
 class TopicProposalApproveAction
 {
@@ -66,6 +67,7 @@ class TopicProposalApproveAction
                 'title' => 'DUYỆT YÊU CẦU',
                 'message' => "Đề tài $title đã được chấp thuận.",
             ]);
+            Socket::sendUpdateNotificationRequest([data_get($student, 'id')]);
         });
 
         return $this;

@@ -4,7 +4,9 @@ namespace App\Modules\Task\Actions;
 
 use App\Entities\Task;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 use App\Modules\Task\DTO\TaskUpdateDTO;
+use Illuminate\Support\Collection;
 
 class TaskUpdateAction
 {
@@ -20,7 +22,7 @@ class TaskUpdateAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->createTopic();
+            ->updateTask();
     }
 
     protected function checkData()
@@ -33,9 +35,18 @@ class TaskUpdateAction
         return $this;
     }
 
-    protected function createTopic()
+    protected function updateTask()
     {
         $this->task->update($this->dto->all());
+        $members = data_get($this->task, 'topic.students', []);
+        $ids = $members->pluck('id');
+
+        $ids[] = data_get($this->task, 'topic.lecturer_id');
+        if ($ids instanceof Collection) {
+            $ids = $ids->toArray();
+        }
+        Socket::sendUpdateTaskRequest($ids, $this->task->topic_id);
+
         return $this;
     }
 }

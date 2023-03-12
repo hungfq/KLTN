@@ -4,6 +4,7 @@ namespace App\Modules\TopicProposal\Actions;
 
 use App\Entities\TopicProposal;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 
 class TopicProposalDeclineAction
 {
@@ -38,6 +39,7 @@ class TopicProposalDeclineAction
                 'title' => 'DUYỆT YÊU CẦU HƯỚNG DẪN',
                 'message' => "Đề tài $title đã bị từ chối.",
             ]);
+            Socket::sendUpdateNotificationRequest([data_get($student, 'id')]);
         });
 
         return $this;

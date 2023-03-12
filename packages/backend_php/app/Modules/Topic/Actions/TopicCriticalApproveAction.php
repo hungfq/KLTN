@@ -4,6 +4,7 @@ namespace App\Modules\Topic\Actions;
 
 use App\Entities\Topic;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 use Illuminate\Support\Facades\Auth;
 
 class TopicCriticalApproveAction
@@ -58,6 +59,7 @@ class TopicCriticalApproveAction
                 'title' => 'DUYỆT HỘI ĐỒNG',
                 'message' => "Đề tài $title đã GVPB chấp thuận.",
             ]);
+            Socket::sendUpdateNotificationRequest([data_get($student, 'id')]);
         });
 
         return $this;
