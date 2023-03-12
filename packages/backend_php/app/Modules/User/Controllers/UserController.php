@@ -2,10 +2,9 @@
 
 namespace App\Modules\User\Controllers;
 
-use App\Http\Controllers\ApiWithoutDataController;
+use App\Http\Controllers\ApiController;
 use App\Modules\User\Actions\UserImportAction;
 use App\Modules\User\Actions\UserStoreAction;
-use App\Modules\User\Actions\UserTemplateDownloadAction;
 use App\Modules\User\Actions\UserUpdateAction;
 use App\Modules\User\Actions\UserViewAction;
 use App\Modules\User\DTO\UserViewDTO;
@@ -16,7 +15,7 @@ use App\Modules\User\Validators\UserUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class UserController extends ApiWithoutDataController
+class UserController extends ApiController
 {
     public function view(UserViewAction $action, UserViewTransformer $transformer)
     {
