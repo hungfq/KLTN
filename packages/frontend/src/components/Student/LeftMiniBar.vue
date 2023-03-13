@@ -111,7 +111,7 @@
           class="flex flex-col w-full"
         >
           <div
-            :class="[noti.isRead ? 'bg-white' : 'bg-green-200']"
+            :class="[noti.isRead ? 'bg-white' : 'bg-green-300']"
             class="mt-2 mx-2 px-6 py-4 bg-white rounded-lg shadow cursor-pointer"
             @click="readNotification(noti._id)"
           >
