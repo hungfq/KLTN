@@ -12,6 +12,11 @@ class TopicViewDTO extends FlexibleDataTransferObject
     public $scheduleId;
     public $is_lecturer_approve;
     public $is_critical_approve;
+    public $as_least_lecturer_approve;
+    public $is_lecturer_mark;
+    public $is_critical_mark;
+    public $is_president_mark;
+    public $is_secretary_mark;
     public $limit;
     public $sort;
 
@@ -26,6 +31,10 @@ class TopicViewDTO extends FlexibleDataTransferObject
             'scheduleId' => $request->input('scheduleId'),
             'is_lecturer_approve' => $request->input('is_lecturer_approve'),
             'is_critical_approve' => $request->input('is_critical_approve'),
+            'as_least_lecturer_approve' => $request->input('as_least_lecturer_approve'),
+            'is_lecturer_mark' => $request->input('is_lecturer_mark'),
+            'is_president_mark' => $request->input('is_president_mark'),
+            'is_secretary_mark' => $request->input('is_secretary_mark'),
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);

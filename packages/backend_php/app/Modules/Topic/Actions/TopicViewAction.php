@@ -15,7 +15,8 @@ class TopicViewAction
     public function handle($dto)
     {
         $query = Topic::query()
-            ->with(['students', 'schedule', 'lecturer', 'critical']);
+            ->with(['students', 'schedule', 'lecturer', 'critical'])
+            ->leftJoin('committees', 'committees.id', '=', 'topics.committee_id');
 
         $query->addSelect([
             $query->qualifyColumn('*'),
@@ -51,6 +52,25 @@ class TopicViewAction
         if ($dto->is_critical_approve) {
             $query->where('critical_id', Auth::id())
                 ->where('critical_approved', false);
+        }
+        if ($dto->as_least_lecturer_approve) {
+            $query->where('lecturer_approved', true);
+        }
+
+        if ($dto->is_lecturer_mark) {
+            $query->where('lecturer_id', Auth::id());
+        }
+
+        if ($dto->is_critical_mark) {
+            $query->where('critical_id', Auth::id());
+        }
+
+        if ($dto->is_president_mark) {
+            $query->where('committees.president_id', Auth::id());
+        }
+
+        if ($dto->is_secretary_mark) {
+            $query->where('committees.secretary_id', Auth::id());
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

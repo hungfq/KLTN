@@ -7,6 +7,7 @@ use App\Modules\Topic\Actions\TopicCriticalApproveAction;
 use App\Modules\Topic\Actions\TopicDeleteAction;
 use App\Modules\Topic\Actions\TopicImportAction;
 use App\Modules\Topic\Actions\TopicLecturerApproveAction;
+use App\Modules\Topic\Actions\TopicMarkAction;
 use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicShowStudentAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
@@ -18,6 +19,7 @@ use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
 use App\Modules\Topic\Transformers\TopicViewTransformer;
 use App\Modules\Topic\Validators\TopicImportValidator;
+use App\Modules\Topic\Validators\TopicMarkValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
 use App\Modules\User\Transformers\UserViewTransformer;
@@ -146,5 +148,22 @@ class TopicController extends ApiController
         });
 
         return $result === true ? $this->responseSuccess() : $result;
+    }
+
+    public function mark($id, TopicMarkValidator $validator, TopicMarkAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
     }
 }

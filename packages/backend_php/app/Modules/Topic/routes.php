@@ -61,6 +61,11 @@ $api->group([
             'as' => '',
             'uses' => 'TopicController@criticalApprove',
         ]);
+
+        $api->post('/mark', [
+            'as' => '',
+            'uses' => 'TopicController@mark',
+        ]);
     });
 
     $api->post('/import', [

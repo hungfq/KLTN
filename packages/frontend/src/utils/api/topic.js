@@ -250,13 +250,13 @@ export default class TopicApi {
   }
 
   static async topicCommitteeByCritical (token, id) {
-    const res = await axios.get(`/topic-committee/${id}`, {
+    const res = await axios.get('/topic?as_least_lecturer_approve=1', {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:5000/v1',
+      baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data;
+    return res.data.data;
   }
 
   static async importTopic (token, xlsx) {

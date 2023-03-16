@@ -19,10 +19,10 @@ class TopicUpdateValidator extends AbstractValidator
             'scheduleId' => 'required',
             'lecturerId' => 'nullable',
             'criticalLecturerId' => 'nullable',
-            'advisorLecturerGrade' => 'nullable',
-            'criticalLecturerGrade' => 'nullable',
-            'committeePresidentGrade' => 'nullable',
-            'committeeSecretaryGrade' => 'nullable',
+            'advisorLecturerGrade' => 'nullable|numeric|min:0|max:10',
+            'criticalLecturerGrade' => 'nullable|numeric|min:0|max:10',
+            'committeePresidentGrade' => 'nullable|numeric|min:0|max:10',
+            'committeeSecretaryGrade' => 'nullable|numeric|min:0|max:10',
             'students' => 'nullable|array',
         ];
     }
