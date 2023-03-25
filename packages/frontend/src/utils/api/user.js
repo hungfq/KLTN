@@ -44,7 +44,7 @@ export default class UserApi {
 
   static async updateUser (token, value) {
     const {
-      email, code, name, gender, _id,
+      email, code, name, gender, _id, status,
     } = value;
     const res = await axios.put(`/user/${_id}`, {
       email,
@@ -52,6 +52,7 @@ export default class UserApi {
       name,
       gender,
       picture: null,
+      status,
     }, {
       headers: {
         authorization: `bearer ${token}`,
