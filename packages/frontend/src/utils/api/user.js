@@ -44,9 +44,9 @@ export default class UserApi {
 
   static async updateUser (token, value) {
     const {
-      email, code, name, gender, id,
+      email, code, name, gender, _id,
     } = value;
-    const res = await axios.put(`/user/${id}`, {
+    const res = await axios.put(`/user/${_id}`, {
       email,
       code,
       name,

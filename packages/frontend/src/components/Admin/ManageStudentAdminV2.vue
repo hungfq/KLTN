@@ -33,15 +33,11 @@
             type="checkbox"
             class="toggle toggle-info"
             :checked="item"
+            @click="toggleActive(item)"
           >
         </template>
         <template #item-operation="item">
           <div class="flex">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRez0gfCWKJG2UnApuVyZXNyRhtB93Feywc0FYHYWD8&s"
-              class="operation-icon w-4 h-4 mx-2"
-              @click="deleteItem(item)"
-            >
             <img
               src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
               class="operation-icon w-4 h-4 mx-2"
@@ -101,18 +97,18 @@ export default {
       await loadToServer(serverOptions.value);
     });
     const showRow = (item) => {
-      store.dispatch('url/updateSection', 'student-update');
-      store.dispatch('url/updateId', item._id);
+      // store.dispatch('url/updateSection', 'student-view');
+      // store.dispatch('url/updateId', item._id);
     };
 
     const editItem = (item) => {
-      store.dispatch('url/updateSection', 'student-view');
+      store.dispatch('url/updateSection', 'student-update');
       store.dispatch('url/updateId', item._id);
     };
-
-    const deleteItem = (item) => {
-      store.dispatch('url/updateSection', 'student-view');
-      store.dispatch('url/updateId', item._id);
+    const toggleActive = async (item) => {
+      const value = { ...item, status: item.status === 'AC' ? 'DA' : 'AC' };
+      await UserApi.updateUser(token, value);
+      await loadToServer(serverOptions);
     };
     watch(serverOptions, (value) => { loadToServer(value); }, { deep: true });
     return {
@@ -126,7 +122,7 @@ export default {
       serverItemsLength,
       rowItems,
       editItem,
-      deleteItem,
+      toggleActive,
     };
   },
   data () {
