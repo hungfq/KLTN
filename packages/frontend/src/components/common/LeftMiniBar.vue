@@ -155,18 +155,6 @@
         aria-orientation="vertical"
         aria-label="user menu"
       >
-        <!-- <a
-          href="#"
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          role="menuitem"
-        >Your Profile</a>
-
-        <a
-          href="#"
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          role="menuitem"
-        >Settings</a> -->
-
         <a
           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           role="menuitem"
@@ -185,8 +173,6 @@ import 'moment/dist/locale/vi';
 export default {
   name: 'LeftMiniBar',
   components: {
-  },
-  props: {
   },
   data () {
     return {

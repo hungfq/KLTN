@@ -5,11 +5,6 @@
     <HeaderPage class="my-10" />
     <BannerFrame class="my-10" />
     <BannerInfo class="my-10" />
-    <BoardTopic
-      class="my-10"
-      :url-image="imageUrlCNPM"
-      :list-topics="listTopics"
-    />
   </div>
 </template>
 
@@ -18,7 +13,6 @@ import { mapState, mapGetters } from 'vuex';
 import HeaderPage from '../components/Home/Header.vue';
 import BannerFrame from '../components/Home/BannerFrame.vue';
 import BannerInfo from '../components/Home/BannerInfo.vue';
-import BoardTopic from '../components/Home/BoardTopic.vue';
 
 export default {
   name: 'HomePage',
@@ -26,7 +20,6 @@ export default {
     HeaderPage,
     BannerFrame,
     BannerInfo,
-    BoardTopic,
   },
   props: {
   },

@@ -16,9 +16,10 @@ const actions = {
   async fetchListStudent ({ commit }, token) {
     const listStudents = await StudentApi.listAllStudent(token);
     commit('setListStudent', listStudents);
+    return listStudents;
   },
 
-  async addStudent ({ dispatch, commit }, payload) {
+  async addStudent ({ dispatch }, payload) {
     try {
       const { token, value } = payload;
       await StudentApi.addStudent(token, value);

@@ -1,18 +1,18 @@
 <!-- eslint-disable max-len -->
 <template>
   <!-- component -->
-  <div v-if="(isAuthenticated && userRole === 'ADMIN')">
-    <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
-      <div class="flex flex-shrink-0 transition-all">
+  <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
+    <div class="flex h-screen text-gray-900 bg-gray-100">
+      <div class="flex">
         <LeftMiniBarVue />
         <ManageBarVue :list-items="listItems" />
       </div>
       <div class="flex grow flex-col">
         <HeaderBarVue :username="userName" />
-        <div class="bg-white mx-4 border rounded overflow-scroll">
+        <div class="bg-white mx-4 border rounded-2 overflow-auto h-full mb-1">
           <template v-if="module === 'student'">
             <ManageStudentAdminVueV2 v-if="section === 'student-list'" />
-            <FormUserVue
+            <FormUserVueV2
               v-if="section === 'student-update' || section === 'student-import' || section === 'student-view'"
             />
           </template>
@@ -46,12 +46,14 @@
         </div>
       </div>
     </div>
-  </div>
-  <ErrorModalVue
-    v-model="showErrorModal"
-    :message="'Bạn không có quyền truy cập, vui lòng đăng nhập lại!'"
-    @close-error="closeErrorModal"
-  />
+  </template>
+  <template v-if="showErrorModal">
+    <ErrorModalVue
+      v-model="showErrorModal"
+      :message="'Bạn không có quyền truy cập, vui lòng đăng nhập lại!'"
+      @close-error="closeErrorModal"
+    />
+  </template>
 </template>
 
 <script>
@@ -60,7 +62,7 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import ManageStudentAdminVue from '../components/Admin/ManageStudentAdmin.vue';
+// import ManageStudentAdminVue from '../components/Admin/ManageStudentAdmin.vue';
 import ManageStudentAdminVueV2 from '../components/Admin/ManageStudentAdminV2.vue';
 import ManageLecturerAdminVue from '../components/Admin/ManageLecturerAdmin.vue';
 import ManageAdminVue from '../components/Admin/ManageAdmin.vue';
@@ -68,7 +70,7 @@ import ManageTopicAdminVue from '../components/Admin/ManageTopicAdmin.vue';
 import ManageScheduleAdminVue from '../components/Admin/ManageScheduleAdmin.vue';
 import ManageApproveProposalAdminVue from '../components/Admin/ManageApproveProposalAdmin.vue';
 import ManageCommitteeAdminVue from '../components/Admin/ManageCommitteeAdmin.vue';
-import FormUserVue from '../components/Admin/FormUser.vue';
+import FormUserVueV2 from '../components/Admin/FormUserV2.vue';
 import FormTopicVue from '../components/Admin/FormTopic.vue';
 import FormScheduleVue from '../components/Admin/FormSchedule.vue';
 import FormApproveVue from '../components/Admin/FormApprove.vue';
@@ -82,8 +84,7 @@ export default {
     LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
-    ManageStudentAdminVue,
-    FormUserVue,
+    FormUserVueV2,
     ManageLecturerAdminVue,
     ManageAdminVue,
     ManageTopicAdminVue,
@@ -124,10 +125,6 @@ export default {
           id: 'schedule',
           value: 'Quản lý lịch đăng ký',
         },
-        // {
-        //   id: 'topic_proposal',
-        //   value: 'Quản lý đề xuất đề tài',
-        // },
         {
           id: 'committee',
           value: 'Quản lý hội đồng',

@@ -1,13 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <div>
-    <div
-      class="mx-4 my-4 rounded px-2 py-2 bg-slate-500 w-fit text-white font-semibold cursor-pointer"
-      @click="rollBack"
-    >
-      Quay về
-    </div>
-    <div class="p-4 w-full h-full md:h-auto mx-auto mt-[10px]">
+    <div class="p-2 w-full h-full mx-auto">
       <!-- Modal content -->
       <div class="bg-white rounded-lg shadow">
         <!-- Modal header -->
@@ -15,9 +9,15 @@
           <h3 class="text-xl font-semibold text-gray-900">
             Thông tin người dùng
           </h3>
+          <div
+            class="mx-2 my-2 px-2 py-2 bg-slate-500 w-fit text-white font-semibold cursor-pointer"
+            @click="rollBack"
+          >
+            Quay về
+          </div>
         </div>
         <!-- Modal body -->
-        <div class="mt-5">
+        <!-- <div class="mt-5">
           <div>
             <div class="overflow-hidden shadow sm:rounded-md">
               <div class="bg-white px-4 py-5 sm:p-6">
@@ -76,6 +76,88 @@
               </div>
             </div>
           </div>
+        </div> -->
+        <div class="bg-gray-100 py-6 px-4">
+          <div class="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-lg">
+            <div class="px-6 py-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-2">
+                Registration Form
+              </h2>
+              <form>
+                <div class="mb-4">
+                  <label
+                    class="block text-gray-700 font-medium mb-2"
+                    for="name"
+                  >Name:</label>
+                  <input
+                    id="name"
+                    class="border-2 border-gray-400 p-2 w-full rounded-md focus:outline-none focus:border-blue-500"
+                    type="text"
+                    name="name"
+                    required
+                  >
+                </div>
+                <div class="mb-4">
+                  <label
+                    class="block text-gray-700 font-medium mb-2"
+                    for="code"
+                  >Code:</label>
+                  <input
+                    id="code"
+                    class="border-2 border-gray-400 p-2 w-full rounded-md focus:outline-none focus:border-blue-500"
+                    type="text"
+                    name="code"
+                    required
+                  >
+                </div>
+                <div class="mb-4">
+                  <label
+                    class="block text-gray-700 font-medium mb-2"
+                    for="email"
+                  >Email:</label>
+                  <input
+                    id="email"
+                    class="border-2 border-gray-400 p-2 w-full rounded-md focus:outline-none focus:border-blue-500"
+                    type="email"
+                    name="email"
+                    required
+                  >
+                </div>
+                <div class="mb-4">
+                  <label
+                    class="block text-gray-700 font-medium mb-2"
+                    for="gender"
+                  >Gender:</label>
+                  <select
+                    id="gender"
+                    class="border-2 border-gray-400 p-2 w-full rounded-md focus:outline-none focus:border-blue-500"
+                    name="gender"
+                    required
+                  >
+                    <option
+                      value=""
+                      disabled
+                      selected
+                    >
+                      Select your gender
+                    </option>
+                    <option value="male">
+                      Male
+                    </option>
+                    <option value="female">
+                      Female
+                    </option>
+                  </select>
+                </div>
+                <button
+                  class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg w-full"
+                  type="submit"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
         <!-- Modal footer -->
         <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
@@ -100,8 +182,6 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'FormUser',
   components: {
-  },
-  props: {
   },
   data () {
     return {
@@ -172,7 +252,7 @@ export default {
     },
     async handleAddUserAdmin () {
       const value = {
-        code: this.code, name: this.name, email: this.email, gender: this.gender, type: 'STUDENT', id: this.id
+        code: this.code, name: this.name, email: this.email, gender: this.gender, type: 'STUDENT', id: this.id,
       };
       try {
         if (this.check()) {

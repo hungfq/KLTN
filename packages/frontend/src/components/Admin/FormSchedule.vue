@@ -162,8 +162,6 @@ export default {
     Multiselect,
     InfoStudentVue,
   },
-  props: {
-  },
   data () {
     return {
       showInfo: false,

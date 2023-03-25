@@ -96,8 +96,6 @@ export default {
   components: {
     Multiselect,
   },
-  props: {
-  },
   data () {
     return {
       code: '',

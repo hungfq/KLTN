@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div class="h-[200px] m-2 flex">
-    <div class="mx-8 center h-full items-center mt-14 w-1/2">
+  <div class="mx-2 my-10 flex">
+    <div class="mx-4 center h-full items-center mt-4 w-1/2">
       <div class="font-sans font-medium text-blue-800">
         Xin chào, <span class="font-bold text-lg">{{ username }}</span>
       </div>

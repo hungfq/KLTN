@@ -29,18 +29,6 @@
 <script>
 export default {
   name: 'UploadFileExcel',
-  components: {
-  },
-  props: {
-  },
-  data () {
-    return {
-    };
-  },
-  computed: {
-  },
-  mounted () {
-  },
   methods: {
     upload () {
       const { files } = this.$refs.uploadBtn;

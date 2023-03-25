@@ -39,7 +39,10 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'ManageBar',
   props: {
-    listItems: [],
+    listItems: {
+      type: Array,
+      default: [],
+    },
   },
   computed: {
     ...mapGetters('url', [

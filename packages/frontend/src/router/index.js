@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../page/HomePage.vue';
-import DashBoardPage from '../page/DashboardPage.vue';
 import AdminPage from '../page/AdminPage.vue';
 import LecturerPage from '../page/LecturerPage.vue';
 import StudentPage from '../page/StudentPage.vue';
@@ -26,11 +25,6 @@ const routes = [
     path: '/student',
     name: 'student.default',
     component: StudentPage,
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: DashBoardPage,
   },
   {
     path: '/test',

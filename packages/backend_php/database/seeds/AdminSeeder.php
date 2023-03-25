@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
     {
         DB::table('users')->insert([
             'id' => 1,
-            'email' => 'quanghungpham07@gmail.com',
+            'email' => 'bao.lq@holistics.io',
             'code' => 'quanghungpham07',
             'name' => 'HUNG ADMIN',
             'status' => User::STATUS_ACTIVE,
@@ -27,7 +27,7 @@ class AdminSeeder extends Seeder
 
         DB::table('users')->insert([
             'id' => 2,
-            'email' => 't.hungpham2314@gmail.com',
+            'email' => 'lequocbao29072001@gmail.com',
             'code' => 'hung.gv',
             'name' => 'HUNG LECTURER',
             'status' => User::STATUS_ACTIVE,
@@ -37,7 +37,7 @@ class AdminSeeder extends Seeder
 
         DB::table('users')->insert([
             'id' => 3,
-            'email' => '19110373@student.hcmute.edu.vn',
+            'email' => '19110327@student.hcmute.edu.vn',
             'code' => '19110373',
             'name' => 'Pham Quang Hung',
             'status' => User::STATUS_ACTIVE,

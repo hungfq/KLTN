@@ -1,10 +1,12 @@
 <template>
-  <router-view />
+  <router-view data-theme="cupcake" />
   <modals-container />
 </template>
   // This starter template is using Vue 3
 <script setup>
 import { ModalsContainer } from 'vue-final-modal';
+
+localStorage.theme = 'light';
 </script>
 <style scoped>
 .logo {

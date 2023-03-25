@@ -38,8 +38,6 @@ export default {
     LoginButton,
     LoginModalVue,
   },
-  props: {
-  },
   data () {
     return {
       showLoginModal: false,
