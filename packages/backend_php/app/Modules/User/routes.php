@@ -20,6 +20,11 @@ $api->group([
         'uses' => 'UserController@update',
     ]);
 
+    $api->delete('/{id:[0-9]+}', [
+        'as' => '',
+        'uses' => 'UserController@delete',
+    ]);
+
     $api->post('/import', [
         'as' => '',
         'uses' => 'UserController@import',

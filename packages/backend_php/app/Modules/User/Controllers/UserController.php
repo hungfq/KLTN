@@ -3,6 +3,7 @@
 namespace App\Modules\User\Controllers;
 
 use App\Http\Controllers\ApiController;
+use App\Modules\User\Actions\UserDeleteAction;
 use App\Modules\User\Actions\UserImportAction;
 use App\Modules\User\Actions\UserStoreAction;
 use App\Modules\User\Actions\UserUpdateAction;
@@ -53,6 +54,16 @@ class UserController extends ApiController
             $action->handle(
                 $validator->toDTO()
             );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function delete($id, UserDeleteAction $action)
+    {
+
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
         });
 
         return $this->responseSuccess();
