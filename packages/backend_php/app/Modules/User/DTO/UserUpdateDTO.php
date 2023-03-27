@@ -12,7 +12,7 @@ class UserUpdateDTO extends FlexibleDataTransferObject
     public $code;
     public $name;
     public $gender;
-    public $picture;
+//    public $picture;
     public $status;
 
     public static function fromRequest($request = null)
@@ -25,7 +25,7 @@ class UserUpdateDTO extends FlexibleDataTransferObject
             'code' => $request->input('code'),
             'name' => $request->input('name'),
             'gender' => $request->input('gender'),
-            'picture' => $request->input('picture'),
+//            'picture' => $request->input('picture'),
             'status' => $request->input('status') ?? User::STATUS_ACTIVE,
         ]);
     }
