@@ -43,7 +43,7 @@ class UserUpdateAction
 
     protected function updateUser()
     {
-        $this->user->update($this->dto->except('status')->toArray());
+        $this->user->update($this->dto->all());
         return $this;
     }
 }
