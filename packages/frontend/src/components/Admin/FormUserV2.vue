@@ -35,6 +35,7 @@
 
 import { mapGetters } from 'vuex';
 import CustomForm from '../common/CustomForm.vue';
+import UserApi from '../../utils/api/user';
 
 export default {
   name: 'FormUser',
@@ -47,13 +48,13 @@ export default {
       formFields: [
         {
           name: 'name',
-          label: 'Name:',
+          label: 'Tên:',
           type: 'text',
           rules: 'required',
         },
         {
           name: 'code',
-          label: 'Code:',
+          label: 'Mã sinh viên:',
           type: 'text',
           rules: 'required|equalLength:8',
         },
@@ -65,7 +66,7 @@ export default {
         },
         {
           name: 'gender',
-          label: 'Gender:',
+          label: 'Giới tính:',
           type: 'select',
           options: [
             {
@@ -191,6 +192,9 @@ export default {
         return false;
       }
       return true;
+    },
+    async onSubmit (value) {
+      await UserApi.updateUser(this.token, { ...this.user, value });
     },
   },
 };

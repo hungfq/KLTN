@@ -13,6 +13,8 @@ import router from './router/index';
 import store from './store/index';
 import '@formkit/themes/genesis';
 import 'vue3-easy-data-table/dist/style.css';
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 const app = createApp(App);
 app.use(vue3GoogleLogin, {
@@ -27,6 +29,7 @@ app.use(CKEditor);
 app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');
 app.use(VeeValidate);
+app.use(ToastPlugin);
 
 app.use(vfmPlugin({
   key: '$vfm',

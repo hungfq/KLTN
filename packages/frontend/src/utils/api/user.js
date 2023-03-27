@@ -12,7 +12,16 @@ export default class UserApi {
       sortType,
     } = option;
 
-    const res = await axios.get(`/user?type=${type}&limit=${rowsPerPage}&sort[${sortBy}]=${sortType}&page=${page - 1}`, {
+    let url = `/user?type=${type}`;
+    if (rowsPerPage) url += `&limit=${rowsPerPage}`;
+    else url += '&limit=10';
+    if (sortBy) {
+      if (!sortType) url += `&sort[${sortBy}]=ASC`;
+      else url += `&sort[${sortBy}]=${sortType}`;
+    }
+    if (page) url += `&page=${page}`;
+
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
@@ -31,7 +40,6 @@ export default class UserApi {
       code,
       name,
       gender,
-      picture: null,
 
     }, {
       headers: {

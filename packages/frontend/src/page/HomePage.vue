@@ -42,9 +42,6 @@ export default {
   watch: {
     // Note: only simple paths. Expressions are not supported.
   },
-  async mounted () {
-    await this.$store.dispatch('topic/fetchListTopics', 'huhu');
-  },
   methods: {
   },
 };

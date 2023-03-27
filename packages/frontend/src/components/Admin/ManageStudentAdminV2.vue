@@ -28,11 +28,20 @@
         :rows-items="rowItems"
         @click-row="showRow"
       >
+        <template #item-gender="item">
+          <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
+        </template>
         <template #item-status="item">
-          <input
-            type="checkbox"
-            class="toggle toggle-info"
-            :checked="item"
+          <img
+            v-if="item.status"
+            src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
+            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
+            @click="toggleActive(item)"
+          >
+          <img
+            v-if="!item.status"
+            src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
+            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
             @click="toggleActive(item)"
           >
         </template>
@@ -40,7 +49,7 @@
           <div class="flex">
             <img
               src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-4 h-4 mx-2"
+              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
               @click="editItem(item)"
             >
           </div>
@@ -52,7 +61,10 @@
 
 <script>
 import { mapState, mapGetters, useStore } from 'vuex';
-import { ref, watch, onMounted } from 'vue';
+import {
+  ref, watch, onMounted, computed,
+} from 'vue';
+import { useToast } from 'vue-toast-notification';
 import UploadButtonVue from './UploadButton.vue';
 import UserApi from '../../utils/api/user';
 
@@ -73,7 +85,7 @@ export default {
       { text: 'Ten sinh vien', value: 'name', sortable: true },
       { text: 'Email', value: 'email', sortable: true },
       { text: 'Giới tính', value: 'gender', sortable: true },
-      { text: 'Trạng thái', value: 'status', sortable: true },
+      { text: 'Trạng thái', value: 'status' },
       { text: 'Hanh dong', value: 'operation' },
     ];
     const items = [];
@@ -93,12 +105,17 @@ export default {
       serverItemsLength.value = response.meta.pagination.total;
       loading.value = false;
     };
+    const $toast = useToast();
+
+    const isToggle = ref(false);
     onMounted(async () => {
       await loadToServer(serverOptions.value);
     });
+
     const showRow = (item) => {
-      // store.dispatch('url/updateSection', 'student-view');
-      // store.dispatch('url/updateId', item._id);
+      if (isToggle.value || loading.value) return;
+      store.dispatch('url/updateSection', 'student-view');
+      store.dispatch('url/updateId', item._id);
     };
 
     const editItem = (item) => {
@@ -106,11 +123,32 @@ export default {
       store.dispatch('url/updateId', item._id);
     };
     const toggleActive = async (item) => {
-      const value = { ...item, status: item.status === 'AC' ? 'DA' : 'AC' };
-      await UserApi.updateUser(token, value);
-      await loadToServer(serverOptions);
+      try {
+        loading.value = true;
+        isToggle.value = true;
+        const value = { ...item, status: item.status ? 'IA' : 'AC' };
+        await UserApi.updateUser(token, value);
+        await loadToServer(serverOptions.value);
+        $toast.success('Đã thay đổi trạng thái thành công');
+        loading.value = false;
+        isToggle.value = false;
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
+      }
     };
     watch(serverOptions, (value) => { loadToServer(value); }, { deep: true });
+
+    const usersShow = computed(() => {
+      if (!users.value) return [];
+      return users.value.map((user) => ({
+        _id: user._id,
+        code: user.code,
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        status: user.status === 'AC',
+      }));
+    });
     return {
       headers,
       items,
@@ -123,6 +161,8 @@ export default {
       rowItems,
       editItem,
       toggleActive,
+      usersShow,
+      isToggle,
     };
   },
   data () {
@@ -140,17 +180,6 @@ export default {
     ...mapGetters('student', [
       'studentId', 'studentEmail', 'student', 'listStudents',
     ]),
-    usersShow () {
-      if (!this.users) return [];
-      return this.users.map((user) => ({
-        _id: user._id,
-        code: user.code,
-        name: user.name,
-        email: user.email,
-        gender: user.gender === 'male' ? 'Nam' : 'Nu',
-        status: user.status === 'AC',
-      }));
-    },
   },
   methods: {
     handleUpdateStudent (id) {
