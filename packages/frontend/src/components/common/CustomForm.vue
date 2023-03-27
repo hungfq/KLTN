@@ -28,7 +28,7 @@
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
                 :rules="field.rules"
-                :disabled="isView"
+                :disabled="isView || !!field.isDisabled"
               />
               <textarea
                 v-else-if="field.type === 'textarea'"
@@ -37,7 +37,7 @@
                 :name="field.name"
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
-                :disabled="isView"
+                :disabled="isView || !!field.isDisabled"
               />
               <select
                 v-else-if="field.type === 'select'"
@@ -45,7 +45,7 @@
                 v-model="formValues[field.name]"
                 :name="field.name"
                 class="input input-bordered pr-2"
-                :disabled="isView"
+                :disabled="isView || !!field.isDisabled"
               >
                 <option
                   v-for="(option, index) in field.options"
@@ -87,7 +87,7 @@
                 :rules="field.rules"
                 :disabled="isView"
               />
-              <textarea
+              <VeeField
                 v-else-if="field.type === 'textarea'"
                 :id="field.name"
                 v-model="formValues[field.name]"
@@ -95,23 +95,34 @@
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
                 :disabled="isView"
+                :rules="field.name"
+                as="textarea"
               />
-              <select
+
+              <VeeField
                 v-else-if="field.type === 'select'"
                 :id="field.name"
                 v-model="formValues[field.name]"
                 :name="field.name"
                 class="input input-bordered pr-2"
                 :disabled="isView"
+                as="select"
               >
+                <option
+                  value=""
+                  disabled
+                >
+                  Vui lòng chọn giới tính
+                </option>
                 <option
                   v-for="(option, index) in field.options"
                   :key="index"
                   :value="option.value"
+                  :selected="formValues[field.name] && formValues[field.name] === option.value"
                 >
                   {{ option.label }}
                 </option>
-              </select>
+              </VeeField>
               <ErrorMessage
                 v-if="!isView"
                 class="pl-1 text-red-500"
@@ -159,6 +170,7 @@ export default {
     isSave: true,
     object: {},
   },
+  // emits: ['on-submit'],
   data () {
     return {
       formValues: {},
@@ -173,9 +185,9 @@ export default {
     // setLocale('vi');
   },
   methods: {
-    onSubmit (newValue) {
-      console.log(newValue);
-      // Here you can perform your form submit logic
+    onSubmit () {
+      console.log('🚀 ~ file: CustomForm.vue:180 ~ onSubmit ~ formFields:', this.formValues);
+      // this.$emit('on-submit', this.formFields);
     },
   },
 };

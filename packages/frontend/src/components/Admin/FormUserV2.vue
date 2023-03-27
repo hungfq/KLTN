@@ -63,16 +63,13 @@ export default {
           label: 'Email:',
           type: 'email',
           rules: 'required',
+          isDisabled: true,
         },
         {
           name: 'gender',
           label: 'Giới tính:',
           type: 'select',
           options: [
-            {
-              label: 'Select your gender',
-              value: '',
-            },
             {
               label: 'Nam',
               value: 'male',
@@ -193,8 +190,19 @@ export default {
       }
       return true;
     },
-    async onSubmit (value) {
-      await UserApi.updateUser(this.token, { ...this.user, value });
+    async submitForm (value) {
+      try {
+        if (this.isUpdate) {
+          await UserApi.updateUser(this.token, { ...this.user, ...value });
+          this.$toast.success('Cập nhật thành công!');
+        } else {
+          await UserApi.addUser(this.token, { ...this.user, ...value }, this.module.toUpperCase());
+          this.$toast.success('Thêm thành công!');
+        }
+        this.rollBack();
+      } catch (e) {
+        this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.');
+      }
     },
   },
 };
