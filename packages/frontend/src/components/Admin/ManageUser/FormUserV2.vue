@@ -34,8 +34,8 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import CustomForm from '../common/CustomForm.vue';
-import UserApi from '../../utils/api/user';
+import CustomForm from '../../common/CustomForm.vue';
+import UserApi from '../../../utils/api/user';
 
 export default {
   name: 'FormUser',
@@ -131,66 +131,8 @@ export default {
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
-    async handleAddUserAdmin () {
-      const value = {
-        code: this.code, name: this.name, email: this.email, gender: this.gender, type: 'STUDENT', id: this.id,
-      };
-      try {
-        if (this.check()) {
-          if (this.isUpdate) {
-            if (this.module === 'student') {
-              await this.$store.dispatch('student/updateStudent', {
-                token: this.token, value,
-              });
-            } else if (this.module === 'lecturer') {
-              await this.$store.dispatch('lecturer/updateLecturer', {
-                token: this.token, value,
-              });
-            } else if (this.module === 'admin') {
-              await this.$store.dispatch('admin/updateAdmin', {
-                token: this.token, value,
-              });
-            }
-            this.$toast.success('Đã cập nhật thành công!');
-            this.rollBack();
-          } else if (this.isSave) {
-            if (this.module === 'student') {
-              await this.$store.dispatch('student/addStudent', {
-                token: this.token, value,
-              });
-            } else if (this.module === 'lecturer') {
-              await this.$store.dispatch('lecturer/addLecturer', {
-                token: this.token, value,
-              });
-            } else if (this.module === 'admin') {
-              await this.$store.dispatch('admin/addAdmin', {
-                token: this.token, value,
-              });
-            }
-            this.$toast.success('Đã thêm thành công!');
-            this.rollBack();
-          }
-        }
-      } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
-    },
-    check () {
-      if (!this.name) {
-        this.$toast.error('Vui lòng nhập tên ');
-        return false;
-      }
-      if (!this.code) {
-        this.$toast.error('Vui lòng nhập mã ');
-        return false;
-      }
-      if (!this.email) {
-        this.$toast.error('Vui lòng nhập email ');
-        return false;
-      }
-      return true;
-    },
     async submitForm (value) {
+      console.log('🚀 ~ file: FormUserV2.vue:135 ~ submitForm ~ value:', value);
       try {
         if (this.isUpdate) {
           await UserApi.updateUser(this.token, { ...this.user, ...value });

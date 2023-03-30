@@ -1,12 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="flex mt-4">
-      <div
-        class=" rounded mr-auto ml-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        @click="$store.dispatch('url/updateSection', 'student-import')"
-      >
-        Thêm sinh viên
-      </div>
+      <ButtonImport :handle-import="handleImport" />
       <UploadButtonVue @uploadFileExcel="upload" />
       <div class="flex items-center justify-center mr-4">
         <a
@@ -65,13 +60,15 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
-import UploadButtonVue from './UploadButton.vue';
-import UserApi from '../../utils/api/user';
+import UploadButtonVue from '../UploadButton.vue';
+import UserApi from '../../../utils/api/user';
+import ButtonImport from '../../common/ButtonImport.vue';
 
 export default {
-  name: 'ManageStudentAdmin',
+  name: 'ManageUser',
   components: {
     UploadButtonVue,
+    ButtonImport,
   },
   setup () {
     const store = useStore();
@@ -81,12 +78,12 @@ export default {
     const rowItems = [10, 20, 50];
     const users = ref([]);
     const headers = [
-      { text: 'Mã sinh viên', value: 'code', sortable: true },
-      { text: 'Ten sinh vien', value: 'name', sortable: true },
+      { text: 'Mã số', value: 'code', sortable: true },
+      { text: 'Tên', value: 'name', sortable: true },
       { text: 'Email', value: 'email', sortable: true },
       { text: 'Giới tính', value: 'gender', sortable: true },
-      { text: 'Trạng thái', value: 'status' },
-      { text: 'Hanh dong', value: 'operation' },
+      { text: 'Trạng thái', value: 'status', sortable: true },
+      { text: 'Hành động', value: 'operation' },
     ];
     const items = [];
     const serverOptions = ref({
@@ -96,12 +93,18 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-
+    const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (option) => {
       loading.value = true;
-      const response = await UserApi.listUser(token, 'STUDENT', option);
+      const response = await UserApi.listUser(token, modulePage.value.toUpperCase(), option);
       users.value = response.data;
-      store.state.student.listStudents = users.value;
+      if (modulePage.value === 'student') {
+        store.state.student.listStudents = users.value;
+      } else if (modulePage.value === 'lecturer') {
+        store.state.lecturer.listLecturer = users.value;
+      } else {
+        store.state.admin.listAdmins = users.value;
+      }
       serverItemsLength.value = response.meta.pagination.total;
       loading.value = false;
     };
@@ -114,12 +117,12 @@ export default {
 
     const showRow = (item) => {
       if (isToggle.value || loading.value) return;
-      store.dispatch('url/updateSection', 'student-view');
+      store.dispatch('url/updateSection', `${modulePage.value}-view`);
       store.dispatch('url/updateId', item._id);
     };
 
     const editItem = (item) => {
-      store.dispatch('url/updateSection', 'student-update');
+      store.dispatch('url/updateSection', `${modulePage.value}-update`);
       store.dispatch('url/updateId', item._id);
     };
     const toggleActive = async (item) => {
@@ -136,7 +139,8 @@ export default {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
-    watch(serverOptions, (value) => { loadToServer(value); }, { deep: true });
+    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
 
     const usersShow = computed(() => {
       if (!users.value) return [];
@@ -149,6 +153,9 @@ export default {
         status: user.status === 'AC',
       }));
     });
+    const handleImport = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-import`);
+    };
     return {
       headers,
       items,
@@ -163,6 +170,8 @@ export default {
       toggleActive,
       usersShow,
       isToggle,
+      modulePage,
+      handleImport,
     };
   },
   data () {
@@ -177,19 +186,8 @@ export default {
     ...mapGetters('auth', [
       'userId', 'userEmail', 'userRole', 'token',
     ]),
-    ...mapGetters('student', [
-      'studentId', 'studentEmail', 'student', 'listStudents',
-    ]),
   },
   methods: {
-    handleUpdateStudent (id) {
-      this.$store.dispatch('url/updateSection', 'student-update');
-      this.$store.dispatch('url/updateId', id);
-    },
-    handleShowStudent (id) {
-      this.$store.dispatch('url/updateSection', 'student-view');
-      this.$store.dispatch('url/updateId', id);
-    },
     async upload (files) {
       if (files.length > 0) {
         await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })

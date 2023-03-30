@@ -2,9 +2,8 @@
   <VeeForm
     v-slot="{ handleSubmit, errors }"
     class="w-full mx-4 mt-6 flex flex-col"
-    @submit="onSubmit"
   >
-    <form @submit="handleSubmit($event, onSubmit)">
+    <form @submit="handleSubmit($event, handleSubmitForm)">
       <div class="flex w-full">
         <div class="w-full">
           <div
@@ -28,33 +27,38 @@
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
                 :rules="field.rules"
-                :disabled="isView || !!field.isDisabled"
+                :disabled="checkDisabled(field.isDisabled)"
               />
-              <textarea
+              <VeeField
                 v-else-if="field.type === 'textarea'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                :rules="field.rules"
                 :name="field.name"
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
-                :disabled="isView || !!field.isDisabled"
+                :disabled="checkDisabled(field.isDisabled)"
+                as="textarea"
               />
-              <select
+              <VeeField
                 v-else-if="field.type === 'select'"
                 :id="field.name"
                 v-model="formValues[field.name]"
                 :name="field.name"
+                :rules="field.rules"
                 class="input input-bordered pr-2"
-                :disabled="isView || !!field.isDisabled"
+                :disabled="checkDisabled(field.isDisabled)"
+                as="select"
               >
                 <option
                   v-for="(option, index) in field.options"
                   :key="index"
                   :value="option.value"
+                  :selected="formValues[field.name] && formValues[field.name] === option.value"
                 >
                   {{ option.label }}
                 </option>
-              </select>
+              </VeeField>
               <ErrorMessage
                 v-if="!isView"
                 class="pl-1 text-red-500"
@@ -85,18 +89,17 @@
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
                 :rules="field.rules"
-                :disabled="isView"
+                :disabled="checkDisabled(field.isDisabled)"
               />
               <VeeField
                 v-else-if="field.type === 'textarea'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                :rules="field.rules"
                 :name="field.name"
                 :placeholder="field.label"
                 class="input input-bordered pr-2"
-                :disabled="isView"
-                :rules="field.name"
-                as="textarea"
+                :disabled="checkDisabled(field.isDisabled)"
               />
 
               <VeeField
@@ -104,16 +107,11 @@
                 :id="field.name"
                 v-model="formValues[field.name]"
                 :name="field.name"
+                :rules="field.rules"
                 class="input input-bordered pr-2"
-                :disabled="isView"
+                :disabled="checkDisabled(field.isDisabled)"
                 as="select"
               >
-                <option
-                  value=""
-                  disabled
-                >
-                  Vui lòng chọn giới tính
-                </option>
                 <option
                   v-for="(option, index) in field.options"
                   :key="index"
@@ -147,9 +145,7 @@
 <script>
 import _ from 'lodash';
 import { Field as VeeField, Form as VeeForm, ErrorMessage } from 'vee-validate';
-// import { setLocale } from '@vee-validate/i18n';
-// import { localize } from '@vee-validate/i18n';
-// import ar from '@vee-validate/i18n/dist/locale/ar.json';
+
 export default {
   components: {
     VeeField,
@@ -176,6 +172,9 @@ export default {
       formValues: {},
     };
   },
+  computed: {
+
+  },
   watch: {
     object (newValue) {
       this.formValues = _.cloneDeep(newValue);
@@ -185,9 +184,14 @@ export default {
     // setLocale('vi');
   },
   methods: {
-    onSubmit () {
+    handleSubmitForm () {
       console.log('🚀 ~ file: CustomForm.vue:180 ~ onSubmit ~ formFields:', this.formValues);
       // this.$emit('on-submit', this.formFields);
+    },
+    checkDisabled (value) {
+      if (this.isView) return true;
+      if (this.isSave) return false;
+      return !!value;
     },
   },
 };

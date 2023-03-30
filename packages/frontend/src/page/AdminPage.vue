@@ -10,22 +10,11 @@
       <div class="flex grow flex-col">
         <HeaderBarVue :username="userName" />
         <div class="bg-white mx-4 border rounded-2 overflow-auto h-full mb-1">
-          <template v-if="module === 'student'">
-            <ManageStudentAdminVueV2 v-if="section === 'student-list'" />
-            <FormUserVueV2
-              v-if="section === 'student-update' || section === 'student-import' || section === 'student-view'"
-            />
-          </template>
-          <template v-if="module === 'lecturer'">
-            <ManageLecturerAdminVue v-if="section === 'lecturer-list'" />
-            <FormUserVue
-              v-if="section === 'lecturer-update' || section === 'lecturer-import' || section === 'lecturer-view'"
-            />
-          </template>
-          <template v-if="module === 'admin'">
-            <ManageAdminVue v-if="section === 'admin-list'" />
-            <FormUserVue v-if="section === 'admin-update' || section === 'admin-import' || section === 'admin-view'" />
-          </template>
+          <BodyUserPage
+            v-if="['student','lecturer', 'admin'].includes(module)"
+            :type-user="module"
+            :section="section"
+          />
           <template v-if="module === 'topic'">
             <ManageTopicAdminVue v-if="section === 'topic-list'" />
             <FormTopicVue v-if="section === 'topic-update' || section === 'topic-import' || section === 'topic-view'" />
@@ -62,20 +51,16 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-// import ManageStudentAdminVue from '../components/Admin/ManageStudentAdmin.vue';
-import ManageStudentAdminVueV2 from '../components/Admin/ManageStudentAdminV2.vue';
-import ManageLecturerAdminVue from '../components/Admin/ManageLecturerAdmin.vue';
-import ManageAdminVue from '../components/Admin/ManageAdmin.vue';
 import ManageTopicAdminVue from '../components/Admin/ManageTopicAdmin.vue';
 import ManageScheduleAdminVue from '../components/Admin/ManageScheduleAdmin.vue';
 import ManageApproveProposalAdminVue from '../components/Admin/ManageApproveProposalAdmin.vue';
 import ManageCommitteeAdminVue from '../components/Admin/ManageCommitteeAdmin.vue';
-import FormUserVueV2 from '../components/Admin/FormUserV2.vue';
 import FormTopicVue from '../components/Admin/FormTopic.vue';
 import FormScheduleVue from '../components/Admin/FormSchedule.vue';
 import FormApproveVue from '../components/Admin/FormApprove.vue';
 import FormCommitteeVue from '../components/Admin/FormCommittee.vue';
 import FormTopicCommitteeVue from '../components/Admin/FormTopicCommittee.vue';
+import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -84,9 +69,6 @@ export default {
     LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
-    FormUserVueV2,
-    ManageLecturerAdminVue,
-    ManageAdminVue,
     ManageTopicAdminVue,
     FormTopicVue,
     ManageScheduleAdminVue,
@@ -96,7 +78,7 @@ export default {
     ManageCommitteeAdminVue,
     FormCommitteeVue,
     FormTopicCommitteeVue,
-    ManageStudentAdminVueV2,
+    BodyUserPage,
   },
   props: {
   },
