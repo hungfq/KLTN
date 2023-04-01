@@ -1,17 +1,19 @@
 import axios from 'axios';
+import urlWithPagination from '../generate_url';
 
 const apiDest = 'http://localhost:5000/v1';
 axios.defaults.baseURL = apiDest;
 
 export default class TopicApi {
-  static async listAllTopics (token) {
-    const res = await axios.get('/topic', {
+  static async listAllTopics (token, options) {
+    const url = urlWithPagination('/topic', options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async getTopic (token, id) {

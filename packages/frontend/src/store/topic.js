@@ -68,7 +68,7 @@ const actions = {
       throw new Error(e.message);
     }
   },
-  async updateTopic ({ dispatch, commit }, payload) {
+  async updateTopic ({ dispatch }, payload) {
     try {
       const { token, value } = payload;
       await TopicApi.updateTopicById(token, value);
@@ -77,23 +77,23 @@ const actions = {
       throw new Error(e.message);
     }
   },
-  async removeTopic ({ dispatch, commit }, value) {
+  async removeTopic ({ dispatch }, value) {
     const { token, id } = value;
     await TopicApi.deleteTopicById(token, id);
     await dispatch('fetchListTopics', token);
   },
-  async addRegisterTopic ({ dispatch, commit }, value) {
+  async addRegisterTopic ({ dispatch }, value) {
     const { token, id } = value;
     await TopicApi.addRegisterTopic(token, id);
     await dispatch('fetchListTopicByStudent', token);
   },
-  async addRegisterTopicNew ({ dispatch, commit }, value) {
+  async addRegisterTopicNew ({ dispatch }, value) {
     const { token, id } = value;
     await TopicApi.addRegisterTopicNew(token, id);
     await dispatch('fetchListTopicByStudent', token);
   },
 
-  async removeRegisterTopicStudent ({ dispatch, commit }, value) {
+  async removeRegisterTopicStudent ({ dispatch }, value) {
     const { token, id } = value;
     await TopicApi.removeRegisterTopicStudent(token, id);
     await dispatch('fetchTopicResult', token);

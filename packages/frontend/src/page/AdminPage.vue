@@ -15,10 +15,7 @@
             :type-user="module"
             :section="section"
           />
-          <template v-if="module === 'topic'">
-            <ManageTopicAdminVue v-if="section === 'topic-list'" />
-            <FormTopicVue v-if="section === 'topic-update' || section === 'topic-import' || section === 'topic-view'" />
-          </template>
+          <BodyTopicPage v-if="module ==='topic'" />
           <template v-if="module === 'schedule'">
             <ManageScheduleAdminVue v-if="section === 'schedule-list'" />
             <FormScheduleVue v-if="section === 'schedule-update' || section === 'schedule-import' || section === 'schedule-view'" />
@@ -51,16 +48,15 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import ManageTopicAdminVue from '../components/Admin/ManageTopicAdmin.vue';
 import ManageScheduleAdminVue from '../components/Admin/ManageScheduleAdmin.vue';
 import ManageApproveProposalAdminVue from '../components/Admin/ManageApproveProposalAdmin.vue';
 import ManageCommitteeAdminVue from '../components/Admin/ManageCommitteeAdmin.vue';
-import FormTopicVue from '../components/Admin/FormTopic.vue';
 import FormScheduleVue from '../components/Admin/FormSchedule.vue';
 import FormApproveVue from '../components/Admin/FormApprove.vue';
 import FormCommitteeVue from '../components/Admin/FormCommittee.vue';
 import FormTopicCommitteeVue from '../components/Admin/FormTopicCommittee.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
+import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -69,8 +65,6 @@ export default {
     LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
-    ManageTopicAdminVue,
-    FormTopicVue,
     ManageScheduleAdminVue,
     ManageApproveProposalAdminVue,
     FormScheduleVue,
@@ -79,6 +73,7 @@ export default {
     FormCommitteeVue,
     FormTopicCommitteeVue,
     BodyUserPage,
+    BodyTopicPage,
   },
   props: {
   },

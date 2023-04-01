@@ -196,8 +196,6 @@ export default {
               this.$toast.success('Đã nhập thành công!');
             }
           });
-
-        this.search();
       } else {
         this.$toast.error('File không tồn tại');
       }
