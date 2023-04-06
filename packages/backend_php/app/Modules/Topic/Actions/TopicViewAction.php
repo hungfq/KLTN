@@ -29,7 +29,8 @@ class TopicViewAction
 
         if ($search = $dto->search) {
             $query->where('code', 'LIKE', "%$search%")
-                ->orWhere('name', 'LIKE', "%$search%");
+                ->orWhere('title', 'LIKE', "%$search%")
+                ->orWhere('description', 'LIKE', "%$search%");
         }
 
         if ($lecturerId = $dto->lecturerId) {
