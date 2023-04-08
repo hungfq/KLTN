@@ -169,6 +169,8 @@
 import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
 import TopicApi from '../../../utils/api/topic';
+import UserApi from '../../../utils/api/user';
+import ScheduleApi from '../../../utils/api/schedule';
 
 export default {
   name: 'FormTopic',
@@ -203,6 +205,7 @@ export default {
       ],
       listSchedules: [],
       messages: '',
+      loading: true,
     };
   },
   computed: {
@@ -223,18 +226,11 @@ export default {
     },
   },
   async mounted () {
-    console.log('hereeee....');
-    try {
-      await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
-      await this.$store.dispatch('student/fetchListStudent', this.token);
-      await this.$store.dispatch('schedule/fetchListSchedules', this.token);
-    } catch (e) {
-      this.$toast('Đã có lỗi xảy, vui lòng liên hệ quản trị viên để kiểm tra');
-    }
-    const lecturers = this.$store.state.lecturer.listLecturer;
-    const students = this.$store.state.student.listStudents;
-    const schedules = this.$store.state.schedule.listSchedules;
-    this.listLecturers = lecturers.map((lecturer) => {
+    this.loading = true;
+    const students = await UserApi.listUser(this.token, 'STUDENT', null);
+    const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
+    const schedules = await ScheduleApi.listAllSchedule(this.token);
+    this.listLecturers = lecturers.data.map((lecturer) => {
       let l = {
         value: lecturer._id,
         label: lecturer.name,
@@ -244,7 +240,7 @@ export default {
       }
       return l;
     });
-    this.listStudents = students.map((student) => {
+    this.listStudents = students.data.map((student) => {
       let st = {
         value: student.code,
         label: `${student.code} - ${student.name}`,
@@ -264,12 +260,13 @@ export default {
       }
       return st;
     });
-    console.log('🚀 ~ file: FormTopic.vue:267 ~ mounted ~ this.isUpdate || this.isView:', this.isUpdate || this.isView);
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
-      console.log('🚀 ~ file: FormTopic.vue:268 ~ mounted ~ id:', id);
-      const { listTopicsByLecturerSchedule } = this.$store.state.topic;
-      const topic = listTopicsByLecturerSchedule.find((s) => s._id.toString() === id.toString());
+      if (!id) {
+        this.loading = false;
+        return;
+      }
+      const topic = await TopicApi.listTopicById(this.token, id);
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;
@@ -291,6 +288,7 @@ export default {
         this.committeeSecretaryGrade = topic.committeeSecretaryGrade;
         this.criticalLecturerGrade = topic.criticalLecturerGrade;
       }
+      this.loading = false;
     }
   },
   methods: {
@@ -324,11 +322,12 @@ export default {
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.isUpdate) {
-            await TopicApi.createTopic(this.token, { ...value, _id: this.id });
+            await TopicApi.updateTopicById(this.token, { ...value, _id: this.id });
             this.rollBack();
             this.$toast.success('Đã cập nhật thành công!');
           }
         }
+        this.loading = false;
       } catch (e) {
         this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
@@ -356,6 +355,10 @@ export default {
       }
       if (this.studentIds.length > this.limit) {
         this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
+        return false;
+      }
+      if (!this.scheduleId) {
+        this.$toast.error('Vui long chon dot dang ky');
         return false;
       }
       return true;

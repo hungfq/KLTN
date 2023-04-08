@@ -38,6 +38,7 @@ export default {
     LoginButton,
     LoginModalVue,
   },
+  emits: ['begin-login', 'end-login'],
   data () {
     return {
       showLoginModal: false,
@@ -49,6 +50,7 @@ export default {
     async login (close, typeLogin) {
       close();
       try {
+        this.$emit('begin-login');
         const payload = await googleTokenLogin();
         await this.$store.dispatch('auth/signIn', { ...payload, type: typeLogin });
         const { _id } = this.$store.state.auth.userInfo;
@@ -70,7 +72,9 @@ export default {
           this.$store.dispatch('url/updateSubModule', 'topic');
           this.$store.dispatch('url/updateSection', 'topic-list');
         }
+        this.$emit('end-login');
       } catch (err) {
+        this.$emit('end-login');
         console.log(err.message);
       }
     },

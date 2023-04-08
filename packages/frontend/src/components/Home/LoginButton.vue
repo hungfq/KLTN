@@ -11,8 +11,6 @@
 
 export default {
   name: 'LoginButton',
-  props: {
-  },
   data () {
     return {
     };

@@ -5,21 +5,22 @@ axios.defaults.baseURL = apiDest;
 
 export default class UserApi {
   static async listUser (token, type, option) {
-    const {
-      page,
-      rowsPerPage,
-      sortBy,
-      sortType,
-    } = option;
-
     let url = `/user?type=${type}`;
-    if (rowsPerPage) url += `&limit=${rowsPerPage}`;
-    else url += '&limit=10';
-    if (sortBy) {
-      if (!sortType) url += `&sort[${sortBy}]=ASC`;
-      else url += `&sort[${sortBy}]=${sortType}`;
+    if (option) {
+      const {
+        page,
+        rowsPerPage,
+        sortBy,
+        sortType,
+      } = option;
+      if (rowsPerPage) url += `&limit=${rowsPerPage}`;
+      else url += '&limit=10';
+      if (sortBy) {
+        if (!sortType) url += `&sort[${sortBy}]=ASC`;
+        else url += `&sort[${sortBy}]=${sortType}`;
+      }
+      if (page) url += `&page=${page}`;
     }
-    if (page) url += `&page=${page}`;
 
     const res = await axios.get(url, {
       headers: {

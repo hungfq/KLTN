@@ -9,7 +9,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ManageTopicAdminV2 from './ManageTopicAdminV2.vue';
-import FormTopic from '../FormTopic.vue';
+import FormTopic from './FormTopicV2.vue';
 
 export default {
   name: 'TopicBodyPage',

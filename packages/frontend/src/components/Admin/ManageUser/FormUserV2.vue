@@ -1,6 +1,6 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div>
+  <div v-if="!loading">
     <div class="p-2 w-full h-full mx-auto">
       <!-- Modal content -->
       <div class="bg-white rounded-lg shadow">
@@ -29,6 +29,7 @@
       </div>
     </div>
   </div>
+  <Loading v-else />
 </template>
 
 <script>
@@ -36,14 +37,17 @@
 import { mapGetters } from 'vuex';
 import CustomForm from '../../common/CustomForm.vue';
 import UserApi from '../../../utils/api/user';
+import Loading from '../../common/LoadingCircle.vue';
 
 export default {
   name: 'FormUser',
   components: {
     CustomForm,
+    Loading,
   },
   data () {
     return {
+      loading: false,
       formTitle: 'Registration Form',
       formFields: [
         {
@@ -103,6 +107,7 @@ export default {
     },
   },
   mounted () {
+    this.loading = true;
     const { section } = this.$store.state.url;
     if (section === 'student-update' || section === 'student-view') {
       const { id } = this.$store.state.url;
@@ -126,13 +131,14 @@ export default {
         this.user = admin;
       }
     }
+    this.loading = false;
   },
   methods: {
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
     async submitForm (value) {
-      console.log('🚀 ~ file: FormUserV2.vue:135 ~ submitForm ~ value:', value);
+      this.loading = true;
       try {
         if (this.isUpdate) {
           await UserApi.updateUser(this.token, { ...this.user, ...value });
@@ -141,8 +147,10 @@ export default {
           await UserApi.addUser(this.token, { ...this.user, ...value }, this.module.toUpperCase());
           this.$toast.success('Thêm thành công!');
         }
+        this.loading = false;
         this.rollBack();
       } catch (e) {
+        this.loading = false;
         this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.');
       }
     },
