@@ -18,14 +18,17 @@ class CommitteeViewTransformer extends TransformerAbstract
             'name' => $model->name,
             'committeePresidentId' => [
                 '_id' => data_get($model, 'president.id'),
+                'code' => data_get($model, 'president.code'),
                 'name' => data_get($model, 'president.name'),
             ],
             'committeeSecretaryId' => [
                 '_id' => data_get($model, 'secretary.id'),
+                'code' => data_get($model, 'secretary.code'),
                 'name' => data_get($model, 'secretary.name'),
             ],
             'criticalLecturerId' => [
                 '_id' => data_get($model, 'critical.id'),
+                'code' => data_get($model, 'critical.code'),
                 'name' => data_get($model, 'critical.name'),
             ],
             'topics' => $topics,
