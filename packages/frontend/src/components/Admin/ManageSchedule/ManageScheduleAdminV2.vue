@@ -14,133 +14,51 @@
       :search-icon="true"
       @keydown.space.enter="search"
     />
-    <table class="w-full text-sm text-left text-gray-500">
-      <div class="shadow-md sm:rounded-lg m-4">
-        <EasyDataTable
-          v-model:items-selected="itemsSelected"
-          v-model:server-options="serverOptions"
-          :server-items-length="serverItemsLength"
-          show-index
-          :headers="headers"
-          :items="schedulesShow"
-          :loading="loading"
-          buttons-pagination
-          :rows-items="rowItems"
-          @click-row="showRow"
-        >
-          <template #item-operation="item">
-            <div class="flex">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                @click="editItem(item)"
-              >
-            </div>
-          </template>
-        </EasyDataTable>
-      </div>
-      <!-- <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-        <tr>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Mã đợt đăng ký
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Tên đợt đăng ký
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Thời gian bắt đầu
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Thời gian kết thúc
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            <a
-              class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-              href="http://localhost:8001/api/v2/template?type=User"
-            >Tải mẫu nhập sinh viên</a>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="schedule in schedules"
-          :key="`schedule-${schedule._id}`"
-          class="bg-slate-300 hover:bg-gray-50 "
-        >
-          <td
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
-          >
-            {{ schedule.code }}
-          </td>
-          <td
-            :key="`schedule-${schedule._id}`"
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
-          >
-            {{ schedule.name }}
-          </td>
-          <td class="py-4 px-6">
-            <div class="font-bold cursor-pointer">
-              {{ formatDay(schedule.startProposalDate) }}
-            </div>
-          </td>
-          <td class="py-4 px-6">
-            <div class="font-bold cursor-pointer">
-              {{ formatDay(schedule.endRegisterDate) }}
-            </div>
-          </td>
-          <td class="py-4 text-right">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleClickStudent(schedule._id)"
-            >Nhập sinh viên bằng file excel</a>
-            <a
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              :href="getLink(schedule._id)"
-            >Xuất báo cáo</a>
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleShowSchedule(schedule._id)"
-            >Xem chi tiết</a>
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleUpdateSchedule(schedule._id)"
-            >Sửa</a>
-            <a
-              class="cursor-pointer font-medium text-red-600 dark:text-red-500 hover:underline mx-2"
-              @click="handleRemoveSchedule(schedule._id)"
-            >Xóa</a>
-          </td>
-        </tr>
-      </tbody> -->
-    </table>
+    <div class="shadow-md sm:rounded-lg m-4">
+      <EasyDataTable
+        v-model:items-selected="itemsSelected"
+        v-model:server-options="serverOptions"
+        :server-items-length="serverItemsLength"
+        show-index
+        :headers="headers"
+        :items="schedulesShow"
+        :loading="loading"
+        buttons-pagination
+        :rows-items="rowItems"
+        @click-row="showRow"
+      >
+        <template #header-import-export="header">
+          <a
+            class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
+            href="http://localhost:8001/api/v2/template?type=User"
+          >Tải mẫu nhập sinh viên</a>
+        </template>
+        <template #item-operation="item">
+          <div class="flex">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+              @click="editItem(item)"
+            >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="2xl"
+            />
+          </div>
+        </template>
+      </EasyDataTable>
+    </div>
+    <ConfirmModal
+      v-model="showConfirmModal"
+      @confirm="confirmRemove"
+      @cancel="showConfirmModal=false"
+    >
+      <template #title>
+        Xác nhận
+      </template>
+      <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
+    </ConfirmModal>
   </div>
-  <ConfirmModal
-    v-model="showConfirmModal"
-    @confirm="confirmRemove"
-    @cancel="showConfirmModal=false"
-  >
-    <template #title>
-      Xác nhận
-    </template>
-    <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
-  </ConfirmModal>
 </template>
 
 <script>
@@ -176,7 +94,8 @@ export default {
       { text: 'Tên đợt đăng ký ', value: 'name', sortable: true },
       { text: 'Thời gian bắt đầu', value: 'startDate' },
       { text: 'Thời gian kết thúc', value: 'deadline' },
-      { text: 'Hanh dong', value: 'deadline' },
+      { text: 'import-export', value: 'import-export' },
+      { text: 'Hành động', value: 'operation' },
     ];
     const items = [];
     const serverOptions = ref({

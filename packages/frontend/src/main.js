@@ -15,6 +15,20 @@ import '@formkit/themes/genesis';
 import 'vue3-easy-data-table/dist/style.css';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core';
+
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+/* import specific icons */
+import { faUserSecret, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
+/* add icons to the library */
+library.add(
+  faUserSecret,
+  faTrashCan,
+);
 
 const app = createApp(App);
 app.use(vue3GoogleLogin, {
@@ -30,6 +44,7 @@ app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');
 app.use(VeeValidate);
 app.use(ToastPlugin);
+app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 app.use(vfmPlugin({
   key: '$vfm',
