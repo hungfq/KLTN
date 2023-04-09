@@ -57,31 +57,30 @@
     </div>
   </div>
   <div class="shadow-md sm:rounded-lg m-4">
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="topicShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-        @click-row="showRow"
-      >
-        <template #item-operation="item">
-          <div class="flex">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-              @click="editItem(item)"
-            >
-          </div>
-        </template>
-      </EasyDataTable>
-    </div>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      show-index
+      :headers="headers"
+      :items="topicShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+      @click-row="showRow"
+    >
+      <template #item-operation="item">
+        <div class="flex">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+            class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+            @click="editItem(item)"
+          >
+        </div>
+      </template>
+    </EasyDataTable>
   </div>
+
   <ConfirmModal
     v-model="showConfirmModal"
     @confirm="confirmRemove"

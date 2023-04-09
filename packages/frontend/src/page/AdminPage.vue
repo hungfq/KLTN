@@ -41,16 +41,12 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import ManageScheduleAdminVue from '../components/Admin/ManageScheduleAdmin.vue';
-// import ManageApproveProposalAdminVue from '../components/Admin/ManageApproveProposalAdmin.vue';
 import ManageCommitteeAdminVue from '../components/Admin/ManageCommitteeAdmin.vue';
-import FormScheduleVue from '../components/Admin/FormSchedule.vue';
-// import FormApproveVue from '../components/Admin/FormApprove.vue';
 import FormCommitteeVue from '../components/Admin/FormCommittee.vue';
 import FormTopicCommitteeVue from '../components/Admin/FormTopicCommittee.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
-import BodySchedulePage from '../components/Admin/ManageSchedule/ManageScheduleAdminV2.vue';
+import BodySchedulePage from '../components/Admin/ManageSchedule/ScheduleBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -59,9 +55,7 @@ export default {
     LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
-    ManageScheduleAdminVue,
     BodySchedulePage,
-    FormScheduleVue,
     ManageCommitteeAdminVue,
     FormCommitteeVue,
     FormTopicCommitteeVue,

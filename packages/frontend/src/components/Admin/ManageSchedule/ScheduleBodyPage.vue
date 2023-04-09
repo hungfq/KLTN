@@ -1,8 +1,6 @@
 <template>
-  <template v-if="module === 'schedule'">
-    <ManageScheduleAdminV2 v-if="section === 'schedule-list'" />
-    <FormScheduleV2 v-if="isSeeForm" />
-  </template>
+  <ManageScheduleAdminV2 v-if="section ===`${modulePage}-list`" />
+  <FormScheduleV2 v-if="isSeeForm" />
 </template>
 
 <script>

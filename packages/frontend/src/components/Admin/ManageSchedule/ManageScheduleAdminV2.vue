@@ -6,7 +6,31 @@
     >
       Thêm đợt đăng ký
     </div>
-    <UploadButton @uploadFileExcel="upload" />
+    <form
+      class="flex"
+      @submit.prevent="upload"
+    >
+      <input
+        id="upload123"
+        ref="uploadBtn"
+        class="hidden"
+        type="file"
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        @change="handleNewButtonClick"
+      >
+      <label
+        ref="labelBtn"
+        class="hidden"
+        for="upload123"
+      >ss</label>
+      <button
+        ref="submitBtn"
+        type="submit"
+        class="hidden"
+      >
+        student
+      </button>
+    </form>
   </div>
   <div class="shadow-md sm:rounded-lg m-4">
     <SearchInput
@@ -32,6 +56,18 @@
             class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
             href="http://localhost:8001/api/v2/template?type=User"
           >Tải mẫu nhập sinh viên</a>
+        </template>
+        <template #item-import-export="item">
+          <div class-="flex">
+            <a
+              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+              @click="handleClickStudent(item._id)"
+            >Nhập sinh viên bằng file excel</a>
+            <a
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+              :href="getLink(item._id)"
+            >Xuất báo cáo</a>
+          </div>
         </template>
         <template #item-operation="item">
           <div class="flex">
@@ -71,7 +107,6 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
-import UploadButton from '../UploadButton.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 
 export default {
@@ -79,7 +114,6 @@ export default {
   components: {
     SearchInput,
     ConfirmModal,
-    UploadButton,
   },
   setup () {
     const store = useStore();
@@ -115,25 +149,29 @@ export default {
         serverItemsLength.value = response.meta.pagination.total;
         loading.value = false;
       } catch (e) {
+        loading.value = false;
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
 
     onMounted(async () => {
+      loading.value = true;
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        console.log(e);
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
+      loading.value = false;
     });
 
     const showRow = (item) => {
+      console.log('show row ');
       store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
 
     const editItem = (item) => {
+      console.log('edit row ');
       store.dispatch('url/updateSection', `${modulePage.value}-update`);
       store.dispatch('url/updateId', item._id);
     };
@@ -154,19 +192,12 @@ export default {
       }
     };
 
-    const selectSchedule = ref('');
-    const selectLecturer = ref('');
+    // const selectSchedule = ref('');
+    // const selectLecturer = ref('');
 
     const schedulesShow = computed(() => {
       if (!schedules.value) return [];
       return schedules.value;
-      // return schedules.value.map((schedule) => ({
-      //   _id: schedule._id,
-      //   code: schedule.code,
-      //   name: schedule.name,
-      //   start_date: schedule.start_date || '',
-      //   end_date: schedule.deadline || '',
-      // }));
     });
 
     return {
@@ -184,8 +215,6 @@ export default {
       handleImport,
       showConfirmModal,
       confirmRemove,
-      selectSchedule,
-      selectLecturer,
       schedulesShow,
     };
   },
@@ -261,9 +290,9 @@ export default {
     getLink (id) {
       return `http://localhost:5000/v1/schedule/${id}/export`;
     },
-    // async handleExportSchedule (id) {
-    //   await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });
-    // },
+    async handleExportSchedule (id) {
+      await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });
+    },
     async handleShowSchedule (id) {
       await this.$store.dispatch('url/updateSection', 'schedule-view');
       await this.$store.dispatch('url/updateId', id);

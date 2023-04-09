@@ -154,7 +154,7 @@
 <script>
 import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
-import InfoStudentVue from '../Modal/InfoStudent.vue';
+import InfoStudentVue from '../../Modal/InfoStudent.vue';
 
 export default {
   name: 'FormSchedule',
@@ -202,23 +202,11 @@ export default {
   },
   async mounted () {
     await this.$store.dispatch('student/fetchListStudent', this.token);
-    await this.$store.dispatch('topic/fetchListTopics', this.token);
     const students = this.$store.state.student.listStudents;
-    const topics = this.$store.state.topic.listTopics;
     this.listStudents = students.map((student) => {
       let st = {
         value: student.code,
         label: `${student.code} - ${student.name}`,
-      };
-      if (this.isView) {
-        st = { ...st, disabled: true };
-      }
-      return st;
-    });
-    this.listTopics = topics.map((topic) => {
-      let st = {
-        value: topic.code,
-        label: topic.title,
       };
       if (this.isView) {
         st = { ...st, disabled: true };
@@ -242,13 +230,7 @@ export default {
         this.startRegisterDate = this.formatDate(schedule.startRegisterDate);
         this.endRegisterDate = this.formatDate(schedule.endRegisterDate);
         this.students = schedule.students;
-        this.topics = schedule.topics;
       }
-      // const set = new Set(this.students);
-      // console.log('🚀 ~ file: FormSchedule.vue:246 ~ mounted ~ set', set);
-      // console.log('🚀 ~ file: FormSchedule.vue:248 ~ mounted ~ listStudents', this.listStudents);
-      // this.infoUser = students.filter((st) => set.has(st.code));
-      // console.log('🚀 ~ file: FormSchedule.vue:246 ~ mounted ~ this.infoUser', this.infoUser);
     }
   },
   methods: {
@@ -262,7 +244,7 @@ export default {
       const {
         name, description, startDate, deadline, startProposalDate,
         endProposalDate, startRegisterDate, endRegisterDate, startApproveDate,
-        endApproveDate, topics, students, code,
+        endApproveDate, students, code,
       } = this;
       const value = {
         name,
@@ -275,7 +257,6 @@ export default {
         endRegisterDate,
         startApproveDate,
         endApproveDate,
-        topics,
         students,
         code,
       };
