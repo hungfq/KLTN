@@ -1,17 +1,20 @@
 import axios from 'axios';
+import urlWithPagination from '../generate_url';
 
 const apiDest = 'http://localhost:8001/api/v2';
+
 axios.defaults.baseURL = apiDest;
 
 export default class CommitteeApi {
-  static async listAllCommittee (token) {
-    const res = await axios.get('/committee', {
+  static async listAllCommittee (token, options) {
+    const url = urlWithPagination('/committee', options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async addCommittee (token, value) {

@@ -42,14 +42,19 @@
         </option>
       </select>
     </div>
-    <div
-      class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-      @click="$store.dispatch('url/updateSection', 'topic-import')"
-    >
-      Thêm đề tài
+    <div class="mx-auto" />
+    <div class="inline-block p-2 rounded-md">
+      <div
+        class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+        @click="$store.dispatch('url/updateSection', 'topic-import')"
+      >
+        Thêm đề tài
+      </div>
     </div>
-    <UploadButtonVue @uploadFileExcel="upload" />
-    <div class="flex items-center justify-center mr-4">
+    <div class="inline-block p-2 rounded-md">
+      <UploadButtonVue @uploadFileExcel="upload" />
+    </div>
+    <div class="inline-block p-2 rounded-md mt-4">
       <a
         class=" rounded ml-auto mr-4 my-2 bg-gray-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
         href="http://localhost:8001/api/v2/template?type=Topic"

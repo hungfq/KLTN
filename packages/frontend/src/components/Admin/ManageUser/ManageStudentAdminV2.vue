@@ -1,11 +1,15 @@
 <template>
   <div class="flex flex-col">
     <div class="flex mt-4">
-      <ButtonImport :handle-import="handleImport" />
-      <UploadButtonVue @uploadFileExcel="upload" />
-      <div class="flex items-center justify-center mr-4">
+      <div class="inline-block p-2 rounded-md">
+        <ButtonImport :handle-import="handleImport" />
+      </div>
+      <div class="inline-block p-2 rounded-md">
+        <UploadButtonVue @uploadFileExcel="upload" />
+      </div>
+      <div class="inline-block p-2 rounded-md mt-4">
         <a
-          class=" rounded ml-auto mr-4 my-2 bg-gray-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+          class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
           href="http://localhost:8001/api/v2/template?type=User"
         >Tải mẫu tệp excel</a>
       </div>

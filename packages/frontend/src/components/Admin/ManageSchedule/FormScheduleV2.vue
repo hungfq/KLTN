@@ -155,6 +155,7 @@
 import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
+import UserApi from '../../../utils/api/user';
 
 export default {
   name: 'FormSchedule',
@@ -202,7 +203,8 @@ export default {
   },
   async mounted () {
     await this.$store.dispatch('student/fetchListStudent', this.token);
-    const students = this.$store.state.student.listStudents;
+    const listStudents = await UserApi.listUser(this.token, 'STUDENT');
+    const students = listStudents.data;
     this.listStudents = students.map((student) => {
       let st = {
         value: student.code,

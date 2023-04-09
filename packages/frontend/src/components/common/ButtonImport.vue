@@ -1,9 +1,9 @@
 <template>
   <div
-    class=" rounded mr-auto ml-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+    class=" rounded bg-blue-800 text-white font-sans font-semibold py-2 px-2 cursor-pointer my-2"
     @click="handleImport"
   >
-    Thêm
+    {{ title }}
   </div>
 </template>
 <script>
@@ -13,6 +13,10 @@ export default {
     handleImport: {
       type: Function,
       default: () => {},
+    },
+    title: {
+      type: String,
+      default: 'Thêm',
     },
   },
 };

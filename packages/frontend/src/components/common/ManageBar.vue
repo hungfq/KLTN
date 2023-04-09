@@ -1,14 +1,17 @@
 <!-- eslint-disable max-len -->
 <template>
   <div
-    class="fixed inset-y-0 left-0 z-10 flex-shrink-0 w-64 bg-white border-r-2 border-indigo-100 shadow-lg sm:left-16 rounded-tr-3xl rounded-br-3xl sm:w-72 lg:static lg:w-64"
+    class="inset-y-0 left-0 w-64 bg-white shadow-lg sm:left-16 rounded-tr-3xl rounded-br-3xl sm:w-72"
+    :class="{ '!w-0' : !open}"
   >
     <nav
-      aria-label="Main"
-      class="flex flex-col h-full"
+      class="flex flex-col h-full relative"
     >
       <!-- Logo -->
-      <div class="flex items-center justify-center flex-shrink-0 py-10">
+      <div
+        v-if="open"
+        class="flex items-center justify-center flex-shrink-0 py-10 "
+      >
         <a href="#">
           <img
             class="w-2/3 mx-auto"
@@ -16,9 +19,18 @@
           >
         </a>
       </div>
+      <div
+        class="font-bold text-xl absolute -right-4 top-8 px-1 py-1 bg-white rounded"
+        @click="open =!open"
+      >
+        {{ open ? '<' : '>' }}
+      </div>
 
       <!-- Links -->
-      <div class="flex-1 px-4 space-y-2 overflow-hidden hover:overflow-auto">
+      <div
+        v-if="open"
+        class="flex-1 px-4 space-y-2 overflow-hidden hover:overflow-auto"
+      >
         <a
           v-for="item in listItems"
           :key="item.id"
@@ -40,6 +52,11 @@ export default {
   name: 'ManageBar',
   props: {
     listItems: [],
+  },
+  data () {
+    return {
+      open: true,
+    };
   },
   computed: {
     ...mapGetters('url', [

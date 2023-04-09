@@ -17,11 +17,7 @@
           />
           <BodyTopicPage v-if="module ==='topic'" />
           <BodySchedulePage v-if="module === 'schedule'" />
-          <template v-if="module === 'committee'">
-            <ManageCommitteeAdminVue v-if="section === 'committee-list'" />
-            <FormCommitteeVue v-if="section === 'committee-update' || section === 'committee-import' || section === 'committee-view'" />
-            <FormTopicCommitteeVue v-if="section === 'committee-add-topic'" />
-          </template>
+          <BodyCommitteePage v-if="module === 'committee'" />
         </div>
       </div>
     </div>
@@ -47,6 +43,7 @@ import FormTopicCommitteeVue from '../components/Admin/FormTopicCommittee.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
 import BodySchedulePage from '../components/Admin/ManageSchedule/ScheduleBodyPage.vue';
+import BodyCommitteePage from '../components/Admin/ManageCommitee/CommitteeBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -61,6 +58,7 @@ export default {
     FormTopicCommitteeVue,
     BodyUserPage,
     BodyTopicPage,
+    BodyCommitteePage,
   },
   props: {
   },

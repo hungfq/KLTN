@@ -1,23 +1,25 @@
 <template>
-  <ManageStudentAdminVueV2
+  <ManageCommitteeAdminV2
     v-if="section === `${modulePage}-list`"
-    :type-user="typeUser"
   />
-  <FormUserVueV2
+  <FormCommittee
     v-if="section === `${modulePage}-update` || section === `${modulePage}-import` || section === `${modulePage}-view`"
   />
+  <FormTopicCommittee v-if="section === 'committee-add-topic'" />
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import Form from './FormUserV2.vue';
-import ManageStudentAdminVueV2 from './ManageScheduleAdminV2.vue';
+import FormCommittee from './FormCommittee.vue';
+import FormTopicCommittee from './FormTopicCommittee.vue';
+import ManageCommitteeAdminV2 from './ManageCommitteeAdmin.vue';
 
 export default {
   name: 'UserBodyPage',
   components: {
-    FormUserVueV2,
-    ManageStudentAdminVueV2,
+    ManageCommitteeAdminV2,
+    FormCommittee,
+    FormTopicCommittee,
   },
   computed: {
     ...mapGetters('url', {
@@ -26,3 +28,4 @@ export default {
   },
 
 };
+</script>

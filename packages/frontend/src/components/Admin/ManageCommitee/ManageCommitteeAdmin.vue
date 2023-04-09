@@ -2,35 +2,11 @@
   <div class="flex">
     <div
       class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-      @click="$store.dispatch('url/updateSection', 'schedule-import')"
+      @click="$store.dispatch('url/updateSection', 'committee-import')"
     >
-      Thêm đợt đăng ký
+      Thêm hội đồng
     </div>
-    <form
-      class="flex"
-      @submit.prevent="upload"
-    >
-      <input
-        id="upload123"
-        ref="uploadBtn"
-        class="hidden"
-        type="file"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        @change="handleNewButtonClick"
-      >
-      <label
-        ref="labelBtn"
-        class="hidden"
-        for="upload123"
-      >ss</label>
-      <button
-        ref="submitBtn"
-        type="submit"
-        class="hidden"
-      >
-        student
-      </button>
-    </form>
+    <!-- <UploadButtonVue @uploadFileExcel="upload" /> -->
   </div>
   <div class="shadow-md sm:rounded-lg m-4">
     <SearchInput
@@ -45,7 +21,7 @@
         :server-items-length="serverItemsLength"
         show-index
         :headers="headers"
-        :items="schedulesShow"
+        :items="committeesShow"
         :loading="loading"
         buttons-pagination
         :rows-items="rowItems"
@@ -55,14 +31,14 @@
           <a
             class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
             href="http://localhost:8001/api/v2/template?type=User"
-          >Tải mẫu nhập sinh viên</a>
+          >Tải mẫu nhập đề tài</a>
         </template>
         <template #item-import-export="item">
           <div class-="flex">
             <a
               class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleClickStudent(item._id)"
-            >Nhập sinh viên bằng file excel</a>
+              @click="handleAddTopic(item._id)"
+            >Nhập đề tài bằng file excel</a>
             <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               :href="getLink(item._id)"
@@ -85,33 +61,32 @@
         </template>
       </EasyDataTable>
     </div>
-    <ConfirmModal
-      v-model="showConfirmModal.value"
-      @confirm="confirmRemove"
-      @cancel="showConfirmModal=false"
-    >
-      <template #title>
-        Xác nhận
-      </template>
-      <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
-    </ConfirmModal>
   </div>
+  <ConfirmModal
+    v-model="showConfirmModal"
+    @confirm="confirmRemove"
+    @cancel="showConfirmModal=false"
+  >
+    <template #title>
+      Xác nhận
+    </template>
+    <div>Bạn có xác nhận xóa hội đồng này không?</div>
+  </ConfirmModal>
 </template>
 
 <script>
 import { mapState, mapGetters, useStore } from 'vuex';
 import SearchInput from 'vue-search-input';
-// Optionally import default styling
 import 'vue-search-input/dist/styles.css';
 import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
-import ScheduleApi from '../../../utils/api/schedule';
+import CommitteeApi from '../../../utils/api/committee';
 
 export default {
-  name: 'ManageScheduleAdmin',
+  name: 'ManageStudentAdmin',
   components: {
     SearchInput,
     ConfirmModal,
@@ -124,12 +99,13 @@ export default {
     const itemsSelected = ref([]);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
-    const schedules = ref([]);
+    const committees = ref([]);
     const headers = [
-      { text: 'Mã đợt đăng ký', value: 'code', sortable: true },
-      { text: 'Tên đợt đăng ký ', value: 'name', sortable: true },
-      { text: 'Thời gian bắt đầu', value: 'startDate' },
-      { text: 'Thời gian kết thúc', value: 'deadline' },
+      { text: 'Mã hội đồng', value: 'code', sortable: true },
+      { text: 'Tên hội đồng ', value: 'name', sortable: true },
+      { text: 'Giáo viên phản biện', value: 'criticalLecturerId.name' },
+      { text: 'Chủ tịch hội đồng', value: 'committeePresidentId.name' },
+      { text: 'Thư kí hội đồng', value: 'committeeSecretaryId.name' },
       { text: 'import-export', value: 'import-export' },
       { text: 'Hành động', value: 'operation' },
     ];
@@ -145,9 +121,9 @@ export default {
     const loadToServer = async (options) => {
       loading.value = true;
       try {
-        const response = await ScheduleApi.listAllSchedule(token, options);
-        schedules.value = response.data;
-        store.state.schedule.listSchedules = schedules.value;
+        const response = await CommitteeApi.listAllCommittee(token, options);
+        committees.value = response.data;
+        store.state.committee.listCommittee = response.data;
         serverItemsLength.value = response.meta.pagination.total;
         loading.value = false;
       } catch (e) {
@@ -167,9 +143,8 @@ export default {
     });
 
     const showRow = (item) => {
-      console.log('showRow');
-      store.dispatch('url/updateId', item._id);
-      store.dispatch('url/updateSection', `${modulePage.value}-view`);
+      // store.dispatch('url/updateId', item._id);
+      // store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
 
     const editItem = (item) => {
@@ -185,7 +160,7 @@ export default {
 
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
-      await ScheduleApi.removeSchedule(this.token, id);
+      await CommitteeApi.deleteCommittee(this.token, id);
       showConfirmModal.value = false;
       removeId.value = 0;
 
@@ -201,10 +176,12 @@ export default {
       showConfirmModal.value = true;
     };
 
-    const schedulesShow = computed(() => {
-      if (!schedules.value) return [];
-      return schedules.value;
+    const committeesShow = computed(() => {
+      if (!committees.value) return [];
+      return committees.value;
     });
+
+    const getLink = (id) => `http://localhost:5000/v1/schedule/${id}/export`;
 
     return {
       headers,
@@ -213,7 +190,7 @@ export default {
       itemsSelected,
       loading,
       serverOptions,
-      schedules,
+      committees,
       serverItemsLength,
       rowItems,
       editItem,
@@ -221,15 +198,16 @@ export default {
       handleImport,
       showConfirmModal,
       confirmRemove,
-      schedulesShow,
+      committeesShow,
       handleRemoveSchedule,
+      getLink,
     };
   },
   data () {
     return {
+      // showConfirmModal: false,
+      removeId: '',
       searchVal: '',
-      importType: '',
-      importId: '',
     };
   },
   computed: {
@@ -239,92 +217,56 @@ export default {
     ...mapGetters('auth', [
       'userId', 'userEmail', 'userRole', 'token',
     ]),
-    ...mapGetters('schedule', [
-      'listSchedules',
+    ...mapGetters('committee', [
+      'listCommittee',
+    ]),
+    ...mapGetters('lecturer', [
+      'listLecturer',
     ]),
   },
   methods: {
-    handleClickStudent (id) {
-      this.importId = id;
-      this.importType = 'student';
-      this.$refs.labelBtn.click();
+    handleAddTopic (id) {
+      this.$store.dispatch('url/updateSection', 'committee-add-topic');
+      this.$store.dispatch('url/updateId', id);
     },
-    handleClickTopic (id) {
-      this.importId = id;
-      this.importType = 'topic';
-      this.$refs.labelBtn.click();
+    handleUpdateStudent (id) {
+      this.$store.dispatch('url/updateSection', 'committee-update');
+      this.$store.dispatch('url/updateId', id);
     },
-    handleNewButtonClick () {
-      this.$refs.submitBtn.click();
+    handleShowStudent (id) {
+      this.$store.dispatch('url/updateSection', 'committee-view');
+      this.$store.dispatch('url/updateId', id);
     },
-    async upload () {
-      const { files } = this.$refs.uploadBtn;
+    async handleRemoveStudent (id) {
+      this.removeId = id;
+      this.showConfirmModal = true;
+    },
+    async upload (files) {
       if (files.length > 0) {
-        if (this.importType === 'student') {
-          await this.$store.dispatch('schedule/importStudent', { token: this.token, id: this.importId, xlsx: files[0] })
-            .then((data) => {
-              if (data.status === 201) {
-                this.$toast.success('Đã nhập thành công!');
-              }
-            });
-        } else if (this.importType === 'topic') {
-          await this.$store.dispatch('schedule/importTopic', { token: this.token, id: this.importId, xlsx: files[0] })
-            .then((data) => {
-              if (data.status === 201) {
-                this.$toast.success('Đã nhập thành công!');
-              }
-            });
-        }
-        this.importId = '';
-        this.importType = '';
-        this.$refs.uploadBtn.value = '';
+        await this.$store.dispatch('committee/importCommittee', { token: this.token, xlsx: files[0] })
+          .then((data) => {
+            if (data.status === 201) {
+              this.$toast.success('Đã nhập thành công!');
+            }
+          });
         this.search();
       } else {
         this.$toast.error('File không tồn tại');
       }
     },
-    async handleUpdateSchedule (id) {
-      await this.$store.dispatch('url/updateSection', 'schedule-update');
-      await this.$store.dispatch('url/updateId', id);
-    },
-    getLink (id) {
-      return `http://localhost:5000/v1/schedule/${id}/export`;
-    },
-    async handleExportSchedule (id) {
-      await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });
-    },
-    async handleShowSchedule (id) {
-      await this.$store.dispatch('url/updateSection', 'schedule-view');
-      await this.$store.dispatch('url/updateId', id);
-    },
-    formatDay (oldDate) {
-      try {
-        if (!oldDate || oldDate === '') {
-          return '';
-        }
-        const newDate = new Date(oldDate);
-        const dateString = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000))
-          .toISOString()
-          .split('T')[0];
-        return dateString;
-      } catch (e) {
-        return '';
-      }
-    },
     search () {
       if (this.searchVal !== '') {
-        const scheduleFilter = this.listSchedules.filter((schedule) => {
+        const committeeFilters = this.listCommittee.filter((st) => {
           const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          const startDate = this.formatDay(schedule.startDate);
-          const endDate = this.formatDay(schedule.endDate);
-          if (schedule.name.match(re)) return true;
-          if (schedule.code.match(re)) return true;
-          if (endDate.match(re)) return true;
-          if (startDate.match(re)) return true;
+          if (st.name.match(re)) return true;
+          if (st.code.match(re)) return true;
+          if (st.committeePresidentId && st.committeePresidentId.name.match(re)) return true;
+          if (st.committeeSecretaryId && st.committeeSecretaryId.name.match(re)) return true;
+          if (st.criticalLecturerId && st.criticalLecturerId.name.match(re)) return true;
           return false;
         });
-        this.schedules = scheduleFilter;
-      } else this.schedules = this.listSchedules;
+        this.committees = committeeFilters;
+      } else this.committees = this.listCommittee;
     },
   },
 };
