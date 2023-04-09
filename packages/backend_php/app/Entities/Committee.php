@@ -23,7 +23,7 @@ class Committee extends BaseSoftModel
 
     public function critical()
     {
-        return $this->belongsTo(User::class, 'secretary_id');
+        return $this->belongsTo(User::class, 'critical_id');
     }
 
     public function topics()
