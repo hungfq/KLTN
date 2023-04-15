@@ -26,8 +26,8 @@ class ScheduleViewAction
             ->leftJoin('users as uu', 'uu.id', '=', $query->qualifyColumn('updated_by'));
 
         if ($search = $dto->search) {
-            $query->where('code', 'LIKE', "%$search%")
-                ->orWhere('name', 'LIKE', "%$search%");
+            $query->where('schedules.code', 'LIKE', "%$search%")
+                ->orWhere('schedules.name', 'LIKE', "%$search%");
         }
 
         if ($dto->is_approve_time) {
