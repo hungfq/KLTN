@@ -14,7 +14,12 @@ class TopicProposalViewAction
      */
     public function handle($dto)
     {
-        $query = TopicProposal::query();
+        $query = TopicProposal::query()
+            ->with([
+               'students',
+               'schedule',
+               'lecturer',
+            ]);
 
         $query->addSelect([
             $query->qualifyColumn('*'),

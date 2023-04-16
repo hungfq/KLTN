@@ -20,6 +20,11 @@ class TopicProposalViewTransformer extends TransformerAbstract
             'current' => $model->students()->count(),
             'limit' => $model->limit,
             'scheduleId' => $model->schedule_id,
+            'schedule' => [
+                '_id' => data_get($model, 'schedule.id'),
+                'code' => data_get($model, 'schedule.code'),
+                'name' => data_get($model, 'schedule.name'),
+            ],
             'lecturerId' => [
                 '_id' => data_get($model, 'lecturer.id'),
                 'code' => data_get($model, 'lecturer.code'),
