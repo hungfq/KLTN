@@ -116,9 +116,13 @@ class TopicController extends ApiController
 
     public function studentViewResult(TopicStudentShowResultAction $action, TopicViewTransformer $transformer)
     {
-        $results = $action->handle();
+        $results = $action->handle(TopicViewDTO::fromRequest());
 
-        return $this->response->collection($results, $transformer);
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
     }
 
     public function lecturerApprove($id, TopicLecturerApproveAction $action)
