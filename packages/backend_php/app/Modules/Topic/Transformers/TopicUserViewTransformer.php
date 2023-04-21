@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\User\Transformers;
+namespace App\Modules\Topic\Transformers;
 
 
 use League\Fractal\TransformerAbstract;
 
-class UserViewTransformer extends TransformerAbstract
+class TopicUserViewTransformer extends TransformerAbstract
 {
     public function transform($model)
     {
@@ -21,8 +21,6 @@ class UserViewTransformer extends TransformerAbstract
             'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
             'updated_by_name' => data_get($model, 'updated_by_name'),
-            'total_advisor_topic' => $model->advisorTopics->count(),
-            'total_critical_topic' => $model->criticalTopics->count(),
         ];
     }
 }

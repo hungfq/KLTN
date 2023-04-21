@@ -17,12 +17,12 @@ use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
 use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
+use App\Modules\Topic\Transformers\TopicUserViewTransformer;
 use App\Modules\Topic\Transformers\TopicViewTransformer;
 use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicMarkValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
-use App\Modules\User\Transformers\UserViewTransformer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -85,7 +85,7 @@ class TopicController extends ApiController
         return $this->responseSuccess();
     }
 
-    public function viewStudent($id, TopicShowStudentAction $action, UserViewTransformer $transformer)
+    public function viewStudent($id, TopicShowStudentAction $action, TopicUserViewTransformer $transformer)
     {
         $results = $action->handle($id);
 

@@ -15,6 +15,8 @@ class UserViewAction
     public function handle($dto)
     {
         $query = User::query()
+            ->with('advisorTopics')
+            ->with('criticalTopics')
             ->join('user_has_roles', 'user_has_roles.user_id', '=', 'users.id');
 
         $query->addSelect([
