@@ -37,9 +37,6 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import ManageCommitteeAdminVue from '../components/Admin/ManageCommitteeAdmin.vue';
-import FormCommitteeVue from '../components/Admin/FormCommittee.vue';
-import FormTopicCommitteeVue from '../components/Admin/FormTopicCommittee.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
 import BodySchedulePage from '../components/Admin/ManageSchedule/ScheduleBodyPage.vue';
@@ -53,9 +50,6 @@ export default {
     ManageBarVue,
     HeaderBarVue,
     BodySchedulePage,
-    ManageCommitteeAdminVue,
-    FormCommitteeVue,
-    FormTopicCommitteeVue,
     BodyUserPage,
     BodyTopicPage,
     BodyCommitteePage,

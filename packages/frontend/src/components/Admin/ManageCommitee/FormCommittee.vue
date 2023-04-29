@@ -11,11 +11,15 @@
     <div class="bg-white rounded-lg shadow">
       <!-- Modal header -->
       <div class="flex justify-between items-start p-4 rounded-t border-b">
+        <!-- TODO: Rename for form committee -->
         <h3 class="text-xl font-semibold text-gray-900">
-          Thông tin đề tài
+          Thông tin hoi dong
         </h3>
       </div>
-      <div class="ml-5 grid grid-cols-2">
+      <div
+        v-if="!loading"
+        class="ml-5 grid grid-cols-2"
+      >
         <FormKit
           v-model="name"
           type="text"
@@ -72,17 +76,19 @@
           </div>
         </div>
       </div>
-      <!-- Modal footer -->
-      <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
-        <button
-          v-if="!isView"
-          type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          @click="handleAddTopicAdmin"
-        >
-          {{ isSave ? 'Lưu' : 'Cập nhật' }}
-        </button>
-      </div>
+      <Loading v-else>
+        <!-- Modal footer -->
+        <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+          <button
+            v-if="!isView && !loading"
+            type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            @click="handleAddTopicAdmin"
+          >
+            {{ isSave ? 'Lưu' : 'Cập nhật' }}
+          </button>
+        </div>
+      </loading>
     </div>
   </div>
 </template>
@@ -92,11 +98,13 @@ import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
 import UserApi from '../../../utils/api/user';
 import CommitteeApi from '../../../utils/api/committee';
+import Loading from '../../common/Loading.vue';
 
 export default {
   name: 'FormTopic',
   components: {
     Multiselect,
+    Loading,
   },
   data () {
     return {
@@ -111,6 +119,7 @@ export default {
         'lecturer3',
       ],
       messages: '',
+      loading: false,
     };
   },
   computed: {
@@ -131,6 +140,7 @@ export default {
     },
   },
   async mounted () {
+    this.loading = true;
     const lecturers = await UserApi.listUser(this.token, 'LECTURER');
     this.listLecturers = lecturers.data.map((lecturer) => {
       let l = {
@@ -154,6 +164,7 @@ export default {
         this.committeeSecretaryId = committee.committeeSecretaryId._id;
         this.criticalLecturerId = committee.criticalLecturerId._id;
       }
+      this.loading = false;
     }
   },
   methods: {
