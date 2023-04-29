@@ -15,7 +15,7 @@ class NotificationViewDTO extends FlexibleDataTransferObject
 
         return new self([
             'search' => $request->input('search'),
-            'sort' => $request->input('sort'),
+            'limit' => $request->input('limit'),
         ]);
     }
 }

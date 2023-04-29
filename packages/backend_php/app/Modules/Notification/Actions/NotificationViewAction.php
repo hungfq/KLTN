@@ -15,6 +15,10 @@ class NotificationViewAction
     public function handle($dto)
     {
         $query = Notification::query()
+            ->with([
+                'createdBy',
+                'updatedBy',
+            ])
             ->where('to_id', Auth::id())
             ->orderBy('created_at', 'desc');
 

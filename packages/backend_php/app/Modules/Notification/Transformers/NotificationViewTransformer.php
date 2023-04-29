@@ -18,7 +18,7 @@ class NotificationViewTransformer extends TransformerAbstract
             'created_by_name' => data_get($model, 'createdBy.name'),
             'updatedAt' => $model->updated_at,
             'updated_at' => $model->updated_at,
-            'updated_by_name' => data_get($model, 'createdBy.name'),
+            'updated_by_name' => data_get($model, 'updatedBy.name'),
         ];
     }
 }
