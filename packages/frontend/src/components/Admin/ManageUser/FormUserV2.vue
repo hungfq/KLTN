@@ -1,6 +1,6 @@
 <!-- eslint-disable max-len -->
 <template>
-  <div v-if="!loading">
+  <div>
     <div class="p-2 w-full h-full mx-auto">
       <!-- Modal content -->
       <div class="bg-white rounded-lg shadow">
@@ -18,6 +18,7 @@
         </div>
         <!-- Modal body -->
         <custom-form
+          v-if="!loading"
           :title="formTitle"
           :form-fields="formFields"
           :on-submit="submitForm"
@@ -26,10 +27,10 @@
           :is-save="isSave"
           :object="user"
         />
+        <Loading v-else />
       </div>
     </div>
   </div>
-  <Loading v-else />
 </template>
 
 <script>
@@ -37,7 +38,7 @@
 import { mapGetters } from 'vuex';
 import CustomForm from '../../common/CustomForm.vue';
 import UserApi from '../../../utils/api/user';
-import Loading from '../../common/LoadingCircle.vue';
+import Loading from '../../common/Loading.vue';
 
 export default {
   name: 'FormUser',

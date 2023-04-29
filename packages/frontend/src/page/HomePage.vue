@@ -23,7 +23,7 @@ import { mapState, mapGetters } from 'vuex';
 import HeaderPage from '../components/Home/Header.vue';
 import BannerFrame from '../components/Home/BannerFrame.vue';
 import BannerInfo from '../components/Home/BannerInfo.vue';
-import Loading from '../components/common/LoadingCircle.vue';
+import Loading from '../components/common/Loading.vue';
 
 export default {
   name: 'HomePage',

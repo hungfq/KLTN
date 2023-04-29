@@ -15,7 +15,10 @@
           Thông tin lịch đăng ký
         </h3>
       </div>
-      <div class="ml-5 grid grid-cols-2">
+      <div
+        v-if="!loading"
+        class="ml-5 grid grid-cols-2"
+      >
         <FormKit
           v-model="name"
           type="text"
@@ -132,10 +135,11 @@
           Xem thông tin sinh viên
         </button>
       </div>
+      <Loading v-else />
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
         <button
-          v-if="!isView"
+          v-if="!isView && !loading"
           type="button"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           @click="handleAddScheduleAdmin"
@@ -156,12 +160,14 @@ import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import UserApi from '../../../utils/api/user';
+import Loading from '../../common/Loading.vue';
 
 export default {
   name: 'FormSchedule',
   components: {
     Multiselect,
     InfoStudentVue,
+    Loading,
   },
   data () {
     return {
@@ -182,6 +188,7 @@ export default {
       listTopics: [],
       listStudents: [],
       infoUser: [],
+      loading: false,
     };
   },
   computed: {
@@ -202,6 +209,7 @@ export default {
     },
   },
   async mounted () {
+    this.loading = true;
     await this.$store.dispatch('student/fetchListStudent', this.token);
     const listStudents = await UserApi.listUser(this.token, 'STUDENT');
     const students = listStudents.data;
@@ -233,6 +241,7 @@ export default {
         this.endRegisterDate = this.formatDate(schedule.endRegisterDate);
         this.students = schedule.students;
       }
+      this.loading = false;
     }
   },
   methods: {
