@@ -31,7 +31,8 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 ## Commands
 ### To run the project
     php -t public -S localhost:8001
-
+###### or
+    php -t public -S 0.0.0.0:8001
 ### To get dependencies
     composer install
 ##### or
