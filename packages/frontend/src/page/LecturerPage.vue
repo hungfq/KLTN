@@ -23,14 +23,8 @@
         />
         <div class="bg-white mx-4 border rounded overflow-scroll">
           <template v-if="page === 'management'">
-            <BodyTopicPage v-if="module === 'topic'" />
-            <template v-if="module === 'topic_proposal_approve'">
-              <ManageApproveProposalLecturerVue
-                v-if="section === 'topic_proposal_approve-list'"
-                :open="isScheduleApprove"
-              />
-              <FormApproveProposalVue v-if="section === 'topic_proposal_approve-view' || section === 'topic_proposal_approve-update'" />
-            </template>
+            <BodyTopicPage v-if="module === 'topic'" />=
+            <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
             <template v-if="module === 'topic_advisor_approve'">
               <ManageTopicAdvisorLecturerVue
                 v-if="section === 'topic_advisor_approve-list'"
@@ -77,6 +71,7 @@ import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 import AdvisorMarkPage from '../lecturer_page/AdvisorMark/AdvisorMarkPage.vue';
 
 import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
+import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
 
 export default {
   name: 'LecturerPage',
@@ -95,6 +90,7 @@ export default {
     ManageTopicCriticalLecturerVue,
     AdvisorMarkPage,
     BodyTopicPage,
+    BodyTopicProposalPage,
   },
   props: {
   },
@@ -129,7 +125,8 @@ export default {
       'listScheduleApproveLecturer',
     ]),
     isScheduleApprove () {
-      if (!this.listScheduleApproveLecturer || this.listScheduleApproveLecturer.length < 1) return false;
+      // if (!this.listScheduleApproveLecturer || this.listScheduleApproveLecturer.length < 1) return false;
+      // TODO: Update the logic show approve time for topic
       return true;
     },
   },

@@ -1,27 +1,20 @@
 import axios from 'axios';
+import urlWithPagination from '../generate_url';
 
 const apiDest = 'http://localhost:5000/v1';
 axios.defaults.baseURL = apiDest;
 
 export default class TopicProposalApi {
-  static async listAllTopicsByLecturer (token, scheduleId) {
-    const res = await axios.get(`/topic-proposal?is_lecturer=1&scheduleId=${scheduleId}`, {
+  static async listAllTopicsByLecturer (token, options, scheduleId) {
+    let url = urlWithPagination('/topic-proposal?is_lecturer=1', options);
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
     return res.data.data;
-  }
-
-  static async listAllTopicsByAdmin (token) {
-    const res = await axios.get('/topic-proposal/admin', {
-      headers: {
-        authorization: `bearer ${token}`,
-      },
-      baseURL: 'http://localhost:5000/v1',
-    });
-    return res.data;
   }
 
   static async listAllTopicsByCreated (token, scheduleId) {
@@ -80,15 +73,6 @@ export default class TopicProposalApi {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
-    });
-    return res.data;
-  }
-
-  static async approveTopicProposalByAdmin (token, value) {
-    const res = await axios.post(`/topic-proposal/approve/${value.id}`, value, {
-      headers: {
-        authorization: `bearer ${token}`,
-      },
     });
     return res.data;
   }

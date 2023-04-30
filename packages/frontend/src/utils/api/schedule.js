@@ -26,14 +26,15 @@ export default class ScheduleApi {
     return res.data;
   }
 
-  static async listScheduleApproveLecturer (token) {
-    const res = await axios.get('/schedule?is_approve_time=1', {
+  static async listScheduleApproveLecturer (token, options) {
+    const url = urlWithPagination('/schedule?is_approve_time=1', options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async addSchedule (token, value) {
