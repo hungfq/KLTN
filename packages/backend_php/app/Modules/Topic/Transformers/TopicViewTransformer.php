@@ -17,7 +17,7 @@ class TopicViewTransformer extends TransformerAbstract
             'code' => $model->code,
             'title' => $model->title,
             'description' => $model->description,
-            'current' => $model->students()->count(),
+            'current' => $model->students->count(),
             'limit' => $model->limit,
             'scheduleId' => [
                 '_id' => data_get($model, 'schedule.id'),

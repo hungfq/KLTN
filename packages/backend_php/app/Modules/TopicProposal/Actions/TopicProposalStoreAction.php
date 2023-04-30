@@ -60,11 +60,12 @@ class TopicProposalStoreAction
     protected function addNotification()
     {
         if ($this->lecturer) {
-            $this->lecturer->notifications()->create([
+            $data = [
                 'title' => 'YÊU CẦU HƯỚNG DẪN',
                 'message' => "Bạn được yêu cầu hướng dẫn trong một đề tài.",
-            ]);
-            Socket::sendUpdateNotificationRequest([data_get($this->lecturer, 'id')]);
+            ];
+            $this->lecturer->notifications()->create($data);
+            Socket::sendUpdateNotificationRequest([data_get($this->lecturer, 'id')], $data);
         }
     }
 }

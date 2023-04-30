@@ -56,7 +56,7 @@ socket.on('connection', async (io) => {
     if (data.id) {
       const socketId = await getSocketIdByUserId(data.id);
 
-      await socket.to(socketId).emit('notify', '122');
+      await socket.to(socketId).emit('notify', data.notification);
     }
   });
 });

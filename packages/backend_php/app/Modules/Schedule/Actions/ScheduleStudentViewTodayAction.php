@@ -9,13 +9,15 @@ class ScheduleStudentViewTodayAction
 {
     public function handle()
     {
-//        dd(date('Y-m-d H:i:s', time()));
         $proposal = Schedule::query()
+            ->with(['students'])
             ->whereDate('proposal_start', '<=', date('Y-m-d H:i:s', time()))
             ->whereDate('proposal_end', '>=', date('Y-m-d H:i:s', time()))
             ->get();
 
-        $register = Schedule::whereDate('register_start', '<=', date('Y-m-d H:i:s', time()))
+        $register = Schedule::query()
+            ->with(['students'])
+            ->whereDate('register_start', '<=', date('Y-m-d H:i:s', time()))
             ->whereDate('register_end', '>=', date('Y-m-d H:i:s', time()))
             ->get();
 
