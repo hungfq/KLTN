@@ -25,6 +25,9 @@
           <template v-if="page === 'management'">
             <BodyTopicPage v-if="module === 'topic'" />=
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
+            <BodyTopicAprrovePage
+              v-if="module === 'topic_approve'"
+            />
             <template v-if="module === 'topic_advisor_approve'">
               <ManageTopicAdvisorLecturerVue
                 v-if="section === 'topic_advisor_approve-list'"
@@ -70,6 +73,7 @@ import AdvisorMarkPage from '../lecturer_page/AdvisorMark/AdvisorMarkPage.vue';
 
 import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
+import BodyTopicAprrovePage from '../components/Lecturer/ManageApprove/TopicApproveBodyPage.vue';
 
 export default {
   name: 'LecturerPage',
@@ -87,6 +91,7 @@ export default {
     AdvisorMarkPage,
     BodyTopicPage,
     BodyTopicProposalPage,
+    BodyTopicAprrovePage,
   },
   props: {
   },
@@ -97,7 +102,8 @@ export default {
       listItems: [
         { id: 'topic', value: 'Quản lý đề tài' },
         // { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
-        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
+        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn v2' },
+        { id: 'topic_approve', value: 'Phê duyệt đề tài' },
         { id: 'topic_advisor_approve', value: 'Phê duyệt đề tài' },
         { id: 'topic_critical_approve', value: 'Phê duyệt đề tài phản biện ra hội đồng' },
         { id: 'advisor_mark', value: 'Giáo viên hướng dẫn cho điểm' },

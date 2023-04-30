@@ -236,14 +236,16 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listTopicAdvisorApprove (token) {
-    const res = await axios.get('/topic?is_lecturer_approve=1', {
+  static async listTopicAdvisorApprove (token, options, scheduleId) {
+    let url = urlWithPagination('/topic?is_lecturer_approve=1', options);
+    if (scheduleId) url += `&schedule_id=${scheduleId}`;
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: apiDest,
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async listTopicCriticalApprove (token) {
