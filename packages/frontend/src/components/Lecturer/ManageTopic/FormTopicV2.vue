@@ -50,16 +50,6 @@
           :disabled="isView"
           :validation-messages="{ min: 'Phải có ít nhất 1 thành viên', max:'Có tối đa 3 thành viên' }"
         />
-        <FormKit
-          v-model="
-            thesisDefenseDate"
-          name="thesisDefenseDate"
-          type="date"
-          label="Thời hạn phản biện"
-          validation="required"
-          :disabled="isView"
-          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-        />
         <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Sinh viên đăng kí
@@ -72,20 +62,6 @@
               :searchable="true"
               :create-option="true"
               :options="listStudents"
-              :disabled="isView"
-              class="w-[400px]"
-            />
-          </div>
-        </div>
-        <div class="my-2-1 w-3/5">
-          <span class="font-bold text-sm py-4 my-4">
-            Đợt đăng ký
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="scheduleId"
-              :options="listSchedules"
-              :searchable="true"
               :disabled="isView"
               class="w-[400px]"
             />
@@ -134,6 +110,7 @@ export default {
   },
   data () {
     return {
+      topicOld: null,
       title: '',
       code: '',
       description: '',
@@ -183,18 +160,18 @@ export default {
   async mounted () {
     this.loading = true;
     const students = await UserApi.listUser(this.token, 'STUDENT', null);
-    const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
-    const schedules = await ScheduleApi.listAllSchedule(this.token);
-    this.listLecturers = lecturers.data.map((lecturer) => {
-      let l = {
-        value: lecturer._id,
-        label: lecturer.name,
-      };
-      if (this.isView) {
-        l = { ...l, disabled: true };
-      }
-      return l;
-    });
+    // const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
+    // const schedules = await ScheduleApi.listAllSchedule(this.token);
+    // this.listLecturers = lecturers.data.map((lecturer) => {
+    //   let l = {
+    //     value: lecturer._id,
+    //     label: lecturer.name,
+    //   };
+    //   if (this.isView) {
+    //     l = { ...l, disabled: true };
+    //   }
+    //   return l;
+    // });
     this.listStudents = students.data.map((student) => {
       let st = {
         value: student.code,
@@ -205,16 +182,16 @@ export default {
       }
       return st;
     });
-    this.listSchedules = schedules.data.map((schedule) => {
-      let st = {
-        value: schedule._id,
-        label: `${schedule.code} : ${schedule.name}`,
-      };
-      if (this.isView) {
-        st = { ...st, disabled: true };
-      }
-      return st;
-    });
+    // this.listSchedules = schedules.data.map((schedule) => {
+    //   let st = {
+    //     value: schedule._id,
+    //     label: `${schedule.code} : ${schedule.name}`,
+    //   };
+    //   if (this.isView) {
+    //     st = { ...st, disabled: true };
+    //   }
+    //   return st;
+    // });
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       if (!id) {
@@ -222,19 +199,13 @@ export default {
         return;
       }
       const topic = await TopicApi.listTopicById(this.token, id);
+      this.topicOld = topic;
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;
         this.description = topic.description;
         this.limit = topic.limit;
         this.studentIds = topic.students;
-        if (topic.thesisDefenseDate) {
-          const date = new Date(topic.thesisDefenseDate);
-          const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-            .toISOString()
-            .split('T')[0];
-          this.thesisDefenseDate = dateString;
-        }
       }
       this.loading = false;
     }
@@ -253,6 +224,14 @@ export default {
         code: this.code,
         limit: this.limit,
         students: studentIds,
+        thesisDefenseDate: this.topicOld.thesisDefenseDate,
+        scheduleId: this.topicOld.scheduleId._id || 1,
+        lecturerId: this.topicOld.lecturerId._id,
+        criticalLecturerId: this.topicOld.criticalLecturerId._id,
+        advisorLecturerGrade: this.topicOld.advisorLecturerGrade,
+        criticalLecturerGrade: this.topicOld.criticalLecturerGrade,
+        committeePresidentGrade: this.topicOld.committeePresidentGrade,
+        committeeSecretaryGrade: this.topicOld.committeeSecretaryGrade,
       };
       try {
         this.loading = true;
@@ -285,20 +264,8 @@ export default {
         this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
         return false;
       }
-      if (!this.lecturerId) {
-        this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
-        return false;
-      }
-      if (!this.lecturerId && this.lecturerId === '') {
-        this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
-        return false;
-      }
       if (this.studentIds.length > this.limit) {
         this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
-        return false;
-      }
-      if (!this.scheduleId) {
-        this.$toast.error('Vui long chon dot dang ky');
         return false;
       }
       return true;

@@ -264,13 +264,15 @@ export default {
     };
 
     const checkCanEdit = (scheduleId) => {
-      if (!scheduleId) return false;
-      const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
-      if (!schedule) return false;
-      const now = Date.now();
-      const start = new Date(schedule.startApproveDate);
-      const end = new Date(schedule.endApproveDate);
-      return (start < now && now < end);
+      const a ;
+      return true;
+      // if (!scheduleId) return false;
+      // const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
+      // if (!schedule) return false;
+      // const now = Date.now();
+      // const start = new Date(schedule.startApproveDate);
+      // const end = new Date(schedule.endApproveDate);
+      // return (start < now && now < end);
     };
 
     const showRow = (item) => {
