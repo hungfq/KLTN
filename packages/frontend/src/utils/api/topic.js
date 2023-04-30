@@ -26,14 +26,37 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listAllTopicsByLecturerId (token, lecturerId) {
-    const res = await axios.get(`/topic?lecturerId=${lecturerId}`, {
+  static async listAllTopicsByLecturerId (token, lecturerId, options) {
+    const url = urlWithPagination(`/topic?lecturerId=${lecturerId}`, options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
+  }
+
+  static async listAllTopicsByCritical (token, criticalId, options) {
+    const url = urlWithPagination(`/topic?criticalId=${criticalId}`, options);
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: 'http://localhost:8001/api/v2',
+    });
+    return res.data;
+  }
+
+  static async listAllTopicsByCriticalAndScheduleId (token, criticalId, scheduleId, options) {
+    const url = urlWithPagination(`/topic?criticalId=${criticalId}&scheduleId=${scheduleId}`, options);
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: 'http://localhost:8001/api/v2',
+    });
+    return res.data;
   }
 
   static async listAllTopicsByLecturerIdAndScheduleId (token, lecturerId, scheduleId, options) {
@@ -44,7 +67,7 @@ export default class TopicApi {
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async listAllTopicsByScheduleId (token, scheduleId) {

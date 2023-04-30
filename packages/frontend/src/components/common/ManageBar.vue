@@ -23,7 +23,7 @@
         class="font-bold text-xl absolute -right-4 top-8 px-1 py-1 bg-white rounded"
         @click="open =!open"
       >
-        {{ open ? '<' : '>' }}
+        <font-awesome-icon :icon="['fas', 'left-right']" />
       </div>
 
       <!-- Links -->

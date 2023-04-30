@@ -235,7 +235,7 @@ export default {
     this.loading = true;
     const students = await UserApi.listUser(this.token, 'STUDENT', null);
     const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
-    const schedules = await ScheduleApi.listAllSchedule(this.token).data;
+    const schedules = await ScheduleApi.listAllSchedule(this.token);
     this.listLecturers = lecturers.data.map((lecturer) => {
       let l = {
         value: lecturer._id,
@@ -256,7 +256,7 @@ export default {
       }
       return st;
     });
-    this.listSchedules = schedules.map((schedule) => {
+    this.listSchedules = schedules.data.map((schedule) => {
       let st = {
         value: schedule._id,
         label: `${schedule.code} : ${schedule.name}`,

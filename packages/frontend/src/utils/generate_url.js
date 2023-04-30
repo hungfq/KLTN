@@ -6,6 +6,7 @@ const urlWithPagination = (urlOld, options, addon = '') => {
       rowsPerPage,
       sortBy,
       sortType,
+      search,
     } = options;
     if (rowsPerPage) url += `?limit=${rowsPerPage}`;
     else url += '&limit=10';
@@ -14,9 +15,14 @@ const urlWithPagination = (urlOld, options, addon = '') => {
       else url += `&sort[${sortBy}]=${sortType}`;
     }
     if (page) url += `&page=${page}`;
+    if (search) url += `&search=${search}`;
   }
   if (addon) url += `&${addon}`;
-  return url;
+  // replace all ? to &
+  const result = url.replaceAll('?', '&');
+  // change the first & to ?
+  const finalUrl = result.replace('&', '?');
+  return finalUrl;
 };
 
 export default urlWithPagination;

@@ -6,7 +6,9 @@
   >
     Quay về
   </div>
-  <div class="p-4 w-full h-full md:h-auto mx-auto mt-[10px]">
+  <div
+    class="p-4 w-full h-full md:h-auto mx-auto mt-[10px]"
+  >
     <!-- Modal content -->
     <div class="bg-white rounded-lg shadow">
       <!-- Modal header -->
@@ -15,7 +17,10 @@
           Thông tin đề tài
         </h3>
       </div>
-      <div class="ml-5 grid grid-cols-2">
+      <div
+        v-if="!loading"
+        class="ml-5 grid grid-cols-2"
+      >
         <FormKit
           v-model="title"
           type="text"
@@ -55,33 +60,7 @@
           :disabled="isView"
           :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
         />
-        <div class="w-2/5">
-          <span class="font-bold text-sm">
-            Giáo viên hướng dẫn
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="lecturerId"
-              :options="listLecturers"
-              :searchable="true"
-              :disabled="true"
-            />
-          </div>
-        </div>
-        <div class="w-2/5">
-          <span class="font-bold text-sm">
-            Giáo viên phản biện
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="criticalLecturerId"
-              :options="listLecturers"
-              :searchable="true"
-              :disabled="true"
-            />
-          </div>
-        </div>
-        <div class="my-2-1 w-2/5">
+        <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Sinh viên đăng kí
           </span>
@@ -94,10 +73,11 @@
               :create-option="true"
               :options="listStudents"
               :disabled="isView"
+              class="w-[400px]"
             />
           </div>
         </div>
-        <div class="my-2-1 w-2/5">
+        <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Đợt đăng ký
           </span>
@@ -106,35 +86,11 @@
               v-model="scheduleId"
               :options="listSchedules"
               :searchable="true"
-              :disabled="true"
+              :disabled="isView"
+              class="w-[400px]"
             />
           </div>
         </div>
-        <FormKit
-          v-model="advisorLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên hướng dẫn"
-          :disabled="isView"
-        />
-        <FormKit
-          v-model="criticalLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên phản biện"
-          :disabled="true"
-        />
-        <FormKit
-          v-model="committeePresidentGrade"
-          type="number"
-          label="Điểm của chủ tịch hội đồng"
-          :disabled="true"
-        />
-        <FormKit
-          v-model="committeeSecretaryGrade"
-          name="limit"
-          type="number"
-          label="Điểm của thư ký"
-          :disabled="true"
-        />
         <FormKit
           v-model="description"
           name="description"
@@ -146,10 +102,11 @@
           :disabled="isView"
         />
       </div>
+      <LoadingProcess v-else />
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
         <button
-          v-if="!isView"
+          v-if="!isView && !loading "
           type="button"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           @click="handleAddTopicAdmin"
@@ -164,13 +121,16 @@
 <script>
 import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
+import TopicApi from '../../../utils/api/topic';
+import UserApi from '../../../utils/api/user';
+import ScheduleApi from '../../../utils/api/schedule';
+import LoadingProcess from '../../common/Loading.vue';
 
 export default {
   name: 'FormTopic',
   components: {
     Multiselect,
-  },
-  props: {
+    LoadingProcess,
   },
   data () {
     return {
@@ -200,6 +160,7 @@ export default {
       ],
       listSchedules: [],
       messages: '',
+      loading: true,
     };
   },
   computed: {
@@ -207,10 +168,7 @@ export default {
       'page', 'module', 'section', 'id',
     ]),
     ...mapGetters('auth', [
-      'token', 'userId',
-    ]),
-    ...mapGetters('topic', [
-      'topicScheduleId',
+      'token',
     ]),
     isSave () {
       return this.section === 'topic-import';
@@ -223,15 +181,11 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
-    await this.$store.dispatch('student/fetchListStudent', this.token);
-    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
-    const lecturers = this.$store.state.lecturer.listLecturer;
-    const students = this.$store.state.student.listStudents;
-    const schedules = this.$store.state.schedule.listSchedules;
-    this.lecturerId = this.userId;
-    this.scheduleId = this.topicScheduleId;
-    this.listLecturers = lecturers.map((lecturer) => {
+    this.loading = true;
+    const students = await UserApi.listUser(this.token, 'STUDENT', null);
+    const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
+    const schedules = await ScheduleApi.listAllSchedule(this.token);
+    this.listLecturers = lecturers.data.map((lecturer) => {
       let l = {
         value: lecturer._id,
         label: lecturer.name,
@@ -241,20 +195,20 @@ export default {
       }
       return l;
     });
-    this.listStudents = students.map((student) => {
+    this.listStudents = students.data.map((student) => {
       let st = {
         value: student.code,
-        label: student.name,
+        label: `${student.code} - ${student.name}`,
       };
       if (this.isView) {
         st = { ...st, disabled: true };
       }
       return st;
     });
-    this.listSchedules = schedules.map((schedule) => {
+    this.listSchedules = schedules.data.map((schedule) => {
       let st = {
         value: schedule._id,
-        label: schedule.code,
+        label: `${schedule.code} : ${schedule.name}`,
       };
       if (this.isView) {
         st = { ...st, disabled: true };
@@ -263,17 +217,16 @@ export default {
     });
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
-      const { listTopicsByLecturerSchedule } = this.$store.state.topic;
-      const topic = listTopicsByLecturerSchedule.find((s) => s._id.toString() === id.toString());
+      if (!id) {
+        this.loading = false;
+        return;
+      }
+      const topic = await TopicApi.listTopicById(this.token, id);
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;
         this.description = topic.description;
         this.limit = topic.limit;
-        this.committeeId = topic.committeeId;
-        if (topic.lecturerId) this.lecturerId = topic.lecturerId._id;
-        if (topic.criticalLecturerId) this.criticalLecturerId = topic.criticalLecturerId._id;
-        if (topic.scheduleId) this.scheduleId = topic.scheduleId._id;
         this.studentIds = topic.students;
         if (topic.thesisDefenseDate) {
           const date = new Date(topic.thesisDefenseDate);
@@ -282,20 +235,17 @@ export default {
             .split('T')[0];
           this.thesisDefenseDate = dateString;
         }
-        this.advisorLecturerGrade = topic.advisorLecturerGrade;
-        this.committeePresidentGrade = topic.committeePresidentGrade;
-        this.committeeSecretaryGrade = topic.committeeSecretaryGrade;
-        this.criticalLecturerGrade = topic.criticalLecturerGrade;
       }
+      this.loading = false;
     }
   },
   methods: {
-    async rollBack () {
-      await this.$store.dispatch('url/updateSection', `${this.module}-list`);
+    rollBack () {
+      this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
     async handleAddTopicAdmin () {
       const {
-        scheduleId, studentIds, lecturerId, criticalLecturerId,
+        studentIds,
       } = this;
       const value = {
         title: this.title,
@@ -303,25 +253,21 @@ export default {
         code: this.code,
         limit: this.limit,
         students: studentIds,
-        lecturerId,
-        scheduleId,
-        criticalLecturerId,
-        thesisDefenseDate: this.thesisDefenseDate,
-        advisorLecturerGrade: this.advisorLecturerGrade,
-        committeePresidentGrade: this.committeePresidentGrade,
-        committeeSecretaryGrade: this.committeeSecretaryGrade,
-        criticalLecturerGrade: this.criticalLecturerGrade,
       };
       try {
-        if (this.check() && this.isSave) {
-          await this.$store.dispatch('topic/addTopic', { token: this.token, value });
-          this.$toast.success('Đã thêm thành công!');
-          this.rollBack();
-        } else if (this.isUpdate) {
-          await this.$store.dispatch('topic/updateTopic', { token: this.token, value: { ...value, _id: this.id } });
-          this.$toast.success('Đã cập nhật thành công!');
-          this.rollBack();
+        this.loading = true;
+        if (this.check()) {
+          if (this.isSave) {
+            await TopicApi.createTopic(this.token, value);
+            this.$toast.success('Đã thêm thành công!');
+            this.rollBack();
+          } else if (this.isUpdate) {
+            await TopicApi.updateTopicById(this.token, { ...value, _id: this.id });
+            this.rollBack();
+            this.$toast.success('Đã cập nhật thành công!');
+          }
         }
+        this.loading = false;
       } catch (e) {
         this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
@@ -339,8 +285,20 @@ export default {
         this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
         return false;
       }
+      if (!this.lecturerId) {
+        this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
+        return false;
+      }
+      if (!this.lecturerId && this.lecturerId === '') {
+        this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
+        return false;
+      }
       if (this.studentIds.length > this.limit) {
         this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
+        return false;
+      }
+      if (!this.scheduleId) {
+        this.$toast.error('Vui long chon dot dang ky');
         return false;
       }
       return true;

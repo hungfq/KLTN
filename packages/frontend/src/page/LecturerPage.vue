@@ -23,12 +23,7 @@
         />
         <div class="bg-white mx-4 border rounded overflow-scroll">
           <template v-if="page === 'management'">
-            <template v-if="module === 'topic'">
-              <ManageTopicLecturerVue v-if="section === 'topic-list'" />
-              <FormTopicVue
-                v-if="section === 'topic-update' || section === 'topic-import' || section === 'topic-view'"
-              />
-            </template>
+            <BodyTopicPage v-if="module === 'topic'" />
             <template v-if="module === 'topic_proposal_approve'">
               <ManageApproveProposalLecturerVue
                 v-if="section === 'topic_proposal_approve-list'"
@@ -72,16 +67,16 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
-import ManageTopicLecturerVue from '../components/Lecturer/ManageTopicLecturer.vue';
 import ManageApproveProposalLecturerVue from '../components/Lecturer/ManageApproveProposalLecturer.vue';
 import ManageTopicAdvisorLecturerVue from '../components/Lecturer/ManageTopicAdvisorLecturer.vue';
 import ManageTopicCriticalLecturerVue from '../components/Lecturer/ManageTopicCriticalLecturer.vue';
-import FormTopicVue from '../components/Lecturer/FormTopic.vue';
 import FormApproveProposalVue from '../components/Lecturer/FormApproveProposal.vue';
 import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 import AdvisorMarkPage from '../lecturer_page/AdvisorMark/AdvisorMarkPage.vue';
+
+import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
 
 export default {
   name: 'LecturerPage',
@@ -91,8 +86,6 @@ export default {
     ManageBarLecturerVue,
     HeaderBarVue,
     MiniHeaderBarVue,
-    ManageTopicLecturerVue,
-    FormTopicVue,
     ManageApproveProposalLecturerVue,
     FormApproveProposalVue,
     TaskBarScheduleVue,
@@ -101,6 +94,7 @@ export default {
     ManageTopicAdvisorLecturerVue,
     ManageTopicCriticalLecturerVue,
     AdvisorMarkPage,
+    BodyTopicPage,
   },
   props: {
   },
@@ -109,9 +103,9 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic', value: 'Quản lý đề tài hướng dẫn' },
+        { id: 'topic', value: 'Quản lý đề tài' },
         // { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
-        { id: 'topic_proposal_approve', value: 'Phê duyệt yêu cầu hướng dẫn' },
+        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
         { id: 'topic_advisor_approve', value: 'Phê duyệt đề tài hướng dẫn ra hội đồng' },
         { id: 'topic_critical_approve', value: 'Phê duyệt đề tài phản biện ra hội đồng' },
         { id: 'advisor_mark', value: 'Giáo viên hướng dẫn cho điểm' },
