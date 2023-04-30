@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="inline-block p-2 rounded-md">
       <select
-        v-model="selectVal"
+        v-model="selectSchedule"
         class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
         @change="selectHandler"
       >
@@ -11,7 +11,7 @@
           :value="''"
         /> -->
         <option
-          v-for="option in listSchedules"
+          v-for="option in schedules"
           :key="`key-${option._id}`"
           :value="option._id"
         >
@@ -33,100 +33,56 @@
       :search-icon="true"
       @keydown.space.enter="search"
     />
-    <table class="w-full text-sm text-left text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-        <tr>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Mã đề tài
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Tên đề tài
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Mô tả
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            Danh sách sinh viên
-          </th>
-          <th
-            scope="col"
-            class="py-3 px-6"
-          >
-            <span class="sr-only">Edit</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="topic in topics"
-          :key="`topic-${topic._id}`"
-          class="bg-slate-300 hover:bg-gray-50 "
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      show-index
+      :headers="headers"
+      :items="topicShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+      @click-row="showRow"
+      @expand-row="loadIntroduction"
+    >
+      <template #expand="item">
+        <div
+          style="padding: 15px"
         >
-          <th
-            :key="`topic-${topic._id}`"
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
+          {{ item }}
+        </div>
+      </template>
+      <template #item-import-export="students">
+        <div class-="flex flex-col">
+          <ul>
+            <li
+              v-for="student in students"
+              :key="`${student}`"
+            >
+              {{ student }}
+            </li>
+          </ul>
+        </div>
+      </template>
+      <template #item-operation="item">
+        <div
+          v-if="checkCanEdit(item.scheduleId)"
+          class="flex"
+        >
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+            class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+            @click="editItem(item)"
           >
-            {{ topic.code }}
-          </th>
-          <th
-            :key="`topic-${topic._id}`"
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
-          >
-            {{ topic.title }}
-          </th>
-          <th
-            :key="`topic-${topic._id}`"
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 w-4"
-          >
-            {{ topic.description }}
-          </th>
-          <td class="py-4 px-6">
-            <div class="font-mono cursor-pointer">
-              <!-- {{ topic.studentInfo }} -->
-              <template v-if="topic.studentInfo && topic.studentInfo.length > 0">
-                <li
-                  v-for="student in topic.studentInfo"
-                  :key="`${Math.floor(Math.random() * 10000000000)}-${student}`"
-                >
-                  {{ student ? student.name : '' }} - {{ student ? student.code : '' }}
-                </li>
-              </template>
-            </div>
-          </td>
-          <td class="py-4 px-6 text-right">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleShowTopic(topic._id)"
-            >Xem chi tiết</a>
-            <a
-              v-if="canEdit"
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleUpdateTopic(topic._id)"
-            >Sửa</a>
-            <a
-              v-if="canEdit"
-              class="cursor-pointer font-medium text-red-600 dark:text-red-500 hover:underline mx-2"
-              @click="handleRemoveTopic(topic._id)"
-            >Xóa</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <font-awesome-icon
+            icon="fa-solid fa-trash-can"
+            size="2xl"
+            @click="handleRemoveSchedule(item._id)"
+          />
+        </div>
+      </template>
+    </EasyDataTable>
   </div>
   <ConfirmModal
     v-model="showConfirmModal"
@@ -141,11 +97,20 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+// import { mapState, mapGetters } from 'vuex';
 import SearchInput from 'vue-search-input';
 import ConfirmModal from '../Modal/ConfirmModal.vue';
+import ScheduleApi from '../../utils/api/schedule';
 // Optionally import default styling
 import 'vue-search-input/dist/styles.css';
+
+// import 'vue-search-input/dist/styles.css';
+import {
+  ref, watch, onMounted, computed,
+} from 'vue';
+import { mapState, mapGetters, useStore } from 'vuex';
+import { useToast } from 'vue-toast-notification';
+import TopicApi from '../../utils/api/topic';
 
 export default {
   name: 'ManageTopicLecturer',
@@ -153,13 +118,153 @@ export default {
     SearchInput,
     ConfirmModal,
   },
+  setup () {
+    const store = useStore();
+    const loading = ref(false);
+    const itemsSelected = ref([]);
+    const serverItemsLength = ref(0);
+    const rowItems = [10, 20, 50];
+    // Init value
+    const topics = ref([]);
+    const schedules = ref([]);
+    const headers = [
+      { text: 'Mã số', value: 'code', sortable: true },
+      { text: 'Tên đề tài ', value: 'title', sortable: true },
+      { text: 'Sinh vien', value: 'students' },
+      { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Hành động', value: 'operation' },
+    ];
+    const items = [];
+    const serverOptions = ref({
+      page: 1,
+      rowsPerPage: 10,
+      sortBy: headers[0].value,
+      sortType: 'desc',
+    });
+    const token = store.getters['auth/token'];
+    const modulePage = computed(() => store.getters['url/module']);
+    const loadToServer = async (options) => {
+      loading.value = true;
+      const response = await TopicApi.listAllTopics(token, options);
+      topics.value = response.data;
+      store.state.topic.listTopics = topics.value;
+      serverItemsLength.value = response.meta.pagination.total;
+      loading.value = false;
+    };
+
+    const $toast = useToast();
+
+    onMounted(async () => {
+      const listAllSchedule = await ScheduleApi.listAllSchedule(token);
+      schedules.value = listAllSchedule.data;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    });
+
+    const editItem = (item) => {
+      store.dispatch('url/updateSection', `${modulePage.value}-update`);
+      store.dispatch('url/updateId', item._id);
+    };
+    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+
+    const handleImport = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-import`);
+    };
+
+    const selectHandler = () => {
+      // this.checkCanEdit(this.selectVal);
+      // this.$store.commit('topic/setTopicScheduleId', this.selectVal);
+      // await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal });
+    };
+
+    const checkCanEdit = (scheduleId) => {
+      if (!scheduleId) return false;
+      const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
+      if (!schedule) return false;
+      const now = Date.now();
+      const start = new Date(schedule.startApproveDate);
+      const end = new Date(schedule.endApproveDate);
+      return (start < now && now < end);
+    };
+
+    const showRow = (item) => {
+      // if (!checkCanEdit(item.scheduleId)) return;
+      store.dispatch('url/updateId', item._id);
+      store.dispatch('url/updateSection', `${modulePage.value}-view`);
+    };
+
+    const showConfirmModal = ref(false);
+    const confirmRemove = async (id) => {
+      showConfirmModal.value = false;
+      try {
+        $toast.success('Đã xóa thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      }
+    };
+
+    const selectSchedule = ref('');
+    const selectLecturer = ref('');
+
+    const loadIntroduction = async (index) => {
+      const expandedItem = topics.value[index];
+      console.log('🚀 ~ file: ManageTopicLecturer.vue:216 ~ loadIntroduction ~ expandedItem:', expandedItem);
+      if (!expandedItem.data) {
+        expandedItem.expandLoading = true;
+        expandedItem.data = 'Hihihi';
+        expandedItem.expandLoading = false;
+      }
+    };
+
+    const topicShow = computed(() => {
+      if (!topics.value) return [];
+      return topics.value.map((topic) => ({
+        _id: topic._id,
+        code: topic.code,
+        title: topic.title,
+        lecturer: topic.lecturerId.name || '',
+        critical: topic.criticalLecturerId.name || '',
+        students: topic.students || [],
+        scheduleId: topic.scheduleId?._id || null,
+      }));
+    });
+
+    return {
+      headers,
+      items,
+      showRow,
+      itemsSelected,
+      loading,
+      serverOptions,
+      topics,
+      serverItemsLength,
+      rowItems,
+      editItem,
+      modulePage,
+      handleImport,
+      showConfirmModal,
+      confirmRemove,
+      selectSchedule,
+      selectLecturer,
+      topicShow,
+      selectHandler,
+      checkCanEdit,
+      schedules,
+      loadIntroduction,
+    };
+  },
   data () {
     return {
       selectVal: '',
       searchVal: '',
-      topics: [],
+      // topics: [],
       canEdit: false,
-      showConfirmModal: false,
+      // showConfirmModal: false,
+      listSchedules: [],
     };
   },
   computed: {
@@ -203,13 +308,17 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('student/fetchListStudent', this.token);
-    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
-    this.topics = this.listTopicsLecturer;
-    this.selectVal = this.listSchedules[0] ? this.listSchedules[0]._id : null;
-    this.$store.commit('topic/setTopicScheduleId', this.selectVal);
-    if (this.selectVal) { await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal }); }
-    this.checkCanEdit(this.selectVal);
+    // Fetch list data schedule
+    const schedules = await ScheduleApi.listAllSchedule(this.token);
+    this.listSchedules = schedules.data;
+    // console.log('🚀 ~ file: ManageTopicLecturer.vue:209 ~ mounted ~ listSchedule:', this.listSchedules);
+    // await this.$store.dispatch('student/fetchListStudent', this.token);
+    // await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+    // this.topics = this.listTopicsLecturer;
+    // this.selectVal = this.listSchedules[0] ? this.listSchedules[0]._id : null;
+    // this.$store.commit('topic/setTopicScheduleId', this.selectVal);
+    // if (this.selectVal) { await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal }); }
+    // this.checkCanEdit(this.selectVal);
   },
   methods: {
     async handleUpdateTopic (id) {
@@ -220,23 +329,23 @@ export default {
       await this.$store.dispatch('url/updateSection', `${this.module}-view`);
       await this.$store.dispatch('url/updateId', id);
     },
-    async confirmRemove () {
-      const id = this.removeId;
-      this.showConfirmModal = false;
-      try {
-        const value = {
-          id,
-          token: this.token,
-        };
-        await this.$store.dispatch('topic/removeTopic', value);
-        await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal });
-        this.$toast.success('Đã xóa thành công!');
-      } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
+    // async confirmRemove () {
+    //   const id = this.removeId;
+    //   this.showConfirmModal = false;
+    //   try {
+    //     const value = {
+    //       id,
+    //       token: this.token,
+    //     };
+    //     await this.$store.dispatch('topic/removeTopic', value);
+    //     await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal });
+    //     this.$toast.success('Đã xóa thành công!');
+    //   } catch (e) {
+    //     this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+    //   }
 
-      this.removeId = '';
-    },
+    //   this.removeId = '';
+    // },
     async handleRemoveTopic (id) {
       this.removeId = id;
       this.showConfirmModal = true;
@@ -266,15 +375,16 @@ export default {
       this.$store.commit('topic/setTopicScheduleId', this.selectVal);
       await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal });
     },
-    checkCanEdit (scheduleId) {
-      const schedule = this.listSchedules.filter((sc) => sc._id === scheduleId)[0];
-      if (schedule) {
-        const now = Date.now();
-        const start = new Date(schedule.startApproveDate);
-        const end = new Date(schedule.endApproveDate);
-        this.canEdit = (start < now && now < end);
-      }
-    },
+    // checkCanEdit (scheduleId) {
+    //   console.log('🚀 ~ file: ManageTopicLecturer.vue:272 ~ checkCanEdit ~ scheduleId:', scheduleId);
+    // const schedule = this.listSchedules.filter((sc) => sc._id === scheduleId)[0];
+    // if (schedule) {
+    //   const now = Date.now();
+    //   const start = new Date(schedule.startApproveDate);
+    //   const end = new Date(schedule.endApproveDate);
+    //   this.canEdit = (start < now && now < end);
+    // }
+    // },
   },
 };
 </script>

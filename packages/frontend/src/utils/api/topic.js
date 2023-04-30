@@ -36,8 +36,9 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listAllTopicsByLecturerIdAndScheduleId (token, lecturerId, scheduleId) {
-    const res = await axios.get(`/topic?lecturerId=${lecturerId}&scheduleId=${scheduleId}`, {
+  static async listAllTopicsByLecturerIdAndScheduleId (token, lecturerId, scheduleId, options) {
+    const url = urlWithPagination(`/topic?lecturerId=${lecturerId}&scheduleId=${scheduleId}`, options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
