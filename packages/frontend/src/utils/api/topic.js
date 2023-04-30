@@ -1,7 +1,8 @@
 import axios from 'axios';
 import urlWithPagination from '../generate_url';
 
-const apiDest = 'http://localhost:5000/v1';
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TopicApi {
@@ -11,7 +12,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -21,7 +22,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -32,7 +33,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -43,7 +44,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -54,7 +55,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -65,7 +66,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -75,7 +76,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -94,7 +95,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -140,7 +141,7 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -150,7 +151,7 @@ export default class TopicApi {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -160,7 +161,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -190,7 +191,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -200,7 +201,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -210,7 +211,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -230,7 +231,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -240,7 +241,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -250,7 +251,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -260,7 +261,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -270,7 +271,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -280,7 +281,7 @@ export default class TopicApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -297,7 +298,7 @@ export default class TopicApi {
           authorization: `bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
-        baseURL: 'http://localhost:8001/api/v2',
+        baseURL: apiDest,
       },
     );
     return res;

@@ -54,7 +54,7 @@
         <template #header-import-export="header">
           <a
             class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            href="http://localhost:8001/api/v2/template?type=User"
+            :href="`${BASE_API_URL}/api/v2/template?type=User`"
           >Tải mẫu nhập sinh viên</a>
         </template>
         <template #item-import-export="item">
@@ -117,6 +117,7 @@ export default {
     ConfirmModal,
   },
   setup () {
+    const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const removeId = ref(0);
     const store = useStore();
     const $toast = useToast();
@@ -223,6 +224,7 @@ export default {
       confirmRemove,
       schedulesShow,
       handleRemoveSchedule,
+      BASE_API_URL,
     };
   },
   data () {
@@ -288,7 +290,7 @@ export default {
       await this.$store.dispatch('url/updateId', id);
     },
     getLink (id) {
-      return `http://localhost:5000/v1/schedule/${id}/export`;
+      return `${this.BASE_API_URL}/v1/schedule/${id}/export`;
     },
     async handleExportSchedule (id) {
       await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });

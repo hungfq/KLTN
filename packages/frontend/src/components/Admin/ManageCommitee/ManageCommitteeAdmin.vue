@@ -30,7 +30,7 @@
         <template #header-import-export="header">
           <a
             class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            href="http://localhost:8001/api/v2/template?type=User"
+            :href="`${BASE_API_URL}/api/v2/template?type=User`"
           >Tải mẫu nhập đề tài</a>
         </template>
         <template #item-import-export="item">
@@ -92,6 +92,7 @@ export default {
     ConfirmModal,
   },
   setup () {
+    const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const removeId = ref(0);
     const store = useStore();
     const $toast = useToast();
@@ -181,7 +182,7 @@ export default {
       return committees.value;
     });
 
-    const getLink = (id) => `http://localhost:5000/v1/schedule/${id}/export`;
+    const getLink = (id) => `${BASE_API_URL.value}/v1/schedule/${id}/export`;
 
     return {
       headers,
@@ -201,6 +202,7 @@ export default {
       committeesShow,
       handleRemoveSchedule,
       getLink,
+      BASE_API_URL,
     };
   },
   data () {

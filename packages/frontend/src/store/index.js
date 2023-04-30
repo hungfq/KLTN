@@ -89,7 +89,7 @@ const createWebSocketPlugin = (socket) => (store) => {
   });
 };
 
-const socket = io('http://localhost:8002');
+const socket = io(import.meta.env.BASE_SOCKET_URL || 'http://localhost:8002');
 
 const websocketPlugin = createWebSocketPlugin(socket);
 

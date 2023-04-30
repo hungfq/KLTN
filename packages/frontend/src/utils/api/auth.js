@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// const apiDest = 'http://localhost:5000/v1';
-// axios.defaults.baseURL = apiDest;
+//
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const apiDest = `${baseUrl}/api/v2`;
+axios.defaults.baseURL = apiDest;
 
 // export const signInWithGoogle = (access_token, type) => axios({
 //   method: 'POST',

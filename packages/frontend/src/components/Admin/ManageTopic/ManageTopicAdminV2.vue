@@ -118,6 +118,7 @@ export default {
     UploadButtonVue,
   },
   setup () {
+    const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const store = useStore();
     const loading = ref(false);
     const itemsSelected = ref([]);
@@ -217,6 +218,7 @@ export default {
       selectSchedule,
       selectLecturer,
       topicShow,
+      BASE_API_URL,
     };
   },
   computed: {
