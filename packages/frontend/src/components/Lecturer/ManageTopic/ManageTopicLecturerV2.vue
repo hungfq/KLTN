@@ -264,7 +264,8 @@ export default {
     };
 
     const checkCanEdit = (scheduleId) => {
-      const a ;
+      // TODO: Make only updated the topic when have permission
+      const a = 1;
       return true;
       // if (!scheduleId) return false;
       // const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
