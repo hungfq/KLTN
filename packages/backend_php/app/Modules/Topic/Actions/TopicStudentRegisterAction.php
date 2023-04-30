@@ -73,12 +73,14 @@ class TopicStudentRegisterAction
         if ($lecturer = data_get($this->topic, 'lecturer')) {
             $topicCode = data_get($this->topic, 'code');
 
-            $lecturer->notifications()->create([
+            $data = [
                 'title' => 'ĐĂNG KÝ ĐỀ TÀI',
                 'message' => "Có đăng ký mới trong đề tài: $topicCode",
-            ]);
+            ];
 
-            Socket::sendUpdateNotificationRequest([data_get($lecturer, 'id')]);
+            $lecturer->notifications()->create($data);
+
+            Socket::sendUpdateNotificationRequest([data_get($lecturer, 'id')], $data);
         }
     }
 }

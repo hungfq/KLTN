@@ -20,14 +20,15 @@ class Socket
         $client->close();
     }
 
-    public static function sendUpdateNotificationRequest($ids)
+    public static function sendUpdateNotificationRequest($ids, $notification)
     {
         $client = new Client(Client::engine(Client::CLIENT_3X, env('SOCKET_URL', '')));
         $client->initialize();
         $client->of('/');
         foreach ($ids as $id) {
-            $client->emit('update-notify',  [
+            $client->emit('update-notify', [
                 'id' => $id,
+                'notification' => $notification,
             ]);
         }
         $client->close();

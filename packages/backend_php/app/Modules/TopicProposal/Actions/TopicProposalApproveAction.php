@@ -63,11 +63,12 @@ class TopicProposalApproveAction
         $title = data_get($this->topicProposal, 'title');
 
         $this->topicProposal->students->each(function ($student) use ($title) {
-            $student->notifications()->create([
+            $data = [
                 'title' => 'DUYỆT YÊU CẦU',
                 'message' => "Đề tài $title đã được chấp thuận.",
-            ]);
-            Socket::sendUpdateNotificationRequest([data_get($student, 'id')]);
+            ];
+            $student->notifications()->create($data);
+            Socket::sendUpdateNotificationRequest([data_get($student, 'id')], $data);
         });
 
         return $this;
