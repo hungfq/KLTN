@@ -15,7 +15,7 @@
         "eslint-plugin-import": "^2.22.0"
     },
     "scripts": {
-        "start": "nodejs server.js",
+        "start": "node socket.js",
         "dev": "node ./node_modules/node-dev/bin/node-dev socket.js"
     }
 }
