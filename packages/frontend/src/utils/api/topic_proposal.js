@@ -14,7 +14,7 @@ export default class TopicProposalApi {
       },
       baseURL: 'http://localhost:8001/api/v2',
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async listAllTopicsByCreated (token, scheduleId) {

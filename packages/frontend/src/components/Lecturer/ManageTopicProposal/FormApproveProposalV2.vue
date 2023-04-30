@@ -67,18 +67,6 @@
             />
           </div>
         </div>
-        <div class="my-2-1 w-3/4">
-          <span class="font-bold text-sm py-4 my-4">
-            Giảng viên hướng dẫn
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="lecturerId"
-              :options="listLecturers"
-              :disabled="true"
-            />
-          </div>
-        </div>
         <FormKit
           v-model="description"
           name="description"
@@ -89,18 +77,6 @@
           validation="required"
           :disabled="isView"
         />
-        <div class="my-2-1 w-3/4">
-          <span class="font-bold text-sm py-4 my-4">
-            Đợt đăng ký
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="scheduleId"
-              :options="listSchedules"
-              :disabled="true"
-            />
-          </div>
-        </div>
       </div>
       <!-- Modal footer -->
       <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
@@ -110,7 +86,7 @@
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           @click="handleAddTopicAdmin"
         >
-          {{ isSave ? 'Lưu' : 'Cập nhật' }}
+          {{ isSave ? 'Lưu' : 'Phê duyệt' }}
         </button>
       </div>
     </div>
@@ -121,6 +97,8 @@
 import Multiselect from '@vueform/multiselect';
 import { getValidationMessages } from '@formkit/validation';
 import { mapState, mapGetters } from 'vuex';
+import ScheduleApi from '../../../utils/api/schedule';
+import TopicProposalApi from '../../../utils/api/topic_proposal';
 
 export default {
   name: 'FormApproveProposal',
@@ -174,7 +152,6 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
     await this.$store.dispatch('student/fetchListStudent', this.token);
     const students = this.$store.state.student.listStudents;
     this.listLecturers = [{
@@ -192,14 +169,7 @@ export default {
       }
       return st;
     });
-    const scheduleApprove = this.listScheduleApproveLecturer.find((schedule) => schedule._id.toString() === this.currentScheduleId.toString());
-    if (scheduleApprove) {
-      this.listSchedules = [{
-        value: scheduleApprove._id,
-        label: `${scheduleApprove.code}: ${scheduleApprove.name}`,
-        disabled: true,
-      }];
-    }
+
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       const { listTopicProposalByLecturer } = this.$store.state.topic_proposal;
@@ -236,11 +206,18 @@ export default {
       try {
         if (this.check() && this.isUpdate) {
           await this.$store.dispatch('topic_proposal/updateTopicProposal', { token: this.token, value: { ...value, _id: this.id } });
+          await TopicProposalApi.approveTopicProposalByLecturer(this.token, this.id);
         }
-        this.$toast.success('Đã cập nhật một thành công!');
+        this.$toast.success('Đã phê duyệt đề tài hướng dẫn thành công!');
         this.rollBack();
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        console.log('🚀 ~ file: FormApproveProposalV2.vue:214 ~ handleAddTopicAdmin ~ e:', e);
+        console.log('🚀 ~ file: FormApproveProposalV2.vue:216 ~ handleAddTopicAdmin ~ e.response.data.error.message:', e.response.data.error.message);
+        if (e.response.data.error.message === 'Some student already has register in another topic') {
+          this.$toast.error('Không thể phê duyệt. Sinh viên đã tồn tại trong một đề tài hướng dẫn khác!');
+        } else {
+          this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        }
       }
     },
     check () {
@@ -249,15 +226,11 @@ export default {
         return false;
       }
       if (!this.limit) {
-        this.$toast.error('Vui lòng số lượng thành viên mã đề tài');
+        this.$toast.error('Vui lòng số lượng thành viên');
         return false;
       }
       if (Number(this.limit) < 1 || Number(this.limit) > 3) {
         this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
-        return false;
-      }
-      if (!this.lecturerId && this.lecturerId === '') {
-        this.$toast.error('Vui lòng chọn giảng viên đề tài');
         return false;
       }
       if (this.studentIds.length > this.limit) {

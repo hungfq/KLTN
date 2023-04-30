@@ -40,22 +40,35 @@
           :loading="loading"
           buttons-pagination
           :rows-items="rowItems"
-          @click-row="showRow"
         >
           <template #item-operation="item">
             <div
-              class="flex"
+              class="flex flex-col"
             >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                @click="editItem(item)"
-              >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="2xl"
-                @click="handleRemoveSchedule(item._id)"
-              />
+              <div class="m-1 cursor-pointer rounded-xl">
+                <button
+                  class=" text-white bg-indigo-600 p-1 w-24"
+                  @click="editItem(item)"
+                >
+                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+              </div>
+              <div class="m-1 cursor-pointer rounded">
+                <button
+                  class=" text-white bg-red-600 p-1 w-24"
+                  @click="handleRemoveTopic(item._id)"
+                >
+                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'ban']"
+                  />
+                </button>
+              </div>
             </div>
           </template>
         </EasyDataTable>
@@ -70,10 +83,9 @@
     <template #title>
       Xác nhận
     </template>
-    <div>Bạn có xác nhận xóa đề tài này không?</div>
+    <div>Bạn có xác nhận từ chối hướng dẫn này không?</div>
   </ConfirmModal>
 </template>
-
 <script>
 // import { mapState, mapGetters } from 'vuex';
 import {
@@ -109,11 +121,11 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh vien', value: 'students' },
-      { text: 'Giảng viên phản biện', value: 'critical' },
       { text: 'Hành động', value: 'operation' },
     ];
 
     const searchVal = ref('');
+    const removeId = ref('');
     const selectSchedule = ref('all');
     const selectLecturer = ref('');
     const items = [];
@@ -136,12 +148,9 @@ export default {
         } else {
           response = await TopicProposalApi.listAllTopicsByLecturer(token, options, selectSchedule.value);
         }
-        console.log(topics);
-        console.log(topics.value);
         if (response) {
           topics.value = response.data;
-          console.log('🚀 ~ file: ManageProposalLecturerV2.vue:141 ~ loadToServer ~ topics.value:', topics.value);
-          store.state.topic.listTopics = topics.value;
+          store.state.topic_proposal.listTopicProposalByLecturer = topics.value;
           if (response.meta) {
             serverItemsLength.value = response.meta.pagination.total;
           } else {
@@ -167,8 +176,8 @@ export default {
     });
 
     const editItem = (item) => {
-      store.dispatch('url/updateSection', `${modulePage.value}-update`);
       store.dispatch('url/updateId', item._id);
+      store.dispatch('url/updateSection', `${modulePage.value}-update`);
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
     watch(modulePage, async () => { await loadToServer(serverOptions.value); });
@@ -187,12 +196,19 @@ export default {
     };
 
     const showConfirmModal = ref(false);
+
+    const handleRemoveTopic = async (id) => {
+      removeId.value = id;
+      showConfirmModal.value = true;
+    };
     const confirmRemove = async (id) => {
       showConfirmModal.value = false;
       try {
-        $toast.success('Đã xóa thành công!');
+        await TopicProposalApi.declineTopicProposal(token, removeId.value);
+        await loadToServer(serverOptions.value);
+        $toast.success('Đã từ chối thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
       }
     };
 
@@ -208,7 +224,6 @@ export default {
         code: topic.code,
         title: topic.title,
         lecturer: topic.lecturerId.name || '',
-        critical: topic.criticalLecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
       }));
@@ -227,6 +242,7 @@ export default {
       editItem,
       modulePage,
       handleImport,
+      handleRemoveTopic,
       showConfirmModal,
       confirmRemove,
       selectSchedule,
@@ -267,10 +283,10 @@ export default {
       await this.$store.dispatch('url/updateSection', `${this.module}-view`);
       await this.$store.dispatch('url/updateId', id);
     },
-    async handleRemoveTopic (id) {
-      this.removeId = id;
-      this.showConfirmModal = true;
-    },
+    // async handleRemoveTopic (id) {
+    // //   this.removeId = id;
+    // //   this.showConfirmModal = true;
+    // // },
   },
 };
 </script>
