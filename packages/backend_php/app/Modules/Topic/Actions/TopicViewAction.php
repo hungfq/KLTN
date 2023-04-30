@@ -34,7 +34,7 @@ class TopicViewAction
         }
 
         if ($lecturerId = $dto->lecturerId) {
-            $query->where('lecturer_id', $lecturerId);
+            $query->where('topics.lecturer_id', $lecturerId);
         }
 
         if ($scheduleId = $dto->scheduleId) {
@@ -42,7 +42,7 @@ class TopicViewAction
         }
 
         if ($criticalId = $dto->criticalId) {
-            $query->where('critical_id', $criticalId);
+            $query->where('topics.critical_id', $criticalId);
         }
 
         if ($dto->is_lecturer_approve) {
@@ -59,11 +59,11 @@ class TopicViewAction
         }
 
         if ($dto->is_lecturer_mark) {
-            $query->where('lecturer_id', Auth::id());
+            $query->where('topics.lecturer_id', Auth::id());
         }
 
         if ($dto->is_critical_mark) {
-            $query->where('critical_id', Auth::id());
+            $query->where('topics.critical_id', Auth::id());
         }
 
         if ($dto->is_president_mark) {
