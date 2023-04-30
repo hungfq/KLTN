@@ -30,7 +30,7 @@ const actions = {
   async fetchListSchedules ({ commit }, token) {
     try {
       const listSchedules = await ScheduleApi.listAllSchedule(token);
-      commit('setListSchedules', listSchedules);
+      commit('setListSchedules', listSchedules.data);
     } catch (e) {
       console.log(e.message);
     }
