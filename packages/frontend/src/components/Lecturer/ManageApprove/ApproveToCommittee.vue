@@ -1,5 +1,14 @@
 <template>
   <div class="flex flex-col">
+    <div class="tabs tabs-boxed bg-white">
+      <a
+        v-for="option in headerTabs"
+        :key="option.code"
+        class="tab rounded-md"
+        :class="{'tab-active' : option.code === tab}"
+        @click="tab= option.code"
+      >{{ option.text }}</a>
+    </div>
     <div>
       <div class="flex">
         <div class="inline-block p-2 rounded-md">
@@ -40,35 +49,34 @@
           :loading="loading"
           buttons-pagination
           :rows-items="rowItems"
+          @click-row="showRow"
         >
+          <template #item-import-export="students">
+            <div class-="flex flex-col">
+              <ul>
+                <li
+                  v-for="student in students"
+                  :key="`${student}`"
+                >
+                  {{ student }}
+                </li>
+              </ul>
+            </div>
+          </template>
           <template #item-operation="item">
             <div
-              class="flex flex-col"
+              class="flex"
             >
-              <div class="m-1 cursor-pointer rounded-xl">
-                <button
-                  class=" text-white bg-indigo-600 p-1 w-24"
-                  @click="editItem(item)"
-                >
-                  <span class="font-semibold px-1">Phê duyệt</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'check']"
-                  />
-                </button>
-              </div>
-              <div class="m-1 cursor-pointer rounded">
-                <button
-                  class=" text-white bg-red-600 p-1 w-24"
-                  @click="handleRemoveTopic(item._id)"
-                >
-                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'ban']"
-                  />
-                </button>
-              </div>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+                @click="editItem(item)"
+              >
+              <font-awesome-icon
+                icon="fa-solid fa-trash-can"
+                size="2xl"
+                @click="handleRemoveSchedule(item._id)"
+              />
             </div>
           </template>
         </EasyDataTable>
@@ -83,24 +91,22 @@
     <template #title>
       Xác nhận
     </template>
-    <div>Bạn có xác nhận từ chối hướng dẫn này không?</div>
+    <div>Bạn có xác nhận xóa đề tài này không?</div>
   </ConfirmModal>
 </template>
+
 <script>
-// import { mapState, mapGetters } from 'vuex';
 import {
   ref, watch, onMounted, computed,
 } from 'vue';
-import { mapState, mapGetters, useStore } from 'vuex';
+import { useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
-// Optionally import default styling
 import 'vue-search-input/dist/styles.css';
 
-// import 'vue-search-input/dist/styles.css';
 import ScheduleApi from '../../../utils/api/schedule';
-import TopicProposalApi from '../../../utils/api/topic_proposal';
+import TopicApi from '../../../utils/api/topic';
 
 export default {
   name: 'ManageTopicLecturer',
@@ -121,11 +127,16 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh vien', value: 'students' },
+      { text: 'Giảng viên phản biện', value: 'critical' },
       { text: 'Hành động', value: 'operation' },
     ];
 
+    const headerTabs = [
+      { code: 'advisor', text: 'Hướng dẫn' },
+      { code: 'critical', text: 'Phản biện' },
+    ];
+    const tab = ref('advisor');
     const searchVal = ref('');
-    const removeId = ref('');
     const selectSchedule = ref('all');
     const selectLecturer = ref('');
     const items = [];
@@ -136,37 +147,38 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
+    const currentLecturerId = store.getters['auth/userId'];
     const modulePage = computed(() => store.getters['url/module']);
-
-    const $toast = useToast();
     const loadToServer = async (options) => {
-      try {
-        loading.value = true;
-        let response;
-        if (!selectSchedule.value || selectSchedule.value === 'all') {
-          response = await TopicProposalApi.listAllTopicsByLecturer(token, options);
+      loading.value = true;
+      let response;
+      if (!selectSchedule.value || selectSchedule.value === 'all') {
+        if (tab.value === 'advisor') {
+          response = await TopicApi.listAllTopicsByLecturerId(token, currentLecturerId, options);
         } else {
-          response = await TopicProposalApi.listAllTopicsByLecturer(token, options, selectSchedule.value);
+          response = await TopicApi.listAllTopicsByCritical(token, currentLecturerId, options);
         }
-        if (response) {
-          topics.value = response.data;
-          store.state.topic_proposal.listTopicProposalByLecturer = topics.value;
-          if (response.meta) {
-            serverItemsLength.value = response.meta.pagination.total;
-          } else {
-            serverItemsLength.value = 1;
-          }
-        }
-        loading.value = false;
-      } catch (e) {
-        loading.value = false;
-        console.log(e.message);
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      } else if (tab.value === 'advisor') {
+        response = await TopicApi.listAllTopicsByLecturerIdAndScheduleId(token, currentLecturerId, selectSchedule.value, options);
+      } else {
+        response = await TopicApi.listAllTopicsByCriticalAndScheduleId(token, currentLecturerId, selectSchedule.value, options);
       }
+      if (response) {
+        topics.value = response.data;
+        store.state.topic.listTopics = topics.value;
+        if (response.meta) {
+          serverItemsLength.value = response.meta.pagination.total;
+        } else {
+          serverItemsLength.value = 1;
+        }
+      }
+      loading.value = false;
     };
 
+    const $toast = useToast();
+
     onMounted(async () => {
-      const listAllSchedule = await ScheduleApi.listScheduleApproveLecturer(token);
+      const listAllSchedule = await ScheduleApi.listAllSchedule(token);
       schedules.value = listAllSchedule.data;
       try {
         await loadToServer(serverOptions.value);
@@ -176,10 +188,13 @@ export default {
     });
 
     const editItem = (item) => {
-      store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-update`);
+      store.dispatch('url/updateId', item._id);
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(tab, async () => {
+      await loadToServer(serverOptions.value);
+    }, { deep: true });
     watch(modulePage, async () => { await loadToServer(serverOptions.value); });
 
     const handleImport = () => {
@@ -190,25 +205,32 @@ export default {
       await loadToServer(serverOptions.value);
     };
 
+    const checkCanEdit = (scheduleId) => {
+      // TODO: Make only updated the topic when have permission
+      const a = 1;
+      return true;
+      // if (!scheduleId) return false;
+      // const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
+      // if (!schedule) return false;
+      // const now = Date.now();
+      // const start = new Date(schedule.startApproveDate);
+      // const end = new Date(schedule.endApproveDate);
+      // return (start < now && now < end);
+    };
+
     const showRow = (item) => {
+      // if (!checkCanEdit(item.scheduleId)) return;
       store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
 
     const showConfirmModal = ref(false);
-
-    const handleRemoveTopic = async (id) => {
-      removeId.value = id;
-      showConfirmModal.value = true;
-    };
     const confirmRemove = async (id) => {
       showConfirmModal.value = false;
       try {
-        await TopicProposalApi.declineTopicProposal(token, removeId.value);
-        await loadToServer(serverOptions.value);
-        $toast.success('Đã từ chối thành công!');
+        $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
@@ -224,8 +246,15 @@ export default {
         code: topic.code,
         title: topic.title,
         lecturer: topic.lecturerId.name || '',
+        critical: topic.criticalLecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
+        committeePresidentGrade: topic.committeePresidentGrade || 0,
+        committeeSecretaryGrade: topic.committeeSecretaryGrade || 0,
+        advisorLecturerGrade: topic.advisorLecturerGrade || 0,
+        criticalLecturerGrade: topic.criticalLecturerGrade || 0,
+        criticalLecturerApprove: topic.criticalLecturerApprove || false,
+        advisorLecturerApprove: topic.advisorLecturerApprove || false,
       }));
     });
 
@@ -242,51 +271,19 @@ export default {
       editItem,
       modulePage,
       handleImport,
-      handleRemoveTopic,
       showConfirmModal,
       confirmRemove,
       selectSchedule,
       selectLecturer,
       topicShow,
       selectHandler,
+      checkCanEdit,
       schedules,
+      headerTabs,
+      tab,
       searchVal,
       search,
     };
-  },
-  computed: {
-    ...mapState({
-      isAuthenticated: ({ auth: { isAuthenticated } }) => isAuthenticated,
-    }),
-    ...mapGetters('auth', [
-      'userId', 'userEmail', 'userRole', 'token',
-    ]),
-    ...mapGetters('topic', [
-      'listTopicsByLecturerSchedule',
-    ]),
-    ...mapGetters('url', [
-      'page', 'module', 'section', 'id',
-    ]),
-    ...mapGetters('student', [
-      'studentId', 'studentEmail', 'student', 'listStudents',
-    ]),
-    ...mapGetters('schedule', [
-      'listSchedules',
-    ]),
-  },
-  methods: {
-    async handleUpdateTopic (id) {
-      await this.$store.dispatch('url/updateSection', `${this.module}-update`);
-      await this.$store.dispatch('url/updateId', id);
-    },
-    async handleShowTopic (id) {
-      await this.$store.dispatch('url/updateSection', `${this.module}-view`);
-      await this.$store.dispatch('url/updateId', id);
-    },
-    // async handleRemoveTopic (id) {
-    // //   this.removeId = id;
-    // //   this.showConfirmModal = true;
-    // // },
   },
 };
 </script>

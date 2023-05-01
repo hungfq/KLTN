@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const apiDest = 'http://localhost:5000/v1';
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TaskApi {
@@ -9,7 +10,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -19,7 +20,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -34,7 +35,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -49,7 +50,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -75,7 +76,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -85,7 +86,7 @@ export default class TaskApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }

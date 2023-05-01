@@ -1,8 +1,10 @@
 import axios from 'axios';
 import urlWithPagination from '../generate_url';
 
-const apiDest = 'http://localhost:8001/api/v2';
 
+
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class CommitteeApi {
@@ -12,7 +14,7 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data;
   }
@@ -22,7 +24,7 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -32,7 +34,7 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
@@ -42,7 +44,7 @@ export default class CommitteeApi {
       headers: {
         authorization: `bearer ${token}`,
       },
-      baseURL: 'http://localhost:8001/api/v2',
+      baseURL: apiDest,
     });
     return res.data.data;
   }
