@@ -248,14 +248,16 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicCriticalApprove (token) {
-    const res = await axios.get('/topic?is_critical_approve=1', {
+  static async listTopicCriticalApprove (token, options, scheduleId) {
+    let url = urlWithPagination('/topic?is_critical_approve=1', options);
+    if (scheduleId) url += `&schedule_id=${scheduleId}`;
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: apiDest,
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async topicAdvisorApprove (token, id) {

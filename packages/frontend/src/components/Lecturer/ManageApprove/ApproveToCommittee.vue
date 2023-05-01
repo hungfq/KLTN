@@ -18,7 +18,6 @@
             @change="selectHandler"
           >
             <option
-              :key="`key-null`"
               :value="'all'"
             >
               Tất cả
@@ -49,7 +48,6 @@
           :loading="loading"
           buttons-pagination
           :rows-items="rowItems"
-          @click-row="showRow"
         >
           <template #item-import-export="students">
             <div class-="flex flex-col">
@@ -65,18 +63,32 @@
           </template>
           <template #item-operation="item">
             <div
-              class="flex"
+              class="flex flex-col"
             >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                @click="editItem(item)"
-              >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="2xl"
-                @click="handleRemoveSchedule(item._id)"
-              />
+              <div class="m-1 cursor-pointer rounded-xl">
+                <button
+                  class=" text-white bg-indigo-600 p-1 w-24"
+                  @click="editItem(item)"
+                >
+                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+              </div>
+              <div class="m-1 cursor-pointer rounded">
+                <button
+                  class=" text-white bg-red-600 p-1 w-24"
+                  @click="handleRemoveTopic(item._id)"
+                >
+                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'ban']"
+                  />
+                </button>
+              </div>
             </div>
           </template>
         </EasyDataTable>
@@ -91,7 +103,17 @@
     <template #title>
       Xác nhận
     </template>
-    <div>Bạn có xác nhận xóa đề tài này không?</div>
+    <div>Bạn có xác nhận từ chối đề tài này ra hội đồng không?</div>
+  </ConfirmModal>
+  <ConfirmModal
+    v-model="showConfirmApproveModal"
+    @confirm="confirmApprrove"
+    @cancel="showConfirmApproveModal=false"
+  >
+    <template #title>
+      Xác nhận phê duyệt
+    </template>
+    <div>Bạn có xác nhận phê duyệt đề tài ra hội đồng không?</div>
   </ConfirmModal>
 </template>
 
@@ -139,6 +161,7 @@ export default {
     const searchVal = ref('');
     const selectSchedule = ref('all');
     const selectLecturer = ref('');
+    const showConfirmApproveModal = ref(false);
     const items = [];
     const serverOptions = ref({
       page: 1,
@@ -147,25 +170,24 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-    const currentLecturerId = store.getters['auth/userId'];
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
       let response;
       if (!selectSchedule.value || selectSchedule.value === 'all') {
         if (tab.value === 'advisor') {
-          response = await TopicApi.listAllTopicsByLecturerId(token, currentLecturerId, options);
+          response = await TopicApi.listTopicAdvisorApprove(token, options);
         } else {
-          response = await TopicApi.listAllTopicsByCritical(token, currentLecturerId, options);
+          response = await TopicApi.listTopicCriticalApprove(token, options);
         }
       } else if (tab.value === 'advisor') {
-        response = await TopicApi.listAllTopicsByLecturerIdAndScheduleId(token, currentLecturerId, selectSchedule.value, options);
+        response = await TopicApi.listTopicAdvisorApprove(token, options, selectSchedule.value);
       } else {
-        response = await TopicApi.listAllTopicsByCriticalAndScheduleId(token, currentLecturerId, selectSchedule.value, options);
+        response = await TopicApi.listTopicCriticalApprove(token, options, selectSchedule.value);
       }
       if (response) {
         topics.value = response.data;
-        store.state.topic.listTopics = topics.value;
+        store.state.topic.listTopicPermitRegister = topics.value;
         if (response.meta) {
           serverItemsLength.value = response.meta.pagination.total;
         } else {
@@ -187,9 +209,13 @@ export default {
       }
     });
 
-    const editItem = (item) => {
-      store.dispatch('url/updateSection', `${modulePage.value}-update`);
-      store.dispatch('url/updateId', item._id);
+    const editItem = async (item) => {
+      try {
+        await TopicApi.topicAdvisorApprove(token, item._id);
+        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
     watch(tab, async () => {
@@ -205,27 +231,16 @@ export default {
       await loadToServer(serverOptions.value);
     };
 
-    const checkCanEdit = (scheduleId) => {
-      // TODO: Make only updated the topic when have permission
-      const a = 1;
-      return true;
-      // if (!scheduleId) return false;
-      // const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
-      // if (!schedule) return false;
-      // const now = Date.now();
-      // const start = new Date(schedule.startApproveDate);
-      // const end = new Date(schedule.endApproveDate);
-      // return (start < now && now < end);
-    };
-
-    const showRow = (item) => {
-      // if (!checkCanEdit(item.scheduleId)) return;
-      store.dispatch('url/updateId', item._id);
-      store.dispatch('url/updateSection', `${modulePage.value}-view`);
-    };
-
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
+      showConfirmModal.value = false;
+      try {
+        $toast.success('Đã xóa thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      }
+    };
+    const confirmApprrove = async (id) => {
       showConfirmModal.value = false;
       try {
         $toast.success('Đã xóa thành công!');
@@ -261,7 +276,6 @@ export default {
     return {
       headers,
       items,
-      showRow,
       itemsSelected,
       loading,
       serverOptions,
@@ -277,12 +291,13 @@ export default {
       selectLecturer,
       topicShow,
       selectHandler,
-      checkCanEdit,
       schedules,
       headerTabs,
       tab,
       searchVal,
       search,
+      showConfirmApproveModal,
+      confirmApprrove,
     };
   },
 };
