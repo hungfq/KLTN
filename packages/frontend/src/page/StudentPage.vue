@@ -4,7 +4,10 @@
     <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
       <div class="flex flex-shrink-0 transition-all">
         <LeftMiniBarVue />
-        <ManageBarStudentVue v-if="page === 'management'" />
+        <ManageBarStudentVue
+          v-if="page === 'management'"
+          :list-items="listItems"
+        />
         <TaskBarTopicVue v-if="page === 'task'" />
       </div>
       <div class="flex grow flex-col overflow-x-clip">
@@ -18,13 +21,7 @@
         />
         <div class="bg-white mx-4 border rounded overflow-scroll">
           <template v-if="page === 'management'">
-            <template v-if="module === 'topic'">
-              <ManageTopicStudentVue
-                v-if="section==='topic-list'"
-                :open=" isScheduleRegister"
-              />
-              <FormTopicVue v-if="section==='topic-view'" />
-            </template>
+            <TopicRegisterPage v-if="module === 'topic_register'" />
             <template v-if="module === 'topic_proposal'">
               <ManageTopicProposalStudentVue
                 v-if="section==='topic_proposal-list'"
@@ -42,14 +39,6 @@
                 v-if="section === 'topic_result-view'"
               />
             </template>
-            <!-- <template v-if="module === 'topic_result'">
-              <ManageTopicResult
-                v-if="section==='topic_result-list'"
-              />
-              <FormResultVue
-                v-if="section === 'topic_result-view'"
-              />
-            </template> -->
           </template>
           <template v-if="page === 'task'">
             <TaskDraggableVue />
@@ -69,8 +58,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/Student/LeftMiniBar.vue';
-import ManageBarStudentVue from '../components/Student/ManageBarStudent.vue';
+import ManageBarStudentVue from '../components/common/ManageBar.vue';
 import ManageTopicStudentVue from '../components/Student/ManageTopicStudent.vue';
 import ManageTopicProposalStudentVue from '../components/Student/ManageTopicProposalStudent.vue';
 import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
@@ -81,6 +69,9 @@ import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 import TaskBarTopicVue from '../components/Student/TaskBarTopic.vue';
+import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
+
+import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 
 export default {
   name: 'StudentPage',
@@ -98,6 +89,7 @@ export default {
     FormResultVue,
     TaskDraggableVue,
     TaskBarTopicVue,
+    TopicRegisterPage,
   },
   props: {
   },
@@ -105,6 +97,11 @@ export default {
     return {
       showErrorModal: false,
       isSidebarOpen: true,
+      listItems: [
+        { id: 'topic_register', value: 'Đăng ký đề tài' },
+        { id: 'topic_proposal', value: 'Đề xuất đề tài' },
+        { id: 'topic_result', value: 'Kiểm tra kết quả' },
+      ],
     };
   },
   computed: {
@@ -125,7 +122,9 @@ export default {
       return true;
     },
     isScheduleRegister () {
-      if (!this.listScheduleRegisterStudent || this.listScheduleRegisterStudent.length < 1) return false;
+      // if (!this.listScheduleRegisterStudent || this.listScheduleRegisterStudent.length < 1) return false;
+      // return true;
+      // TODO: Check permission for date
       return true;
     },
   },
@@ -136,8 +135,8 @@ export default {
     const { page, module, section } = this.$store.state.url;
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
-      this.$store.dispatch('url/updateModule', 'topic');
-      this.$store.dispatch('url/updateSection', 'topic-list');
+      this.$store.dispatch('url/updateModule', 'topic_register');
+      this.$store.dispatch('url/updateSection', 'topic_register-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
   },

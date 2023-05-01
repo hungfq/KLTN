@@ -210,7 +210,6 @@ export default {
   },
   async mounted () {
     this.loading = true;
-    await this.$store.dispatch('student/fetchListStudent', this.token);
     const listStudents = await UserApi.listUser(this.token, 'STUDENT');
     const students = listStudents.data;
     this.listStudents = students.map((student) => {
@@ -241,8 +240,8 @@ export default {
         this.endRegisterDate = this.formatDate(schedule.endRegisterDate);
         this.students = schedule.students;
       }
-      this.loading = false;
     }
+    this.loading = false;
   },
   methods: {
     showInfoStudent () {
