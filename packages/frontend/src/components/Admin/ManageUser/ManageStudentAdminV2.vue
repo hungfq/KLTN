@@ -94,7 +94,7 @@ export default {
     const serverOptions = ref({
       page: 1,
       rowsPerPage: 10,
-      sortBy: headers[0].value,
+      sortBy: 'updated_at',
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
