@@ -10,7 +10,7 @@
       <a @click="$router.push('/')">
         <img
           class="h-[40px] my-auto w-[50px]"
-          src="/fit.png"
+          :src="imageUrl"
         >
       </a>
     </div>
@@ -144,7 +144,7 @@
         <img
           referrerpolicy="no-referrer"
           class="w-10 h-10 rounded-lg shadow-md"
-          :src="userInfo ? userInfo.picture : '/default_avatar.png'"
+          :src="userInfo ? userInfo.picture : defaultAvatarUrl"
           alt="Avatar"
         >
         <span class="sr-only">User menu</span>
@@ -208,6 +208,14 @@ export default {
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
     ]),
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/fit.png', import.meta.url);
+      return imageUrl;
+    },
+    defaultAvatarUrl () {
+      const imageUrl = new URL('/src/assets/images/default_avatar.png', import.meta.url);
+      return imageUrl;
+    },
   },
   async mounted () {
     await this.$store.dispatch('notification/fetchListNotifications', this.token);

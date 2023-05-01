@@ -6,7 +6,7 @@
       </p>
       <img
         class="w-6 h-6 rounded-full ml-3"
-        :src="'/default_avatar.png'"
+        :src="defaultAvatarUrl"
         alt="Avatar"
       >
     </div>
@@ -36,6 +36,10 @@ export default {
     ...mapGetters('task', [
       'listMember',
     ]),
+    defaultAvatarUrl () {
+      const imageUrl = new URL('/src/assets/images/default_avatar.png', import.meta.url);
+      return imageUrl;
+    },
   },
   methods: {
     getAssignName (id) {
