@@ -21,23 +21,13 @@
           v-if="page === 'task'"
           :username="userName"
         />
-        <div class="bg-white mx-4 border rounded overflow-scroll">
+        <div class="bg-white mx-4 rounded overflow-auto">
           <template v-if="page === 'management'">
-            <BodyTopicPage v-if="module === 'topic'" />=
+            <BodyTopicPage v-if="module === 'topic'" />
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
             <BodyTopicApprovePage
               v-if="module === 'topic_approve'"
             />
-            <template v-if="module === 'topic_advisor_approve'">
-              <ManageTopicAdvisorLecturerVue
-                v-if="section === 'topic_advisor_approve-list'"
-              />
-            </template>
-            <template v-if="module === 'topic_critical_approve'">
-              <ManageTopicCriticalLecturerVue
-                v-if="section === 'topic_critical_approve-list'"
-              />
-            </template>
             <template v-if="module === 'advisor_mark'">
               <AdvisorMarkPage />
             </template>
@@ -104,12 +94,7 @@ export default {
         // { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
         { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
         { id: 'topic_approve', value: 'Phê duyệt đề tài' },
-        { id: 'topic_advisor_approve', value: 'Phê duyệt đề tài v2' },
-        { id: 'topic_critical_approve', value: 'Phê duyệt đề tài phản biện ra hội đồng' },
-        { id: 'advisor_mark', value: 'Giáo viên hướng dẫn cho điểm' },
-        { id: 'president_mark', value: 'Chủ tịch hội đồng cho điểm' },
-        { id: 'critical_mark', value: 'Giáo viên phản biện cho điểm' },
-        { id: 'secretary_mark', value: 'Thư ký hội đồng cho điểm' },
+        { id: 'mark', value: 'Chấm điểm' },
       ],
     };
   },
