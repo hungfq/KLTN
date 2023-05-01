@@ -87,7 +87,6 @@ export default {
       isSidebarOpen: true,
       listItems: [
         { id: 'topic', value: 'Quản lý đề tài' },
-        // { id: 'topic_proposal', value: 'Yêu cầu hướng dẫn' },
         { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
         { id: 'topic_approve', value: 'Phê duyệt đề tài' },
         { id: 'mark', value: 'Chấm điểm' },
