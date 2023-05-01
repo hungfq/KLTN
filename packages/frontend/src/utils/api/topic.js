@@ -1,7 +1,7 @@
 import axios from 'axios';
 import urlWithPagination from '../generate_url';
 
-const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001';
 const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
@@ -248,14 +248,16 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicCriticalApprove (token) {
-    const res = await axios.get('/topic?is_critical_approve=1', {
+  static async listTopicCriticalApprove (token, options, scheduleId) {
+    let url = urlWithPagination('/topic?is_critical_approve=1', options);
+    if (scheduleId) url += `&schedule_id=${scheduleId}`;
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: apiDest,
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async topicAdvisorApprove (token, id) {
@@ -268,8 +270,28 @@ export default class TopicApi {
     return res.data;
   }
 
+  static async topicAdvisorDecline (token, id) {
+    const res = await axios.delete(`/topic/${id}/lecturer/decline`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async topicCriticalApprove (token, id) {
     const res = await axios.post(`/topic/${id}/critical/approve`, {}, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async topicCriticalDecline (token, id) {
+    const res = await axios.delete(`/topic/${id}/critical/decline`, {
       headers: {
         authorization: `bearer ${token}`,
       },

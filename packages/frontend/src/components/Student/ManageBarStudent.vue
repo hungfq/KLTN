@@ -19,7 +19,7 @@
         <a href="#">
           <img
             class="w-2/3 mx-auto"
-            src="/fit.png"
+            :src="imageUrl"
           >
         </a>
       </div>
@@ -77,6 +77,10 @@ export default {
     },
     isResult () {
       return this.module === 'topic_result';
+    },
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/fit.png', import.meta.url);
+      return imageUrl;
     },
   },
   mounted () {

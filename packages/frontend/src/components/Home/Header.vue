@@ -2,7 +2,7 @@
   <div class="flex h-[60px] shadow-2xl rounded">
     <img
       class="h-[40px] my-auto ml-5 w-[50px]"
-      src="/fit.png"
+      :src="imageUrl"
     >
     <div class="grow flex">
       <div class="grow" />
@@ -45,6 +45,10 @@ export default {
     };
   },
   computed: {
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/fit.png', import.meta.url);
+      return imageUrl;
+    },
   },
   methods: {
     async login (close, typeLogin) {

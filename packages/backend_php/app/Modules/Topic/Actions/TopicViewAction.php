@@ -47,13 +47,14 @@ class TopicViewAction
 
         if ($dto->is_lecturer_approve) {
             $query->where('lecturer_id', Auth::id())
-                ->where('lecturer_approved', false);
+                ->whereNull('lecturer_approved');
         }
 
         if ($dto->is_critical_approve) {
             $query->where('topics.critical_id', Auth::id())
-                ->where('critical_approved', false);
+                ->whereNull('critical_approved');
         }
+
         if ($dto->as_least_lecturer_approve) {
             $query->where('lecturer_approved', true);
         }

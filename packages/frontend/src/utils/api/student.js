@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-
-const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001/';
+const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001';
 const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
