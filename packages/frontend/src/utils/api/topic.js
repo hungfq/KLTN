@@ -270,8 +270,28 @@ export default class TopicApi {
     return res.data;
   }
 
+  static async topicAdvisorDecline (token, id) {
+    const res = await axios.delete(`/topic/${id}/lecturer/decline`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async topicCriticalApprove (token, id) {
     const res = await axios.post(`/topic/${id}/critical/approve`, {}, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async topicCriticalDecline (token, id) {
+    const res = await axios.delete(`/topic/${id}/critical/decline`, {
       headers: {
         authorization: `bearer ${token}`,
       },

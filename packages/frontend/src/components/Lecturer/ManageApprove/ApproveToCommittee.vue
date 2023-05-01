@@ -162,6 +162,7 @@ export default {
     const selectLecturer = ref('');
     const showConfirmApproveModal = ref(false);
     const approveId = ref('');
+    const declineId = ref('');
     const items = [];
     const serverOptions = ref({
       page: 1,
@@ -235,8 +236,13 @@ export default {
     const confirmRemove = async () => {
       showConfirmModal.value = false;
       try {
-        // TODO: Add deny approve to committee
-        $toast.success('Đã xóa thành công!');
+        if (tab.value === 'advisor') {
+          await TopicApi.topicAdvisorDecline(token, declineId.value);
+        } else {
+          await TopicApi.topicCriticalDecline(token, declineId.value);
+        }
+        $toast.success('Đã từ chối thành công!');
+        await loadToServer(serverOptions.value);
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
@@ -250,13 +256,19 @@ export default {
           await TopicApi.topicCriticalApprove(token, approveId.value);
         }
         $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+        await loadToServer(serverOptions.value);
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
-    const handleRemoveTopic = () => {
-      // TODO: Deny topic
+    const handleRemoveTopic = (id) => {
+      try {
+        declineId.value = id;
+        showConfirmModal.value = true;
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
     };
     const search = async () => {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
@@ -307,6 +319,7 @@ export default {
       search,
       showConfirmApproveModal,
       confirmApprove,
+      declineId,
       handleRemoveTopic,
     };
   },
