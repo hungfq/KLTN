@@ -25,12 +25,8 @@
           <template v-if="page === 'management'">
             <BodyTopicPage v-if="module === 'topic'" />
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
-            <BodyTopicApprovePage
-              v-if="module === 'topic_approve'"
-            />
-            <template v-if="module === 'advisor_mark'">
-              <AdvisorMarkPage />
-            </template>
+            <BodyTopicApprovePage v-if="module === 'topic_approve'" />
+            <BodyMarkPage v-if="module === 'mark'" />
           </template>
           <template v-if="page === 'task'">
             <TaskDraggableVue />

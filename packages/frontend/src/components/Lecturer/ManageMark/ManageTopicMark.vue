@@ -1,245 +1,330 @@
 <template>
-  <div>
-    <div class="flex">
-      <div class="inline-block p-2 rounded-md">
-        <select
-          v-model="selectVal"
-          class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          @change="selectHandler"
-        >
-          <!-- <option
-          :key="`key-null`"
-          :value="''"
-        /> -->
-          <option
-            v-for="option in listSchedules"
-            :key="`key-${option._id}`"
-            :value="option._id"
+  <div class="flex flex-col">
+    <div class="tabs tabs-boxed bg-white">
+      <a
+        v-for="option in headerTabs"
+        :key="option.code"
+        class="tab rounded-md"
+        :class="{'tab-active' : option.code === tab}"
+        @click="tab= option.code"
+      >{{ option.text }}</a>
+    </div>
+    <div>
+      <div class="flex">
+        <div class="inline-block p-2 rounded-md">
+          <select
+            v-model="selectSchedule"
+            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
+            @change="selectHandler"
           >
-            {{ option.code }} : {{ option.name }}
-          </option>
-        </select>
+            <option
+              :value="'all'"
+            >
+              Tất cả
+            </option>
+            <option
+              v-for="option in schedules"
+              :key="`key-${option._id}`"
+              :value="option._id"
+            >
+              {{ option.code }} : {{ option.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="shadow-md sm:rounded-lg m-4">
+        <SearchInput
+          v-model="searchVal"
+          :search-icon="true"
+          @keydown.space.enter="search"
+        />
+        <EasyDataTable
+          v-model:items-selected="itemsSelected"
+          v-model:server-options="serverOptions"
+          :server-items-length="serverItemsLength"
+          show-index
+          :headers="headers"
+          :items="topicShow"
+          :loading="loading"
+          buttons-pagination
+          :rows-items="rowItems"
+        >
+          <template #item-import-export="students">
+            <div class-="flex flex-col">
+              <ul>
+                <li
+                  v-for="student in students"
+                  :key="`${student}`"
+                >
+                  {{ student }}
+                </li>
+              </ul>
+            </div>
+          </template>
+          <template #item-operation="item">
+            <div
+              class="flex flex-col"
+            >
+              <div class="m-1 cursor-pointer rounded-xl">
+                <button
+                  class=" text-white bg-indigo-600 p-1 w-24"
+                  @click="editItem(item._id)"
+                >
+                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+              </div>
+              <div class="m-1 cursor-pointer rounded">
+                <button
+                  class=" text-white bg-red-600 p-1 w-24"
+                  @click="handleRemoveTopic(item._id)"
+                >
+                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'ban']"
+                  />
+                </button>
+              </div>
+            </div>
+          </template>
+        </EasyDataTable>
       </div>
     </div>
-    <div class="shadow-md sm:rounded-lg m-4">
-      <SearchInput
-        v-model="searchVal"
-        :search-icon="true"
-        @keydown.space.enter="search"
-      />
-      <table class="w-full text-sm text-left text-gray-500">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-          <tr>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Mã đề tài
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Tên đề tài
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Mô tả
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Danh sách sinh viên
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              <span class="sr-only">Edit</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="topic in topics"
-            :key="`topic-${topic._id}`"
-            class="bg-slate-300 hover:bg-gray-50 "
-          >
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ topic.code }}
-            </th>
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ topic.title }}
-            </th>
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-4 px-6 font-medium text-gray-900 w-4"
-            >
-              {{ topic.description }}
-            </th>
-            <td class="py-4 px-6">
-              <div class="font-mono cursor-pointer">
-                <!-- {{ topic.studentInfo }} -->
-                <template v-if="topic.studentInfo && topic.studentInfo.length > 0">
-                  <li
-                    v-for="student in topic.studentInfo"
-                    :key="`${Math.floor(Math.random() * 10000000000)}-${student}`"
-                  >
-                    {{ student ? student.name : '' }} - {{ student ? student.code : '' }}
-                  </li>
-                </template>
-              </div>
-            </td>
-            <td class="py-4 px-6 text-right">
-              <a
-                class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-                @click="showTopicMaskModal(topic._id)"
-              >Cho điểm</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <TopicMaskModalVue
-      v-model="showTopicModal"
-      :task-id="1"
-      @close-detail-modal="closeTopicMaskModal"
-    />
   </div>
+  <ConfirmModal
+    v-model="showConfirmModal"
+    @confirm="confirmRemove"
+    @cancel="showConfirmModal=false"
+  >
+    <template #title>
+      Xác nhận
+    </template>
+    <div>Bạn có xác nhận từ chối đề tài này ra hội đồng không?</div>
+  </ConfirmModal>
+  <ConfirmModal
+    v-model="showConfirmApproveModal"
+    @confirm="confirmApprove"
+    @cancel="showConfirmApproveModal=false"
+  >
+    <template #title>
+      Xác nhận phê duyệt
+    </template>
+    <div>Bạn có xác nhận phê duyệt đề tài ra hội đồng không?</div>
+  </ConfirmModal>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import {
+  ref, watch, onMounted, computed,
+} from 'vue';
+import { useStore } from 'vuex';
+import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
-// Optionally import default styling
+import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
-import TopicMaskModalVue from '../../Modal/TopicMaskModal.vue';
+
+import ScheduleApi from '../../../utils/api/schedule';
+import TopicApi from '../../../utils/api/topic';
 
 export default {
-  name: 'ManageTopicMark',
+  name: 'ManageTopicLecturer',
   components: {
     SearchInput,
-    TopicMaskModalVue,
+    ConfirmModal,
   },
-  data () {
-    return {
-      selectVal: '',
-      searchVal: '',
-      topics: [],
-      canEdit: false,
-      showTopicModal: false,
-    };
-  },
-  computed: {
-    ...mapState({
-      isAuthenticated: ({ auth: { isAuthenticated } }) => isAuthenticated,
-    }),
-    ...mapGetters('auth', [
-      'userId', 'userEmail', 'userRole', 'token',
-    ]),
-    ...mapGetters('topic', [
-      'listTopicsByLecturerSchedule',
-    ]),
-    ...mapGetters('url', [
-      'page', 'module', 'section', 'id',
-    ]),
-    ...mapGetters('student', [
-      'studentId', 'studentEmail', 'student', 'listStudents',
-    ]),
-    ...mapGetters('schedule', [
-      'listSchedules',
-    ]),
-    listTopicsLecturer () {
-      const list = this.listTopicsByLecturerSchedule.map((t) => {
-        const listStudents = t.students.map((s) => this.listStudents.find((st) => st.code.toString() === s.toString()));
-        return {
-          ...t, studentInfo: listStudents,
-        };
-      });
-      const newList = list.filter((item) => {
-        if (!item.lecturerId) return false;
-        return item.lecturerId._id.toString() === this.userId.toString();
-      });
-      return newList;
-    },
-  },
-  watch: {
-    listTopicsByLecturerSchedule: {
-      handler () {
-        this.topics = this.listTopicsLecturer;
-      },
-    },
-  },
-  async mounted () {
-    await this.$store.dispatch('student/fetchListStudent', this.token);
-    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
-    this.topics = this.listTopicsLecturer;
-    this.selectVal = this.listSchedules[0] ? this.listSchedules[0]._id : null;
-    this.$store.commit('topic/setTopicScheduleId', this.selectVal);
-    if (this.selectVal) { await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal }); }
-    this.checkCanEdit(this.selectVal);
-  },
-  methods: {
-    async handleUpdateTopic (id) {
-      await this.$store.dispatch('url/updateSection', `${this.module}-update`);
-      await this.$store.dispatch('url/updateId', id);
-    },
-    async handleShowTopic (id) {
-      await this.$store.dispatch('url/updateSection', `${this.module}-view`);
-      await this.$store.dispatch('url/updateId', id);
-    },
-    displayLecturer (lecturer) {
-      return lecturer ? lecturer.name : '';
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const topicFilter = this.listTopicsLecturer.filter((topic) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (topic.title.match(re)) return true;
-          if (topic.code.match(re)) return true;
-          for (let i; i < topic.students.length; i += 1) {
-            if (topic.students[i]) {
-              if (topic.students[i].name.match(re)) return true;
-              if (topic.students[i].code.match(re)) return true;
-            }
-          }
-          return false;
-        });
-        this.topics = topicFilter;
-      } else this.topics = this.listTopicsLecturer;
-    },
-    async selectHandler () {
-      this.checkCanEdit(this.selectVal);
-      this.$store.commit('topic/setTopicScheduleId', this.selectVal);
-      await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.userId, scheduleId: this.selectVal });
-    },
-    checkCanEdit (scheduleId) {
-      const schedule = this.listSchedules.filter((sc) => sc._id === scheduleId)[0];
-      if (schedule) {
-        const now = Date.now();
-        const start = new Date(schedule.startApproveDate);
-        const end = new Date(schedule.endApproveDate);
-        this.canEdit = (start < now && now < end);
+  setup () {
+    const store = useStore();
+    const loading = ref(false);
+    const itemsSelected = ref([]);
+    const serverItemsLength = ref(0);
+    const rowItems = [10, 20, 50];
+    // Init value
+    const topics = ref([]);
+    const schedules = ref([]);
+    const headers = [
+      { text: 'Mã số', value: 'code', sortable: true },
+      { text: 'Tên đề tài ', value: 'title', sortable: true },
+      { text: 'Sinh vien', value: 'students' },
+      { text: 'Hành động', value: 'operation' },
+    ];
+
+    const headerTabs = [
+      { code: 'advisor', text: 'Hướng dẫn' },
+      { code: 'critical', text: 'Phản biện' },
+      { code: 'secretary', text: 'Thư ký' },
+      { code: 'president', text: 'Chủ tịch' },
+    ];
+    const tab = ref('advisor');
+    const searchVal = ref('');
+    const selectSchedule = ref('all');
+    const selectLecturer = ref('');
+    const showConfirmApproveModal = ref(false);
+    const approveId = ref('');
+    const declineId = ref('');
+    const items = [];
+    const serverOptions = ref({
+      page: 1,
+      rowsPerPage: 10,
+      sortBy: 'updated_at',
+      sortType: 'desc',
+    });
+    const token = store.getters['auth/token'];
+    const modulePage = computed(() => store.getters['url/module']);
+    // TODO: Update API get mark and update mark in committee
+    const loadToServer = async (options) => {
+      loading.value = true;
+      let response;
+      if (!selectSchedule.value || selectSchedule.value === 'all') {
+        if (tab.value === 'advisor') {
+          response = await TopicApi.listTopicAdvisorApprove(token, options);
+        } else {
+          response = await TopicApi.listTopicCriticalApprove(token, options);
+        }
+      } else if (tab.value === 'advisor') {
+        response = await TopicApi.listTopicAdvisorApprove(token, options, selectSchedule.value);
+      } else {
+        response = await TopicApi.listTopicCriticalApprove(token, options, selectSchedule.value);
       }
-    },
-    showTopicMaskModal () {
-      this.showTaskDetail = true;
-    },
-    async closeTopicMaskModal (close) {
-      await close();
-    },
+      if (response) {
+        topics.value = response.data;
+        store.state.topic.listTopicPermitRegister = topics.value;
+        if (response.meta) {
+          serverItemsLength.value = response.meta.pagination.total;
+        } else {
+          serverItemsLength.value = 1;
+        }
+      }
+      loading.value = false;
+    };
+
+    const $toast = useToast();
+
+    onMounted(async () => {
+      const listAllSchedule = await ScheduleApi.listAllSchedule(token);
+      schedules.value = listAllSchedule.data;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    });
+
+    const editItem = async (id) => {
+      try {
+        approveId.value = id;
+        showConfirmApproveModal.value = true;
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(tab, async () => {
+      await loadToServer(serverOptions.value);
+    }, { deep: true });
+    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+
+    const handleImport = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-import`);
+    };
+
+    const selectHandler = async () => {
+      await loadToServer(serverOptions.value);
+    };
+
+    const showConfirmModal = ref(false);
+    const confirmRemove = async () => {
+      showConfirmModal.value = false;
+      try {
+        if (tab.value === 'advisor') {
+          await TopicApi.topicAdvisorDecline(token, declineId.value);
+        } else {
+          await TopicApi.topicCriticalDecline(token, declineId.value);
+        }
+        $toast.success('Đã từ chối thành công!');
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      }
+    };
+    const confirmApprove = async () => {
+      showConfirmApproveModal.value = false;
+      try {
+        if (tab.value === 'advisor') {
+          await TopicApi.topicAdvisorApprove(token, approveId.value);
+        } else {
+          await TopicApi.topicCriticalApprove(token, approveId.value);
+        }
+        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      }
+    };
+
+    const handleRemoveTopic = (id) => {
+      try {
+        declineId.value = id;
+        showConfirmModal.value = true;
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const search = async () => {
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
+    };
+
+    const topicShow = computed(() => {
+      if (!topics.value) return [];
+      return topics.value.map((topic) => ({
+        _id: topic._id,
+        code: topic.code,
+        title: topic.title,
+        lecturer: topic.lecturerId.name || '',
+        critical: topic.criticalLecturerId.name || '',
+        students: topic.students || [],
+        scheduleId: topic.scheduleId?._id || null,
+        committeePresidentGrade: topic.committeePresidentGrade || 0,
+        committeeSecretaryGrade: topic.committeeSecretaryGrade || 0,
+        advisorLecturerGrade: topic.advisorLecturerGrade || 0,
+        criticalLecturerGrade: topic.criticalLecturerGrade || 0,
+        criticalLecturerApprove: topic.criticalLecturerApprove || false,
+        advisorLecturerApprove: topic.advisorLecturerApprove || false,
+      }));
+    });
+
+    return {
+      headers,
+      items,
+      itemsSelected,
+      loading,
+      serverOptions,
+      topics,
+      serverItemsLength,
+      rowItems,
+      editItem,
+      modulePage,
+      handleImport,
+      showConfirmModal,
+      confirmRemove,
+      selectSchedule,
+      selectLecturer,
+      topicShow,
+      selectHandler,
+      schedules,
+      headerTabs,
+      tab,
+      searchVal,
+      search,
+      showConfirmApproveModal,
+      confirmApprove,
+      declineId,
+      handleRemoveTopic,
+    };
   },
 };
 </script>
