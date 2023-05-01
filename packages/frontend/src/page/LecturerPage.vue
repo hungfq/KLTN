@@ -57,11 +57,11 @@ import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
-import AdvisorMarkPage from '../lecturer_page/AdvisorMark/AdvisorMarkPage.vue';
 
 import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
 import BodyTopicApprovePage from '../components/Lecturer/ManageApprove/TopicApproveBodyPage.vue';
+import BodyMarkPage from '../components/Lecturer/ManageMark/MarkBodyPage.vue';
 
 export default {
   name: 'LecturerPage',
@@ -74,10 +74,10 @@ export default {
     TaskBarScheduleVue,
     TaskBarTopicVue,
     TaskDraggableVue,
-    AdvisorMarkPage,
     BodyTopicPage,
     BodyTopicProposalPage,
     BodyTopicApprovePage,
+    BodyMarkPage,
   },
   props: {
   },

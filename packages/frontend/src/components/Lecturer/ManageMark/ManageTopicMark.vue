@@ -125,7 +125,7 @@ import { mapState, mapGetters } from 'vuex';
 import SearchInput from 'vue-search-input';
 // Optionally import default styling
 import 'vue-search-input/dist/styles.css';
-import TopicMaskModalVue from '../Modal/TopicMaskModal.vue';
+import TopicMaskModalVue from '../../Modal/TopicMaskModal.vue';
 
 export default {
   name: 'ManageTopicMark',
