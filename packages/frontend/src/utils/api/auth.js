@@ -15,8 +15,8 @@ axios.defaults.baseURL = apiDest;
 
 export const signInWithGoogle = (access_token, type) => axios({
   method: 'POST',
-  baseURL: 'http://localhost:8001/api/v2/auth',
-  url: 'login',
+  baseURL: apiDest,
+  url: 'auth/login',
   data: {
     access_token, type,
   },
