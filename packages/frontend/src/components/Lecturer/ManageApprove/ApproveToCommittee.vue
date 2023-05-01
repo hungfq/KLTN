@@ -68,7 +68,7 @@
               <div class="m-1 cursor-pointer rounded-xl">
                 <button
                   class=" text-white bg-indigo-600 p-1 w-24"
-                  @click="editItem(item)"
+                  @click="editItem(item._id)"
                 >
                   <span class="font-semibold px-1">Phê duyệt</span>
                   <font-awesome-icon
@@ -107,7 +107,7 @@
   </ConfirmModal>
   <ConfirmModal
     v-model="showConfirmApproveModal"
-    @confirm="confirmApprrove"
+    @confirm="confirmApprove"
     @cancel="showConfirmApproveModal=false"
   >
     <template #title>
@@ -149,7 +149,6 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh vien', value: 'students' },
-      { text: 'Giảng viên phản biện', value: 'critical' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -162,6 +161,7 @@ export default {
     const selectSchedule = ref('all');
     const selectLecturer = ref('');
     const showConfirmApproveModal = ref(false);
+    const approveId = ref('');
     const items = [];
     const serverOptions = ref({
       page: 1,
@@ -209,10 +209,10 @@ export default {
       }
     });
 
-    const editItem = async (item) => {
+    const editItem = async (id) => {
       try {
-        await TopicApi.topicAdvisorApprove(token, item._id);
-        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+        approveId.value = id;
+        showConfirmApproveModal.value = true;
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
@@ -232,23 +232,32 @@ export default {
     };
 
     const showConfirmModal = ref(false);
-    const confirmRemove = async (id) => {
+    const confirmRemove = async () => {
       showConfirmModal.value = false;
       try {
+        // TODO: Add deny approve to committee
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
-    const confirmApprrove = async (id) => {
-      showConfirmModal.value = false;
+    const confirmApprove = async () => {
+      showConfirmApproveModal.value = false;
       try {
-        $toast.success('Đã xóa thành công!');
+        if (tab.value === 'advisor') {
+          await TopicApi.topicAdvisorApprove(token, approveId.value);
+        } else {
+          await TopicApi.topicCriticalApprove(token, approveId.value);
+        }
+        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
+    const handleRemoveTopic = () => {
+      // TODO: Deny topic
+    };
     const search = async () => {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
       else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
@@ -297,7 +306,8 @@ export default {
       searchVal,
       search,
       showConfirmApproveModal,
-      confirmApprrove,
+      confirmApprove,
+      handleRemoveTopic,
     };
   },
 };
