@@ -4,9 +4,11 @@ namespace App\Modules\Topic\Controllers;
 
 use App\Http\Controllers\ApiController;
 use App\Modules\Topic\Actions\TopicCriticalApproveAction;
+use App\Modules\Topic\Actions\TopicCriticalDeclineAction;
 use App\Modules\Topic\Actions\TopicDeleteAction;
 use App\Modules\Topic\Actions\TopicImportAction;
 use App\Modules\Topic\Actions\TopicLecturerApproveAction;
+use App\Modules\Topic\Actions\TopicLecturerDeclineAction;
 use App\Modules\Topic\Actions\TopicMarkAction;
 use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicShowStudentAction;
@@ -134,7 +136,25 @@ class TopicController extends ApiController
         return $this->responseSuccess();
     }
 
+    public function lecturerDecline($id, TopicLecturerDeclineAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
     public function criticalApprove($id, TopicCriticalApproveAction $action)
+    {
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function criticalDecline($id, TopicCriticalDeclineAction $action)
     {
         DB::transaction(function () use ($action, $id) {
             $action->handle($id);

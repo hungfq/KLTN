@@ -57,9 +57,19 @@ $api->group([
             'uses' => 'TopicController@lecturerApprove',
         ]);
 
+        $api->delete('/lecturer/decline', [
+            'as' => '',
+            'uses' => 'TopicController@lecturerDecline',
+        ]);
+
         $api->post('/critical/approve', [
             'as' => '',
             'uses' => 'TopicController@criticalApprove',
+        ]);
+
+        $api->delete('/critical/decline', [
+            'as' => '',
+            'uses' => 'TopicController@criticalDecline',
         ]);
 
         $api->post('/mark', [

@@ -25,8 +25,8 @@ class CreateTopicsTable extends Migration
             $table->integer('committee_ordinal')->nullable();
             $table->unsignedBigInteger('lecturer_id')->nullable();
             $table->unsignedBigInteger('critical_id')->nullable();
-            $table->boolean('lecturer_approved')->default(false);
-            $table->boolean('critical_approved')->default(false);
+            $table->boolean('lecturer_approved')->nullable();
+            $table->boolean('critical_approved')->nullable();
             $table->float('lecturer_grade')->nullable();
             $table->float('critical_grade')->nullable();
             $table->float('committee_president_grade')->nullable();
