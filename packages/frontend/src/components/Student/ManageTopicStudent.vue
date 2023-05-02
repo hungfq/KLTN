@@ -170,12 +170,6 @@ export default {
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
     ]),
-    ...mapGetters('student', [
-      'studentId', 'studentEmail', 'student', 'listStudents',
-    ]),
-    ...mapGetters('schedule', [
-      'listScheduleRegisterStudent',
-    ]),
   },
   async mounted () {
     if (this.open) {

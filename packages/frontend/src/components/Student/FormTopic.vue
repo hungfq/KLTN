@@ -97,44 +97,6 @@
             />
           </div>
         </div>
-        <div class="my-2-1 w-2/5">
-          <span class="font-bold text-sm py-4 my-4">
-            Đợt đăng ký
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="scheduleId"
-              :options="listSchedules"
-              :searchable="true"
-              :disabled="true"
-            />
-          </div>
-        </div>
-        <!-- <FormKit
-          v-model="advisorLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên hướng dẫn"
-          :disabled="isView"
-        />
-        <FormKit
-          v-model="criticalLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên phản biện"
-          :disabled="true"
-        />
-        <FormKit
-          v-model="committeePresidentGrade"
-          type="number"
-          label="Điểm của chủ tịch hội đồng"
-          :disabled="true"
-        />
-        <FormKit
-          v-model="committeeSecretaryGrade"
-          name="limit"
-          type="number"
-          label="Điểm của thư ký"
-          :disabled="true"
-        /> -->
         <FormKit
           v-model="description"
           name="description"
