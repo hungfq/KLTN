@@ -75,6 +75,10 @@ class TopicViewAction
             $query->where('committees.secretary_id', Auth::id());
         }
 
+        if ($dto->schedule_ids) {
+            $query->whereIn('topics.schedule_id', $dto->schedule_ids);
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',
