@@ -5,6 +5,7 @@ namespace App\Modules\Schedule\Actions;
 use App\Entities\Schedule;
 use App\Libraries\Helpers;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleViewAction
 {
@@ -33,6 +34,12 @@ class ScheduleViewAction
         if ($dto->is_approve_time) {
             $query->whereDate('approve_start', '<=', date('Y-m-d H:i:s', time()))
                 ->whereDate('approve_end', '>=', date('Y-m-d H:i:s', time()));
+        }
+
+        if ($dto->is_student) {
+            $query->whereHas('students', function ($q) {
+                $q->where('student_id', Auth::id());
+            });
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [
