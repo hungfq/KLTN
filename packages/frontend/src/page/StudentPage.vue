@@ -59,10 +59,8 @@
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
-import ManageTopicStudentVue from '../components/Student/ManageTopicStudent.vue';
 import ManageTopicProposalStudentVue from '../components/Student/ManageTopicProposalStudent.vue';
 import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
-import FormTopicVue from '../components/Student/FormTopic.vue';
 import FormResultVue from '../components/Student/FormResult.vue';
 import FormTopicProposalVue from '../components/Student/FormTopicProposal.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
@@ -79,10 +77,8 @@ export default {
     ErrorModalVue,
     LeftMiniBarVue,
     ManageBarStudentVue,
-    ManageTopicStudentVue,
     ManageTopicProposalStudentVue,
     ManageTopicResult,
-    FormTopicVue,
     HeaderBarVue,
     MiniHeaderBarVue,
     FormTopicProposalVue,

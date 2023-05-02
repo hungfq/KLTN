@@ -211,8 +211,6 @@ export default {
         this.$toast.success('Đã phê duyệt đề tài hướng dẫn thành công!');
         this.rollBack();
       } catch (e) {
-        console.log('🚀 ~ file: FormApproveProposalV2.vue:214 ~ handleAddTopicAdmin ~ e:', e);
-        console.log('🚀 ~ file: FormApproveProposalV2.vue:216 ~ handleAddTopicAdmin ~ e.response.data.error.message:', e.response.data.error.message);
         if (e.response.data.error.message === 'Some student already has register in another topic') {
           this.$toast.error('Không thể phê duyệt. Sinh viên đã tồn tại trong một đề tài hướng dẫn khác!');
         } else {
