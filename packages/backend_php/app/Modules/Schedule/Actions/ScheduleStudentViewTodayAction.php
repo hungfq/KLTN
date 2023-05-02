@@ -15,6 +15,12 @@ class ScheduleStudentViewTodayAction
             ->whereDate('proposal_end', '>=', date('Y-m-d H:i:s', time()))
             ->get();
 
+        $approve = Schedule::query()
+            ->with(['students'])
+            ->whereDate('approve_start', '<=', date('Y-m-d H:i:s', time()))
+            ->whereDate('approve_end', '>=', date('Y-m-d H:i:s', time()))
+            ->get();
+
         $register = Schedule::query()
             ->with(['students'])
             ->whereDate('register_start', '<=', date('Y-m-d H:i:s', time()))
@@ -25,12 +31,16 @@ class ScheduleStudentViewTodayAction
         $proposalTransform = $proposal->map(function ($dtl) use ($transform) {
             return $transform->transform($dtl);
         });
+        $approveTransform = $approve->map(function ($dtl) use ($transform) {
+            return $transform->transform($dtl);
+        });
         $registerTransform = $register->map(function ($dtl) use ($transform) {
             return $transform->transform($dtl);
         });
 
         return [
             'proposal' => $proposalTransform,
+            'approve' => $approveTransform,
             'register' => $registerTransform,
         ];
     }
