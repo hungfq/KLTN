@@ -17,6 +17,7 @@ const initState = {
 
 const getters = {
   userId: (state) => state.userInfo._id,
+  code: (state) => state.userInfo.code,
   userEmail: (state) => state.userInfo.email,
   isAuthenticated: (state) => state.isAuthenticated,
   userInfo: (state) => state.userInfo,

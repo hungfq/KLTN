@@ -22,21 +22,10 @@
         <div class="bg-white mx-4 border rounded overflow-scroll">
           <template v-if="page === 'management'">
             <TopicRegisterPage v-if="module === 'topic_register'" />
-            <template v-if="module === 'topic_proposal'">
-              <ManageTopicProposalStudentVue
-                v-if="section==='topic_proposal-list'"
-                :open=" isScheduleProposal"
-              />
-              <FormTopicProposalVue
-                v-if="section === 'topic_proposal-update' || section === 'topic_proposal-import' || section === 'topic_proposal-view'"
-              />
-            </template>
+            <TopicProposalPage v-if="module === 'topic_proposal'" />
             <template v-if="module === 'topic_result'">
               <ManageTopicResult
                 v-if="section==='topic_result-list'"
-              />
-              <FormResultVue
-                v-if="section === 'topic_result-view'"
               />
             </template>
           </template>
@@ -59,10 +48,8 @@
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
-import ManageTopicStudentVue from '../components/Student/ManageTopicStudent.vue';
 import ManageTopicProposalStudentVue from '../components/Student/ManageTopicProposalStudent.vue';
 import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
-import FormTopicVue from '../components/Student/FormTopic.vue';
 import FormResultVue from '../components/Student/FormResult.vue';
 import FormTopicProposalVue from '../components/Student/FormTopicProposal.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
@@ -72,6 +59,7 @@ import TaskBarTopicVue from '../components/Student/TaskBarTopic.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
+import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
 
 export default {
   name: 'StudentPage',
@@ -79,10 +67,8 @@ export default {
     ErrorModalVue,
     LeftMiniBarVue,
     ManageBarStudentVue,
-    ManageTopicStudentVue,
     ManageTopicProposalStudentVue,
     ManageTopicResult,
-    FormTopicVue,
     HeaderBarVue,
     MiniHeaderBarVue,
     FormTopicProposalVue,
@@ -90,6 +76,7 @@ export default {
     TaskDraggableVue,
     TaskBarTopicVue,
     TopicRegisterPage,
+    TopicProposalPage,
   },
   props: {
   },
