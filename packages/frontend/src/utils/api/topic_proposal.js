@@ -18,14 +18,15 @@ export default class TopicProposalApi {
     return res.data;
   }
 
-  static async listAllTopicsByCreated (token, scheduleId) {
-    const res = await axios.get(`/topic-proposal?is_created=1&scheduleId=${scheduleId}`, {
+  static async listAllTopicsByCreated (token, scheduleId, options) {
+    const url = urlWithPagination(`/topic-proposal?is_created=1&scheduleId=${scheduleId}`, options);
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },
       baseURL: apiDest,
     });
-    return res.data.data;
+    return res.data;
   }
 
   static async addTopicProposal (token, value) {
@@ -50,6 +51,16 @@ export default class TopicProposalApi {
 
   static async removeTopicProposal (token, id) {
     const res = await axios.delete(`/topic-proposal/${id}`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
+  static async getTopicProposal (token, id) {
+    const res = await axios.get(`/topic-proposal/${id}`, {
       headers: {
         authorization: `bearer ${token}`,
       },

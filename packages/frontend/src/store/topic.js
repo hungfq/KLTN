@@ -10,6 +10,7 @@ const initState = {
   listTopicPermitRegister: [],
   topicScheduleId: null,
   listTopicByScheduleStudent: [],
+  listTopicProposalStudent: [],
 };
 
 const getters = {
