@@ -27,6 +27,13 @@ class AuthLoginWithGoogleAccessTokenAction
             ->validateEmail()
             ->generateTokenAndUpdateUserPicture();
 
+        $roles = [];
+        foreach ($this->user->roles as $role) {
+            $roles[] = [
+                'id' => data_get($role, 'id'),
+                'name' => data_get($role, 'name'),
+            ];
+        }
         return [
             'userInfo' => [
                 '_id' => $this->user->id,
@@ -37,7 +44,8 @@ class AuthLoginWithGoogleAccessTokenAction
                 'notificationIds' => [],
                 'picture' => $this->user->picture,
             ],
-            'role' => data_get($this->user, 'roles.0.name'),
+            'role' => $this->dto->type,
+            'roles' => $roles,
             'accessToken' => $this->token,
         ];
     }
@@ -61,7 +69,7 @@ class AuthLoginWithGoogleAccessTokenAction
     {
         $email = data_get($this->body, 'email');
 
-        $this->user = User::where('email', $email)->first();
+        $this->user = User::role($this->dto->type)->where('email', $email)->first();
         if (!$this->user) {
             throw new UserException('User not found');
         }
@@ -73,7 +81,7 @@ class AuthLoginWithGoogleAccessTokenAction
     {
         $this->token = $this->user->generateToken([
             'email' => $this->user->email,
-            'role' => data_get($this->user, 'roles.0.name'),
+            'role' => $this->dto->type,
         ]);
 
         if ($picture = data_get($this->body, 'picture')) {
