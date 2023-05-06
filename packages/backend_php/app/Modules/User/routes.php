@@ -10,6 +10,11 @@ $api->group([
         'uses' => 'UserController@view',
     ]);
 
+    $api->get('/{id:[0-9]+}', [
+        'as' => '',
+        'uses' => 'UserController@show',
+    ]);
+
     $api->post('/', [
         'as' => '',
         'uses' => 'UserController@store',

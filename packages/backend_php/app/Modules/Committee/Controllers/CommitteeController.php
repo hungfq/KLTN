@@ -4,10 +4,12 @@ namespace App\Modules\Committee\Controllers;
 
 use App\Http\Controllers\ApiController;
 use App\Modules\Committee\Actions\CommitteeDeleteAction;
+use App\Modules\Committee\Actions\CommitteeShowAction;
 use App\Modules\Committee\Actions\CommitteeStoreAction;
 use App\Modules\Committee\Actions\CommitteeUpdateAction;
 use App\Modules\Committee\Actions\CommitteeViewAction;
 use App\Modules\Committee\DTO\CommitteeViewDTO;
+use App\Modules\Committee\Transformers\CommitteeShowTransformer;
 use App\Modules\Committee\Transformers\CommitteeViewTransformer;
 use App\Modules\Committee\Validators\CommitteeStoreValidator;
 use App\Modules\Committee\Validators\CommitteeUpdateValidator;
@@ -25,6 +27,13 @@ class CommitteeController extends ApiController
         }
 
         return $this->response->paginator($results, $transformer);
+    }
+
+    public function show($id, CommitteeShowAction $action, CommitteeShowTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        return $this->response->item($results, $transformer);
     }
 
     public function store(CommitteeStoreValidator $validator, CommitteeStoreAction $action)
