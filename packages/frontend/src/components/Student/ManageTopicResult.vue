@@ -151,9 +151,27 @@
             </div>
           </div>
         </div>
+        <div class="my-2 mx-4">
+          <button
+            class="btn btn-error"
+            @click="removeRegister"
+          >
+            Hủy đăng ký
+          </button>
+        </div>
       </div>
     </div>
   </template>
+  <ConfirmModal
+    v-model="showConfirmModal"
+    @confirm="confirmRemove"
+    @cancel="showConfirmModal=false"
+  >
+    <template #title>
+      Xác nhận
+    </template>
+    <div>Bạn có xác nhận xóa đăng ký này?</div>
+  </ConfirmModal>
 </template>
 
 <script>
@@ -161,11 +179,13 @@ import { mapState, mapGetters } from 'vuex';
 import 'vue-search-input/dist/styles.css';
 import TopicApi from '../../utils/api/topic';
 import LineItem from './LineItem.vue';
+import ConfirmModal from '../Modal/ConfirmModal.vue';
 
 export default {
   name: 'ManageTopicStudent',
   components: {
     LineItem,
+    ConfirmModal,
   },
   props: {
     open: {
@@ -182,7 +202,7 @@ export default {
       headerTabs: [],
       hashTopics: new Map(),
       tab: '',
-      // currentTopic: null,
+      showConfirmModal: false,
     };
   },
   computed: {
@@ -207,16 +227,32 @@ export default {
     },
   },
   async mounted () {
-    const topicResult = await TopicApi.getResultRegister(this.token);
-    topicResult.forEach((topic) => {
-      const { scheduleId } = topic;
-      if (!scheduleId || !scheduleId.code) return;
-      this.hashTopics.set(scheduleId.code, topic);
-    });
-    this.headerTabs = [...this.hashTopics.keys()];
-    if (this.headerTabs.length > 0) this.tab = this.headerTabs[0];
-    this.topics = this.topicResult;
-    // console.log('🚀 ~ file: ManageTopicResult.vue:211 ~ mounted ~ this.currentTopic:', this.currentTopic);
+    this.fetch();
+  },
+  methods: {
+    async fetch () {
+      const topicResult = await TopicApi.getResultRegister(this.token);
+      topicResult.forEach((topic) => {
+        const { scheduleId } = topic;
+        if (!scheduleId || !scheduleId.code) return;
+        this.hashTopics.set(scheduleId.code, topic);
+      });
+      this.headerTabs = [...this.hashTopics.keys()];
+      if (this.headerTabs.length > 0) this.tab = this.headerTabs[0];
+      this.topics = this.topicResult;
+    },
+    async removeRegister () {
+      this.showConfirmModal = true;
+    },
+    async confirmRemove () {
+      this.showConfirmModal = false;
+      try {
+        await TopicApi.removeRegisterTopicStudent(this.token, this.currentTopic._id);
+        this.$toast.success('Đã xóa thành công, vui lòng xem kết quả!');
+      } catch (e) {
+        this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+      }
+    },
   },
 };
 </script>
