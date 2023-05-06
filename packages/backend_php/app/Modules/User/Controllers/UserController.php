@@ -5,10 +5,12 @@ namespace App\Modules\User\Controllers;
 use App\Http\Controllers\ApiController;
 use App\Modules\User\Actions\UserDeleteAction;
 use App\Modules\User\Actions\UserImportAction;
+use App\Modules\User\Actions\UserShowAction;
 use App\Modules\User\Actions\UserStoreAction;
 use App\Modules\User\Actions\UserUpdateAction;
 use App\Modules\User\Actions\UserViewAction;
 use App\Modules\User\DTO\UserViewDTO;
+use App\Modules\User\Transformers\UserShowTransformer;
 use App\Modules\User\Transformers\UserViewTransformer;
 use App\Modules\User\Validators\UserImportValidator;
 use App\Modules\User\Validators\UserStoreValidator;
@@ -27,6 +29,13 @@ class UserController extends ApiController
         }
 
         return $this->response->paginator($results, $transformer);
+    }
+
+    public function show($id, UserShowAction $action, UserShowTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        return $this->response->item($results, $transformer);
     }
 
     public function store( UserStoreValidator $validator, UserStoreAction $action)
