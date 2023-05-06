@@ -29,9 +29,11 @@ class UserViewAction
             ->leftJoin('users as uu', 'uu.id', '=', $query->qualifyColumn('updated_by'));
 
         if ($search = $dto->search) {
-            $query->where('users.code', 'LIKE', "%$search%")
-                ->orWhere('users.name', 'LIKE', "%$search%")
-                ->orWhere('users.email', 'LIKE', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('users.code', 'LIKE', "%$search%")
+                    ->orWhere('users.name', 'LIKE', "%$search%")
+                    ->orWhere('users.email', 'LIKE', "%$search%");
+            });
         }
 
 

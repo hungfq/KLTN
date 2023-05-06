@@ -28,9 +28,11 @@ class TopicViewAction
             ->leftJoin('users as uu', 'uu.id', '=', $query->qualifyColumn('updated_by'));
 
         if ($search = $dto->search) {
-            $query->where('topics.code', 'LIKE', "%$search%")
-                ->orWhere('topics.title', 'LIKE', "%$search%")
-                ->orWhere('topics.description', 'LIKE', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('topics.code', 'LIKE', "%$search%")
+                    ->orWhere('topics.title', 'LIKE', "%$search%")
+                    ->orWhere('topics.description', 'LIKE', "%$search%");
+            });
         }
 
         if ($lecturerId = $dto->lecturerId) {

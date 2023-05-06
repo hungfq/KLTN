@@ -26,8 +26,10 @@ class CommitteeViewAction
             ->leftJoin('users as uu', 'uu.id', '=', $query->qualifyColumn('updated_by'));
 
         if ($search = $dto->search) {
-            $query->where('committees.code', 'LIKE', "%$search%")
-                ->orWhere('committees.name', 'LIKE', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('committees.code', 'LIKE', "%$search%")
+                    ->orWhere('committees.name', 'LIKE', "%$search%");
+            });
         }
 
         if ($presidentId = $dto->presidentId) {
