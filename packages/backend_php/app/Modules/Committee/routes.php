@@ -10,6 +10,11 @@ $api->group([
         'uses' => 'CommitteeController@view',
     ]);
 
+    $api->get('/{id:[0-9]+}', [
+        'as' => '',
+        'uses' => 'CommitteeController@show',
+    ]);
+
     $api->post('/', [
         'as' => '',
         'uses' => 'CommitteeController@store',
