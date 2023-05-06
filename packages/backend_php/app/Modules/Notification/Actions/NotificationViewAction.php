@@ -23,8 +23,10 @@ class NotificationViewAction
             ->orderBy('created_at', 'desc');
 
         if ($search = $dto->search) {
-            $query->where('code', 'LIKE', "%$search%")
-                ->orWhere('name', 'LIKE', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'LIKE', "%$search%")
+                    ->orWhere('name', 'LIKE', "%$search%");
+            });
         }
 
         if ($dto->limit) {
