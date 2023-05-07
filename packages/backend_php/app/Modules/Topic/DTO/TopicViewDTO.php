@@ -39,6 +39,7 @@ class TopicViewDTO extends FlexibleDataTransferObject
             'is_critical_approve' => $request->input('is_critical_approve'),
             'as_least_lecturer_approve' => $request->input('as_least_lecturer_approve'),
             'is_lecturer_mark' => $request->input('is_lecturer_mark'),
+            'is_critical_mark' => $request->input('is_critical_mark'),
             'is_president_mark' => $request->input('is_president_mark'),
             'is_secretary_mark' => $request->input('is_secretary_mark'),
             'limit' => $request->input('limit'),
