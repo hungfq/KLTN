@@ -9,6 +9,7 @@ use App\Modules\User\Actions\UserShowAction;
 use App\Modules\User\Actions\UserStoreAction;
 use App\Modules\User\Actions\UserUpdateAction;
 use App\Modules\User\Actions\UserViewAction;
+use App\Modules\User\Actions\UserViewStatsAction;
 use App\Modules\User\DTO\UserViewDTO;
 use App\Modules\User\Transformers\UserShowTransformer;
 use App\Modules\User\Transformers\UserViewTransformer;
@@ -87,5 +88,12 @@ class UserController extends ApiController
         });
 
         return $result === true ? $this->responseSuccess() : $result;
+    }
+
+    public function getStats(UserViewStatsAction $action)
+    {
+        $results = $action->handle();
+        return $results;
+//        return $this->response->item($results, $transformer);
     }
 }
