@@ -73,6 +73,11 @@ class CommitteeUpdateAction
 
     protected function updateTopics()
     {
+        foreach (data_get($this->committee, 'topics', []) as $topic) {
+            $topic->committee_id = null;
+            $topic->save();
+        }
+
         foreach (data_get($this->dto, 'topics', []) as $topicId) {
             $topic = Topic::find($topicId);
             if (!$topic) {

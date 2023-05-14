@@ -69,6 +69,7 @@ class CommitteeStoreAction
             }
 
             $topic->committee_id = $this->committee->id;
+            $topic->save();
         }
 
         return $this;
