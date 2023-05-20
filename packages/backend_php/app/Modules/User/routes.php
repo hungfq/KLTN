@@ -35,4 +35,9 @@ $api->group([
         'uses' => 'UserController@import',
     ]);
 
+    $api->get('/stats', [
+        'as' => '',
+        'uses' => 'UserController@getStats',
+    ]);
+
 });

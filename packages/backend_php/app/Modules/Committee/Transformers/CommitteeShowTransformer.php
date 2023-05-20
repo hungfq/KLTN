@@ -8,6 +8,11 @@ class CommitteeShowTransformer extends TransformerAbstract
 {
     public function transform($model)
     {
+        $topics = [];
+        foreach (data_get($model, 'topics', []) as $topic) {
+            $topics[] = data_get($topic, 'id');
+        }
+
         return [
             '_id' => $model->id,
             'code' => $model->code,
@@ -18,9 +23,10 @@ class CommitteeShowTransformer extends TransformerAbstract
             'secretary_id' => data_get($model, 'secretary.id'),
             'secretary_code' => data_get($model, 'secretary.code'),
             'secretary_name' => data_get($model, 'secretary.name'),
-            'lecturer_id' => data_get($model, 'critical.id'),
-            'lecturer_code' => data_get($model, 'critical.code'),
-            'lecturer_name' => data_get($model, 'critical.name'),
+            'critical_id' => data_get($model, 'critical.id'),
+            'critical_code' => data_get($model, 'critical.code'),
+            'critical_name' => data_get($model, 'critical.name'),
+            'topics' => $topics,
             'created_at' => $model->created_at,
             'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
