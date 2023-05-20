@@ -67,25 +67,13 @@
             >
               <div class="m-1 cursor-pointer rounded-xl">
                 <button
-                  class=" text-white bg-indigo-600 p-1 w-24"
+                  class=" text-white bg-indigo-600 p-1 w-28"
                   @click="editItem(item._id)"
                 >
-                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <span class="font-semibold px-1">Chấm điểm</span>
                   <font-awesome-icon
                     size="xl"
-                    :icon="['fas', 'check']"
-                  />
-                </button>
-              </div>
-              <div class="m-1 cursor-pointer rounded">
-                <button
-                  class=" text-white bg-red-600 p-1 w-24"
-                  @click="handleRemoveTopic(item._id)"
-                >
-                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'ban']"
+                    :icon="['fas', 'bullseye']"
                   />
                 </button>
               </div>
@@ -95,16 +83,6 @@
       </div>
     </div>
   </div>
-  <ConfirmModal
-    v-model="showConfirmModal"
-    @confirm="confirmRemove"
-    @cancel="showConfirmModal=false"
-  >
-    <template #title>
-      Xác nhận
-    </template>
-    <div>Bạn có xác nhận từ chối đề tài này ra hội đồng không?</div>
-  </ConfirmModal>
   <ConfirmModal
     v-model="showConfirmApproveModal"
     @confirm="confirmApprove"
@@ -221,6 +199,10 @@ export default {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
+
+    const markGrade = async (id) => {
+      console.log(id);
+    };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
     watch(tab, async () => {
       await loadToServer(serverOptions.value);
@@ -307,6 +289,7 @@ export default {
       serverItemsLength,
       rowItems,
       editItem,
+      markGrade,
       modulePage,
       handleImport,
       showConfirmModal,

@@ -24,7 +24,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 /* import specific icons */
 import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
-  faLeftRight, faAnglesRight, faBan, faCheck,
+  faLeftRight, faAnglesRight, faBan, faCheck, faBullseye,
 } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
@@ -37,6 +37,7 @@ library.add(
   faAnglesRight,
   faBan,
   faCheck,
+  faBullseye,
 );
 
 const app = createApp(App);
