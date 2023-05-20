@@ -18,6 +18,7 @@
           <BodyTopicPage v-if="module ==='topic'" />
           <BodySchedulePage v-if="module === 'schedule'" />
           <BodyCommitteePage v-if="module === 'committee'" />
+          <BodyCriteriaPage v-if="module === 'criteria'" />
         </div>
       </div>
     </div>
@@ -41,6 +42,7 @@ import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
 import BodySchedulePage from '../components/Admin/ManageSchedule/ScheduleBodyPage.vue';
 import BodyCommitteePage from '../components/Admin/ManageCommitee/CommitteeBodyPage.vue';
+import BodyCriteriaPage from '../components/Admin/ManageCriteria/CriteriaBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -53,6 +55,7 @@ export default {
     BodyUserPage,
     BodyTopicPage,
     BodyCommitteePage,
+    BodyCriteriaPage,
   },
   props: {
   },
@@ -84,6 +87,10 @@ export default {
         {
           id: 'committee',
           value: 'Quản lý hội đồng',
+        },
+        {
+          id: 'criteria',
+          value: 'Quản lý tieu chi',
         },
       ],
     };
