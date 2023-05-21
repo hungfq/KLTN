@@ -26,6 +26,11 @@ $api->group([
             'as' => '',
             'uses' => 'CriteriaController@update',
         ]);
+
+        $api->delete('/', [
+            'as' => '',
+            'uses' => 'CriteriaController@delete',
+        ]);
     });
 
 });

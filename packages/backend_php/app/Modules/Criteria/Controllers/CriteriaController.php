@@ -3,8 +3,7 @@
 namespace App\Modules\Criteria\Controllers;
 
 use App\Http\Controllers\ApiController;
-use App\Modules\Criteria\Actions\CriteriaCommentAddAction;
-use App\Modules\Criteria\Actions\CriteriaCommentDeleteAction;
+use App\Modules\Criteria\Actions\CriteriaDeleteAction;
 use App\Modules\Criteria\Actions\CriteriaShowAction;
 use App\Modules\Criteria\Actions\CriteriaStoreAction;
 use App\Modules\Criteria\Actions\CriteriaUpdateAction;
@@ -12,7 +11,6 @@ use App\Modules\Criteria\Actions\CriteriaViewAction;
 use App\Modules\Criteria\DTO\CriteriaViewDTO;
 use App\Modules\Criteria\Transformers\CriteriaShowTransformer;
 use App\Modules\Criteria\Transformers\CriteriaViewTransformer;
-use App\Modules\Criteria\Validators\CriteriaCommentAddValidator;
 use App\Modules\Criteria\Validators\CriteriaStoreValidator;
 use App\Modules\Criteria\Validators\CriteriaUpdateValidator;
 use Illuminate\Support\Collection;
@@ -68,27 +66,14 @@ class CriteriaController extends ApiController
         return $this->responseSuccess();
     }
 
-    public function addComment($id, CriteriaCommentAddValidator $validator, CriteriaCommentAddAction $action)
+    public function delete($id, CriteriaDeleteAction $action)
     {
         $this->request->merge([
             'id' => $id
         ]);
 
-        $validator->validate($this->request->all());
-
-        DB::transaction(function () use ($action, $validator) {
-            $action->handle(
-                $validator->toDTO()
-            );
-        });
-
-        return $this->responseSuccess();
-    }
-
-    public function deleteComment($commentId, CriteriaCommentDeleteAction $action)
-    {
-        DB::transaction(function () use ($action, $commentId) {
-            $action->handle($commentId);
+        DB::transaction(function () use ($action, $id) {
+            $action->handle($id);
         });
 
         return $this->responseSuccess();
