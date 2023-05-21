@@ -17,6 +17,7 @@ class CreateGradesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('topic_id')->index();
             $table->unsignedBigInteger('criteria_id')->index();
+            $table->unsignedBigInteger('student_id')->index();
             $table->float('score');
             $table->unsignedBigInteger('graded_by')->index();
 
@@ -30,6 +31,11 @@ class CreateGradesTable extends Migration
             $table->foreign('topic_id')
                 ->references('id')
                 ->on('topics')
+                ->onDelete('cascade');
+
+            $table->foreign('student_id')
+                ->references('id')
+                ->on('users')
                 ->onDelete('cascade');
 
             $table->foreign('criteria_id')
