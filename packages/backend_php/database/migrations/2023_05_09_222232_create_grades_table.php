@@ -25,6 +25,17 @@ class CreateGradesTable extends Migration
             $table->timestamps();
             $table->timestamp('deleted_at')->default('1999-01-01');
             $table->tinyInteger('deleted')->default('0');
+
+                        
+            $table->foreign('topic_id')
+                ->references('id')
+                ->on('topics')
+                ->onDelete('cascade');
+
+            $table->foreign('criteria_id')
+                ->references('id')
+                ->on('criteria')
+                ->onDelete('cascade');
         });
     }
 

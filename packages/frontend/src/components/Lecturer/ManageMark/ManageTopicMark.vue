@@ -93,6 +93,13 @@
     </template>
     <div>Bạn có xác nhận phê duyệt đề tài ra hội đồng không?</div>
   </ConfirmModal>
+  <ModalContainer
+    v-model="showConfirmApproveModal"
+    @confirm="confirmApprove"
+    @cancel="showConfirmApproveModal=false"
+  >
+    <FormMark />
+  </ModalContainer>
 </template>
 
 <script>
@@ -103,16 +110,21 @@ import { useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
+import ModalContainer from '../../common/ModalContainer.vue';
 import 'vue-search-input/dist/styles.css';
 
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
+
+import FormMark from './FormMark.vue';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    ModalContainer,
+    FormMark,
   },
   setup () {
     const store = useStore();
@@ -135,6 +147,15 @@ export default {
       { code: 'critical', text: 'Phản biện' },
       { code: 'secretary', text: 'Thư ký' },
       { code: 'president', text: 'Chủ tịch' },
+    ];
+
+    const listCriteria = [
+      { id: 1, name: 'Criteria 1' },
+      { id: 2, name: 'Criteria 2' },
+      { id: 3, name: 'Criteria 3' },
+      { id: 4, name: 'Criteria 4' },
+      { id: 5, name: 'Criteria 5' },
+      { id: 6, name: 'Criteria 6' },
     ];
     const tab = ref('advisor');
     const searchVal = ref('');
@@ -307,6 +328,7 @@ export default {
       confirmApprove,
       declineId,
       handleRemoveTopic,
+      listCriteria,
     };
   },
 };

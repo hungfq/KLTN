@@ -23,6 +23,7 @@ class CreateCriteriaTable extends Migration
             $table->timestamps();
             $table->timestamp('deleted_at')->default('1999-01-01');
             $table->tinyInteger('deleted')->default('0');
+
         });
     }
 
