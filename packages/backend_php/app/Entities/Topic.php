@@ -59,4 +59,10 @@ class Topic extends BaseSoftModel
 
         return sprintf('%s-%03d', $arr[0], ++$arr[1]);
     }
+
+    public function criteria()
+    {
+        return $this->belongsToMany(Criteria::class, 'schedule_criteria', 'schedule_id', 'criteria_id');
+    }
+
 }
