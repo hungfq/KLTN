@@ -15,6 +15,7 @@ class Grade extends BaseSoftModel
     {
         return $this->belongsTo(Topic::class, 'topic_id');
     }
+
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');

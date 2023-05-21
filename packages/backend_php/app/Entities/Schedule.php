@@ -20,4 +20,9 @@ class Schedule extends BaseSoftModel
     {
         return $this->belongsToMany(User::class, 'schedule_students', 'schedule_id', 'student_id');
     }
+
+    public function criteria()
+    {
+        return $this->belongsToMany(Criteria::class, 'schedule_criteria', 'schedule_id', 'criteria_id');
+    }
 }
