@@ -24,7 +24,8 @@ class ScheduleViewCriteriaAction
             ->join('criteria', function ($q) {
                 $q->on('schedule_criteria.criteria_id', '=', 'criteria.id')
                     ->where('criteria.deleted', 0);
-            });
+            })
+            ->where('schedule_criteria.schedule_id', $schedule->id);
 
         return $query->get();
     }
