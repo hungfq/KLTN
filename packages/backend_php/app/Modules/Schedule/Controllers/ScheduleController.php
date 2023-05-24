@@ -6,16 +6,20 @@ use App\Http\Controllers\ApiController;
 use App\Modules\Schedule\Actions\ScheduleDeleteAction;
 use App\Modules\Schedule\Actions\ScheduleStoreAction;
 use App\Modules\Schedule\Actions\ScheduleStudentViewTodayAction;
+use App\Modules\Schedule\Actions\ScheduleSyncCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleUpdateAction;
 use App\Modules\Schedule\Actions\ScheduleViewAction;
+use App\Modules\Schedule\Actions\ScheduleViewCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
 use App\Modules\Schedule\Actions\ScheduleViewWithTopicAction;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
 use App\Modules\Schedule\DTO\ScheduleViewWithTopicDTO;
+use App\Modules\Schedule\Transformers\ScheduleViewCriteriaTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewStudentTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewWithTopicTransformer;
 use App\Modules\Schedule\Validators\ScheduleStoreValidator;
+use App\Modules\Schedule\Validators\ScheduleSyncCriteriaValidator;
 use App\Modules\Schedule\Validators\ScheduleUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -98,5 +102,33 @@ class ScheduleController extends ApiController
     public function studentViewToday(ScheduleStudentViewTodayAction $action)
     {
         return $action->handle();
+    }
+
+    public function viewCriteria($id, ScheduleViewCriteriaAction $action, ScheduleViewCriteriaTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
+    }
+
+    public function syncCriteria($id, ScheduleSyncCriteriaValidator $validator, ScheduleSyncCriteriaAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
     }
 }
