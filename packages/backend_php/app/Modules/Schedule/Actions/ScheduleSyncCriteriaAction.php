@@ -36,11 +36,5 @@ class ScheduleSyncCriteriaAction
                 ]);
             }
         }
-
-//        dd($details, $criteriaIds);
-//
-//        dd($schedule);
-
-
     }
 }

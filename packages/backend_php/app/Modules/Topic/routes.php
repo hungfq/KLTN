@@ -76,6 +76,16 @@ $api->group([
             'as' => '',
             'uses' => 'TopicController@mark',
         ]);
+
+        $api->get('/grade', [
+            'as' => '',
+            'uses' => 'TopicController@viewGrade',
+        ]);
+
+        $api->put('/grade', [
+            'as' => '',
+            'uses' => 'TopicController@setGrade',
+        ]);
     });
 
     $api->post('/import', [
