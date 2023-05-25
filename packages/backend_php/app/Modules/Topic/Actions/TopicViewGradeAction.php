@@ -28,6 +28,7 @@ class TopicViewGradeAction
                 'criteria.description',
                 'topic_students.student_id',
 //                'grades.student_id',
+                'grades.type',
                 'grades.score',
                 'grades.graded_by',
             ])
@@ -41,11 +42,15 @@ class TopicViewGradeAction
                     ->where('topics.deleted', 0);
             })
             ->join('topic_students', 'topic_students.topic_id', '=', 'topics.id')
-            ->leftJoin('grades', function ($q) {
+            ->leftJoin('grades', function ($q) use ($dto) {
                 $q->on('grades.topic_id', '=', 'topics.id')
                     ->on('grades.criteria_id', '=', 'schedule_criteria.criteria_id')
                     ->on('grades.student_id', '=', 'topic_students.student_id')
                     ->where('grades.deleted', 0);
+
+                if ($type = $dto->type) {
+                    $q->where('grades.type', $type);
+                }
             })
             ->where('schedule_criteria.schedule_id', $this->topic->schedule_id);
 

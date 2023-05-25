@@ -11,6 +11,21 @@ class Grade extends BaseSoftModel
 
     use CreatedByRelationshipTrait, UpdatedByRelationshipTrait;
 
+    const TYPE_LECTURER = 'LT';
+    const TYPE_CRITICAL = 'CR';
+    const TYPE_PRESIDENT = 'PD';
+    const TYPE_SECRETARY = 'SE';
+
+    public static function type()
+    {
+        return [
+            self::TYPE_LECTURER => 'Lecturer',
+            self::TYPE_CRITICAL => 'Critical',
+            self::TYPE_PRESIDENT => 'President',
+            self::TYPE_SECRETARY => 'Secretary',
+        ];
+    }
+
     public function topic()
     {
         return $this->belongsTo(Topic::class, 'topic_id');

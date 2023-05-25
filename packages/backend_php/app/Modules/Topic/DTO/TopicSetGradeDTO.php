@@ -7,6 +7,7 @@ use Spatie\DataTransferObject\FlexibleDataTransferObject;
 class TopicSetGradeDTO extends FlexibleDataTransferObject
 {
     public $id;
+    public $type;
     public $details;
 
     public static function fromRequest($request = null)
@@ -15,6 +16,7 @@ class TopicSetGradeDTO extends FlexibleDataTransferObject
 
         return new self([
             'id' => $request->input('id'),
+            'type' => $request->input('type'),
             'details' => $request->input('details'),
         ]);
     }

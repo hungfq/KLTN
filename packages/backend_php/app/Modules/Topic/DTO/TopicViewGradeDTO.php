@@ -8,6 +8,7 @@ class TopicViewGradeDTO extends FlexibleDataTransferObject
 {
     public $id;
     public $student_id;
+    public $type;
 
     public static function fromRequest($request = null)
     {
@@ -16,6 +17,7 @@ class TopicViewGradeDTO extends FlexibleDataTransferObject
         return new self([
             'id' => $request->input('id'),
             'student_id' => $request->input('student_id'),
+            'type' => $request->input('type'),
         ]);
     }
 }

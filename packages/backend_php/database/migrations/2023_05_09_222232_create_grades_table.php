@@ -19,6 +19,7 @@ class CreateGradesTable extends Migration
             $table->unsignedBigInteger('criteria_id')->index();
             $table->unsignedBigInteger('student_id')->index();
             $table->float('score');
+            $table->string('type');
             $table->unsignedBigInteger('graded_by')->index();
 
             $table->unsignedBigInteger('created_by')->index();
