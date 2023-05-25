@@ -49,7 +49,6 @@
         :loading="loading"
         buttons-pagination
         :rows-items="rowItems"
-        @click-row="showRow"
       >
         <template #header-import-export="header">
           <a
@@ -58,11 +57,15 @@
           >Tải mẫu nhập sinh viên</a>
         </template>
         <template #item-import-export="item">
-          <div class-="flex">
+          <div class-="flex flex-col">
             <a
               class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               @click="handleClickStudent(item._id)"
             >Nhập sinh viên bằng file excel</a>
+            <a
+              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+              @click="showSelectStudent = true"
+            >Chọn sinh viên</a>
             <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               :href="getLink(item._id)"
@@ -96,6 +99,9 @@
       <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
     </ConfirmModal>
   </div>
+  <SelectStudent
+    v-model="showSelectStudent"
+  />
 </template>
 
 <script>
@@ -109,12 +115,14 @@ import {
 import { useToast } from 'vue-toast-notification';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 
 export default {
   name: 'ManageScheduleAdmin',
   components: {
     SearchInput,
     ConfirmModal,
+    SelectStudent,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -126,6 +134,8 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const schedules = ref([]);
+    const showSelectStudent = ref(false);
+    const searchVal = ref('');
     const headers = [
       { text: 'Mã đợt đăng ký', value: 'code', sortable: true },
       { text: 'Tên đợt đăng ký ', value: 'name', sortable: true },
@@ -168,7 +178,6 @@ export default {
     });
 
     const showRow = (item) => {
-      console.log('showRow');
       store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
@@ -225,6 +234,8 @@ export default {
       schedulesShow,
       handleRemoveSchedule,
       BASE_API_URL,
+      showSelectStudent,
+      searchVal,
     };
   },
   data () {

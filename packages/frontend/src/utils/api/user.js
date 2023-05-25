@@ -13,6 +13,7 @@ export default class UserApi {
         rowsPerPage,
         sortBy,
         sortType,
+        searchVal,
       } = option;
       if (rowsPerPage) url += `&limit=${rowsPerPage}`;
       else url += '&limit=10';
@@ -21,6 +22,7 @@ export default class UserApi {
         else url += `&sort[${sortBy}]=${sortType}`;
       }
       if (page) url += `&page=${page}`;
+      if (searchVal) url += `&search=${searchVal}`;
     }
 
     const res = await axios.get(url, {
