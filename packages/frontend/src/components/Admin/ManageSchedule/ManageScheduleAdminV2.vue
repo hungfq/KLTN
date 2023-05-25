@@ -40,7 +40,6 @@
     />
     <div class="shadow-md sm:rounded-lg m-4">
       <EasyDataTable
-        v-model:items-selected="itemsSelected"
         v-model:server-options="serverOptions"
         :server-items-length="serverItemsLength"
         show-index
@@ -64,7 +63,7 @@
             >Nhập sinh viên bằng file excel</a>
             <a
               class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="showSelectStudent = true"
+              @click="selectStudents(item._id)"
             >Chọn sinh viên</a>
             <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
@@ -74,6 +73,11 @@
         </template>
         <template #item-operation="item">
           <div class="flex">
+            <font-awesome-icon
+              icon="fa-solid fa-eye"
+              size="2xl"
+              @click="showRow(item)"
+            />
             <img
               src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
               class="operation-icon w-6 h-6 mx-2 cursor-pointer"
@@ -101,6 +105,8 @@
   </div>
   <SelectStudent
     v-model="showSelectStudent"
+    :schedule-id="selectStudentScheduleId"
+    @change-students="changeStudents"
   />
 </template>
 
@@ -135,6 +141,7 @@ export default {
     const rowItems = [10, 20, 50];
     const schedules = ref([]);
     const showSelectStudent = ref(false);
+    const selectStudentScheduleId = ref(null);
     const searchVal = ref('');
     const headers = [
       { text: 'Mã đợt đăng ký', value: 'code', sortable: true },
@@ -195,11 +202,10 @@ export default {
 
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
-      await ScheduleApi.removeSchedule(this.token, id);
-      showConfirmModal.value = false;
-      removeId.value = 0;
-
       try {
+        await ScheduleApi.removeSchedule(this.token, id);
+        showConfirmModal.value = false;
+        removeId.value = 0;
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
@@ -216,11 +222,29 @@ export default {
       return schedules.value;
     });
 
+    const selectStudents = (scheduleId) => {
+      selectStudentScheduleId.value = scheduleId;
+      showSelectStudent.value = true;
+    };
+
+    const changeStudents = async (students) => {
+      try {
+        showSelectStudent.value = false;
+        const _id = selectStudentScheduleId.value;
+        console.log('🚀 ~ file: ManageScheduleAdminV2.vue:235 ~ changeStudents ~ _id:', _id);
+        await ScheduleApi.updateSchedule(token, { _id, students });
+        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
     return {
       headers,
       items,
       showRow,
       itemsSelected,
+      selectStudents,
       loading,
       serverOptions,
       schedules,
@@ -236,11 +260,12 @@ export default {
       BASE_API_URL,
       showSelectStudent,
       searchVal,
+      selectStudentScheduleId,
+      changeStudents,
     };
   },
   data () {
     return {
-      searchVal: '',
       importType: '',
       importId: '',
     };

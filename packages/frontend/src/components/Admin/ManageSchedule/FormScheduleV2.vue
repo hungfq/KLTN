@@ -100,24 +100,6 @@
           validation="required"
           :disabled="isView"
         />
-        <div
-          v-if="!isView"
-          class="my-2-1 w-3/4"
-        >
-          <span class="font-bold text-sm py-4 my-4">
-            Sinh viên đăng kí
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="students"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :create-option="true"
-              :options="listStudents"
-            />
-          </div>
-        </div>
         <FormKit
           v-model="description"
           name="description"
@@ -129,10 +111,10 @@
         />
         <button
           v-if="isView"
-          class="rounded bg-slate-500 h-[60px] w-[300px]  text-white font-semibold cursor-pointer "
+          class="rounded bg-slate-500 h-[60px] w-[400px]  text-white font-semibold cursor-pointer "
           @click="showInfoStudent"
         >
-          Xem thông tin sinh viên
+          Xem danh sách sinh viên
         </button>
       </div>
       <Loading v-else />

@@ -2,6 +2,7 @@
   <vue-final-modal
     v-slot="{ close }"
     v-bind="$attrs"
+    @before-open="prepareData(scheduleId)"
   >
     <div class="relative p-4 w-full max-w-4xl mx-auto mt-[5%] ">
       <!-- Modal content -->
@@ -80,17 +81,15 @@
           </EasyDataTable>
         </div>
         <!-- Modal footer -->
-        <div>
-          {{ itemsSelected }}
-        </div>
         <div class="flex items-center pl-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
           <button
             data-modal-toggle="defaultModal"
             type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            @click="close"
+            :disabled="isEqualSelected"
+            class="btn btn-primary"
+            @click="submitStudents"
           >
-            OK
+            Lưu lựa chọn
           </button>
         </div>
       </div>
@@ -99,25 +98,34 @@
 </template>
 
 <script>
-import { mapState, mapGetters, useStore } from 'vuex';
+import { useStore } from 'vuex';
 import SearchInput from 'vue-search-input';
 import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import 'vue-search-input/dist/styles.css';
-import { useToast } from 'vue-toast-notification';
+import { isEqual, cloneDeep } from 'lodash';
 import UserApi from '../../utils/api/user';
+import ScheduleApi from '../../utils/api/schedule';
 
 export default {
   name: 'SelectStudent',
   components: {
     SearchInput,
   },
-  setup () {
+  props: {
+    scheduleId: {
+      type: Number,
+      default: null,
+    },
+  },
+  emits: ['change-students'],
+  setup (props, { emit }) {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const store = useStore();
     const loading = ref(false);
     const itemsSelected = ref([]);
+    const itemsPrevSelected = ref([]);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const users = ref([]);
@@ -168,6 +176,31 @@ export default {
       }
     };
 
+    const prepareData = async (scheduleId) => {
+      if (!scheduleId) itemsSelected.value = [];
+      else {
+        const listStudentsRaw = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
+        itemsSelected.value = listStudentsRaw.map((user) => ({
+          _id: user._id,
+          code: user.code,
+          name: user.name,
+          email: user.email,
+        }));
+        itemsPrevSelected.value = cloneDeep(itemsSelected.value);
+      }
+    };
+
+    const isEqualSelected = computed(() => {
+      const selectedCopy = [...itemsSelected.value].map((item) => item._id).sort();
+      const prevSelectedCopy = [...itemsPrevSelected.value].map((item) => item._id).sort();
+      return isEqual(selectedCopy, prevSelectedCopy);
+    });
+
+    const submitStudents = async () => {
+      const selectedCopy = [...itemsSelected.value].map((item) => item.code).sort();
+      emit('change-students', selectedCopy);
+    };
+
     return {
       headers,
       items,
@@ -182,6 +215,10 @@ export default {
       BASE_API_URL,
       searchVal,
       search,
+      prepareData,
+      isEqualSelected,
+      itemsPrevSelected,
+      submitStudents,
     };
   },
 };
