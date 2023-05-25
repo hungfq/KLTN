@@ -62,10 +62,15 @@
       </template>
       <template #item-import-export="item">
         <div class-="flex flex-col">
-          <a
-            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-            @click="handleClickStudent(item._id)"
-          >Nhập sinh viên bằng file excel</a>
+          <!-- <div
+            class="tooltip tooltip-bottom"
+            data-tip="Nhap sinh vien"
+          >
+            <a
+              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+              @click="handleImportStudentsExcel(item._id)"
+            >Nhập sinh viên bằng file excel</a>
+          </div> -->
           <a
             class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
             @click="selectStudents(item._id)"
@@ -111,6 +116,7 @@
     v-model="showSelectStudent"
     :schedule-id="selectStudentScheduleId"
     @change-students="changeStudents"
+    @import-excel="handleImportStudentsExcel"
   />
 </template>
 
@@ -296,7 +302,8 @@ export default {
     ]),
   },
   methods: {
-    handleClickStudent (id) {
+    handleImportStudentsExcel (id) {
+      this.showSelectStudent = false;
       this.importId = id;
       this.importType = 'student';
       this.$refs.labelBtn.click();

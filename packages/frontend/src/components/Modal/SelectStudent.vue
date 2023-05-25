@@ -81,7 +81,15 @@
           </EasyDataTable>
         </div>
         <!-- Modal footer -->
-        <div class="flex items-center pl-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
+        <div class="flex justify-between items-center px-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
+          <button
+            data-modal-toggle="defaultModal"
+            type="button"
+            class="btn btn-accent"
+            @click="$emit('import-excel',scheduleId)"
+          >
+            Nhap bang file excel
+          </button>
           <button
             data-modal-toggle="defaultModal"
             type="button"
@@ -119,7 +127,7 @@ export default {
       default: null,
     },
   },
-  emits: ['change-students'],
+  emits: ['change-students', 'import-excel'],
   setup (props, { emit }) {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const store = useStore();
