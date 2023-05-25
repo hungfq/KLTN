@@ -39,7 +39,7 @@
         <FormKit
           v-model="startDate"
           name="startDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian bắt đầu làm đề tài"
           validation="required"
           :disabled="isView"
@@ -47,7 +47,7 @@
         <FormKit
           v-model="deadline"
           name="deadline"
-          type="date"
+          type="datetime-local"
           label="Thời gian kết thúc làm đề tài"
           validation="required"
           :disabled="isView"
@@ -55,7 +55,7 @@
         <FormKit
           v-model="startProposalDate"
           name="startProposalDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian bắt đầu đề xuất"
           validation="required"
           :disabled="isView"
@@ -63,7 +63,7 @@
         <FormKit
           v-model="endProposalDate"
           name="startProposalDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian kết thúc đề xuất"
           validation="required"
           :disabled="isView"
@@ -71,7 +71,7 @@
         <FormKit
           v-model="startApproveDate"
           name="startApproveDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian bắt đầu chấp thuận"
           validation="required"
           :disabled="isView"
@@ -79,7 +79,7 @@
         <FormKit
           v-model="endApproveDate"
           name="endApproveDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian kết thúc chấp thuận"
           validation="required"
           :disabled="isView"
@@ -87,7 +87,7 @@
         <FormKit
           v-model="startRegisterDate"
           name="startRegisterDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian bắt đầu đăng ký"
           validation="required"
           :disabled="isView"
@@ -95,7 +95,7 @@
         <FormKit
           v-model="endRegisterDate"
           name="endRegisterDate"
-          type="date"
+          type="datetime-local"
           label="Thời gian kết thúc đăng ký"
           validation="required"
           :disabled="isView"
@@ -138,8 +138,8 @@
 </template>
 
 <script>
-import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
+import moment from 'moment';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import UserApi from '../../../utils/api/user';
 import Loading from '../../common/Loading.vue';
@@ -147,7 +147,6 @@ import Loading from '../../common/Loading.vue';
 export default {
   name: 'FormSchedule',
   components: {
-    Multiselect,
     InfoStudentVue,
     Loading,
   },
@@ -273,11 +272,7 @@ export default {
     formatDate (rawDate) {
       try {
         if (!rawDate || rawDate === '') return '';
-        const date = new Date(rawDate);
-        const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-          .toISOString()
-          .split('T')[0];
-        return dateString;
+        return rawDate;
       } catch (e) {
         return '';
       }

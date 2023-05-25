@@ -38,60 +38,64 @@
       :search-icon="true"
       @keydown.space.enter="search"
     />
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="schedulesShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #header-import-export="header">
+    <EasyDataTable
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      show-index
+      :headers="headers"
+      :items="schedulesShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #header-import-export="header">
+        <a
+          class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
+          :href="`${BASE_API_URL}/api/v2/template?type=User`"
+        >Tải mẫu nhập sinh viên</a>
+      </template>
+      <template #item-startDate="item">
+        {{ formatDate(item.startDate) }}
+      </template>
+      <template #item-deadline="item">
+        {{ formatDate(item.deadline) }}
+      </template>
+      <template #item-import-export="item">
+        <div class-="flex flex-col">
           <a
-            class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            :href="`${BASE_API_URL}/api/v2/template?type=User`"
-          >Tải mẫu nhập sinh viên</a>
-        </template>
-        <template #item-import-export="item">
-          <div class-="flex flex-col">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleClickStudent(item._id)"
-            >Nhập sinh viên bằng file excel</a>
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="selectStudents(item._id)"
-            >Chọn sinh viên</a>
-            <a
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              :href="getLink(item._id)"
-            >Xuất báo cáo</a>
-          </div>
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <font-awesome-icon
-              icon="fa-solid fa-eye"
-              size="2xl"
-              @click="showRow(item)"
-            />
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-              @click="editItem(item)"
-            >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="2xl"
-              @click="handleRemoveSchedule(item._id)"
-            />
-          </div>
-        </template>
-      </EasyDataTable>
-    </div>
+            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+            @click="handleClickStudent(item._id)"
+          >Nhập sinh viên bằng file excel</a>
+          <a
+            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+            @click="selectStudents(item._id)"
+          >Chọn sinh viên</a>
+          <a
+            class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+            :href="getLink(item._id)"
+          >Xuất báo cáo</a>
+        </div>
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <font-awesome-icon
+            icon="fa-solid fa-eye"
+            size="2xl"
+            @click="showRow(item)"
+          />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+            class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+            @click="editItem(item)"
+          >
+          <font-awesome-icon
+            icon="fa-solid fa-trash-can"
+            size="2xl"
+            @click="handleRemoveSchedule(item._id)"
+          />
+        </div>
+      </template>
+    </EasyDataTable>
     <ConfirmModal
       v-model="showConfirmModal.value"
       @confirm="confirmRemove"
@@ -119,9 +123,11 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import moment from 'moment';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import 'moment/dist/locale/vi';
 
 export default {
   name: 'ManageScheduleAdmin',
@@ -231,12 +237,18 @@ export default {
       try {
         showSelectStudent.value = false;
         const _id = selectStudentScheduleId.value;
-        console.log('🚀 ~ file: ManageScheduleAdminV2.vue:235 ~ changeStudents ~ _id:', _id);
         await ScheduleApi.updateSchedule(token, { _id, students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
+    };
+
+    const formatDate = (datetime) => moment(datetime).format('LL');
+
+    const search = async () => {
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
     };
 
     return {
@@ -262,6 +274,8 @@ export default {
       searchVal,
       selectStudentScheduleId,
       changeStudents,
+      formatDate,
+      search,
     };
   },
   data () {
@@ -348,21 +362,6 @@ export default {
       } catch (e) {
         return '';
       }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const scheduleFilter = this.listSchedules.filter((schedule) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          const startDate = this.formatDay(schedule.startDate);
-          const endDate = this.formatDay(schedule.endDate);
-          if (schedule.name.match(re)) return true;
-          if (schedule.code.match(re)) return true;
-          if (endDate.match(re)) return true;
-          if (startDate.match(re)) return true;
-          return false;
-        });
-        this.schedules = scheduleFilter;
-      } else this.schedules = this.listSchedules;
     },
   },
 };
