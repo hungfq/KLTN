@@ -65,6 +65,10 @@ export default {
       isSidebarOpen: true,
       listItems: [
         {
+          id: 'schedule',
+          value: 'Quản lý đợt đăng ký',
+        },
+        {
           id: 'student',
           value: 'Quản lý sinh viên',
         },
@@ -79,10 +83,6 @@ export default {
         {
           id: 'topic',
           value: 'Quản lý đề tài',
-        },
-        {
-          id: 'schedule',
-          value: 'Quản lý lịch đăng ký',
         },
         {
           id: 'committee',
