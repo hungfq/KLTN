@@ -8,6 +8,7 @@ use App\Modules\Schedule\Actions\ScheduleStoreAction;
 use App\Modules\Schedule\Actions\ScheduleStudentViewTodayAction;
 use App\Modules\Schedule\Actions\ScheduleSyncCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleUpdateAction;
+use App\Modules\Schedule\Actions\ScheduleUpdateStudentAction;
 use App\Modules\Schedule\Actions\ScheduleViewAction;
 use App\Modules\Schedule\Actions\ScheduleViewCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
@@ -20,6 +21,7 @@ use App\Modules\Schedule\Transformers\ScheduleViewTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewWithTopicTransformer;
 use App\Modules\Schedule\Validators\ScheduleStoreValidator;
 use App\Modules\Schedule\Validators\ScheduleSyncCriteriaValidator;
+use App\Modules\Schedule\Validators\ScheduleUpdateStudentValidator;
 use App\Modules\Schedule\Validators\ScheduleUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -73,6 +75,23 @@ class ScheduleController extends ApiController
     }
 
     public function update($id, ScheduleUpdateValidator $validator, ScheduleUpdateAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function updateStudent($id, ScheduleUpdateStudentValidator $validator, ScheduleUpdateStudentAction $action)
     {
         $this->request->merge([
             'id' => $id

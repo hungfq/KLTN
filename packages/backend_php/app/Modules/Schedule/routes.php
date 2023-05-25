@@ -37,6 +37,11 @@ $api->group([
             'uses' => 'ScheduleController@update',
         ]);
 
+        $api->put('/student', [
+            'as' => '',
+            'uses' => 'ScheduleController@updateStudent',
+        ]);
+
         $api->delete('/', [
             'as' => '',
             'uses' => 'ScheduleController@delete',
