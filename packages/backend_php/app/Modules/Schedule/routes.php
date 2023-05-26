@@ -32,6 +32,11 @@ $api->group([
     ]);
 
     $api->group(['prefix' => '{id:[0-9]+}'], function () use ($api) {
+        $api->get('/', [
+            'as' => '',
+            'uses' => 'ScheduleController@show',
+        ]);
+
         $api->put('/', [
             'as' => '',
             'uses' => 'ScheduleController@update',
@@ -40,6 +45,11 @@ $api->group([
         $api->put('/student', [
             'as' => '',
             'uses' => 'ScheduleController@updateStudent',
+        ]);
+
+        $api->post('/student/import', [
+            'as' => '',
+            'uses' => 'ScheduleController@importStudent',
         ]);
 
         $api->delete('/', [
