@@ -18,7 +18,7 @@ class ScheduleSyncCriteriaAction
             throw new UserException("Schedule not found!");
         }
 
-        $schedule->update($dto->all());
+//        $schedule->update($dto->all());
 
         $details = $dto->details;
         $criteriaIds = array_column($details, 'criteria_id');
