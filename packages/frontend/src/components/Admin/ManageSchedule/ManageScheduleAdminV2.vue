@@ -33,7 +33,7 @@
       </button>
     </form>
   </div>
-  <div class="shadow-md sm:rounded-lg m-4">
+  <div class="shadow-md sm:rounded-lg m-4 px-4">
     <SearchInput
       v-model="searchVal"
       :search-icon="true"
@@ -49,12 +49,6 @@
       buttons-pagination
       :rows-items="rowItems"
     >
-      <template #header-import-export="header">
-        <a
-          class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-          :href="`${BASE_API_URL}/api/v2/template?type=User`"
-        >Tải mẫu nhập sinh viên</a>
-      </template>
       <template #item-startDate="item">
         {{ formatDate(item.startDate) }}
       </template>
@@ -83,6 +77,21 @@
               class="cursor-pointer"
               :icon="['fas', 'file-export']"
               @click="getLink(item._id)"
+            />
+          </div>
+        </div>
+      </template>
+      <template #item-score-rate="item">
+        <div class-="flex flex-col">
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn tiêu chí chấm điểm"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-list-check"
+              size="xl"
+              @click="selectCriteria(item._id)"
             />
           </div>
         </div>
@@ -141,6 +150,11 @@
     @change-students="changeStudents"
     @import-excel="handleImportStudentsExcel"
   />
+  <SelectCriteriaModal
+    v-model="showSelectCriteria"
+    :schedule-id="selectCriteriaScheduleId"
+    @change-criteria="changeCriteria"
+  />
 </template>
 
 <script>
@@ -155,7 +169,9 @@ import { useToast } from 'vue-toast-notification';
 import moment from 'moment';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
+import CriteriaApi from '../../../utils/api/criteria';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import SelectCriteriaModal from '../../Modal/SelectCriteria.vue';
 import 'moment/dist/locale/vi';
 
 export default {
@@ -164,6 +180,7 @@ export default {
     SearchInput,
     ConfirmModal,
     SelectStudent,
+    SelectCriteriaModal,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -176,14 +193,15 @@ export default {
     const rowItems = [10, 20, 50];
     const schedules = ref([]);
     const showSelectStudent = ref(false);
+    const showSelectCriteria = ref(false);
     const selectStudentScheduleId = ref(null);
+    const selectCriteriaScheduleId = ref(null);
     const searchVal = ref('');
     const headers = [
-      { text: 'Mã đợt đăng ký', value: 'code', sortable: true },
-      { text: 'Tên đợt đăng ký ', value: 'name', sortable: true },
-      { text: 'Thời gian bắt đầu', value: 'startDate' },
-      { text: 'Thời gian kết thúc', value: 'deadline' },
-      { text: 'import-export', value: 'import-export' },
+      { text: 'Mã đợt', value: 'code', sortable: true },
+      { text: 'Tên đợt ', value: 'name', sortable: true },
+      { text: 'Nhập xuất sinh viên', value: 'import-export' },
+      { text: 'Tỷ lệ chấm điểm', value: 'score-rate' },
       { text: 'Hành động', value: 'operation' },
     ];
     const items = [];
@@ -262,12 +280,28 @@ export default {
       showSelectStudent.value = true;
     };
 
+    const selectCriteria = (scheduleId) => {
+      selectCriteriaScheduleId.value = scheduleId;
+      showSelectCriteria.value = true;
+    };
+
     const changeStudents = async (students) => {
       try {
         showSelectStudent.value = false;
         const _id = selectStudentScheduleId.value;
         await ScheduleApi.importListStudents(token, _id, students);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const changeCriteria = async (criteria) => {
+      console.log('🚀 ~ file: ManageScheduleAdminV2.vue:299 ~ changeCriteria ~ criteria:', criteria);
+      try {
+        showSelectCriteria.value = false;
+        const _id = selectCriteriaScheduleId.value;
+        await CriteriaApi.updateCriteriaBySchedule(token, _id, { details: criteria });
+        $toast.success('Đã cập nhật  danh sách tiêu chí thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
@@ -295,6 +329,7 @@ export default {
       modulePage,
       handleImport,
       showConfirmModal,
+      changeCriteria,
       confirmRemove,
       schedulesShow,
       handleRemoveSchedule,
@@ -304,7 +339,9 @@ export default {
       selectStudentScheduleId,
       changeStudents,
       formatDate,
+      selectCriteria,
       search,
+      showSelectCriteria,
     };
   },
   data () {

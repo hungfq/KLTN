@@ -82,14 +82,20 @@
         </div>
         <!-- Modal footer -->
         <div class="flex justify-between items-center px-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
-          <button
-            data-modal-toggle="defaultModal"
-            type="button"
-            class="btn btn-accent"
-            @click="$emit('import-excel',scheduleId)"
-          >
-            Nhap bang file excel
-          </button>
+          <div>
+            <button
+              data-modal-toggle="defaultModal"
+              type="button"
+              class="btn btn-accent"
+              @click="$emit('import-excel',scheduleId)"
+            >
+              Nhập bằng excel
+            </button>
+            <a
+              class="btn btn-accent"
+              :href="`${BASE_API_URL}/api/v2/template?type=User`"
+            >Tải mẫu nhập sinh viên</a>
+          </div>
           <button
             data-modal-toggle="defaultModal"
             type="button"

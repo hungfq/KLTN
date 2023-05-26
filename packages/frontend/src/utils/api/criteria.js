@@ -52,4 +52,22 @@ export default class CriteriaApi {
     });
     return res.data.data;
   }
+
+  static async listBySchedule (token, id) {
+    const res = await axios.get(`/schedule/${id}/criteria`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.data;
+  }
+
+  static async updateCriteriaBySchedule (token, id, value) {
+    const res = await axios.put(`/schedule/${id}/criteria`, value, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.data;
+  }
 }
