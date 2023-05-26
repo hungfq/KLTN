@@ -32,6 +32,11 @@ $api->group([
     ]);
 
     $api->group(['prefix' => '{id:[0-9]+}'], function () use ($api) {
+        $api->get('/', [
+            'as' => '',
+            'uses' => 'ScheduleController@show',
+        ]);
+
         $api->put('/', [
             'as' => '',
             'uses' => 'ScheduleController@update',

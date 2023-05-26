@@ -12,6 +12,10 @@ ScheduleSyncCriteriaValidator extends AbstractValidator
     {
         return [
             'id' => 'required|integer',
+            'advisor_score_rate' => 'required|numeric|min:1',
+            'critical_score_rate' => 'required|numeric|min:1',
+            'president_score_rate' => 'required|numeric|min:1',
+            'secretary_score_rate' => 'required|numeric|min:1',
             'details' => 'required|array',
             'details.*.criteria_id' => 'required|integer',
             'details.*.score_rate' => 'required|numeric|min:1',

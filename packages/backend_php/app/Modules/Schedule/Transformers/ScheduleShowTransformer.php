@@ -4,7 +4,8 @@ namespace App\Modules\Schedule\Transformers;
 
 use League\Fractal\TransformerAbstract;
 
-class ScheduleViewTransformer extends TransformerAbstract
+class
+ScheduleShowTransformer extends TransformerAbstract
 {
     public function transform($model)
     {
