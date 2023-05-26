@@ -67,30 +67,37 @@ export default {
         {
           id: 'schedule',
           value: 'Quản lý đợt đăng ký',
+          icon: 'fa-solid fa-calendar-days',
         },
         {
           id: 'student',
           value: 'Quản lý sinh viên',
+          icon: 'fa-solid fa-user-graduate',
         },
         {
           id: 'lecturer',
           value: 'Quản lý giảng viên',
+          icon: 'fa-solid fa-person-chalkboard',
         },
         {
           id: 'admin',
           value: 'Quản lý admin',
+          icon: 'fa-solid fa-shield-halved',
         },
         {
           id: 'topic',
           value: 'Quản lý đề tài',
+          icon: 'fa-solid fa-book',
         },
         {
           id: 'committee',
           value: 'Quản lý hội đồng',
+          icon: 'fa-solid fa-crown',
         },
         {
           id: 'criteria',
-          value: 'Quản lý tieu chi',
+          value: 'Tiêu chí chấm điểm',
+          icon: 'fa-solid fa-list-check',
         },
       ],
     };

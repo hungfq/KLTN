@@ -35,10 +35,11 @@
           v-for="item in listItems"
           :key="item.id"
           class="cursor-pointer"
-          :class="[ item.id == module ? 'flex p-2 items-center w-full space-x-2 text-white bg-indigo-600 rounded-lg' : 'flex p-2 items-center space-x-2 text-indigo-600 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
+          :class="[ item.id == module ? 'flex p-2 items-center w-full space-x-2 text-white bg-blue-900 rounded-lg' : 'flex p-2 items-center space-x-2 text-blue-900 transition-colors rounded-lg group hover:bg-indigo-600 hover:text-white']"
           @click="updateModule(item.id)"
         >
-          {{ item.value }}
+          <font-awesome-icon :icon="item.icon" />
+          <span> {{ item.value }} </span>
         </a>
       </div>
     </nav>

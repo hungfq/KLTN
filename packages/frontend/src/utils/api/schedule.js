@@ -121,6 +121,16 @@ export default class ScheduleApi {
     return res;
   }
 
+  static async importListStudents (token, id, listStudents) {
+    const res = await axios.put(`/schedule/${id}/student`, { students: listStudents }, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async fetchStudentsOfSchedule (token, id) {
     const res = await axios.get(
       `/schedule/${id}/student`,

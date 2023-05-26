@@ -4,7 +4,8 @@
       class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
       @click="$store.dispatch('url/updateSection', 'schedule-import')"
     >
-      Thêm đợt đăng ký
+      <font-awesome-icon :icon="['fas', 'circle-plus']" />
+      <span class="ml-2"> Thêm đợt đăng ký</span>
     </div>
     <form
       class="flex"
@@ -62,42 +63,64 @@
       </template>
       <template #item-import-export="item">
         <div class-="flex flex-col">
-          <!-- <div
-            class="tooltip tooltip-bottom"
-            data-tip="Nhap sinh vien"
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn sinh viên"
           >
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleImportStudentsExcel(item._id)"
-            >Nhập sinh viên bằng file excel</a>
-          </div> -->
-          <a
-            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-            @click="selectStudents(item._id)"
-          >Chọn sinh viên</a>
-          <a
-            class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-            :href="getLink(item._id)"
-          >Xuất báo cáo</a>
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'people-group']"
+              size="2xl"
+              @click="selectStudents(item._id)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Xuất báo cáo"
+          >
+            <font-awesome-icon
+              size="2xl"
+              class="cursor-pointer"
+              :icon="['fas', 'file-export']"
+              @click="getLink(item._id)"
+            />
+          </div>
         </div>
       </template>
       <template #item-operation="item">
         <div class="flex">
-          <font-awesome-icon
-            icon="fa-solid fa-eye"
-            size="2xl"
-            @click="showRow(item)"
-          />
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-            class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-            @click="editItem(item)"
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem đợt đăng ký"
           >
-          <font-awesome-icon
-            icon="fa-solid fa-trash-can"
-            size="2xl"
-            @click="handleRemoveSchedule(item._id)"
-          />
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="2xl"
+              @click="showRow(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa đợt đăng ký"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="2xl"
+              @click="editItem(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom pl-3"
+            data-tip="Xóa đợt đăng ký"
+          >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="2xl"
+              @click="handleRemoveSchedule(item._id)"
+            />
+          </div>
         </div>
       </template>
     </EasyDataTable>
@@ -243,7 +266,7 @@ export default {
       try {
         showSelectStudent.value = false;
         const _id = selectStudentScheduleId.value;
-        await ScheduleApi.updateSchedule(token, { _id, students });
+        await ScheduleApi.importListStudents(token, _id, students);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -355,20 +378,6 @@ export default {
     async handleShowSchedule (id) {
       await this.$store.dispatch('url/updateSection', 'schedule-view');
       await this.$store.dispatch('url/updateId', id);
-    },
-    formatDay (oldDate) {
-      try {
-        if (!oldDate || oldDate === '') {
-          return '';
-        }
-        const newDate = new Date(oldDate);
-        const dateString = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000))
-          .toISOString()
-          .split('T')[0];
-        return dateString;
-      } catch (e) {
-        return '';
-      }
     },
   },
 };
