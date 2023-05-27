@@ -102,7 +102,10 @@
               class="cursor-pointer"
               icon="fa-solid fa-scale-balanced"
               size="xl"
-              @click="selectCriteria(item._id)"
+              @click="changeLecturerRate(item._id, { advisor_score_rate: item.advisor_score_rate ,
+                                                     critical_score_rate: item.critical_score_rate,
+                                                     president_score_rate: item.president_score_rate,
+                                                     secretary_score_rate: item.secretary_score_rate,})"
             />
           </div>
         </div>
@@ -166,6 +169,11 @@
     :schedule-id="selectCriteriaScheduleId"
     @change-criteria="changeCriteria"
   />
+  <LecturerRateModal
+    v-model="showLecturerRate"
+    :schedule-id="selectLecturerScheduleId"
+    :rate-lecturer="rateLecturer"
+  />
 </template>
 
 <script>
@@ -183,6 +191,7 @@ import ScheduleApi from '../../../utils/api/schedule';
 import CriteriaApi from '../../../utils/api/criteria';
 import SelectStudent from '../../Modal/SelectStudent.vue';
 import SelectCriteriaModal from '../../Modal/SelectCriteria.vue';
+import LecturerRateModal from '../../Modal/LecturerRate.vue';
 import 'moment/dist/locale/vi';
 
 export default {
@@ -192,6 +201,7 @@ export default {
     ConfirmModal,
     SelectStudent,
     SelectCriteriaModal,
+    LecturerRateModal,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -205,9 +215,12 @@ export default {
     const schedules = ref([]);
     const showSelectStudent = ref(false);
     const showSelectCriteria = ref(false);
+    const showLecturerRate = ref(false);
     const selectStudentScheduleId = ref(null);
     const selectCriteriaScheduleId = ref(0);
+    const selectLecturerScheduleId = ref(0);
     const searchVal = ref('');
+    const rateLecturer = ref({});
     const headers = [
       { text: 'Mã đợt', value: 'code', sortable: true },
       { text: 'Tên đợt ', value: 'name', sortable: true },
@@ -307,7 +320,6 @@ export default {
       }
     };
     const changeCriteria = async (criteria) => {
-      console.log('🚀 ~ file: ManageScheduleAdminV2.vue:299 ~ changeCriteria ~ criteria:', criteria);
       try {
         showSelectCriteria.value = false;
         const _id = selectCriteriaScheduleId.value;
@@ -318,6 +330,12 @@ export default {
       }
     };
 
+    const changeLecturerRate = async (scheduleId, rate) => {
+      rateLecturer.value = rate;
+      console.log('🚀 ~ file: ManageScheduleAdminV2.vue:335 ~ changeLecturerRate ~ rateLecturer.value:', rateLecturer.value);
+      showLecturerRate.value = true;
+      selectLecturerScheduleId.value = scheduleId;
+    };
     const formatDate = (datetime) => moment(datetime).format('LL');
 
     const search = async () => {
@@ -342,10 +360,13 @@ export default {
       showConfirmModal,
       changeCriteria,
       confirmRemove,
+      showLecturerRate,
       schedulesShow,
       handleRemoveSchedule,
       BASE_API_URL,
+      selectLecturerScheduleId,
       showSelectStudent,
+      changeLecturerRate,
       searchVal,
       selectStudentScheduleId,
       changeStudents,
@@ -353,6 +374,7 @@ export default {
       selectCriteria,
       search,
       showSelectCriteria,
+      rateLecturer,
       selectCriteriaScheduleId,
     };
   },
