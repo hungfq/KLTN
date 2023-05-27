@@ -71,6 +71,11 @@ $api->group([
             'as' => '',
             'uses' => 'ScheduleController@syncCriteria',
         ]);
+
+        $api->get('/topic/export', [
+            'as' => '',
+            'uses' => 'ScheduleController@exportTopic',
+        ]);
     });
 
 });
