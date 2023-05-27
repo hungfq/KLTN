@@ -25,7 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
-  faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck,
+  faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
 } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
@@ -51,6 +51,7 @@ library.add(
   faCrown,
   faPenToSquare,
   faListCheck,
+  faScaleBalanced,
 );
 
 const app = createApp(App);

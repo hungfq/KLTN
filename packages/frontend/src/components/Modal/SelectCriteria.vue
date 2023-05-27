@@ -190,7 +190,8 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import 'vue-search-input/dist/styles.css';
-import { isEqual, cloneDeep, unionBy } from 'lodash';
+import { cloneDeep, unionBy } from 'lodash';
+import { useToast } from 'vue-toast-notification';
 import CriteriaApi from '../../utils/api/criteria';
 
 export default {
@@ -228,6 +229,7 @@ export default {
       sortBy: 'updated_at',
       sortType: 'desc',
     });
+    const $toast = useToast();
     const token = store.getters['auth/token'];
     const loadToServer = async (option) => {
       loading.value = true;
@@ -254,38 +256,45 @@ export default {
     });
 
     const search = async () => {
-      if (!searchVal.value || searchVal.value === '') {
-        await loadToServer(serverOptions.value);
-      } else {
-        await loadToServer({ ...serverOptions.value, searchVal: searchVal.value });
+      try {
+        if (!searchVal.value || searchVal.value === '') {
+          await loadToServer(serverOptions.value);
+        } else {
+          await loadToServer({ ...serverOptions.value, searchVal: searchVal.value });
+        }
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
 
     const prepareData = async (scheduleId) => {
+      loading.value = true;
       currentPage.value = 0;
       if (!scheduleId) itemsSelected.value = [];
       else {
-        const listStudentsRaw = await CriteriaApi.listBySchedule(token, scheduleId);
-        itemsSelected.value = listStudentsRaw.map((criterion) => ({
-          id: criterion.criteria_id,
-          title: criterion.title,
-          description: criterion.description,
-        }));
-        itemsPrevSelected.value = cloneDeep(itemsSelected.value);
+        try {
+          const listStudentsRaw = await CriteriaApi.listBySchedule(token, scheduleId);
+          itemsSelected.value = listStudentsRaw.map((criterion) => ({
+            id: criterion.criteria_id,
+            title: criterion.title,
+            description: criterion.description,
+          }));
+          itemsPrevSelected.value = listStudentsRaw.map((criterion) => ({
+            id: criterion.criteria_id,
+            title: criterion.title,
+            description: criterion.description,
+            score_rate: criterion.score_rate,
+          }));
+        } catch (e) {
+          $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        }
       }
+      loading.value = false;
     };
 
-    // const isEqualSelected = computed(() => {
-    //   const selectedCopy = [...itemsSelected.value].map((item) => item.id).sort();
-    //   const prevSelectedCopy = [...itemsPrevSelected.value].map((item) => item.id).sort();
-    //   return isEqual(selectedCopy, prevSelectedCopy);
-    // });
-
     const continuePage = () => {
-      // itemsSelectedScore.value = .map((item) => ({
-      //   ...item, score_rate: 0,
-      // }));
-      itemsSelectedScore.value = unionBy(itemsPrevSelected.value, itemsSelected.value, 'id');
+      const mergedArray = unionBy(itemsPrevSelected.value, itemsSelected.value, 'id');
+      itemsSelectedScore.value = cloneDeep(mergedArray);
       currentPage.value = 1;
     };
     const checkTotalEqual100Percent = computed(() => {
@@ -294,16 +303,23 @@ export default {
     });
 
     const validateData = computed(() => {
+      const equalPrevSelected = JSON.stringify(itemsSelectedScore.value) === JSON.stringify(itemsPrevSelected.value);
       const isValid = itemsSelectedScore.value.every((item) => {
         const scoreRate = item.score_rate;
         return !!scoreRate && scoreRate > 1 && scoreRate <= 100;
       });
-      return isValid && checkTotalEqual100Percent.value;
+      return !equalPrevSelected && isValid && checkTotalEqual100Percent.value;
     });
+
     const submitCriteria = async () => {
       if (!validateData.value) return;
       const criteriaScore = itemsSelectedScore.value.map((item) => ({ criteria_id: item.id, score_rate: item.score_rate }));
       emit('change-criteria', criteriaScore);
+    };
+
+    const closeModal = (close) => {
+      close();
+      itemsSelected.value = [];
     };
     return {
       headers,
@@ -315,6 +331,7 @@ export default {
       serverItemsLength,
       rowItems,
       criteriaShow,
+      closeModal,
       isToggle,
       BASE_API_URL,
       continuePage,

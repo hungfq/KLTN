@@ -94,6 +94,17 @@
               @click="selectCriteria(item._id)"
             />
           </div>
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn tỷ lệ điểm chấm điểm"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-scale-balanced"
+              size="xl"
+              @click="selectCriteria(item._id)"
+            />
+          </div>
         </div>
       </template>
       <template #item-operation="item">
@@ -195,7 +206,7 @@ export default {
     const showSelectStudent = ref(false);
     const showSelectCriteria = ref(false);
     const selectStudentScheduleId = ref(null);
-    const selectCriteriaScheduleId = ref(null);
+    const selectCriteriaScheduleId = ref(0);
     const searchVal = ref('');
     const headers = [
       { text: 'Mã đợt', value: 'code', sortable: true },
@@ -342,6 +353,7 @@ export default {
       selectCriteria,
       search,
       showSelectCriteria,
+      selectCriteriaScheduleId,
     };
   },
   data () {
