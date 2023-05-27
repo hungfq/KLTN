@@ -4,6 +4,7 @@ namespace App\Modules\Schedule\Controllers;
 
 use App\Http\Controllers\ApiController;
 use App\Modules\Schedule\Actions\ScheduleDeleteAction;
+use App\Modules\Schedule\Actions\ScheduleExportTopicAction;
 use App\Modules\Schedule\Actions\ScheduleImportStudentAction;
 use App\Modules\Schedule\Actions\ScheduleShowAction;
 use App\Modules\Schedule\Actions\ScheduleStoreAction;
@@ -175,5 +176,10 @@ class ScheduleController extends ApiController
         });
 
         return $result === true ? $this->responseSuccess() : $result;
+    }
+
+    public function exportTopic($id, ScheduleExportTopicAction $action)
+    {
+        return $action->handle($id);
     }
 }
