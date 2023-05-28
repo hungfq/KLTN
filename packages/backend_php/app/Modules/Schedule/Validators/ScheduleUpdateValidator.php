@@ -22,10 +22,10 @@ class ScheduleUpdateValidator extends AbstractValidator
             'endApproveDate' => 'nullable',
             'startRegisterDate' => 'nullable',
             'endRegisterDate' => 'nullable',
-            'advisor_score_rate' => 'nullable|numeric|min:1',
-            'critical_score_rate' => 'nullable|numeric|min:1',
-            'president_score_rate' => 'nullable|numeric|min:1',
-            'secretary_score_rate' => 'nullable|numeric|min:1',
+//            'advisor_score_rate' => 'nullable|numeric|min:1',
+//            'critical_score_rate' => 'nullable|numeric|min:1',
+//            'president_score_rate' => 'nullable|numeric|min:1',
+//            'secretary_score_rate' => 'nullable|numeric|min:1',
             'students' => 'nullable|array',
         ];
     }

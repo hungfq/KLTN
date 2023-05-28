@@ -47,6 +47,11 @@ $api->group([
             'uses' => 'ScheduleController@updateStudent',
         ]);
 
+        $api->put('/score-rate', [
+            'as' => '',
+            'uses' => 'ScheduleController@updateScoreRate',
+        ]);
+
         $api->post('/student/import', [
             'as' => '',
             'uses' => 'ScheduleController@importStudent',

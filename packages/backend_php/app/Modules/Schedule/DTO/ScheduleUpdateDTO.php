@@ -18,10 +18,10 @@ class ScheduleUpdateDTO extends FlexibleDataTransferObject
     public $approve_end;
     public $register_start;
     public $register_end;
-    public $advisor_score_rate;
-    public $critical_score_rate;
-    public $president_score_rate;
-    public $secretary_score_rate;
+//    public $advisor_score_rate;
+//    public $critical_score_rate;
+//    public $president_score_rate;
+//    public $secretary_score_rate;
     public $students;
 
     public static function fromRequest($request = null)
@@ -41,10 +41,10 @@ class ScheduleUpdateDTO extends FlexibleDataTransferObject
             'approve_end' => $request->input('endApproveDate'),
             'register_start' => $request->input('startRegisterDate'),
             'register_end' => $request->input('endRegisterDate'),
-            'advisor_score_rate' => $request->input('advisor_score_rate'),
-            'critical_score_rate' => $request->input('critical_score_rate'),
-            'president_score_rate' => $request->input('president_score_rate'),
-            'secretary_score_rate' => $request->input('secretary_score_rate'),
+//            'advisor_score_rate' => $request->input('advisor_score_rate'),
+//            'critical_score_rate' => $request->input('critical_score_rate'),
+//            'president_score_rate' => $request->input('president_score_rate'),
+//            'secretary_score_rate' => $request->input('secretary_score_rate'),
             'students' => $request->input('students'),
         ]);
     }
