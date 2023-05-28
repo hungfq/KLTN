@@ -173,6 +173,7 @@
     v-model="showLecturerRate"
     :schedule-id="selectLecturerScheduleId"
     :rate-lecturer="rateLecturer"
+    @change-rate="updateScoreRate"
   />
 </template>
 
@@ -332,7 +333,6 @@ export default {
 
     const changeLecturerRate = async (scheduleId, rate) => {
       rateLecturer.value = rate;
-      console.log('🚀 ~ file: ManageScheduleAdminV2.vue:335 ~ changeLecturerRate ~ rateLecturer.value:', rateLecturer.value);
       showLecturerRate.value = true;
       selectLecturerScheduleId.value = scheduleId;
     };
@@ -341,6 +341,18 @@ export default {
     const search = async () => {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
       else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
+    const updateScoreRate = async (scoreRate) => {
+      try {
+        showLecturerRate.value = false;
+        const _id = selectLecturerScheduleId.value;
+        await ScheduleApi.updateScoreRate(token, _id, scoreRate);
+        await loadToServer(serverOptions.value);
+        $toast.success('Đã cập nhật tỷ lệ điểm  thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
     };
 
     return {
@@ -359,6 +371,7 @@ export default {
       handleImport,
       showConfirmModal,
       changeCriteria,
+      updateScoreRate,
       confirmRemove,
       showLecturerRate,
       schedulesShow,

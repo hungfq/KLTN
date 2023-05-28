@@ -154,7 +154,6 @@ export default {
       president_score_rate: 0,
       secretary_score_rate: 0,
     });
-    console.log('🚀 ~ file: LecturerRate.vue:157 ~ shorter ~ props.rateLecturer:', props.rateLecturer);
     const prevRate = ref({});
     const shorter = defaults(omitBy(props.rateLecturer, isNull), {
       advisor_score_rate: 0,
@@ -180,7 +179,6 @@ export default {
 
     const submitRate = () => {
       emit('change-rate', rate.value);
-      console.log(rate.value);
     };
 
     const prepareData = (rateLecturer) => {
