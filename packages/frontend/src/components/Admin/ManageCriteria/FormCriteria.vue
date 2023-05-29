@@ -24,7 +24,7 @@
           type="text"
           name="title"
           label="Tên tiêu chí"
-          help="Ví dụ: Công nghệ mới"
+          help="Không quá 50 từ. Ví dụ: Công nghệ mới."
           validation="required"
           :disabled="isView"
         />
