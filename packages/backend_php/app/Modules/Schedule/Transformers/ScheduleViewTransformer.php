@@ -25,6 +25,8 @@ class ScheduleViewTransformer extends TransformerAbstract
             'endApproveDate' => $model->approve_end,
             'endRegisterDate' => $model->register_end,
             'startRegisterDate' => $model->register_start,
+            'mark_start' => $model->mark_start,
+            'mark_end' => $model->mark_end,
             'advisor_score_rate' => $model->advisor_score_rate,
             'critical_score_rate' => $model->critical_score_rate,
             'president_score_rate' => $model->president_score_rate,
