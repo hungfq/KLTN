@@ -95,7 +95,7 @@ const actions = {
     try {
       const { token, id } = payload;
       const data = await ScheduleApi.fetchStudentsOfSchedule(token, id);
-      commit('setListStudentsOfSchedule', data);
+      commit('setListStudentsOfSchedule', data.data);
       return data;
     } catch (e) {
       throw new Error(e.message);

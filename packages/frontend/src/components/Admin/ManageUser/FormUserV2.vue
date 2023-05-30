@@ -59,7 +59,7 @@ export default {
         },
         {
           name: 'code',
-          label: 'Mã sinh viên:',
+          label: 'Mã',
           type: 'text',
           rules: 'required|equalLength:8',
         },

@@ -36,6 +36,7 @@ class CommitteeViewTransformer extends TransformerAbstract
             'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
             'updated_by_name' => data_get($model, 'created_by_name'),
+            
         ];
     }
 }

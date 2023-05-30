@@ -51,42 +51,15 @@
             :loading="loading"
             buttons-pagination
             :rows-items="rowItems"
-          >
-            <template #item-gender="item">
-              <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
-            </template>
-            <template #item-status="item">
-              <img
-                v-if="item.status"
-                src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
-                class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-                @click="toggleActive(item)"
-              >
-              <img
-                v-if="!item.status"
-                src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
-                class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-                @click="toggleActive(item)"
-              >
-            </template>
-            <template #item-operation="item">
-              <div class="flex">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                  class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                  @click="editItem(item)"
-                >
-              </div>
-            </template>
-          </EasyDataTable>
+          />
         </div>
         <!-- Modal footer -->
         <div class="flex justify-between items-center px-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
-          <div>
+          <div v-if="!enabledExcel">
             <button
               data-modal-toggle="defaultModal"
               type="button"
-              class="btn btn-accent"
+              class="btn btn-accent mx-2"
               @click="$emit('import-excel',scheduleId)"
             >
               Nhập bằng excel
@@ -132,6 +105,18 @@ export default {
       type: Number,
       default: null,
     },
+    type: {
+      type: String,
+      default: 'SCHEDULE',
+    },
+    selected: {
+      type: Array,
+      default: () => [],
+    },
+    enabledExcel: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['change-students', 'import-excel'],
   setup (props, { emit }) {
@@ -159,16 +144,23 @@ export default {
     const token = store.getters['auth/token'];
     const loadToServer = async (option) => {
       loading.value = true;
-      const response = await UserApi.listUser(token, 'STUDENT', option);
+      let response = { data: [], meta: { pagination: { total: 0 } } };
+      if (props.type === 'SCHEDULE') {
+        response = await UserApi.listUser(token, 'STUDENT', option);
+      } else if (props.type === 'TOPIC') {
+        if (props.scheduleId) {
+          response = await ScheduleApi.fetchStudentsOfSchedule(token, props.scheduleId, option);
+        }
+      }
       users.value = response.data;
-      serverItemsLength.value = response.meta.pagination.total;
+      serverItemsLength.value = (response.meta && response.meta.pagination && response.meta.pagination.total) || 0;
       loading.value = false;
     };
 
     const isToggle = ref(false);
-    onMounted(async () => {
-      await loadToServer(serverOptions.value);
-    });
+    // onMounted(async () => {
+    //   await loadToServer(serverOptions.value);
+    // });
 
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
 
@@ -191,16 +183,25 @@ export default {
     };
 
     const prepareData = async (scheduleId) => {
+      // console.log('🚀 ~ file: SelectStudent.vue:208 ~ prepareData ~ scheduleId:', scheduleId);
       if (!scheduleId) itemsSelected.value = [];
       else {
-        const listStudentsRaw = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
+        let listStudentsRaw = [];
+        if (props.type === 'SCHEDULE') {
+          const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
+          listStudentsRaw = result.data;
+        } else if (props.type === 'TOPIC') {
+          listStudentsRaw = props.selected;
+        }
         itemsSelected.value = listStudentsRaw.map((user) => ({
-          _id: user._id,
+          _id: user._id || user.id,
           code: user.code,
           name: user.name,
           email: user.email,
         }));
+        console.log('🚀 ~ file: SelectStudent.vue:229 ~ itemsSelected.value=listStudentsRaw.map ~ itemsSelected.value:', itemsSelected.value);
         itemsPrevSelected.value = cloneDeep(itemsSelected.value);
+        await loadToServer(serverOptions.value);
       }
     };
 

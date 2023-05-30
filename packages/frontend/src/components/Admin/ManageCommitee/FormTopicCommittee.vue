@@ -27,14 +27,18 @@
           />
         </div>
         <div class="mt-1">
-          <Multiselect
-            v-model="topics"
-            mode="tags"
-            :close-on-select="false"
-            :searchable="true"
-            :options="listTopics"
-            :disabled="isView"
-          />
+          <div class="max-h-96 overflow-y-auto">
+            <EasyDataTable
+              v-model:server-options="serverOptions"
+              :server-items-length="serverItemsLength"
+              show-index
+              :headers="headers"
+              :items="topicShow"
+              :loading="loading"
+              buttons-pagination
+              :rows-items="rowItems"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -53,32 +57,180 @@
 </template>
 
 <script>
+import {
+  ref, watch, onMounted, computed,
+} from 'vue';
+import { mapState, mapGetters, useStore } from 'vuex';
+import { useToast } from 'vue-toast-notification';
 import Multiselect from '@vueform/multiselect';
-import { mapGetters } from 'vuex';
-import TopicApi from '../../../utils/api/topic';
 import ButtonImport from '../../common/ButtonImport.vue';
+import TopicApi from '../../../utils/api/topic';
+import ConfirmModal from '../../Modal/ConfirmModal.vue';
+import UploadButtonVue from '../UploadButton.vue';
+import CommitteeApi from '../../../utils/api/committee';
 
 export default {
   name: 'FormTopic',
   components: {
-    Multiselect,
     ButtonImport,
   },
-  data () {
+  setup () {
+    const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
+    const store = useStore();
+    const loading = ref(false);
+    const itemsSelected = ref([]);
+    const serverItemsLength = ref(0);
+    const rowItems = [10, 20, 50];
+    const topics = ref([]);
+    const selectSchedule = ref(0);
+    const selectLecturer = ref(0);
+    const showSelectStudent = ref(false);
+    const selectStudentScheduleId = ref(null);
+    const listTopicsSelected = ref([]);
+    const criticalId = ref(0);
+    const headers = [
+      { text: 'Mã số', value: 'code', sortable: true },
+      { text: 'Tên đề tài ', value: 'title', sortable: true },
+      { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
+      { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Đợt đăng ký', value: 'schedule' },
+    ];
+    const items = [];
+    const serverOptions = ref({
+      page: 1,
+      rowsPerPage: 10,
+      sortBy: 'updated_at',
+      sortType: 'desc',
+    });
+    const token = store.getters['auth/token'];
+    const modulePage = computed(() => store.getters['url/module']);
+    // Get id from store
+    const transformTopic = (listTopics) => listTopics.map((topic) => ({
+      id: topic._id || topic.id,
+      title: topic.title,
+      code: topic.code,
+    }));
+    const loadToServer = async (options) => {
+      loading.value = true;
+      const response = await TopicApi.listAllTopicsByCritical(token, options, criticalId.value, selectSchedule.value);
+      topics.value = response.data;
+      store.state.topic.listTopics = topics.value;
+      serverItemsLength.value = response.meta.pagination.total;
+      loading.value = false;
+    };
+
+    const $toast = useToast();
+
+    onMounted(async () => {
+      try {
+        const committeeId = store.getters['url/id'];
+        const committee = await CommitteeApi.getCommittee(token, committeeId);
+        listTopicsSelected.value = transformTopic(committee.list_topics);
+        criticalId.value = committee.critical_id;
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    });
+
+    const showRow = (item) => {
+      store.dispatch('url/updateId', item._id);
+      store.dispatch('url/updateSection', `${modulePage.value}-view`);
+    };
+
+    const editItem = (item) => {
+      store.dispatch('url/updateSection', `${modulePage.value}-update`);
+      store.dispatch('url/updateId', item._id);
+    };
+    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+
+    const handleImport = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-import`);
+    };
+
+    const showConfirmModal = ref(false);
+    const confirmRemove = async (id) => {
+      showConfirmModal.value = false;
+      try {
+        $toast.success('Đã xóa thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      }
+    };
+
+    const topicShow = computed(() => {
+      if (!topics.value) return [];
+      return topics.value.map((topic) => ({
+        _id: topic._id,
+        code: topic.code,
+        title: topic.title,
+        lecturer: topic.lecturerId.name || '',
+        critical: topic.criticalLecturerId.name || '',
+        schedule: topic.scheduleId.name || '',
+        scheduleId: topic.scheduleId || '',
+        list_students: topic.list_students,
+      }));
+    });
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const selectHandlerLecturer = async (value) => {
+      selectLecturer.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const changeStudents = async (students) => {
+      //  TODO: Add api update student for topic
+      console.log('🚀 ~ file: ManageTopicAdminV2.vue:239 ~ changeStudents ~ students:', students);
+      try {
+        showSelectStudent.value = false;
+        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const selectStudents = (item) => {
+      selectStudentScheduleId.value = item.scheduleId._id;
+      showSelectStudent.value = true;
+      listTopicsSelected.value = item.list_students;
+    };
+
     return {
-      code: '',
-      name: '',
-      committeePresidentId: '',
-      committeeSecretaryId: '',
-      criticalLecturerId: '',
-      listLecturers: [
-        'lecturer1',
-        'lecturer2',
-        'lecturer3',
-      ],
-      messages: '',
-      listTopics: [],
-      topics: [],
+      headers,
+      items,
+      showRow,
+      itemsSelected,
+      loading,
+      serverOptions,
+      topics,
+      serverItemsLength,
+      selectStudentScheduleId,
+      rowItems,
+      editItem,
+      modulePage,
+      handleImport,
+      showConfirmModal,
+      confirmRemove,
+      listTopicsSelected,
+      selectSchedule,
+      selectLecturer,
+      topicShow,
+      BASE_API_URL,
+      showSelectStudent,
+      selectStudents,
+
+      selectHandlerSchedule,
+      selectHandlerLecturer,
+      changeStudents,
     };
   },
   computed: {
@@ -88,58 +240,6 @@ export default {
     ...mapGetters('auth', [
       'token',
     ]),
-    isSave () {
-      return this.section === 'committee-import';
-    },
-    isUpdate () {
-      return this.section === 'committee-update';
-    },
-    isView () {
-      return this.section === 'committee-view';
-    },
-  },
-  async mounted () {
-    await this.$store.dispatch('committee/fetchListCommittee', this.token);
-    const { id } = this.$store.state.url;
-    const { listCommittee } = this.$store.state.committee;
-    const committee = listCommittee.find((s) => s._id.toString() === id.toString());
-    if (committee) {
-      this.name = committee.name;
-      this.code = committee.code;
-      this.committeePresidentId = committee.committeePresidentId._id;
-      this.committeeSecretaryId = committee.committeeSecretaryId._id;
-      this.criticalLecturerId = committee.criticalLecturerId._id;
-      this.topics = committee.topics;
-    }
-    let topics = [];
-    if (this.criticalLecturerId) {
-      topics = await TopicApi.topicCommitteeByCritical(this.token, this.criticalLecturerId);
-    }
-    this.listTopics = topics.map((s) => {
-      const l = {
-        value: s._id,
-        label: s.title,
-      };
-      return l;
-    });
-  },
-  methods: {
-    rollBack () {
-      this.$store.dispatch('url/updateSection', `${this.module}-list`);
-    },
-    async handleAddTopicAdmin () {
-      const value = {
-        id: this.id,
-        topics: this.topics,
-      };
-      try {
-        await this.$store.dispatch('committee/updateCommittee', { token: this.token, value, type: 'ADD_TOPIC' });
-        this.$toast.success('Đã cập nhật một thành công!');
-        this.rollBack();
-      } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
-    },
   },
 };
 </script>

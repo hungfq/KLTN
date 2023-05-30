@@ -6,8 +6,10 @@ const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TopicApi {
-  static async listAllTopics (token, options) {
-    const url = urlWithPagination('/topic', options);
+  static async listAllTopics (token, options, lecturerId, scheduleId) {
+    let url = urlWithPagination('/topic', options);
+    if (lecturerId) url += `&lecturerId=${lecturerId}`;
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
@@ -67,7 +69,9 @@ export default class TopicApi {
   }
 
   static async listAllTopicsByCriticalAndScheduleId (token, criticalId, scheduleId, options) {
-    const url = urlWithPagination(`/topic?criticalId=${criticalId}&scheduleId=${scheduleId}`, options);
+    let url = urlWithPagination('/topic', options);
+    if (criticalId) url += `&criticalId=${criticalId}`;
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
