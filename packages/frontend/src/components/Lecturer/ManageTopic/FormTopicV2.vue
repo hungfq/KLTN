@@ -160,18 +160,6 @@ export default {
   async mounted () {
     this.loading = true;
     const students = await UserApi.listUser(this.token, 'STUDENT', null);
-    // const lecturers = await UserApi.listUser(this.token, 'LECTURER', null);
-    // const schedules = await ScheduleApi.listAllSchedule(this.token);
-    // this.listLecturers = lecturers.data.map((lecturer) => {
-    //   let l = {
-    //     value: lecturer._id,
-    //     label: lecturer.name,
-    //   };
-    //   if (this.isView) {
-    //     l = { ...l, disabled: true };
-    //   }
-    //   return l;
-    // });
     this.listStudents = students.data.map((student) => {
       let st = {
         value: student.code,
