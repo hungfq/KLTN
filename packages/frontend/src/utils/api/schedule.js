@@ -165,6 +165,16 @@ export default class ScheduleApi {
     return res.data;
   }
 
+  static async fetchSchedule (token, id) {
+    const res = await axios.get(`/schedule/${id}`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async exportExcel (token, id) {
     const res = await axios.get(
       `/schedule/${id}/export`,
