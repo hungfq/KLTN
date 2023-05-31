@@ -1,13 +1,6 @@
 <!-- eslint-disable max-len -->
 <template>
   <div
-    x-transition:enter="transform transition-transform duration-300"
-    x-transition:enter-start="-translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transform transition-transform duration-300"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="-translate-x-full"
-    x-show="isSidebarOpen"
     class="fixed inset-y-0 left-0 z-10 flex-shrink-0 w-40 bg-white border-r-2 border-indigo-100 shadow-lg sm:left-2 rounded-tr-xl rounded-br-xl lg:static"
   >
     <nav

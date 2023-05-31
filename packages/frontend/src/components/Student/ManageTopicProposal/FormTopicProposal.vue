@@ -23,6 +23,8 @@
           label="Tiêu đề"
           help="Vd: Xây dụng web thương mại điện tử e-shop"
           validation="required"
+          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+
           :disabled="isView"
         />
         <FormKit
@@ -32,6 +34,7 @@
           label="Mô tả"
           help="Ghi các thông tin chi tiết tại đây"
           validation="required"
+          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
           :disabled="isView"
         />
         <FormKit
@@ -40,15 +43,6 @@
           type="number"
           label="Số thành viên"
           validation="min:1"
-          :disabled="isView"
-        />
-        <FormKit
-          v-if="false"
-          v-model="deadline"
-          name="deadline"
-          type="date"
-          label="Thời hạn hoàn thành"
-          validation="required"
           :disabled="isView"
         />
         <div
@@ -61,23 +55,6 @@
             <Multiselect
               v-model="lecturerId"
               :options="listLecturers"
-              :close-on-select="false"
-              :disabled="isView"
-            />
-          </div>
-        </div>
-        <div class="my-2-1 w-3/4">
-          <span class="font-bold text-sm py-4 my-4">
-            Sinh viên đăng kí
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="studentIds"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :create-option="true"
-              :options="listStudents"
               :disabled="isView"
             />
           </div>
@@ -89,15 +66,31 @@
           <div class="mt-1">
             <Multiselect
               v-model="scheduleId"
-              :options="listSchedules"
+              :options="scheduleSelect"
               :searchable="true"
-              :disabled="true"
+              :disabled="isView"
             />
+          </div>
+          <div class="my-2-1 w-3/4">
+            <span class="font-bold text-sm py-4 my-4">
+              Sinh viên đăng kí
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="studentIds"
+                mode="tags"
+                :close-on-select="false"
+                :searchable="true"
+                :create-option="true"
+                :options="listStudents"
+                :disabled="isView"
+              />
+            </div>
           </div>
         </div>
       </div>
       <!-- Modal footer -->
-      <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+      <div class="mt-10 flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
         <button
           v-if="!isView"
           type="button"
@@ -167,6 +160,12 @@ export default {
     isView () {
       return this.section === 'topic_proposal-view';
     },
+    scheduleSelect () {
+      return this.listSchedules.map((s) => ({
+        value: s._id,
+        label: s.name,
+      }));
+    },
   },
   async mounted () {
     await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
@@ -174,7 +173,8 @@ export default {
     const lecturers = this.$store.state.lecturer.listLecturer;
     const students = this.$store.state.student.listStudents;
     const schedules = this.$store.state.schedule.listScheduleProposalStudent;
-    this.scheduleId = this.topicScheduleId;
+    this.listSchedules = schedules;
+    console.log('🚀 ~ file: FormTopicProposal.vue:185 ~ mounted ~ this.scheduleSelect:', this.scheduleSelect);
     this.listLecturers = lecturers.map((lecturer) => {
       let l = {
         value: lecturer._id,
@@ -185,20 +185,11 @@ export default {
       }
       return l;
     });
+    // TODO : fetch correctly the students by schedule
     this.listStudents = students.map((student) => {
       let st = {
         value: student.code,
         label: `${student.name} - ${student.code}`,
-      };
-      if (this.isView) {
-        st = { ...st, disabled: true };
-      }
-      return st;
-    });
-    this.listSchedules = schedules.map((schedule) => {
-      let st = {
-        value: schedule._id,
-        label: schedule.code,
       };
       if (this.isView) {
         st = { ...st, disabled: true };
@@ -215,13 +206,6 @@ export default {
         this.description = topic.description;
         this.limit = topic.limit;
         if (topic.scheduleId) this.scheduleId = topic.scheduleId;
-        if (topic.deadline) {
-          const date = new Date(topic.deadline);
-          const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-            .toISOString()
-            .split('T')[0];
-          this.deadline = dateString;
-        }
         if (topic.lecturerId) this.lecturerId = topic.lecturerId._id;
         this.studentIds = topic.students;
       }
@@ -243,11 +227,11 @@ export default {
         scheduleId,
         status: 'LECTURER',
       };
+      console.log('🚀 ~ file: FormTopicProposal.vue:240 ~ handleAddTopicAdmin ~ value:', value);
       try {
         if (value.lecturerId !== '' && !!value.lecturerId) {
           if (this.check() && this.isSave) {
             await TopicProposalApi.addTopicProposal(this.token, value);
-            await this.$store.dispatch('topic_proposal/addTopicProposal', { token: this.token, value });
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.check() && this.isUpdate) {

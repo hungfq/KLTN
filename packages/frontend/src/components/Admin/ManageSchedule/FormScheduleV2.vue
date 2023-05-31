@@ -359,8 +359,6 @@ export default {
         mark_end: this.convertToUTC(mark_end).format(),
         students,
         code,
-        // eslint-disable-next-line camelcase
-        // eslint-disable-next-line camelcase
       };
       try {
         if (this.isSave) {

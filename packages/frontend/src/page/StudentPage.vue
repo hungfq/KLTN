@@ -48,7 +48,6 @@
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
-import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
@@ -65,7 +64,6 @@ export default {
     ErrorModalVue,
     LeftMiniBarVue,
     ManageBarStudentVue,
-    ManageTopicResult,
     HeaderBarVue,
     MiniHeaderBarVue,
     TaskDraggableVue,
@@ -80,8 +78,8 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic_register', value: 'Đăng ký đề tài' },
         { id: 'topic_proposal', value: 'Đề xuất đề tài' },
+        { id: 'topic_register', value: 'Đăng ký đề tài' },
         { id: 'topic_result', value: 'Kiểm tra kết quả' },
       ],
     };
@@ -95,9 +93,6 @@ export default {
     ]),
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
-    ]),
-    ...mapGetters('schedule', [
-      'listScheduleProposalStudent', 'listScheduleRegisterStudent',
     ]),
     isScheduleProposal () {
       if (!this.listScheduleProposalStudent || this.listScheduleProposalStudent.length < 1) return false;
@@ -115,13 +110,11 @@ export default {
       this.showErrorModal = true;
     }
     const { page, module, section } = this.$store.state.url;
-    const schedules = ScheduleApi.listScheduleToday(this.token);
-    console.log('🚀 ~ file: StudentPage.vue:108 ~ isScheduleRegister ~ schedules:', schedules);
 
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
-      this.$store.dispatch('url/updateModule', 'topic_register');
-      this.$store.dispatch('url/updateSection', 'topic_register-list');
+      this.$store.dispatch('url/updateModule', 'topic_proposal');
+      this.$store.dispatch('url/updateSection', 'topic_proposal-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
   },
