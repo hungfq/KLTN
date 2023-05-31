@@ -69,7 +69,6 @@ export default class ScheduleApi {
   }
 
   static async updateSchedule (token, value) {
-    console.log('🚀 ~ file: schedule.js:74 ~ ScheduleApi ~ updateSchedule ~ value:', value);
     const res = await axios.put(`/schedule/${value._id}`, value, {
       headers: {
         authorization: `bearer ${token}`,
