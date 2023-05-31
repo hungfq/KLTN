@@ -37,6 +37,11 @@ $api->group([
             'uses' => 'TopicController@update',
         ]);
 
+        $api->put('/student', [
+            'as' => '',
+            'uses' => 'TopicController@updateStudent',
+        ]);
+
         $api->delete('/', [
             'as' => '',
             'uses' => 'TopicController@delete',

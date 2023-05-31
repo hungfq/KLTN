@@ -18,6 +18,7 @@ use App\Modules\Topic\Actions\TopicStudentRegisterAction;
 use App\Modules\Topic\Actions\TopicStudentShowResultAction;
 use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
+use App\Modules\Topic\Actions\TopicUpdateStudentAction;
 use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\Actions\TopicViewGradeAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
@@ -29,6 +30,7 @@ use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicMarkValidator;
 use App\Modules\Topic\Validators\TopicSetGradeValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
+use App\Modules\Topic\Validators\TopicUpdateStudentValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,23 @@ class TopicController extends ApiController
     }
 
     public function update($id, TopicUpdateValidator $validator, TopicUpdateAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function updateStudent($id, TopicUpdateStudentValidator $validator, TopicUpdateStudentAction $action)
     {
         $this->request->merge([
             'id' => $id
