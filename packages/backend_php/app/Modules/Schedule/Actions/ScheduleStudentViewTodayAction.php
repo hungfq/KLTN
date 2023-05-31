@@ -3,34 +3,37 @@
 namespace App\Modules\Schedule\Actions;
 
 use App\Entities\Schedule;
+use Carbon\Carbon;
 use App\Modules\Schedule\Transformers\ScheduleViewTransformer;
-
 class ScheduleStudentViewTodayAction
 {
     public function handle()
     {
+        
+        $now = Carbon::now('UTC');
+
         $proposal = Schedule::query()
             ->with(['students'])
-            ->whereDate('proposal_start', '<=', date('Y-m-d H:i:s', time()))
-            ->whereDate('proposal_end', '>=', date('Y-m-d H:i:s', time()))
+            ->whereDate('proposal_start', '<=', $now)
+            ->whereDate('proposal_end', '>=', $now)
             ->get();
 
         $approve = Schedule::query()
             ->with(['students'])
-            ->whereDate('approve_start', '<=', date('Y-m-d H:i:s', time()))
-            ->whereDate('approve_end', '>=', date('Y-m-d H:i:s', time()))
+            ->whereDate('approve_start', '<=', $now)
+            ->whereDate('approve_end', '>=', $now)
             ->get();
 
         $register = Schedule::query()
             ->with(['students'])
-            ->whereDate('register_start', '<=', date('Y-m-d H:i:s', time()))
-            ->whereDate('register_end', '>=', date('Y-m-d H:i:s', time()))
+            ->whereDate('register_start', '<=', $now)
+            ->whereDate('register_end', '>=', $now)
             ->get();
 
         $mark = Schedule::query()
             ->with(['students'])
-            ->whereDate('mark_start', '<=', date('Y-m-d H:i:s', time()))
-            ->whereDate('mark_end', '>=', date('Y-m-d H:i:s', time()))
+            ->whereDate('mark_start', '<=', $now)
+            ->whereDate('mark_end', '>=', $now)
             ->get();
 
         $transform = new ScheduleViewTransformer();
