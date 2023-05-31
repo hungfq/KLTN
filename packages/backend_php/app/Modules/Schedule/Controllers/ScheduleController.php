@@ -18,6 +18,7 @@ use App\Modules\Schedule\Actions\ScheduleViewCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
 use App\Modules\Schedule\Actions\ScheduleViewWithTopicAction;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
+use App\Modules\Schedule\DTO\ScheduleViewStudentDTO;
 use App\Modules\Schedule\DTO\ScheduleViewWithTopicDTO;
 use App\Modules\Schedule\Transformers\ScheduleShowTransformer;
 use App\Modules\Schedule\Transformers\ScheduleViewCriteriaTransformer;
@@ -72,7 +73,11 @@ class ScheduleController extends ApiController
 
     public function viewStudent($id, ScheduleViewStudentAction $action, ScheduleViewStudentTransformer $transformer)
     {
-        $results = $action->handle($id);
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $results = $action->handle(ScheduleViewStudentDTO::fromRequest());
 
         if ($results instanceof Collection) {
             return $this->response->collection($results, $transformer);
