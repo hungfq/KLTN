@@ -3,17 +3,21 @@
 namespace App\Modules\Schedule\Actions;
 
 use App\Entities\Schedule;
-use Carbon\Carbon;
 use App\Modules\Schedule\Transformers\ScheduleViewTransformer;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 class ScheduleStudentViewTodayAction
 {
     public function handle()
     {
-        
         $now = Carbon::now('UTC');
 
         $proposal = Schedule::query()
             ->with(['students'])
+            ->whereHas('students', function ($q) {
+                $q->where('id', '=', Auth::id());
+            })
             ->whereDate('proposal_start', '<=', $now)
             ->whereDate('proposal_end', '>=', $now)
             ->get();
@@ -26,6 +30,9 @@ class ScheduleStudentViewTodayAction
 
         $register = Schedule::query()
             ->with(['students'])
+            ->whereHas('students', function ($q) {
+                $q->where('id', '=', Auth::id());
+            })
             ->whereDate('register_start', '<=', $now)
             ->whereDate('register_end', '>=', $now)
             ->get();

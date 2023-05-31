@@ -33,6 +33,7 @@ ScheduleShowTransformer extends TransformerAbstract
             'president_score_rate' => $model->president_score_rate,
             'secretary_score_rate' => $model->secretary_score_rate,
             'students' => $students,
+            'list_students' => data_get($model, 'students'),
             'created_at' => $model->created_at,
             'created_by_name' => data_get($model, 'created_by_name'),
             'updated_at' => $model->updated_at,
