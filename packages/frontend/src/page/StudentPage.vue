@@ -48,10 +48,7 @@
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
-import ManageTopicProposalStudentVue from '../components/Student/ManageTopicProposalStudent.vue';
 import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
-import FormResultVue from '../components/Student/FormResult.vue';
-import FormTopicProposalVue from '../components/Student/FormTopicProposal.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
@@ -60,6 +57,7 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
+import ScheduleApi from '../utils/api/schedule';
 
 export default {
   name: 'StudentPage',
@@ -67,12 +65,9 @@ export default {
     ErrorModalVue,
     LeftMiniBarVue,
     ManageBarStudentVue,
-    ManageTopicProposalStudentVue,
     ManageTopicResult,
     HeaderBarVue,
     MiniHeaderBarVue,
-    FormTopicProposalVue,
-    FormResultVue,
     TaskDraggableVue,
     TaskBarTopicVue,
     TopicRegisterPage,
@@ -120,6 +115,9 @@ export default {
       this.showErrorModal = true;
     }
     const { page, module, section } = this.$store.state.url;
+    const schedules = ScheduleApi.listScheduleToday(this.token);
+    console.log('🚀 ~ file: StudentPage.vue:108 ~ isScheduleRegister ~ schedules:', schedules);
+
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
       this.$store.dispatch('url/updateModule', 'topic_register');

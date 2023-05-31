@@ -222,7 +222,7 @@
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
         </button>
         <button
-          v-if="page != 6"
+          v-if="page != 6 && !isView"
           type="button"
           class="btn btn-primary"
           @click="page+=1"
@@ -240,9 +240,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import moment from 'moment';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
+import 'moment/dist/locale/vi';
 
 export default {
   name: 'FormSchedule',
@@ -345,20 +347,20 @@ export default {
       const value = {
         name,
         description,
-        startDate,
-        deadline,
-        startProposalDate,
-        endProposalDate,
-        startRegisterDate,
-        endRegisterDate,
-        startApproveDate,
-        endApproveDate,
+        startDate: this.convertToUTC(startDate).format(),
+        deadline: this.convertToUTC(deadline).format(),
+        startProposalDate: this.convertToUTC(startProposalDate).format(),
+        endProposalDate: this.convertToUTC(endProposalDate).format(),
+        startRegisterDate: this.convertToUTC(startRegisterDate).format(),
+        endRegisterDate: this.convertToUTC(endRegisterDate).format(),
+        startApproveDate: this.convertToUTC(startApproveDate).format(),
+        endApproveDate: this.convertToUTC(endApproveDate).format(),
+        mark_start: this.convertToUTC(mark_start).format(),
+        mark_end: this.convertToUTC(mark_end).format(),
         students,
         code,
         // eslint-disable-next-line camelcase
-        mark_start,
         // eslint-disable-next-line camelcase
-        mark_end,
       };
       try {
         if (this.isSave) {
@@ -381,10 +383,19 @@ export default {
     formatDate (rawDate) {
       try {
         if (!rawDate || rawDate === '') return '';
-        return rawDate;
+        const date = new Date(rawDate);
+        const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          .toISOString();
+        const localDate = moment(dateString).local();
+        return localDate.format('YYYY-MM-DD HH:mm:ss');
       } catch (e) {
         return '';
       }
+    },
+    convertToUTC (dateStr) {
+      const date = moment(dateStr); // parse the date string
+      const utc = date.utc(); // convert to UTC
+      return utc;
     },
     checkDate () {
       if (!this.name) {
