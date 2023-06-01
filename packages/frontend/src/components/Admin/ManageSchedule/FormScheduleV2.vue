@@ -324,6 +324,7 @@ export default {
           this.endRegisterDate = this.formatDate(schedule.endRegisterDate);
           this.mark_end = this.formatDate(schedule.mark_end);
           this.mark_start = this.formatDate(schedule.mark_start);
+          this.students = schedule.students;
         }
       } catch (e) {
         this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
