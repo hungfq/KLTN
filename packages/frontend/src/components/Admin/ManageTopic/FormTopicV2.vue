@@ -68,6 +68,7 @@
             <Multiselect
               v-model="lecturerId"
               :options="listLecturers"
+              :can-clear="false"
               :searchable="true"
               :disabled="isView"
             />
@@ -81,6 +82,7 @@
             <Multiselect
               v-model="criticalLecturerId"
               :options="listLecturers"
+              :can-clear="false"
               :searchable="true"
               :disabled="isView"
             />
@@ -112,6 +114,7 @@
               v-model="scheduleId"
               :options="listSchedules"
               :searchable="true"
+              :can-clear="false"
               :disabled="isView"
               class="w-[400px]"
             />

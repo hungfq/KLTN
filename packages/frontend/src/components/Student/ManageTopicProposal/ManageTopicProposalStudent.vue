@@ -1,78 +1,94 @@
 <template>
   <template v-if="!open">
-    <div class="py-2 mx-2 font-medium text-red-600 ">
-      Hiện tại đang không có đợt đề xuất, vui lòng chọn mục khác!
+    <div class="relative">
+      <img
+        class="w-fit h-fit"
+        :src="imageUrl"
+      >
+      <button
+        v-if="!checkIsRegister"
+        class="btn btn-primary absolute top-[75%] left-[46%] !py-0"
+        @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+      >
+        Xem kết quả
+      </button>
+      <button
+        v-else
+        class="btn btn-primary absolute top-[75%] left-[46%] !py-0"
+        @click="$store.dispatch('url/updateSection', 'topic_register-list')"
+      >
+        Đăng ký đề tài
+      </button>
     </div>
   </template>
   <template v-if="open">
-    <div class="flex">
-      <div class="inline-block p-2 rounded-md">
-        <select
-          v-model="selectSchedule"
-          class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-          @change="selectHandler"
+    <template v-if="!loading">
+      <div class="flex">
+        <div class="w-[300px] mt-2 ml-4">
+          <Multiselect
+            v-if="scheduleSelectOption.length > 2"
+            v-model="selectSchedule"
+            :options="scheduleSelectOption"
+            :can-clear="false"
+            @change="selectHandlerSchedule"
+          />
+        </div>
+        <div
+          class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+          @click="$store.dispatch('url/updateSection', 'topic_proposal-import')"
         >
-          <option
-            v-for="option in schedules"
-            :key="`key-${option._id}`"
-            :value="option._id"
-          >
-            {{ option.code }} : {{ option.name }}
-          </option>
-        </select>
+          Thêm đề xuất đề tài
+        </div>
       </div>
       <div
-        class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        @click="$store.dispatch('url/updateSection', 'topic_proposal-import')"
+        class="shadow-md sm:rounded-lg m-4"
       >
-        Thêm đề xuất đề tài
-      </div>
-    </div>
-    <div class="shadow-md sm:rounded-lg m-4">
-      <SearchInput
-        v-model="searchVal"
-        :search-icon="true"
-        @keydown.space.enter="search"
-      />
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="topicShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #item-import-export="students">
-          <div class-="flex flex-col">
-            <ul>
-              <li
-                v-for="student in students"
-                :key="`${student}`"
+        <SearchInput
+          v-model="searchVal"
+          :search-icon="true"
+          @keydown.space.enter="search"
+        />
+        <EasyDataTable
+          v-model:items-selected="itemsSelected"
+          v-model:server-options="serverOptions"
+          :server-items-length="serverItemsLength"
+          show-index
+          :headers="headers"
+          :items="topicShow"
+          :loading="loading"
+          buttons-pagination
+          :rows-items="rowItems"
+        >
+          <template #item-import-export="students">
+            <div class-="flex flex-col">
+              <ul>
+                <li
+                  v-for="student in students"
+                  :key="`${student}`"
+                >
+                  {{ student }}
+                </li>
+              </ul>
+            </div>
+          </template>
+          <template #item-operation="item">
+            <div class="flex">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
+                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+                @click="editItem(item._id)"
               >
-                {{ student }}
-              </li>
-            </ul>
-          </div>
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-              @click="editItem(item._id)"
-            >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="xl"
-              @click="handleRemoveTopicProposal(item._id)"
-            />
-          </div>
-        </template>
-      </EasyDataTable>
-    </div>
+              <font-awesome-icon
+                icon="fa-solid fa-trash-can"
+                size="xl"
+                @click="handleRemoveTopicProposal(item._id)"
+              />
+            </div>
+          </template>
+        </EasyDataTable>
+      </div>
+    </template>
+    <LoadingProcess v-else />
   </template>
   <ConfirmModal
     v-model="showConfirmModal"
@@ -95,15 +111,19 @@ import { mapState, mapGetters, useStore } from 'vuex';
 import SearchInput from 'vue-search-input';
 import { useToast } from 'vue-toast-notification';
 import 'vue-search-input/dist/styles.css';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
+import LoadingProcess from '../../common/Loading.vue';
 
 export default {
   name: 'ManageTopicProposalStudent',
   components: {
     SearchInput,
+    LoadingProcess,
     ConfirmModal,
+    Multiselect,
   },
   props: {
     open: {
@@ -120,10 +140,11 @@ export default {
     // Init value
     const topics = ref([]);
     const schedules = ref([]);
+    const imgNotFound = ref('');
+    imgNotFound.value = new URL('/src/assets/images/not_proposal.png', import.meta.url).href;
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      // { text: 'Sinh vien', value: 'students' },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Hành động', value: 'operation' },
     ];
@@ -150,7 +171,10 @@ export default {
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
-      if (!selectSchedule.value) return;
+      if (!selectSchedule.value) {
+        loading.value = false;
+        return;
+      }
       const response = await TopicProposalApi.listAllTopicsByCreated(token, selectSchedule.value, options);
       if (response) {
         topics.value = response.data;
@@ -167,13 +191,11 @@ export default {
     const $toast = useToast();
 
     const fetchListScheduleProposalByStudentId = async () => {
-      const listAllScheduleToday = await ScheduleApi.listScheduleToday(token);
-      const scheduleToday = listAllScheduleToday.proposal;
-      const schedulesTodayRegister = scheduleToday.filter((schedule) => schedule.students.includes(currentCodeStudent));
-      return schedulesTodayRegister;
+      const schedulesToday = store.getters['schedule/listScheduleProposalStudent'];
+      return schedulesToday;
     };
-
     onMounted(async () => {
+      loading.value = true;
       schedules.value = await fetchListScheduleProposalByStudentId();
       if (schedules.value.length > 0) {
         store.state.listScheduleProposalStudent = schedules.value;
@@ -184,6 +206,7 @@ export default {
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
+      loading.value = false;
     });
 
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
@@ -191,9 +214,15 @@ export default {
       await loadToServer(serverOptions.value);
     }, { deep: true });
     watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+    watch(selectSchedule.value, async () => { await loadToServer(serverOptions.value); });
 
-    const selectHandler = async () => {
+    const selectHandler = async (value) => {
+      console.log('🚀 ~ file: ManageTopicProposalStudent.vue:229 ~ selectHandler ~ schedule:', value);
+      selectSchedule.value = value;
       await loadToServer(serverOptions.value);
+    };
+    const selectHandlerSchedule = async (value) => {
+      console.log('🚀 ~ file: ManageTopicProposalStudent.vue:229 ~ selectHandler ~ schedule:', value);
     };
     const showRow = (item) => {
       // if (!checkCanEdit(item.scheduleId)) return;
@@ -223,7 +252,6 @@ export default {
     };
     const handleRemoveTopicProposal = async (id) => {
       removeId.value = id;
-      console.log('🚀 ~ file: ManageTopicProposalStudent.vue:229 ~ handleRemoveTopicProposal ~ removeId.value:', removeId.value);
       showConfirmModal.value = true;
     };
 
@@ -234,16 +262,18 @@ export default {
         code: topic.code,
         title: topic.title,
         lecturer: topic.lecturerId?.name || '',
-        critical: topic.criticalLecturerId?.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
-        committeePresidentGrade: topic.committeePresidentGrade || 0,
-        committeeSecretaryGrade: topic.committeeSecretaryGrade || 0,
-        advisorLecturerGrade: topic.advisorLecturerGrade || 0,
-        criticalLecturerGrade: topic.criticalLecturerGrade || 0,
-        criticalLecturerApprove: topic.criticalLecturerApprove || false,
-        advisorLecturerApprove: topic.advisorLecturerApprove || false,
       }));
+    });
+
+    const scheduleSelectOption = computed(() => {
+      const arr = [{ value: 0, label: 'Chọn đợt' }];
+      if (!schedules.value) return arr;
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: schedule.name });
+      });
+      return arr;
     });
 
     return {
@@ -254,6 +284,7 @@ export default {
       removeId,
       serverOptions,
       topics,
+      scheduleSelectOption,
       serverItemsLength,
       rowItems,
       editItem,
@@ -270,7 +301,9 @@ export default {
       searchVal,
       search,
       handleRemoveTopicProposal,
+      selectHandlerSchedule,
       showRow,
+      imgNotFound,
     };
   },
   computed: {
@@ -292,6 +325,17 @@ export default {
     ...mapGetters('schedule', [
       'listScheduleProposalStudent',
     ]),
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/not_proposal.png', import.meta.url).href;
+      return imageUrl;
+    },
+    checkIsRegister () {
+      const schedules = this.$store.state.schedule.listScheduleRegisterStudent;
+      if (schedules && schedules.length > 0) {
+        return true;
+      }
+      return false;
+    },
   },
   methods: {
     async handleUpdateTopicProposal (id) {

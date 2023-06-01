@@ -56,7 +56,6 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
-import ScheduleApi from '../utils/api/schedule';
 
 export default {
   name: 'StudentPage',

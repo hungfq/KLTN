@@ -147,7 +147,7 @@ export default {
       let response = { data: [], meta: { pagination: { total: 0 } } };
       if (props.type === 'SCHEDULE') {
         response = await UserApi.listUser(token, 'STUDENT', option);
-      } else if (props.type === 'TOPIC') {
+      } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
         if (props.scheduleId) {
           response = await ScheduleApi.fetchStudentsOfSchedule(token, props.scheduleId, option);
         }
@@ -183,14 +183,13 @@ export default {
     };
 
     const prepareData = async (scheduleId) => {
-      // console.log('🚀 ~ file: SelectStudent.vue:208 ~ prepareData ~ scheduleId:', scheduleId);
       if (!scheduleId) itemsSelected.value = [];
       else {
         let listStudentsRaw = [];
         if (props.type === 'SCHEDULE') {
           const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
           listStudentsRaw = result.data;
-        } else if (props.type === 'TOPIC') {
+        } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
           listStudentsRaw = props.selected;
         }
         itemsSelected.value = listStudentsRaw.map((user) => ({
@@ -199,7 +198,6 @@ export default {
           name: user.name,
           email: user.email,
         }));
-        console.log('🚀 ~ file: SelectStudent.vue:229 ~ itemsSelected.value=listStudentsRaw.map ~ itemsSelected.value:', itemsSelected.value);
         itemsPrevSelected.value = cloneDeep(itemsSelected.value);
         await loadToServer(serverOptions.value);
       }
@@ -213,7 +211,11 @@ export default {
 
     const submitStudents = async () => {
       const selectedCopy = [...itemsSelected.value].map((item) => item.code).sort();
-      emit('change-students', selectedCopy);
+      if (props.type === 'SCHEDULE' || props.type === 'TOPIC') {
+        emit('change-students', selectedCopy);
+      } else {
+        emit('change-students', itemsSelected.value);
+      }
     };
 
     return {

@@ -61,6 +61,7 @@
               :close-on-select="false"
               :searchable="true"
               :create-option="true"
+              :can-clear="false"
               :options="listStudents"
               :disabled="isView"
               class="w-[400px]"

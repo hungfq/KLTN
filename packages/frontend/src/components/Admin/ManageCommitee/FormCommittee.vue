@@ -47,6 +47,7 @@
                 v-model="criticalLecturerId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-clear="false"
                 :disabled="isView"
               />
             </div>
@@ -60,6 +61,7 @@
                 v-model="committeePresidentId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-clear="false"
                 :disabled="isView"
               />
             </div>
@@ -73,6 +75,7 @@
                 v-model="committeeSecretaryId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-clear="false"
                 :disabled="isView"
               />
             </div>

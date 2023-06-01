@@ -5,6 +5,7 @@ const initState = {
   listTopicProposalByLecturer: [],
   listTopicProposalCreated: [],
   listTopicProposalAdmin: [],
+  listTopicProposalStudent: [],
   topicScheduleId: '',
 };
 

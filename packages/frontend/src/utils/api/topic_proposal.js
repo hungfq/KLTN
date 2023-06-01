@@ -19,7 +19,9 @@ export default class TopicProposalApi {
   }
 
   static async listAllTopicsByCreated (token, scheduleId, options) {
-    const url = urlWithPagination(`/topic-proposal?is_created=1&scheduleId=${scheduleId}`, options);
+    let rawUrl = '/topic-proposal?is_created=1';
+    if (scheduleId) rawUrl += `&scheduleId=${scheduleId}`;
+    const url = urlWithPagination(rawUrl, options);
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

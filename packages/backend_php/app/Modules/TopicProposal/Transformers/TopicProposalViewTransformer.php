@@ -30,6 +30,7 @@ class TopicProposalViewTransformer extends TransformerAbstract
                 'code' => data_get($model, 'lecturer.code'),
                 'name' => data_get($model, 'lecturer.name'),
             ],
+            'list_students' => data_get($model, 'students'),
             'students' => $students,
             'created_at' => $model->created_at,
             'createdBy' => $model->created_by,
