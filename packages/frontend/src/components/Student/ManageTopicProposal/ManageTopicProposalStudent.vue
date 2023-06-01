@@ -73,16 +73,38 @@
           </template>
           <template #item-operation="item">
             <div class="flex">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                @click="editItem(item._id)"
+              <div
+                class="tooltip tooltip-bottom pr-3"
+                data-tip="Xem đề xuất"
               >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xl"
-                @click="handleRemoveTopicProposal(item._id)"
-              />
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  icon="fa-solid fa-eye"
+                  size="2xl"
+                  @click="showRow(item)"
+                />
+              </div>
+              <div
+                class="tooltip tooltip-bottom"
+                data-tip="Chỉnh sửa đề xuất"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  :icon="['fas', 'pen-to-square']"
+                  size="2xl"
+                  @click="editItem(item)"
+                />
+              </div>
+              <div
+                class="tooltip tooltip-bottom pl-3"
+                data-tip="Xóa đợt đề xuất"
+              >
+                <font-awesome-icon
+                  icon="fa-solid fa-trash-can"
+                  size="2xl"
+                  @click="handleRemoveTopicProposal(item._id)"
+                />
+              </div>
             </div>
           </template>
         </EasyDataTable>
@@ -167,7 +189,7 @@ export default {
     });
     const token = store.getters['auth/token'];
     // const currentLecturerId = store.getters['auth/userId'];
-    const currentCodeStudent = store.getters['auth/code'];
+    // const currentCodeStudent = store.getters['auth/code'];
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
@@ -217,7 +239,6 @@ export default {
     watch(selectSchedule.value, async () => { await loadToServer(serverOptions.value); });
 
     const selectHandler = async (value) => {
-      console.log('🚀 ~ file: ManageTopicProposalStudent.vue:229 ~ selectHandler ~ schedule:', value);
       selectSchedule.value = value;
       await loadToServer(serverOptions.value);
     };
@@ -231,9 +252,9 @@ export default {
     };
 
     const showConfirmModal = ref(false);
-    const editItem = async (id) => {
+    const editItem = async (item) => {
       store.dispatch('url/updateSection', `${modulePage.value}-update`);
-      store.dispatch('url/updateId', id);
+      store.dispatch('url/updateId', item._id);
     };
     const confirmRemove = async (id) => {
       showConfirmModal.value = false;

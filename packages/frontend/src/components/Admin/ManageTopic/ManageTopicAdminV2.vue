@@ -144,6 +144,7 @@ export default {
     const showSelectStudent = ref(false);
     const selectStudentScheduleId = ref(null);
     const listStudentSelected = ref([]);
+    const topicStudentId = ref(0);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
@@ -237,9 +238,10 @@ export default {
     };
     const changeStudents = async (students) => {
       //  TODO: Add api update student for topic
-      console.log('🚀 ~ file: ManageTopicAdminV2.vue:239 ~ changeStudents ~ students:', students);
       try {
         showSelectStudent.value = false;
+        await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
+        console.log('🚀 ~ file: ManageTopicAdminV2.vue:244 ~ changeStudents ~ topicStudentId.value:', topicStudentId.value);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -247,6 +249,7 @@ export default {
     };
     const selectStudents = (item) => {
       selectStudentScheduleId.value = item.scheduleId._id;
+      topicStudentId.value = item._id;
       showSelectStudent.value = true;
       listStudentSelected.value = item.list_students;
     };

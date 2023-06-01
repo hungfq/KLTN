@@ -18,7 +18,7 @@
         <div
           class="ml-5 mt-5 flex flex-col items-center"
         >
-          <template v-if="page ===1">
+          <template v-if="page ===1 || isView">
             <div class="flex">
               <FormKit
                 v-model="title"
@@ -78,7 +78,7 @@
               </div>
             </div>
           </template>
-          <template v-if="page===2">
+          <template v-if="page===2 || isView">
             <div class="flex flex-col">
               <div class="font-bold my-4">
                 Danh sách sinh viên đã chọn
@@ -94,7 +94,10 @@
                 />
               </div>
             </div>
-            <div class="flex mt-4">
+            <div
+              v-if="!isView"
+              class="flex mt-4"
+            >
               <FormKit
                 v-model.number="limit"
                 name="limit"
@@ -106,14 +109,7 @@
                 :disabled="isView"
               />
               <button
-                v-if="isView"
-                class="btn btn-primary mt-5 !mx-8 w-[250px]"
-                @click="showInfoStudent"
-              >
-                Xem danh sách sinh viên
-              </button>
-              <button
-                v-else
+                v-if="!isView"
                 class="btn btn-primary mt-5 !mx-8 w-[250px]"
                 @click="chooseStudent"
               >
@@ -264,8 +260,10 @@ export default {
     this.studentIds = [this.userInfo.code];
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
-      const topics = this.$store.state.topic.listTopicProposalStudent;
-      const topic = topics.find((t) => t._id === id);
+      console.log('🚀 ~ file: FormTopicProposal.vue:263 ~ mounted ~ id:', id);
+      // const topics = this.$store.state.topic.listTopicProposalStudent;
+      const topic = await TopicProposalApi.getTopicProposal(this.token, id);
+      console.log('🚀 ~ file: FormTopicProposal.vue:265 ~ mounted ~ topic:', topic);
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;

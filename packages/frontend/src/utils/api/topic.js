@@ -381,4 +381,14 @@ export default class TopicApi {
     );
     return res;
   }
+
+  static async importStudentToTopic (token, id, students) {
+    const res = await axios.post(`/topic/${id}/student`, students, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
 }
