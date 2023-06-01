@@ -11,21 +11,21 @@ class ScheduleStudentViewTodayAction
 {
     public function handle()
     {
-        $now = Carbon::now('UTC');
+        $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
 
         $proposal = Schedule::query()
             ->with(['students'])
             ->whereHas('students', function ($q) {
                 $q->where('id', '=', Auth::id());
             })
-            ->whereDate('proposal_start', '<=', $now)
-            ->whereDate('proposal_end', '>=', $now)
+            ->where('proposal_start', '<=', $now)
+            ->where('proposal_end', '>=', $now)
             ->get();
 
         $approve = Schedule::query()
             ->with(['students'])
-            ->whereDate('approve_start', '<=', $now)
-            ->whereDate('approve_end', '>=', $now)
+            ->where('approve_start', '<=', $now)
+            ->where('approve_end', '>=', $now)
             ->get();
 
         $register = Schedule::query()
@@ -33,14 +33,14 @@ class ScheduleStudentViewTodayAction
             ->whereHas('students', function ($q) {
                 $q->where('id', '=', Auth::id());
             })
-            ->whereDate('register_start', '<=', $now)
-            ->whereDate('register_end', '>=', $now)
+            ->where('register_start', '<=', $now)
+            ->where('register_end', '>=', $now)
             ->get();
 
         $mark = Schedule::query()
             ->with(['students'])
-            ->whereDate('mark_start', '<=', $now)
-            ->whereDate('mark_end', '>=', $now)
+            ->where('mark_start', '<=', $now)
+            ->where('mark_end', '>=', $now)
             ->get();
 
         $transform = new ScheduleViewTransformer();
