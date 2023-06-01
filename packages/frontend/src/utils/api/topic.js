@@ -383,7 +383,7 @@ export default class TopicApi {
   }
 
   static async importStudentToTopic (token, id, students) {
-    const res = await axios.post(`/topic/${id}/student`, students, {
+    const res = await axios.put(`/topic/${id}/student`, students, {
       headers: {
         authorization: `bearer ${token}`,
       },
