@@ -20,6 +20,11 @@ $api->group([
         'uses' => 'TopicProposalController@update',
     ]);
 
+    $api->get('/{id:[0-9]+}', [
+        'as' => '',
+        'uses' => 'TopicProposalController@show',
+    ]);
+
     $api->delete('/{id:[0-9]+}', [
         'as' => '',
         'uses' => 'TopicProposalController@delete',

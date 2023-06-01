@@ -6,10 +6,12 @@ use App\Http\Controllers\ApiController;
 use App\Modules\TopicProposal\Actions\TopicProposalApproveAction;
 use App\Modules\TopicProposal\Actions\TopicProposalDeclineAction;
 use App\Modules\TopicProposal\Actions\TopicProposalDeleteAction;
+use App\Modules\TopicProposal\Actions\TopicProposalShowAction;
 use App\Modules\TopicProposal\Actions\TopicProposalStoreAction;
 use App\Modules\TopicProposal\Actions\TopicProposalUpdateAction;
 use App\Modules\TopicProposal\Actions\TopicProposalViewAction;
 use App\Modules\TopicProposal\DTO\TopicProposalViewDTO;
+use App\Modules\TopicProposal\Transformers\TopicProposalShowTransformer;
 use App\Modules\TopicProposal\Transformers\TopicProposalViewTransformer;
 use App\Modules\TopicProposal\Validators\TopicProposalStoreValidator;
 use App\Modules\TopicProposal\Validators\TopicProposalUpdateValidator;
@@ -41,6 +43,15 @@ class TopicProposalController extends ApiController
 
         return $this->responseSuccess();
     }
+
+
+    public function show($id, TopicProposalShowAction $action, TopicProposalShowTransformer $transformer)
+    {
+        $results = $action->handle($id);
+
+        return $this->response->item($results, $transformer);
+    }
+
 
     public function update($id, TopicProposalUpdateValidator $validator, TopicProposalUpdateAction $action)
     {
