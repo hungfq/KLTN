@@ -1,122 +1,103 @@
 <template>
   <div class="flex flex-col">
-    <div>
-      <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
-            v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
+    <template v-if="!open">
+      <div class="relative">
+        <img
+          class="w-fit h-fit"
+          :src="imageUrl"
+        >
+        <button
+          class="btn btn-primary absolute bottom-0 left-0 !py-0"
+          @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+        >
+          Xem kết quả
+        </button>
+        <button
+          class="btn btn-primary absolute bottom-0 right-0 !py-0"
+          @click="$store.dispatch('url/updateSection', 'topic_proposal-list')"
+        >
+          Đề xuất đề tài
+        </button>
+      </div>
+    </template>
+    <template v-if="open">
+      <div>
+        <div class="flex">
+          <div class="w-[300px] mt-2 ml-4">
+            <Multiselect
+              v-if="scheduleSelectOption.length > 2"
+              v-model="selectSchedule"
+              :options="scheduleSelectOption"
+              :allow-empty="false"
+              :clear-on-select="false"
+              placeholder="Chọn đợt đăng ký"
+              :can-clear="false"
+              :preselect-first="true"
+              @change="selectHandler"
+            />
+          </div>
+        </div>
+        <div class="shadow-md sm:rounded-lg m-4">
+          <SearchInput
+            v-model="searchVal"
+            :search-icon="true"
+            @keydown.space.enter="search"
+          />
+          <EasyDataTable
+            v-model:server-options="serverOptions"
+            header-text-direction="center"
+            body-text-direction="center"
+            :server-items-length="serverItemsLength"
+            show-index
+            :headers="headers"
+            :items="topicShow"
+            :loading="loading"
+            buttons-pagination
           >
-            <option
-              :key="`key-null`"
-              :value="'all'"
-            >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+            <template #expand="item">
+              <div
+                class="flex items-center ml-64 my-4"
+              >
+                <div class="font-bold">
+                  Danh sách sinh viên
+                </div>
+                <div class="flex ml-16">
+                  <div
+                    v-for="student in item.list_students"
+                    :key="`${student.code}`"
+                    class="mt-2 flex flex-col mr-8"
+                  >
+                    <span class="font-semibold">Mã sinh viên: {{ student.code }} </span>
+                    <span class="font-semibold">Tên: {{ student.name }}</span>
+                    <span class="font-semibold">Email: {{ student.name }}</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <template #item-operation="item">
+              <div class="m-1 cursor-pointer rounded-xl">
+                <button
+                  class="btn btn-primary"
+                  :disabled="item.current_register >= item.limit"
+                  @click="editItem(item)"
+                >
+                  <span class="font-semibold px-1">Đăng ký</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+              </div>
+            </template>
+            <template #item-limit="item">
+              <div class="m-1 flex items-center  justify-center ml-2">
+                {{ `${item.current_register} / ${item.limit}` }}
+              </div>
+            </template>
+          </EasyDataTable>
         </div>
       </div>
-      <div class="shadow-md sm:rounded-lg m-4">
-        <SearchInput
-          v-model="searchVal"
-          :search-icon="true"
-          @keydown.space.enter="search"
-        />
-        <EasyDataTable
-          v-model:items-selected="itemsSelected"
-          v-model:server-options="serverOptions"
-          :server-items-length="serverItemsLength"
-          show-index
-          :headers="headers"
-          :items="topicShow"
-          :loading="loading"
-          buttons-pagination
-          :rows-items="rowItems"
-        >
-          <template #expand="item">
-            <div
-              class="flex"
-            >
-              <div class="flex flex-col grow">
-                <div>Danh sach sinh vien</div>
-                <ul>
-                  <li
-                    v-for="student in item.students"
-                    :key="`${student}`"
-                  >
-                    {{ student }}
-                  </li>
-                </ul>
-              </div>
-              <div class="flex flex-col grow">
-                <div>Diem so</div>
-                <div class="flex">
-                  <div> Giao vien huong dan: </div>
-                  <div>{{ item.advisorLecturerGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div> Giao vien phan vien: </div>
-                  <div>{{ item.criticalLecturerGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div>Chu tich hoi dong: </div>
-                  <div>{{ item.committeePresidentGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div> Thu ky hoi dong: </div>
-                  <div>{{ item.advisorLecturerGrade }}</div>
-                </div>
-              </div>
-              <div class="flex flex-col grow">
-                <div>Chap thuan ra hoi dong</div>
-                <div class="flex">
-                  <div> Giao vien huong dan: </div>
-                  <div>{{ item.advisorLecturerApprove ? 'Dong y' : 'Khong dong y' }}</div>
-                </div>
-                <div class="flex">
-                  <div> Giao vien phan bien: </div>
-                  <div>{{ item.criticalLecturerApprove ? 'Dong y' : 'Khong dong y' }}</div>
-                </div>
-              </div>
-            </div>
-          </template>
-          <template #item-import-export="students">
-            <div class-="flex flex-col">
-              <ul>
-                <li
-                  v-for="student in students"
-                  :key="`${student}`"
-                >
-                  {{ student }}
-                </li>
-              </ul>
-            </div>
-          </template>
-          <template #item-operation="item">
-            <div class="m-1 cursor-pointer rounded-xl">
-              <button
-                class=" text-white bg-indigo-600 p-1 w-24"
-                @click="editItem(item)"
-              >
-                <span class="font-semibold px-1">Đăng ký</span>
-                <font-awesome-icon
-                  size="xl"
-                  :icon="['fas', 'check']"
-                />
-              </button>
-            </div>
-          </template>
-        </EasyDataTable>
-      </div>
-    </div>
+    </template>
   </div>
   <ConfirmModal
     v-model="showConfirmModal"
@@ -137,10 +118,10 @@ import {
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
 
-import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
 
 export default {
@@ -148,6 +129,13 @@ export default {
   components: {
     SearchInput,
     ConfirmModal,
+    Multiselect,
+  },
+  props: {
+    open: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup () {
     const store = useStore();
@@ -161,18 +149,15 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      // { text: 'Sinh vien', value: 'students' },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
+      { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Số lượng đăng ký', value: 'limit' },
       { text: 'Hành động', value: 'operation' },
     ];
 
-    const headerTabs = [
-      { code: 'advisor', text: 'Hướng dẫn' },
-      { code: 'critical', text: 'Phản biện' },
-    ];
     const tab = ref('advisor');
     const searchVal = ref('');
-    const selectSchedule = ref('all');
+    const selectSchedule = ref(0);
     const selectLecturer = ref('');
     const items = [];
     const registerId = ref('');
@@ -184,12 +169,12 @@ export default {
     });
     const token = store.getters['auth/token'];
     // const currentLecturerId = store.getters['auth/userId'];
-    const currentCodeStudent = store.getters['auth/code'];
+    // const currentCodeStudent = store.getters['auth/code'];
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
       let response;
-      if (!selectSchedule.value || selectSchedule.value === 'all') {
+      if (!selectSchedule.value || selectSchedule.value === 0) {
         const scheduleIds = schedules.value.map((s) => s._id);
         response = await TopicApi.listAllTopicsByScheduleIds(token, scheduleIds, options);
       } else {
@@ -210,10 +195,8 @@ export default {
     const $toast = useToast();
 
     const fetchListScheduleRegisterByStudentId = async () => {
-      const listAllScheduleToday = await ScheduleApi.listScheduleToday(token);
-      const scheduleToday = listAllScheduleToday.register;
-      const schedulesTodayRegister = scheduleToday.filter((schedule) => schedule.students.includes(currentCodeStudent));
-      return schedulesTodayRegister;
+      const schedulesToday = store.getters['schedule/listScheduleRegisterStudent'];
+      return schedulesToday;
     };
 
     onMounted(async () => {
@@ -230,8 +213,11 @@ export default {
       await loadToServer(serverOptions.value);
     }, { deep: true });
     watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+    watch(selectSchedule.value, async () => { await loadToServer(serverOptions.value); });
 
-    const selectHandler = async () => {
+    const selectHandler = async (value) => {
+      if (!value) selectSchedule.value = 0;
+      else selectSchedule.value = value;
       await loadToServer(serverOptions.value);
     };
 
@@ -269,13 +255,19 @@ export default {
         critical: topic.criticalLecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
-        committeePresidentGrade: topic.committeePresidentGrade || 0,
-        committeeSecretaryGrade: topic.committeeSecretaryGrade || 0,
-        advisorLecturerGrade: topic.advisorLecturerGrade || 0,
-        criticalLecturerGrade: topic.criticalLecturerGrade || 0,
-        criticalLecturerApprove: topic.criticalLecturerApprove || false,
-        advisorLecturerApprove: topic.advisorLecturerApprove || false,
+        list_students: topic.list_students,
+        limit: topic.limit,
+        current_register: topic.current,
       }));
+    });
+
+    const scheduleSelectOption = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả' }];
+      if (!schedules.value) return arr;
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: schedule.name });
+      });
+      return arr;
     });
 
     return {
@@ -296,10 +288,10 @@ export default {
       topicShow,
       selectHandler,
       schedules,
-      headerTabs,
       tab,
       searchVal,
       search,
+      scheduleSelectOption,
     };
   },
   data () {
@@ -331,6 +323,10 @@ export default {
     ...mapGetters('schedule', [
       'listSchedules',
     ]),
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/not_register.png', import.meta.url).href;
+      return imageUrl;
+    },
   },
   methods: {
     async handleUpdateTopic (id) {
@@ -348,3 +344,6 @@ export default {
   },
 };
 </script>
+<style>
+--easy-table-header-item-padding: 10px 15px;
+</style>

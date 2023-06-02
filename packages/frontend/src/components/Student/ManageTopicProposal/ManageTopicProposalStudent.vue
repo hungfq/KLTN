@@ -6,15 +6,13 @@
         :src="imageUrl"
       >
       <button
-        v-if="!checkIsRegister"
-        class="btn btn-primary absolute top-[75%] left-[46%] !py-0"
+        class="btn btn-primary absolute bottom-0 left-0 !py-0"
         @click="$store.dispatch('url/updateSection', 'topic_result-list')"
       >
         Xem kết quả
       </button>
       <button
-        v-else
-        class="btn btn-primary absolute top-[75%] left-[46%] !py-0"
+        class="btn btn-primary absolute bottom-0 right-0 !py-0"
         @click="$store.dispatch('url/updateSection', 'topic_register-list')"
       >
         Đăng ký đề tài
@@ -30,7 +28,7 @@
             v-model="selectSchedule"
             :options="scheduleSelectOption"
             :can-clear="false"
-            @change="selectHandlerSchedule"
+            @change="selectHandler"
           />
         </div>
         <div
@@ -49,6 +47,8 @@
           @keydown.space.enter="search"
         />
         <EasyDataTable
+            header-text-direction="center"
+            body-text-direction="center"
           v-model:items-selected="itemsSelected"
           v-model:server-options="serverOptions"
           :server-items-length="serverItemsLength"
@@ -135,7 +135,6 @@ import { useToast } from 'vue-toast-notification';
 import 'vue-search-input/dist/styles.css';
 import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
-import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
 
@@ -188,8 +187,7 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-    // const currentLecturerId = store.getters['auth/userId'];
-    // const currentCodeStudent = store.getters['auth/code'];
+
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
@@ -239,11 +237,9 @@ export default {
     watch(selectSchedule.value, async () => { await loadToServer(serverOptions.value); });
 
     const selectHandler = async (value) => {
-      selectSchedule.value = value;
+      if (!value) selectSchedule.value = 0;
+      else selectSchedule.value = value;
       await loadToServer(serverOptions.value);
-    };
-    const selectHandlerSchedule = async (value) => {
-      console.log('🚀 ~ file: ManageTopicProposalStudent.vue:229 ~ selectHandler ~ schedule:', value);
     };
     const showRow = (item) => {
       // if (!checkCanEdit(item.scheduleId)) return;
@@ -322,7 +318,6 @@ export default {
       searchVal,
       search,
       handleRemoveTopicProposal,
-      selectHandlerSchedule,
       showRow,
       imgNotFound,
     };
