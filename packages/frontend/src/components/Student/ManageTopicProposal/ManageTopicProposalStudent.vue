@@ -1,10 +1,11 @@
 <template>
   <template v-if="!open">
     <div class="relative">
-      <img
-        class="w-fit h-fit"
-        :src="imageUrl"
-      >
+      <div class="flex">
+        <img
+          :src="imageUrl"
+        >
+      </div>
       <button
         class="btn btn-primary absolute bottom-0 left-0 !py-0"
         @click="$store.dispatch('url/updateSection', 'topic_result-list')"
@@ -47,10 +48,10 @@
           @keydown.space.enter="search"
         />
         <EasyDataTable
-            header-text-direction="center"
-            body-text-direction="center"
           v-model:items-selected="itemsSelected"
           v-model:server-options="serverOptions"
+          header-text-direction="center"
+          body-text-direction="center"
           :server-items-length="serverItemsLength"
           show-index
           :headers="headers"

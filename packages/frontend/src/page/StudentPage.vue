@@ -19,7 +19,7 @@
           v-if="page === 'task'"
           :username="userName"
         />
-        <div class="bg-white mx-4 border rounded overflow-scroll">
+        <div class="bg-white border rounded overflow-y-auto overflow-x-auto">
           <template v-if="page === 'management'">
             <TopicRegisterPage v-if="module === 'topic_register'" />
             <TopicProposalPage v-if="module === 'topic_proposal'" />
