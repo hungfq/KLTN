@@ -56,6 +56,7 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
+import ManageTopicResult from '../components/Student/ManageResult/ManageTopicResult.vue';
 
 export default {
   name: 'StudentPage',
@@ -69,6 +70,7 @@ export default {
     TaskBarTopicVue,
     TopicRegisterPage,
     TopicProposalPage,
+    ManageTopicResult,
   },
   props: {
   },

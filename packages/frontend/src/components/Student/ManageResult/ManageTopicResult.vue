@@ -5,125 +5,186 @@
     </div>
   </template>
   <template v-if="open">
-    <div
-      class="shadow-md sm:rounded-lg m-4"
-    >
-      <SearchInput
-        v-model="searchVal"
-        :search-icon="true"
-        @keydown.space.enter="search"
-      />
-      <table class="w-full text-sm text-left text-gray-500">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-          <tr>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Đợt đăng ký
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Mã đề tài
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Tên đề tài
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Mô tả
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Giảng viên hướng dẫn
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              <span class="sr-only">Edit</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="topic in topics"
-            :key="`topic-${topic._id}`"
-            class="bg-slate-300 hover:bg-gray-50 "
-          >
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ displaySchedule(topic.scheduleId) }}
-            </th>
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ topic.code }}
-            </th>
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ topic.title }}
-            </th>
-            <th
-              :key="`topic-${topic._id}`"
-              scope="row"
-              class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap "
-            >
-              {{ topic.description }}
-            </th>
-            <td class="py-2 pl-6">
-              <th
-                scope="row"
-                class="py-2 px-4 font-medium text-gray-900  "
-              >
-                {{ displayLecturer(topic.lecturerId) }}
-              </th>
-            </td>
+    <div class="tabs tabs-boxed bg-white">
+      <a
+        v-for="option in headerTabs"
+        :key="option"
+        class="tab rounded-md"
+        :class="{'tab-active' : option === tab}"
+        @click="tab= option"
+      >{{ option }}</a>
+    </div>
+    <div v-if="tab">
+      <div class="flex flex-col">
+        <div class="flex my-8">
+          <div class="w-3/5 bg-white mx-4 border rounded-lg shadow-md">
+            <div class="bg-gray-200 px-4 py-3 flex items-center">
+              <h1 class="font-bold text-xl text-gray-800">
+                {{ currentTopic.title || '' }}
+              </h1>
+            </div>
 
-            <td class="py-2 px-6">
-              <!-- <a
-                class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-                @click="handleRegisterTopic(topic._id)"
-              >Đăng ký</a> -->
-              <a
-                class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-                @click="handleShowTopic(topic._id)"
-              >Xem chi tiết</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <div class="px-4 py-3 bg-white">
+              <div class="flex flex-col md:flex-row md:items-center">
+                <div class="md:w-1/2">
+                  <LineItem
+                    :title="'Mã đề tài: '"
+                    :content="currentTopic.name"
+                  />
+                  <LineItem
+                    :title="'Ngày phản biện: '"
+                    :content="currentTopic.thesisDefenseDate || ''"
+                  />
+                  <LineItem
+                    :title="'Mô tả: '"
+                    :content="currentTopic.description"
+                  />
+                </div>
+                <div class="md:w-1/2">
+                  <LineItem
+                    :title="'Đợt đăng ký: '"
+                    :content="`${currentTopic.scheduleId.code}: ${currentTopic.scheduleId.name}`"
+                  />
+                  <LineItem
+                    :title="'Giáo viên phản biện: '"
+                    :content="currentTopic.criticalLecturerId?.name || ''"
+                  />
+                  <LineItem
+                    :title="'Giáo viên hướng dẫn: '"
+                    :content="currentTopic.lecturerId?.name || ''"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-2/5 flex flex-col">
+            <div class="bg-white mx-4 border rounded-lg shadow-md">
+              <div class="bg-gray-200 px-4 py-3 flex items-center">
+                <h1 class="font-bold text-xl text-gray-800">
+                  Danh sách thành viên
+                </h1>
+              </div>
+
+              <div class="px-4 py-3 bg-white">
+                <div class="md:w-1/2">
+                  <ol class="list-decimal pl-4">
+                    <li
+                      v-for="student in currentTopic.students"
+                      :key="student"
+                    >
+                      {{ student }}
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white mx-4 border rounded-lg shadow-md my-4">
+              <div class="bg-gray-200 px-4 py-3 flex items-center">
+                <h1 class="font-bold text-xl text-gray-800">
+                  Phê duyệt ra hội đồng
+                </h1>
+              </div>
+
+              <div class="px-4 py-3 bg-white">
+                <div class="flex flex-col">
+                  <LineItem
+                    :title="'Giáo viên hướng dẫn: '"
+                    :content="currentTopic.advisorLecturerApprove ? 'Đồng ý' : 'Chưa đồng ý'"
+                  />
+                  <LineItem
+                    :title="'Giáo viên phản biện: '"
+                    :content="currentTopic.criticalLecturerApprove ? 'Đồng ý' : 'Chưa đồng ý'"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white mx-4 border rounded-lg shadow-md">
+              <div class="bg-gray-200 px-4 py-3 flex items-center">
+                <h1 class="font-bold text-xl text-gray-800">
+                  Danh sách hội đồng
+                </h1>
+              </div>
+
+              <div class="px-4 py-3 bg-white">
+                <div class="md:w-1/2">
+                  <ol class="list-decimal pl-4">
+                    <li>Coffee</li>
+                    <li>Tea</li>
+                    <li>Milk</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white mx-4 border rounded-lg shadow-md overflow-hidden">
+          <div class="bg-gray-200 px-4 py-3 flex items-center">
+            <h1 class="font-bold text-xl text-gray-800">
+              Điểm số
+            </h1>
+          </div>
+
+          <div class="px-4 py-3 bg-white">
+            <div>
+              <LineItem
+                :title="'Điểm của giáo viên hướng dẫn:'"
+                :content="currentTopic.advisorLecturerGrade || 0"
+              />
+              <LineItem
+                :title="'Điểm của giáo viên phản biện:'"
+                :content="currentTopic.criticalLecturerGrade || 0"
+              />
+              <LineItem
+                :title="'Điểm của chủ tịch hội đồng:'"
+                :content="currentTopic.committeePresidentGrade || 0"
+              />
+              <LineItem
+                :title="'Điểm của thư ký hội đồng:'"
+                :content="currentTopic.committeeSecretaryGrade || 0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="my-4 mx-4">
+          <button
+            class="btn btn-error"
+            @click="removeRegister"
+          >
+            Hủy đăng ký
+          </button>
+        </div>
+      </div>
     </div>
   </template>
+  <ConfirmModal
+    v-model="showConfirmModal"
+    @confirm="confirmRemove"
+    @cancel="showConfirmModal=false"
+  >
+    <template #title>
+      Xác nhận
+    </template>
+    <div>Bạn có xác nhận xóa đăng ký này?</div>
+  </ConfirmModal>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import SearchInput from 'vue-search-input';
-// Optionally import default styling
 import 'vue-search-input/dist/styles.css';
+import TopicApi from '../../../utils/api/topic';
+import LineItem from '../LineItem.vue';
+import ConfirmModal from '../../Modal/ConfirmModal.vue';
 
 export default {
   name: 'ManageTopicStudent',
   components: {
-    SearchInput,
+    LineItem,
+    ConfirmModal,
   },
   props: {
     open: {
@@ -137,6 +198,10 @@ export default {
       currentScheduleId: '',
       listSchedules: [],
       topics: [],
+      headerTabs: [],
+      hashTopics: new Map(),
+      tab: '',
+      showConfirmModal: false,
     };
   },
   computed: {
@@ -145,9 +210,6 @@ export default {
     }),
     ...mapGetters('auth', [
       'userId', 'userEmail', 'userRole', 'token',
-    ]),
-    ...mapGetters('topic', [
-      'topicResult',
     ]),
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
@@ -158,65 +220,37 @@ export default {
     ...mapGetters('schedule', [
       'listScheduleRegisterStudent',
     ]),
+    currentTopic () {
+      if (!this.tab) return null;
+      return this.hashTopics.get(this.tab);
+    },
   },
   async mounted () {
-    await this.$store.dispatch('topic/fetchTopicResult', this.token);
-    this.topics = this.topicResult;
+    this.fetch();
   },
   methods: {
-    async handleRegisterTopic (id) {
+    async fetch () {
+      const topicResult = await TopicApi.getResultRegister(this.token);
+      topicResult.forEach((topic) => {
+        const { scheduleId } = topic;
+        if (!scheduleId || !scheduleId.code) return;
+        this.hashTopics.set(scheduleId.code, topic);
+      });
+      this.headerTabs = [...this.hashTopics.keys()];
+      if (this.headerTabs.length > 0) this.tab = this.headerTabs[0];
+      this.topics = this.topicResult;
+    },
+    async removeRegister () {
+      this.showConfirmModal = true;
+    },
+    async confirmRemove () {
+      this.showConfirmModal = false;
       try {
-        await this.$store.dispatch('topic/addRegisterTopicNew', { token: this.token, id });
-        this.$toast.success('Đã đăng ký thành công!');
-        this.topics = this.listTopicByScheduleStudent.map((c) => {
-          if (c._id.toString() === id.toString()) {
-            c.students.push(this.userId);
-          }
-          return c;
-        });
-        this.$store.dispatch('topic/fetchListTopicByStudent', this.token);
+        await TopicApi.removeRegisterTopicStudent(this.token, this.currentTopic._id);
+        this.$toast.success('Đã xóa thành công, vui lòng xem kết quả!');
       } catch (e) {
-        if (e.response.status === 400) this.$toast.error('Bạn đã tồn tại đăng ký, vui lòng xóa đăng ký hiện tại');
-        else if (e.response.status === 404) this.$toast.error('Không tồn tại đề tài, vui lòng kiểm tra lại');
-        else if (e.response.status === 422) this.$toast.error('Đã hết lượt đăng ký, vui lòng thử lại');
-        else this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
       }
-    },
-    async handleShowTopic (id) {
-      await this.$store.dispatch('url/updateSection', `${this.module}-view`);
-      await this.$store.dispatch('url/updateId', id);
-    },
-    async handleRemoveTopic (id) {
-      try {
-        const value = {
-          id,
-          token: this.token,
-        };
-        await this.$store.dispatch('topic/removeTopic', value);
-        this.$toast.success('Đã xóa thành công!');
-      } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
-    },
-    displaySchedule (schedule) {
-      return schedule ? schedule.name : '';
-    },
-    displayLecturer (lecturer) {
-      return lecturer ? lecturer.name : '';
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const topicFilter = this.topicResult.filter((topic) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (topic.title.match(re)) return true;
-          if (topic.description.match(re)) return true;
-          if (topic.code.match(re)) return true;
-          if (!topic.lecturerId) return false;
-          if (topic.lecturerId.name.match(re)) return true;
-          return false;
-        });
-        this.topics = topicFilter;
-      } else this.topics = this.topicResult;
     },
   },
 };
