@@ -4,12 +4,11 @@
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
     <div class="flex h-screen text-gray-900 bg-gray-100">
       <div class="flex">
-        <LeftMiniBarVue />
         <ManageBarVue :list-items="listItems" />
       </div>
       <div class="flex grow flex-col">
         <HeaderBarVue :username="userName" />
-        <div class="bg-white mx-4 border rounded-2 overflow-auto h-full mb-1">
+        <div class="bg-white border rounded-2 overflow-auto h-full mb-1">
           <BodyUserPage
             v-if="['student','lecturer', 'admin'].includes(module)"
             :type-user="module"
