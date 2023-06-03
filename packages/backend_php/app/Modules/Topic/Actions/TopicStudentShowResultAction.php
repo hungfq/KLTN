@@ -4,6 +4,7 @@ namespace App\Modules\Topic\Actions;
 
 use App\Entities\Topic;
 use App\Modules\Topic\DTO\TopicViewDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class TopicStudentShowResultAction
@@ -24,6 +25,14 @@ class TopicStudentShowResultAction
             'uc.name as created_by_name',
             'uu.name as updated_by_name',
         ]);
+
+        if ($dto->is_in_progress) {
+            $query->whereHas('schedule', function ($q) {
+                $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
+                $q->where('start_date', '<=', $now)
+                    ->where('end_date', '>=', $now);
+            });
+        }
 
         $query->leftJoin('users as uc', 'uc.id', '=', $query->qualifyColumn('created_by'))
             ->leftJoin('users as uu', 'uu.id', '=', $query->qualifyColumn('updated_by'));

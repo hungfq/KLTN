@@ -12,11 +12,6 @@
       </div>
       <div class="flex grow flex-col overflow-x-clip">
         <HeaderBarVue
-          v-if="page !== 'task'"
-          :username="userName"
-        />
-        <MiniHeaderBarVue
-          v-if="page === 'task'"
           :username="userName"
         />
         <div class="bg-white border rounded overflow-y-auto overflow-x-auto">
