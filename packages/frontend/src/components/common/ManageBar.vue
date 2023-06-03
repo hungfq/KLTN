@@ -25,22 +25,10 @@
           <font-awesome-icon :icon="['fas', 'arrow-left']" />
         </div>
       </div>
-      <div
-        class="flex pl-2 border-y-2 bg-slate-300"
-      >
-        <div class="flex my-1 items-center">
-          <img
-            class="w-8 h-8 rounded-full ml-2"
-            :src="userInfo ? userInfo.picture : defaultAvatarUrl"
-            alt="Avatar"
-          > <span
-            v-if="open"
-            class="mx-2 font-semibold text-blue-800"
-          >
-            {{ userName }}
-          </span>
-        </div>
+      <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100">
+        {{ open ? 'Quản lý đăng ký' : '' }}
       </div>
+
       <!-- Management -->
       <div
         class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
@@ -55,6 +43,9 @@
           <font-awesome-icon :icon="item.icon" />
           <span v-if="open"> {{ item.value }} </span>
         </a>
+      </div>
+      <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100 mt-2">
+        {{ open ? 'Quá trình thực hiện' : '' }}
       </div>
       <div class="mt-auto" />
       <!-- Notifications -->
@@ -141,6 +132,22 @@
           <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
           <span v-if="open">Đăng xuất</span>
         </a>
+      </div>
+      <div
+        class="flex pl-2 border-y-2 bg-slate-300"
+      >
+        <div class="flex my-1 items-center">
+          <img
+            class="w-8 h-8 rounded-full ml-2"
+            :src="userInfo ? userInfo.picture : defaultAvatarUrl"
+            alt="Avatar"
+          > <span
+            v-if="open"
+            class="mx-2 font-semibold text-blue-800"
+          >
+            {{ userName }}
+          </span>
+        </div>
       </div>
     </nav>
   </div>

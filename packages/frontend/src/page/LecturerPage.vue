@@ -44,7 +44,6 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
@@ -61,7 +60,6 @@ export default {
     LeftMiniBarVue,
     ManageBarLecturerVue,
     HeaderBarVue,
-    MiniHeaderBarVue,
     TaskBarScheduleVue,
     TaskBarTopicVue,
     TaskDraggableVue,
