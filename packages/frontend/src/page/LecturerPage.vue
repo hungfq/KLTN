@@ -82,10 +82,10 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic', value: 'Quản lý đề tài' },
-        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
-        { id: 'topic_approve', value: 'Phê duyệt đề tài' },
-        { id: 'mark', value: 'Chấm điểm' },
+        { id: 'topic', value: 'Quản lý đề tài', icon: 'fa-solid fa-book' },
+        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn', icon: 'fa-solid fa-person-chalkboard' },
+        { id: 'topic_approve', value: 'Phê duyệt đề tài', icon: 'fa-solid fa-user-check' },
+        { id: 'mark', value: 'Chấm điểm', icon: 'fa-solid fa-list-check' },
       ],
     };
   },

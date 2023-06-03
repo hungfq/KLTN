@@ -270,7 +270,6 @@ export default {
     const editItem = (item) => {
       store.dispatch('url/updateSection', `${modulePage.value}-update`);
       store.dispatch('url/updateId', item._id);
-      console.log('🚀 ~ file: ManageScheduleAdminV2.vue:273 ~ editItem ~ item._id:', item._id);
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
     watch(modulePage, async () => { await loadToServer(serverOptions.value); });

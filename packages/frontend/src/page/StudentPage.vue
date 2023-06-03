@@ -79,9 +79,9 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic_proposal', value: 'Đề xuất đề tài' },
-        { id: 'topic_register', value: 'Đăng ký đề tài' },
-        { id: 'topic_result', value: 'Kiểm tra kết quả' },
+        { id: 'topic_proposal', value: 'Đề xuất đề tài', icon: 'fa-solid fa-book' },
+        { id: 'topic_register', value: 'Đăng ký đề tài', icon: 'fa-solid fa-user-check' },
+        { id: 'topic_result', value: 'Kiểm tra kết quả', icon: 'fa-solid fa-bullseye' },
       ],
     };
   },
