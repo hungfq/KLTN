@@ -44,7 +44,6 @@ import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 import TaskBarTopicVue from '../components/Student/TaskBarTopic.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
@@ -60,7 +59,6 @@ export default {
     LeftMiniBarVue,
     ManageBarStudentVue,
     HeaderBarVue,
-    MiniHeaderBarVue,
     TaskDraggableVue,
     TaskBarTopicVue,
     TopicRegisterPage,
