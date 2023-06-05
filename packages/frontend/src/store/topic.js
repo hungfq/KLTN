@@ -11,6 +11,7 @@ const initState = {
   topicScheduleId: null,
   listTopicByScheduleStudent: [],
   listTopicProposalStudent: [],
+  listTopicResultInProgress: [],
 };
 
 const getters = {
@@ -22,6 +23,7 @@ const getters = {
   topicScheduleId: (state) => state.topicScheduleId,
   listTopicByScheduleStudent: (state) => state.listTopicByScheduleStudent,
   topicResult: (state) => state.topicResult,
+  listTopicResultInProgress: (state) => state.listTopicResultInProgress,
 };
 
 const actions = {
@@ -137,6 +139,9 @@ const mutations = {
   },
   setListTopicRegister: (state, listTopicPermitRegister) => {
     state.listTopicPermitRegister = listTopicPermitRegister;
+  },
+  setListTopicResultInProcess: (state, listTopicResultInProgress) => {
+    state.listTopicResultInProgress = listTopicResultInProgress;
   },
   setListTopicByScheduleStudent: (state, listTopicByScheduleStudent) => {
     state.listTopicByScheduleStudent = listTopicByScheduleStudent;

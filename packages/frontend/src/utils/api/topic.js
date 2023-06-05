@@ -270,6 +270,16 @@ export default class TopicApi {
     return res.data.data;
   }
 
+  static async getResultRegisterInProcess (token) {
+    const res = await axios.get('/topic/student/result?is_in_progress', {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
   static async listTopicMember (token, topicId) {
     const res = await axios.get(`/topic/${topicId}/members`, {
       headers: {

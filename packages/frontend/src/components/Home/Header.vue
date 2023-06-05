@@ -67,7 +67,7 @@ export default {
         } else if (typeLogin === 'STUDENT') {
           this.$router.push('/student');
           this.$store.dispatch('url/updatePage', 'management');
-          this.$store.dispatch('url/updateModule', 'topic_proposal  ');
+          this.$store.dispatch('url/updateModule', 'topic_proposal');
           this.$store.dispatch('url/updateSection', 'topic_proposal-list');
         } else if (typeLogin === 'LECTURER') {
           this.$router.push('/lecturer');

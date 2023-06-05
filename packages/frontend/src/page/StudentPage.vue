@@ -51,6 +51,7 @@ import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
 import ManageTopicResult from '../components/Student/ManageResult/ManageTopicResult.vue';
+import TopicApi from '../utils/api/topic';
 
 export default {
   name: 'StudentPage',
@@ -111,6 +112,8 @@ export default {
       this.$store.dispatch('url/updateSection', 'topic_proposal-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
+    const resultInProcess = await TopicApi.getResultRegisterInProcess(this.token);
+    console.log('🚀 ~ file: StudentPage.vue:116 ~ mounted ~ resultInProcess:', resultInProcess);
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;

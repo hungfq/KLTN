@@ -27,7 +27,7 @@ const getters = {
 };
 
 const actions = {
-  async signIn ({ commit, dispatch, rootState }, payload) {
+  async signIn ({ commit }, payload) {
     try {
       const { access_token, type } = payload;
       const res = await signInWithGoogle(access_token, type);
@@ -37,6 +37,7 @@ const actions = {
         commit('setAuthenticated', { ...userInfo, role, token: accessToken });
       } else {
         // handle ui display error in UI
+
         console.log('Error in login');
       }
     } catch (e) {
