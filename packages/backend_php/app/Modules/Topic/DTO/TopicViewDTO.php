@@ -20,6 +20,7 @@ class TopicViewDTO extends FlexibleDataTransferObject
     public $is_critical_mark;
     public $is_president_mark;
     public $is_secretary_mark;
+    public $is_in_progress;
     public $limit;
     public $sort;
 
@@ -42,6 +43,7 @@ class TopicViewDTO extends FlexibleDataTransferObject
             'is_critical_mark' => $request->input('is_critical_mark'),
             'is_president_mark' => $request->input('is_president_mark'),
             'is_secretary_mark' => $request->input('is_secretary_mark'),
+            'is_in_progress' => $request->input('is_in_progress'),
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);

@@ -74,6 +74,7 @@
             <Multiselect
               v-model="lecturerId"
               :options="listLecturers"
+              :can-clear="false"
               :close-on-select="false"
               :disabled="true"
             />
@@ -89,6 +90,7 @@
               mode="tags"
               :close-on-select="false"
               :searchable="true"
+              :can-clear="false"
               :create-option="true"
               :options="listStudents"
               :disabled="true"

@@ -81,7 +81,7 @@ export default {
           value: 'LECTURER',
         },
         {
-          name: 'Admin',
+          name: 'Người quản trị',
           value: 'ADMIN',
         },
       ],

@@ -27,6 +27,7 @@ const vuexLocal = createPersistedState({
     'url.module',
     'url.subModule',
     'url.section',
+    'url.type',
     'url.id',
     'student',
     'student.listStudents',

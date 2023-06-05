@@ -25,24 +25,62 @@ $api->group([
         'uses' => 'ScheduleController@store',
     ]);
 
-    $api->get('/{id:[0-9]+}/student', [
-        'as' => '',
-        'uses' => 'ScheduleController@viewStudent',
-    ]);
-
-    $api->put('/{id:[0-9]+}', [
-        'as' => '',
-        'uses' => 'ScheduleController@update',
-    ]);
-
-    $api->delete('/{id:[0-9]+}', [
-        'as' => '',
-        'uses' => 'ScheduleController@delete',
-    ]);
 
     $api->post('/import', [
         'as' => '',
         'uses' => 'ScheduleController@import',
     ]);
+
+    $api->group(['prefix' => '{id:[0-9]+}'], function () use ($api) {
+        $api->get('/', [
+            'as' => '',
+            'uses' => 'ScheduleController@show',
+        ]);
+
+        $api->put('/', [
+            'as' => '',
+            'uses' => 'ScheduleController@update',
+        ]);
+
+        $api->put('/student', [
+            'as' => '',
+            'uses' => 'ScheduleController@updateStudent',
+        ]);
+
+        $api->put('/score-rate', [
+            'as' => '',
+            'uses' => 'ScheduleController@updateScoreRate',
+        ]);
+
+        $api->post('/student/import', [
+            'as' => '',
+            'uses' => 'ScheduleController@importStudent',
+        ]);
+
+        $api->delete('/', [
+            'as' => '',
+            'uses' => 'ScheduleController@delete',
+        ]);
+
+        $api->get('/student', [
+            'as' => '',
+            'uses' => 'ScheduleController@viewStudent',
+        ]);
+
+        $api->get('/criteria', [
+            'as' => '',
+            'uses' => 'ScheduleController@viewCriteria',
+        ]);
+
+        $api->put('/criteria', [
+            'as' => '',
+            'uses' => 'ScheduleController@syncCriteria',
+        ]);
+
+        $api->get('/topic/export', [
+            'as' => '',
+            'uses' => 'ScheduleController@exportTopic',
+        ]);
+    });
 
 });

@@ -129,7 +129,7 @@
               >
               <font-awesome-icon
                 icon="fa-solid fa-trash-can"
-                size="2xl"
+                size="xl"
                 @click="handleRemoveSchedule(item._id)"
               />
             </div>

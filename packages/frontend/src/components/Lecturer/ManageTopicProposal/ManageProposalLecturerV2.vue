@@ -47,7 +47,7 @@
             >
               <div class="m-1 cursor-pointer rounded-xl">
                 <button
-                  class=" text-white bg-indigo-600 p-1 w-24"
+                  class=" btn btn-primary w-36 py-1"
                   @click="editItem(item)"
                 >
                   <span class="font-semibold px-1">Phê duyệt</span>
@@ -59,7 +59,7 @@
               </div>
               <div class="m-1 cursor-pointer rounded">
                 <button
-                  class=" text-white bg-red-600 p-1 w-24"
+                  class=" btn btn-warning w-36 py-1"
                   @click="handleRemoveTopic(item._id)"
                 >
                   <span class="font-semibold px-1 cursor-pointer">Từ chối</span>

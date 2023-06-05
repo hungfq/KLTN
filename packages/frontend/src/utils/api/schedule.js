@@ -27,6 +27,26 @@ export default class ScheduleApi {
     return res.data;
   }
 
+  // static async listScheduleToday (token) {
+  //   const res = await axios.get('/schedule/student/today', {
+  //     headers: {
+  //       authorization: `bearer ${token}`,
+  //     },
+  //     baseURL: apiDest,
+  //   });
+  //   return res.data;
+  // }
+
+  static async updateScoreRate (token, id, value) {
+    const res = await axios.put(`/schedule/${id}/score-rate`, value, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async listScheduleApproveLecturer (token, options) {
     const url = urlWithPagination('/schedule?is_approve_time=1', options);
     const res = await axios.get(url, {
@@ -121,9 +141,20 @@ export default class ScheduleApi {
     return res;
   }
 
-  static async fetchStudentsOfSchedule (token, id) {
+  static async importListStudents (token, id, listStudents) {
+    const res = await axios.put(`/schedule/${id}/student`, { students: listStudents }, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async fetchStudentsOfSchedule (token, id, options) {
+    const url = urlWithPagination(`/schedule/${id}/student`, options);
     const res = await axios.get(
-      `/schedule/${id}/student`,
+      url,
       {
         headers: {
           authorization: `bearer ${token}`,
@@ -131,7 +162,17 @@ export default class ScheduleApi {
         baseURL: apiDest,
       },
     );
-    return res.data.data;
+    return res.data;
+  }
+
+  static async fetchSchedule (token, id) {
+    const res = await axios.get(`/schedule/${id}`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
   }
 
   static async exportExcel (token, id) {

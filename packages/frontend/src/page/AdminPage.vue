@@ -4,12 +4,11 @@
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
     <div class="flex h-screen text-gray-900 bg-gray-100">
       <div class="flex">
-        <LeftMiniBarVue />
         <ManageBarVue :list-items="listItems" />
       </div>
       <div class="flex grow flex-col">
         <HeaderBarVue :username="userName" />
-        <div class="bg-white mx-4 border rounded-2 overflow-auto h-full mb-1">
+        <div class="bg-white border rounded-2 overflow-auto h-full mb-1">
           <BodyUserPage
             v-if="['student','lecturer', 'admin'].includes(module)"
             :type-user="module"
@@ -18,6 +17,7 @@
           <BodyTopicPage v-if="module ==='topic'" />
           <BodySchedulePage v-if="module === 'schedule'" />
           <BodyCommitteePage v-if="module === 'committee'" />
+          <BodyCriteriaPage v-if="module === 'criteria'" />
         </div>
       </div>
     </div>
@@ -41,6 +41,7 @@ import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
 import BodyTopicPage from '../components/Admin/ManageTopic/TopicBodyPage.vue';
 import BodySchedulePage from '../components/Admin/ManageSchedule/ScheduleBodyPage.vue';
 import BodyCommitteePage from '../components/Admin/ManageCommitee/CommitteeBodyPage.vue';
+import BodyCriteriaPage from '../components/Admin/ManageCriteria/CriteriaBodyPage.vue';
 
 export default {
   name: 'AdminPage',
@@ -53,6 +54,7 @@ export default {
     BodyUserPage,
     BodyTopicPage,
     BodyCommitteePage,
+    BodyCriteriaPage,
   },
   props: {
   },
@@ -62,28 +64,39 @@ export default {
       isSidebarOpen: true,
       listItems: [
         {
+          id: 'schedule',
+          value: 'Quản lý đợt đăng ký',
+          icon: 'fa-solid fa-calendar-days',
+        },
+        {
           id: 'student',
           value: 'Quản lý sinh viên',
+          icon: 'fa-solid fa-user-graduate',
         },
         {
           id: 'lecturer',
           value: 'Quản lý giảng viên',
+          icon: 'fa-solid fa-person-chalkboard',
         },
         {
           id: 'admin',
           value: 'Quản lý admin',
+          icon: 'fa-solid fa-shield-halved',
         },
         {
           id: 'topic',
           value: 'Quản lý đề tài',
-        },
-        {
-          id: 'schedule',
-          value: 'Quản lý lịch đăng ký',
+          icon: 'fa-solid fa-book',
         },
         {
           id: 'committee',
           value: 'Quản lý hội đồng',
+          icon: 'fa-solid fa-crown',
+        },
+        {
+          id: 'criteria',
+          value: 'Tiêu chí chấm điểm',
+          icon: 'fa-solid fa-list-check',
         },
       ],
     };

@@ -137,7 +137,7 @@
       </div>
       <!-- User avatar -->
       <button
-        class="transition-opacity rounded-lg opacity-80 hover:opacity-100 focus:outline-none focus:ring focus:ring-indigo-600 focus:ring-offset-white focus:ring-offset-2"
+        class="transition-opacity rounded-lg opacity-80 hover:opacity-100 focus:outline-none"
         @click="clickNotifyOrInfo('avatar')"
       >
         <img

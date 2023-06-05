@@ -65,12 +65,12 @@
             <div
               class="flex flex-col"
             >
-              <div class="m-1 cursor-pointer rounded-xl">
+              <div class="m-1 cursor-pointer rounded">
                 <button
-                  class=" text-white bg-indigo-600 p-1 w-24"
+                  class=" btn btn-primary w-36 py-1"
                   @click="editItem(item._id)"
                 >
-                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <span class="font-semibold pr-2">Phê duyệt</span>
                   <font-awesome-icon
                     size="xl"
                     :icon="['fas', 'check']"
@@ -79,10 +79,10 @@
               </div>
               <div class="m-1 cursor-pointer rounded">
                 <button
-                  class=" text-white bg-red-600 p-1 w-24"
+                  class="btn btn-warning w-36"
                   @click="handleRemoveTopic(item._id)"
                 >
-                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
+                  <span class="font-semibold pr-2 cursor-pointer">Từ chối</span>
                   <font-awesome-icon
                     size="xl"
                     :icon="['fas', 'ban']"

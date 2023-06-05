@@ -37,6 +37,11 @@ class Topic extends BaseSoftModel
         return $this->belongsToMany(User::class, 'topic_students', 'topic_id', 'student_id');
     }
 
+    public function grade()
+    {
+        return $this->hasMany(Grade::class, 'topic_id');
+    }
+
     public static function generateTopicCode($schedule)
     {
         $defaultNum = data_get($schedule, 'code') . "-001";

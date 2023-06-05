@@ -17,7 +17,9 @@ class CreateGradesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('topic_id')->index();
             $table->unsignedBigInteger('criteria_id')->index();
+            $table->unsignedBigInteger('student_id')->index();
             $table->float('score');
+            $table->string('type');
             $table->unsignedBigInteger('graded_by')->index();
 
             $table->unsignedBigInteger('created_by')->index();
@@ -25,6 +27,22 @@ class CreateGradesTable extends Migration
             $table->timestamps();
             $table->timestamp('deleted_at')->default('1999-01-01');
             $table->tinyInteger('deleted')->default('0');
+
+                        
+            $table->foreign('topic_id')
+                ->references('id')
+                ->on('topics')
+                ->onDelete('cascade');
+
+            $table->foreign('student_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('criteria_id')
+                ->references('id')
+                ->on('criteria')
+                ->onDelete('cascade');
         });
     }
 

@@ -67,25 +67,13 @@
             >
               <div class="m-1 cursor-pointer rounded-xl">
                 <button
-                  class=" text-white bg-indigo-600 p-1 w-24"
+                  class=" btn btn-primary "
                   @click="editItem(item._id)"
                 >
-                  <span class="font-semibold px-1">Phê duyệt</span>
+                  <span class="font-semibold px-1">Chấm điểm</span>
                   <font-awesome-icon
                     size="xl"
-                    :icon="['fas', 'check']"
-                  />
-                </button>
-              </div>
-              <div class="m-1 cursor-pointer rounded">
-                <button
-                  class=" text-white bg-red-600 p-1 w-24"
-                  @click="handleRemoveTopic(item._id)"
-                >
-                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'ban']"
+                    :icon="['fas', 'bullseye']"
                   />
                 </button>
               </div>
@@ -95,26 +83,6 @@
       </div>
     </div>
   </div>
-  <ConfirmModal
-    v-model="showConfirmModal"
-    @confirm="confirmRemove"
-    @cancel="showConfirmModal=false"
-  >
-    <template #title>
-      Xác nhận
-    </template>
-    <div>Bạn có xác nhận từ chối đề tài này ra hội đồng không?</div>
-  </ConfirmModal>
-  <ConfirmModal
-    v-model="showConfirmApproveModal"
-    @confirm="confirmApprove"
-    @cancel="showConfirmApproveModal=false"
-  >
-    <template #title>
-      Xác nhận phê duyệt
-    </template>
-    <div>Bạn có xác nhận phê duyệt đề tài ra hội đồng không?</div>
-  </ConfirmModal>
 </template>
 
 <script>
@@ -124,7 +92,6 @@ import {
 import { useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
-import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
 
 import ScheduleApi from '../../../utils/api/schedule';
@@ -134,7 +101,6 @@ export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
-    ConfirmModal,
   },
   setup () {
     const store = useStore();
@@ -158,13 +124,18 @@ export default {
       { code: 'secretary', text: 'Thư ký' },
       { code: 'president', text: 'Chủ tịch' },
     ];
+
+    const mapValue = {
+      advisor: 'LT',
+      critical: 'CR',
+      secretary: 'SE',
+      president: 'PD',
+    };
+
     const tab = ref('advisor');
     const searchVal = ref('');
     const selectSchedule = ref('all');
     const selectLecturer = ref('');
-    const showConfirmApproveModal = ref(false);
-    const approveId = ref('');
-    const declineId = ref('');
     const items = [];
     const serverOptions = ref({
       page: 1,
@@ -174,20 +145,16 @@ export default {
     });
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
+    store.dispatch('url/updateType', mapValue[tab.value]);
     // TODO: Update API get mark and update mark in committee
     const loadToServer = async (options) => {
       loading.value = true;
       let response;
+      // Get all topic need mark grade
       if (!selectSchedule.value || selectSchedule.value === 'all') {
-        if (tab.value === 'advisor') {
-          response = await TopicApi.listTopicAdvisorApprove(token, options);
-        } else {
-          response = await TopicApi.listTopicCriticalApprove(token, options);
-        }
-      } else if (tab.value === 'advisor') {
-        response = await TopicApi.listTopicAdvisorApprove(token, options, selectSchedule.value);
-      } else {
-        response = await TopicApi.listTopicCriticalApprove(token, options, selectSchedule.value);
+        response = await TopicApi.listAllTopicsMarkGrade(token, options, mapValue[tab.value]);
+      } else { // Get topic have scheduleID
+        response = await TopicApi.listAllTopicsMarkGrade(token, options, mapValue[tab.value], selectSchedule.value);
       }
       if (response) {
         topics.value = response.data;
@@ -215,12 +182,14 @@ export default {
 
     const editItem = async (id) => {
       try {
-        approveId.value = id;
-        showConfirmApproveModal.value = true;
+        store.dispatch('url/updateType', mapValue[tab.value]);
+        store.dispatch('url/updateSection', `${modulePage.value}-update`);
+        store.dispatch('url/updateId', id);
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
+
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
     watch(tab, async () => {
       await loadToServer(serverOptions.value);
@@ -235,44 +204,6 @@ export default {
       await loadToServer(serverOptions.value);
     };
 
-    const showConfirmModal = ref(false);
-    const confirmRemove = async () => {
-      showConfirmModal.value = false;
-      try {
-        if (tab.value === 'advisor') {
-          await TopicApi.topicAdvisorDecline(token, declineId.value);
-        } else {
-          await TopicApi.topicCriticalDecline(token, declineId.value);
-        }
-        $toast.success('Đã từ chối thành công!');
-        await loadToServer(serverOptions.value);
-      } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
-    };
-    const confirmApprove = async () => {
-      showConfirmApproveModal.value = false;
-      try {
-        if (tab.value === 'advisor') {
-          await TopicApi.topicAdvisorApprove(token, approveId.value);
-        } else {
-          await TopicApi.topicCriticalApprove(token, approveId.value);
-        }
-        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
-        await loadToServer(serverOptions.value);
-      } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
-      }
-    };
-
-    const handleRemoveTopic = (id) => {
-      try {
-        declineId.value = id;
-        showConfirmModal.value = true;
-      } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
-      }
-    };
     const search = async () => {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
       else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
@@ -288,12 +219,6 @@ export default {
         critical: topic.criticalLecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
-        committeePresidentGrade: topic.committeePresidentGrade || 0,
-        committeeSecretaryGrade: topic.committeeSecretaryGrade || 0,
-        advisorLecturerGrade: topic.advisorLecturerGrade || 0,
-        criticalLecturerGrade: topic.criticalLecturerGrade || 0,
-        criticalLecturerApprove: topic.criticalLecturerApprove || false,
-        advisorLecturerApprove: topic.advisorLecturerApprove || false,
       }));
     });
 
@@ -309,8 +234,6 @@ export default {
       editItem,
       modulePage,
       handleImport,
-      showConfirmModal,
-      confirmRemove,
       selectSchedule,
       selectLecturer,
       topicShow,
@@ -320,10 +243,6 @@ export default {
       tab,
       searchVal,
       search,
-      showConfirmApproveModal,
-      confirmApprove,
-      declineId,
-      handleRemoveTopic,
     };
   },
 };

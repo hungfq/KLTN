@@ -1,46 +1,22 @@
 <template>
   <div class="flex">
-    <div class="inline-block p-2 rounded-md">
-      <select
+    <div class="w-64 m-4">
+      <Multiselect
         v-model="selectSchedule"
-        class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        @change="selectHandler"
-      >
-        <option
-          :key="`key-null`"
-          :value="''"
-        >
-          Tất cả
-        </option>
-        <option
-          v-for="option in listSchedules"
-          :key="`key-${option._id}`"
-          :value="option._id"
-        >
-          {{ option.code }} : {{ option.name }}
-        </option>
-      </select>
+        :options="listScheduleSelect"
+        :searchable="true"
+        :can-clear="false"
+        @change="selectHandlerSchedule"
+      />
     </div>
-    <div class="inline-block p-2 rounded-md">
-      <select
+    <div class="w-64 m-4">
+      <Multiselect
         v-model="selectLecturer"
-        class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        @change="selectHandler"
-      >
-        <option
-          :key="`key-null`"
-          :value="''"
-        >
-          Tất cả
-        </option>
-        <option
-          v-for="option in listLecturer"
-          :key="`key-${option._id}`"
-          :value="option._id"
-        >
-          {{ option.code }} : {{ option.name }}
-        </option>
-      </select>
+        :options="listLecturerSelect"
+        :searchable="true"
+        :can-clear="false"
+        @change="selectHandlerLecturer"
+      />
     </div>
     <div class="mx-auto" />
     <div class="inline-block p-2 rounded-md">
@@ -63,7 +39,6 @@
   </div>
   <div class="shadow-md sm:rounded-lg m-4">
     <EasyDataTable
-      v-model:items-selected="itemsSelected"
       v-model:server-options="serverOptions"
       :server-items-length="serverItemsLength"
       show-index
@@ -72,15 +47,42 @@
       :loading="loading"
       buttons-pagination
       :rows-items="rowItems"
-      @click-row="showRow"
     >
       <template #item-operation="item">
         <div class="flex">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-            class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-            @click="editItem(item)"
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn sinh viên"
           >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'people-group']"
+              size="xl"
+              @click="selectStudents(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem đề tài"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa đề tài"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
+          </div>
         </div>
       </template>
     </EasyDataTable>
@@ -96,6 +98,14 @@
     </template>
     <div>Bạn có xác nhận xóa đề tài này không?</div>
   </ConfirmModal>
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="selectStudentScheduleId"
+    :type="'TOPIC'"
+    :selected="listStudentSelected"
+    :enabled-excel="true"
+    @change-students="changeStudents"
+  />
 </template>
 
 <script>
@@ -107,15 +117,19 @@ import {
 } from 'vue';
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import UploadButtonVue from '../UploadButton.vue';
 import TopicApi from '../../../utils/api/topic';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 
 export default {
   name: 'ManageTopicAdmin',
   components: {
     ConfirmModal,
+    SelectStudent,
     UploadButtonVue,
+    Multiselect,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -125,11 +139,18 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const topics = ref([]);
+    const selectSchedule = ref(0);
+    const selectLecturer = ref(0);
+    const showSelectStudent = ref(false);
+    const selectStudentScheduleId = ref(null);
+    const listStudentSelected = ref([]);
+    const topicStudentId = ref(0);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Đợt đăng ký', value: 'schedule' },
       { text: 'Hành động', value: 'operation' },
     ];
     const items = [];
@@ -143,7 +164,7 @@ export default {
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
       loading.value = true;
-      const response = await TopicApi.listAllTopics(token, options);
+      const response = await TopicApi.listAllTopics(token, options, selectLecturer.value, selectSchedule.value);
       topics.value = response.data;
       store.state.topic.listTopics = topics.value;
       serverItemsLength.value = response.meta.pagination.total;
@@ -186,9 +207,6 @@ export default {
       }
     };
 
-    const selectSchedule = ref('');
-    const selectLecturer = ref('');
-
     const topicShow = computed(() => {
       if (!topics.value) return [];
       return topics.value.map((topic) => ({
@@ -197,8 +215,44 @@ export default {
         title: topic.title,
         lecturer: topic.lecturerId.name || '',
         critical: topic.criticalLecturerId.name || '',
+        schedule: topic.scheduleId.name || '',
+        scheduleId: topic.scheduleId || '',
+        list_students: topic.list_students,
       }));
     });
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const selectHandlerLecturer = async (value) => {
+      selectLecturer.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const changeStudents = async (students) => {
+      //  TODO: Add api update student for topic
+      try {
+        showSelectStudent.value = false;
+        await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
+        console.log('🚀 ~ file: ManageTopicAdminV2.vue:244 ~ changeStudents ~ topicStudentId.value:', topicStudentId.value);
+        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const selectStudents = (item) => {
+      selectStudentScheduleId.value = item.scheduleId._id;
+      topicStudentId.value = item._id;
+      showSelectStudent.value = true;
+      listStudentSelected.value = item.list_students;
+    };
 
     return {
       headers,
@@ -209,16 +263,24 @@ export default {
       serverOptions,
       topics,
       serverItemsLength,
+      selectStudentScheduleId,
       rowItems,
       editItem,
       modulePage,
       handleImport,
       showConfirmModal,
       confirmRemove,
+      listStudentSelected,
       selectSchedule,
       selectLecturer,
       topicShow,
       BASE_API_URL,
+      showSelectStudent,
+      selectStudents,
+
+      selectHandlerSchedule,
+      selectHandlerLecturer,
+      changeStudents,
     };
   },
   computed: {
@@ -240,6 +302,20 @@ export default {
     ...mapGetters('lecturer', [
       'listLecturer',
     ]),
+    listLecturerSelect () {
+      const arr = [{ value: 0, label: 'Chọn giảng viên' }];
+      this.listLecturer.forEach((lecturer) => {
+        arr.push({ value: lecturer._id, label: lecturer.name });
+      });
+      return arr;
+    },
+    listScheduleSelect () {
+      const arr = [{ value: 0, label: 'Chọn đợt' }];
+      this.listSchedules.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: schedule.name });
+      });
+      return arr;
+    },
   },
   methods: {
     handleUpdateTopic (id) {
@@ -287,10 +363,6 @@ export default {
     },
     handleNewButtonClick () {
       this.$refs.submitBtn.click();
-    },
-    async selectHandler () {
-      await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.selectLecturer, scheduleId: this.selectSchedule });
-      this.topics = this.listTopicsByLecturerSchedule;
     },
   },
 };

@@ -6,7 +6,7 @@
   >
     Quay về
   </div>
-  <div class="p-4 w-full h-full md:h-auto mx-auto mt-[10px]">
+  <div class="p-4  mx-auto mt-8">
     <!-- Modal content -->
     <div class="bg-white rounded-lg shadow">
       <!-- Modal header -->
@@ -16,69 +16,73 @@
           Thông tin hoi dong
         </h3>
       </div>
-      <div
-        v-if="!loading"
-        class="ml-5 grid grid-cols-2"
-      >
-        <FormKit
-          v-model="name"
-          type="text"
-          name="name"
-          label="Tên hội đồng"
-          validation="required"
-          :disabled="isView"
-        />
-        <FormKit
-          v-model="code"
-          name="code"
-          type="text"
-          label="Mã hội đồng"
-          validation="required"
-          :disabled="isView"
-        />
-        <div class="w-3/4">
-          <span class="font-bold text-sm">
-            Giáo viên phản biện
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="criticalLecturerId"
-              :options="listLecturers"
-              :searchable="true"
-              :disabled="isView"
-            />
+      <template v-if="!loading">
+        <div
+          class="ml-5 grid grid-cols-2"
+        >
+          <FormKit
+            v-model="name"
+            type="text"
+            name="name"
+            label="Tên hội đồng"
+            validation="required"
+            :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+            :disabled="isView"
+          />
+          <FormKit
+            v-model="code"
+            name="code"
+            type="text"
+            label="Mã hội đồng"
+            :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+            validation="required"
+            :disabled="isView"
+          />
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Giáo viên phản biện
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="criticalLecturerId"
+                :options="listLecturers"
+                :searchable="true"
+                :can-clear="false"
+                :disabled="isView"
+              />
+            </div>
           </div>
-        </div>
-        <div class="w-3/4">
-          <span class="font-bold text-sm">
-            Chủ tịch hội đồng
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="committeePresidentId"
-              :options="listLecturers"
-              :searchable="true"
-              :disabled="isView"
-            />
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Chủ tịch hội đồng
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="committeePresidentId"
+                :options="listLecturers"
+                :searchable="true"
+                :can-clear="false"
+                :disabled="isView"
+              />
+            </div>
           </div>
-        </div>
-        <div class="w-3/4">
-          <span class="font-bold text-sm">
-            Thư kí hội đồng
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="committeeSecretaryId"
-              :options="listLecturers"
-              :searchable="true"
-              :disabled="isView"
-            />
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Thư kí hội đồng
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="committeeSecretaryId"
+                :options="listLecturers"
+                :searchable="true"
+                :can-clear="false"
+                :disabled="isView"
+              />
+            </div>
           </div>
+          <!-- Modal footer -->
         </div>
-      </div>
-      <Loading v-else>
-        <!-- Modal footer -->
-        <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+        <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 mt-2">
           <button
             v-if="!isView && !loading"
             type="button"
@@ -88,7 +92,8 @@
             {{ isSave ? 'Lưu' : 'Cập nhật' }}
           </button>
         </div>
-      </loading>
+      </template>
+      <Loading v-else />
     </div>
   </div>
 </template>
@@ -164,8 +169,8 @@ export default {
         this.committeeSecretaryId = committee.committeeSecretaryId._id;
         this.criticalLecturerId = committee.criticalLecturerId._id;
       }
-      this.loading = false;
     }
+    this.loading = false;
   },
   methods: {
     rollBack () {

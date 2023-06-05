@@ -6,8 +6,10 @@ const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TopicApi {
-  static async listAllTopics (token, options) {
-    const url = urlWithPagination('/topic', options);
+  static async listAllTopics (token, options, lecturerId, scheduleId) {
+    let url = urlWithPagination('/topic', options);
+    if (lecturerId) url += `&lecturerId=${lecturerId}`;
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
@@ -38,6 +40,23 @@ export default class TopicApi {
     return res.data;
   }
 
+  static async listAllTopicsMarkGrade (token, options, type, scheduleId) {
+    let url = urlWithPagination('/topic', options);
+    let lecturer = 'is_lecturer_mark=1';
+    if (type === 'CR') lecturer = 'is_critical_mark=1';
+    else if (type === 'PD') lecturer = 'is_president_mark=1';
+    else if (type === 'SE') lecturer = 'is_secretary_mark=1';
+    url += `&${lecturer}`;
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
   static async listAllTopicsByCritical (token, criticalId, options) {
     const url = urlWithPagination(`/topic?criticalId=${criticalId}`, options);
     const res = await axios.get(url, {
@@ -50,10 +69,32 @@ export default class TopicApi {
   }
 
   static async listAllTopicsByCriticalAndScheduleId (token, criticalId, scheduleId, options) {
-    const url = urlWithPagination(`/topic?criticalId=${criticalId}&scheduleId=${scheduleId}`, options);
+    let url = urlWithPagination('/topic', options);
+    if (criticalId) url += `&criticalId=${criticalId}`;
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async updateGradeForTopic (token, topicId, value) {
+    const res = await axios.put(`/topic/${topicId}/grade`, value, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async getGradeForTopicByLecturer (token, topicId, type) {
+    const res = await axios.get(`/topic/${topicId}/grade?type=${type}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
       },
       baseURL: apiDest,
     });
@@ -339,5 +380,15 @@ export default class TopicApi {
       },
     );
     return res;
+  }
+
+  static async importStudentToTopic (token, id, students) {
+    const res = await axios.put(`/topic/${id}/student`, students, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
   }
 }

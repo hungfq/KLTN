@@ -14,11 +14,6 @@
       </div>
       <div class="flex grow flex-col overflow-x-clip">
         <HeaderBarVue
-          v-if="page !== 'task'"
-          :username="userName"
-        />
-        <MiniHeaderBarVue
-          v-if="page === 'task'"
           :username="userName"
         />
         <div class="bg-white mx-4 rounded overflow-auto">
@@ -49,7 +44,6 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
@@ -66,7 +60,6 @@ export default {
     LeftMiniBarVue,
     ManageBarLecturerVue,
     HeaderBarVue,
-    MiniHeaderBarVue,
     TaskBarScheduleVue,
     TaskBarTopicVue,
     TaskDraggableVue,
@@ -82,10 +75,10 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic', value: 'Quản lý đề tài' },
-        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn' },
-        { id: 'topic_approve', value: 'Phê duyệt đề tài' },
-        { id: 'mark', value: 'Chấm điểm' },
+        { id: 'topic', value: 'Quản lý đề tài', icon: 'fa-solid fa-book' },
+        { id: 'topic_proposal_approve', value: 'Yêu cầu hướng dẫn', icon: 'fa-solid fa-person-chalkboard' },
+        { id: 'topic_approve', value: 'Phê duyệt đề tài', icon: 'fa-solid fa-user-check' },
+        { id: 'mark', value: 'Chấm điểm', icon: 'fa-solid fa-list-check' },
       ],
     };
   },

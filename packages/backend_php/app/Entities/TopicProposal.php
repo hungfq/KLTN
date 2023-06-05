@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use App\Entities\Traits\CreatedByRelationshipTrait;
 use App\Entities\Traits\UpdatedByRelationshipTrait;
+use Illuminate\Support\Facades\DB;
 
 class TopicProposal extends BaseSoftModel
 {
@@ -27,5 +28,28 @@ class TopicProposal extends BaseSoftModel
     public function students()
     {
         return $this->belongsToMany(User::class, 'topic_proposal_students', 'topic_id', 'student_id');
+    }
+
+    public static function generateTopicCode($schedule)
+    {
+        $defaultNum = data_get($schedule, 'code') . "-001";
+
+        $topic = DB::table(TopicProposal::getTableName())
+            ->where('schedule_id', data_get($schedule, 'id'))
+            ->where('code', 'LIKE', "%-%")
+            ->orderBy('code', 'desc')
+            ->first();
+
+        if (!$topic) {
+            return $defaultNum;
+        }
+
+        $arr = explode('-', $topic->code);
+
+        if (!isset($arr[1])) {
+            return $defaultNum;
+        }
+
+        return sprintf('%s-%03d', $arr[0], ++$arr[1]);
     }
 }

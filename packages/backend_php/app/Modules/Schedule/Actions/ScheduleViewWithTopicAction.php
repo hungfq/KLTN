@@ -5,6 +5,7 @@ namespace App\Modules\Schedule\Actions;
 use App\Entities\Schedule;
 use App\Libraries\Helpers;
 use App\Modules\Schedule\DTO\ScheduleViewWithTopicDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleViewWithTopicAction
@@ -14,12 +15,21 @@ class ScheduleViewWithTopicAction
      */
     public function handle($dto)
     {
+        $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
+
         $query = Schedule::query()
             ->with(['topics' => function ($q) use ($dto) {
                 $q->when($dto->is_lecturer, function ($q1) {
                     $q1->where('lecturer_id', Auth::id());
                 });
-            }]);
+            }])
+            ->whereHas('topics', function ($q) use ($dto) {
+                $q->when($dto->is_lecturer, function ($q1) {
+                    $q1->where('lecturer_id', Auth::id());
+                });
+            })
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now);
 
         $query->addSelect([
             $query->qualifyColumn('*'),

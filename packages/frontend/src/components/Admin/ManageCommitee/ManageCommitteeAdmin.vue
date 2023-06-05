@@ -25,7 +25,6 @@
         :loading="loading"
         buttons-pagination
         :rows-items="rowItems"
-        @click-row="showRow"
       >
         <template #header-import-export="header">
           <a
@@ -47,6 +46,17 @@
         </template>
         <template #item-operation="item">
           <div class="flex">
+            <div
+              class="tooltip tooltip-bottom pr-3"
+              data-tip="Xem đề tài"
+            >
+              <font-awesome-icon
+                class="cursor-pointer"
+                icon="fa-solid fa-eye"
+                size="xl"
+                @click="showRow(item)"
+              />
+            </div>
             <img
               src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
               class="operation-icon w-6 h-6 mx-2 cursor-pointer"
@@ -54,7 +64,7 @@
             >
             <font-awesome-icon
               icon="fa-solid fa-trash-can"
-              size="2xl"
+              size="xl"
               @click="handleRemoveSchedule(item._id)"
             />
           </div>
@@ -144,8 +154,8 @@ export default {
     });
 
     const showRow = (item) => {
-      // store.dispatch('url/updateId', item._id);
-      // store.dispatch('url/updateSection', `${modulePage.value}-view`);
+      store.dispatch('url/updateId', item._id);
+      store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
 
     const editItem = (item) => {

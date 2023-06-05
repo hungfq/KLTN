@@ -3,6 +3,7 @@
 namespace App\Modules\TopicProposal\Actions;
 
 use App\Entities\Role;
+use App\Entities\Schedule;
 use App\Entities\TopicProposal;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -44,6 +45,15 @@ class TopicProposalStoreAction
             if (!$this->lecturer) {
                 throw new UserException("Lecturer not found!");
             }
+        }
+
+        $schedule = Schedule::query()->find($this->dto->schedule_id);
+        if (!$schedule) {
+            throw new UserException("Schedule not found!");
+        }
+
+        if (!$this->dto->code) {
+            $this->dto->code = TopicProposal::generateTopicCode($schedule);
         }
 
         return $this;

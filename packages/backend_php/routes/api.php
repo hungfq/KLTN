@@ -47,6 +47,7 @@ $api->version('v2', function ($api) {
             'Notification',
             'Task',
             'TopicProposal',
+            'Criteria',
         ];
 
         foreach ($modules as $module) {

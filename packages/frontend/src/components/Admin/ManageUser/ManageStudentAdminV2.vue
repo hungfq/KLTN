@@ -25,7 +25,6 @@
         :loading="loading"
         buttons-pagination
         :rows-items="rowItems"
-        @click-row="showRow"
       >
         <template #item-gender="item">
           <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
@@ -46,11 +45,28 @@
         </template>
         <template #item-operation="item">
           <div class="flex">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-              @click="editItem(item)"
+            <div
+              class="tooltip tooltip-bottom pr-3"
+              data-tip="Xem tiêu chí"
             >
+              <font-awesome-icon
+                class="cursor-pointer"
+                icon="fa-solid fa-eye"
+                size="xl"
+                @click="showRow(item)"
+              />
+            </div>
+            <div
+              class="tooltip tooltip-bottom"
+              data-tip="Chỉnh sửa tiêu chí"
+            >
+              <font-awesome-icon
+                class="cursor-pointer"
+                :icon="['fas', 'pen-to-square']"
+                size="xl"
+                @click="editItem(item)"
+              />
+            </div>
           </div>
         </template>
       </EasyDataTable>

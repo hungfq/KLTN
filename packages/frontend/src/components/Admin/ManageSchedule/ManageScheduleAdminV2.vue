@@ -4,7 +4,8 @@
       class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
       @click="$store.dispatch('url/updateSection', 'schedule-import')"
     >
-      Thêm đợt đăng ký
+      <font-awesome-icon :icon="['fas', 'circle-plus']" />
+      <span class="ml-2"> Thêm đợt đăng ký</span>
     </div>
     <form
       class="flex"
@@ -32,59 +33,120 @@
       </button>
     </form>
   </div>
-  <div class="shadow-md sm:rounded-lg m-4">
+  <div class="shadow-md sm:rounded-lg m-4 px-4">
     <SearchInput
       v-model="searchVal"
       :search-icon="true"
       @keydown.space.enter="search"
     />
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="schedulesShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-        @click-row="showRow"
-      >
-        <template #header-import-export="header">
-          <a
-            class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            :href="`${BASE_API_URL}/api/v2/template?type=User`"
-          >Tải mẫu nhập sinh viên</a>
-        </template>
-        <template #item-import-export="item">
-          <div class-="flex">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleClickStudent(item._id)"
-            >Nhập sinh viên bằng file excel</a>
-            <a
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              :href="getLink(item._id)"
-            >Xuất báo cáo</a>
+    <EasyDataTable
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      show-index
+      :headers="headers"
+      :items="schedulesShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #item-startDate="item">
+        {{ formatDate(item.startDate) }}
+      </template>
+      <template #item-deadline="item">
+        {{ formatDate(item.deadline) }}
+      </template>
+      <template #item-import-export="item">
+        <div class-="flex flex-col">
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn sinh viên"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'people-group']"
+              size="2xl"
+              @click="selectStudents(item._id)"
+            />
           </div>
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Xuất báo cáo"
+          >
+            <font-awesome-icon
+              size="2xl"
+              class="cursor-pointer"
+              :icon="['fas', 'file-export']"
+              @click="getLink(item._id)"
+            />
+          </div>
+        </div>
+      </template>
+      <template #item-score-rate="item">
+        <div class-="flex flex-col">
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn tiêu chí chấm điểm"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-list-check"
+              size="xl"
+              @click="selectCriteria(item._id)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom px-3"
+            data-tip="Chọn tỷ lệ điểm chấm điểm"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-scale-balanced"
+              size="xl"
+              @click="changeLecturerRate(item._id, { advisor_score_rate: item.advisor_score_rate ,
+                                                     critical_score_rate: item.critical_score_rate,
+                                                     president_score_rate: item.president_score_rate,
+                                                     secretary_score_rate: item.secretary_score_rate,})"
+            />
+          </div>
+        </div>
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem đợt đăng ký"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="2xl"
+              @click="showRow(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa đợt đăng ký"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="2xl"
               @click="editItem(item)"
-            >
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom pl-3"
+            data-tip="Xóa đợt đăng ký"
+          >
             <font-awesome-icon
               icon="fa-solid fa-trash-can"
               size="2xl"
               @click="handleRemoveSchedule(item._id)"
             />
           </div>
-        </template>
-      </EasyDataTable>
-    </div>
+        </div>
+      </template>
+    </EasyDataTable>
     <ConfirmModal
       v-model="showConfirmModal.value"
       @confirm="confirmRemove"
@@ -96,6 +158,23 @@
       <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
     </ConfirmModal>
   </div>
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="selectStudentScheduleId"
+    @change-students="changeStudents"
+    @import-excel="handleImportStudentsExcel"
+  />
+  <SelectCriteriaModal
+    v-model="showSelectCriteria"
+    :schedule-id="selectCriteriaScheduleId"
+    @change-criteria="changeCriteria"
+  />
+  <LecturerRateModal
+    v-model="showLecturerRate"
+    :schedule-id="selectLecturerScheduleId"
+    :rate-lecturer="rateLecturer"
+    @change-rate="updateScoreRate"
+  />
 </template>
 
 <script>
@@ -107,14 +186,23 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import moment from 'moment';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
+import CriteriaApi from '../../../utils/api/criteria';
+import SelectStudent from '../../Modal/SelectStudent.vue';
+import SelectCriteriaModal from '../../Modal/SelectCriteria.vue';
+import LecturerRateModal from '../../Modal/LecturerRate.vue';
+import 'moment/dist/locale/vi';
 
 export default {
   name: 'ManageScheduleAdmin',
   components: {
     SearchInput,
     ConfirmModal,
+    SelectStudent,
+    SelectCriteriaModal,
+    LecturerRateModal,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -126,12 +214,19 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const schedules = ref([]);
+    const showSelectStudent = ref(false);
+    const showSelectCriteria = ref(false);
+    const showLecturerRate = ref(false);
+    const selectStudentScheduleId = ref(null);
+    const selectCriteriaScheduleId = ref(0);
+    const selectLecturerScheduleId = ref(0);
+    const searchVal = ref('');
+    const rateLecturer = ref({});
     const headers = [
-      { text: 'Mã đợt đăng ký', value: 'code', sortable: true },
-      { text: 'Tên đợt đăng ký ', value: 'name', sortable: true },
-      { text: 'Thời gian bắt đầu', value: 'startDate' },
-      { text: 'Thời gian kết thúc', value: 'deadline' },
-      { text: 'import-export', value: 'import-export' },
+      { text: 'Mã đợt', value: 'code', sortable: true },
+      { text: 'Tên đợt ', value: 'name', sortable: true },
+      { text: 'Nhập xuất sinh viên', value: 'import-export' },
+      { text: 'Tỷ lệ chấm điểm', value: 'score-rate' },
       { text: 'Hành động', value: 'operation' },
     ];
     const items = [];
@@ -168,7 +263,6 @@ export default {
     });
 
     const showRow = (item) => {
-      console.log('showRow');
       store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
@@ -186,11 +280,10 @@ export default {
 
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
-      await ScheduleApi.removeSchedule(this.token, id);
-      showConfirmModal.value = false;
-      removeId.value = 0;
-
       try {
+        await ScheduleApi.removeSchedule(this.token, id);
+        showConfirmModal.value = false;
+        removeId.value = 0;
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
@@ -207,11 +300,67 @@ export default {
       return schedules.value;
     });
 
+    const selectStudents = (scheduleId) => {
+      selectStudentScheduleId.value = scheduleId;
+      showSelectStudent.value = true;
+    };
+
+    const selectCriteria = (scheduleId) => {
+      selectCriteriaScheduleId.value = scheduleId;
+      showSelectCriteria.value = true;
+    };
+
+    const changeStudents = async (students) => {
+      try {
+        showSelectStudent.value = false;
+        const _id = selectStudentScheduleId.value;
+        await ScheduleApi.importListStudents(token, _id, students);
+        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const changeCriteria = async (criteria) => {
+      try {
+        showSelectCriteria.value = false;
+        const _id = selectCriteriaScheduleId.value;
+        await CriteriaApi.updateCriteriaBySchedule(token, _id, { details: criteria });
+        $toast.success('Đã cập nhật  danh sách tiêu chí thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
+    const changeLecturerRate = async (scheduleId, rate) => {
+      rateLecturer.value = rate;
+      showLecturerRate.value = true;
+      selectLecturerScheduleId.value = scheduleId;
+    };
+    const formatDate = (datetime) => moment(datetime).format('LL');
+
+    const search = async () => {
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
+    const updateScoreRate = async (scoreRate) => {
+      try {
+        showLecturerRate.value = false;
+        const _id = selectLecturerScheduleId.value;
+        await ScheduleApi.updateScoreRate(token, _id, scoreRate);
+        await loadToServer(serverOptions.value);
+        $toast.success('Đã cập nhật tỷ lệ điểm  thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
     return {
       headers,
       items,
       showRow,
       itemsSelected,
+      selectStudents,
       loading,
       serverOptions,
       schedules,
@@ -221,15 +370,29 @@ export default {
       modulePage,
       handleImport,
       showConfirmModal,
+      changeCriteria,
+      updateScoreRate,
       confirmRemove,
+      showLecturerRate,
       schedulesShow,
       handleRemoveSchedule,
       BASE_API_URL,
+      selectLecturerScheduleId,
+      showSelectStudent,
+      changeLecturerRate,
+      searchVal,
+      selectStudentScheduleId,
+      changeStudents,
+      formatDate,
+      selectCriteria,
+      search,
+      showSelectCriteria,
+      rateLecturer,
+      selectCriteriaScheduleId,
     };
   },
   data () {
     return {
-      searchVal: '',
       importType: '',
       importId: '',
     };
@@ -246,7 +409,8 @@ export default {
     ]),
   },
   methods: {
-    handleClickStudent (id) {
+    handleImportStudentsExcel (id) {
+      this.showSelectStudent = false;
       this.importId = id;
       this.importType = 'student';
       this.$refs.labelBtn.click();
@@ -298,35 +462,6 @@ export default {
     async handleShowSchedule (id) {
       await this.$store.dispatch('url/updateSection', 'schedule-view');
       await this.$store.dispatch('url/updateId', id);
-    },
-    formatDay (oldDate) {
-      try {
-        if (!oldDate || oldDate === '') {
-          return '';
-        }
-        const newDate = new Date(oldDate);
-        const dateString = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000))
-          .toISOString()
-          .split('T')[0];
-        return dateString;
-      } catch (e) {
-        return '';
-      }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const scheduleFilter = this.listSchedules.filter((schedule) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          const startDate = this.formatDay(schedule.startDate);
-          const endDate = this.formatDay(schedule.endDate);
-          if (schedule.name.match(re)) return true;
-          if (schedule.code.match(re)) return true;
-          if (endDate.match(re)) return true;
-          if (startDate.match(re)) return true;
-          return false;
-        });
-        this.schedules = scheduleFilter;
-      } else this.schedules = this.listSchedules;
     },
   },
 };

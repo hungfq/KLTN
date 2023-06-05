@@ -5,6 +5,7 @@ const initState = {
   subModule: null,
   section: null,
   id: null,
+  type: null,
 };
 
 const getters = {
@@ -14,6 +15,7 @@ const getters = {
   subModule: (state) => state.subModule || 'student',
   section: (state) => state.section || 'student-list',
   id: (state) => state.id,
+  type: (state) => state.type,
 };
 
 const actions = {
@@ -35,10 +37,14 @@ const actions = {
   async updateId ({ commit }, id) {
     commit('setId', id);
   },
+  async updateType ({ commit }, type) {
+    commit('setType', type);
+  },
   clearUrls ({ commit }) {
     commit('setModule', null);
     commit('setSubModule', null);
     commit('setSection', null);
+    commit('setType', null);
   },
 };
 
@@ -46,7 +52,7 @@ const mutations = {
   setUrl: (state, url) => {
     state.url = url;
     const subUrl = url.substring(1).split('/').slice(1);
-    [state.page, state.module, state.subModul, state.section, state.id] = subUrl;
+    [state.page, state.module, state.subModule, state.section, state.id] = subUrl;
   },
   setPage: (state, page) => {
     state.page = page;
@@ -62,6 +68,9 @@ const mutations = {
   },
   setId: (state, id) => {
     state.id = id;
+  },
+  setType: (state, type) => {
+    state.type = type;
   },
 };
 

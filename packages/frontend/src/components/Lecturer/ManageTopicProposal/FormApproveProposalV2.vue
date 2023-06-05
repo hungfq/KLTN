@@ -45,6 +45,7 @@
           <div class="mt-1">
             <Multiselect
               v-model="lecturerId"
+              :can-clear="false"
               :options="listLecturers"
               :close-on-select="false"
               :disabled="isView"

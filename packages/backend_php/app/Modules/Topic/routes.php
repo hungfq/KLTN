@@ -37,6 +37,11 @@ $api->group([
             'uses' => 'TopicController@update',
         ]);
 
+        $api->put('/student', [
+            'as' => '',
+            'uses' => 'TopicController@updateStudent',
+        ]);
+
         $api->delete('/', [
             'as' => '',
             'uses' => 'TopicController@delete',
@@ -75,6 +80,16 @@ $api->group([
         $api->post('/mark', [
             'as' => '',
             'uses' => 'TopicController@mark',
+        ]);
+
+        $api->get('/grade', [
+            'as' => '',
+            'uses' => 'TopicController@viewGrade',
+        ]);
+
+        $api->put('/grade', [
+            'as' => '',
+            'uses' => 'TopicController@setGrade',
         ]);
     });
 

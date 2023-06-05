@@ -24,6 +24,17 @@ class CreateScheduleCriteriaTable extends Migration
             $table->timestamps();
             $table->timestamp('deleted_at')->default('1999-01-01');
             $table->tinyInteger('deleted')->default('0');
+
+            
+            $table->foreign('schedule_id')
+                ->references('id')
+                ->on('schedules')
+                ->onDelete('cascade');
+
+            $table->foreign('criteria_id')
+                ->references('id')
+                ->on('criteria')
+                ->onDelete('cascade');
         });
     }
 

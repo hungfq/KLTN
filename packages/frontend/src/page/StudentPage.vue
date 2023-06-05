@@ -12,14 +12,9 @@
       </div>
       <div class="flex grow flex-col overflow-x-clip">
         <HeaderBarVue
-          v-if="page !== 'task'"
           :username="userName"
         />
-        <MiniHeaderBarVue
-          v-if="page === 'task'"
-          :username="userName"
-        />
-        <div class="bg-white mx-4 border rounded overflow-scroll">
+        <div class="bg-white border rounded overflow-y-auto overflow-x-auto">
           <template v-if="page === 'management'">
             <TopicRegisterPage v-if="module === 'topic_register'" />
             <TopicProposalPage v-if="module === 'topic_proposal'" />
@@ -48,18 +43,14 @@
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
-import ManageTopicProposalStudentVue from '../components/Student/ManageTopicProposalStudent.vue';
-import ManageTopicResult from '../components/Student/ManageTopicResult.vue';
-import FormResultVue from '../components/Student/FormResult.vue';
-import FormTopicProposalVue from '../components/Student/FormTopicProposal.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import MiniHeaderBarVue from '../components/Lecturer/MiniHeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 import TaskBarTopicVue from '../components/Student/TaskBarTopic.vue';
 import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
+import ManageTopicResult from '../components/Student/ManageResult/ManageTopicResult.vue';
 
 export default {
   name: 'StudentPage',
@@ -67,16 +58,12 @@ export default {
     ErrorModalVue,
     LeftMiniBarVue,
     ManageBarStudentVue,
-    ManageTopicProposalStudentVue,
-    ManageTopicResult,
     HeaderBarVue,
-    MiniHeaderBarVue,
-    FormTopicProposalVue,
-    FormResultVue,
     TaskDraggableVue,
     TaskBarTopicVue,
     TopicRegisterPage,
     TopicProposalPage,
+    ManageTopicResult,
   },
   props: {
   },
@@ -85,9 +72,9 @@ export default {
       showErrorModal: false,
       isSidebarOpen: true,
       listItems: [
-        { id: 'topic_register', value: 'Đăng ký đề tài' },
-        { id: 'topic_proposal', value: 'Đề xuất đề tài' },
-        { id: 'topic_result', value: 'Kiểm tra kết quả' },
+        { id: 'topic_proposal', value: 'Đề xuất đề tài', icon: 'fa-solid fa-book' },
+        { id: 'topic_register', value: 'Đăng ký đề tài', icon: 'fa-solid fa-user-check' },
+        { id: 'topic_result', value: 'Kiểm tra kết quả', icon: 'fa-solid fa-bullseye' },
       ],
     };
   },
@@ -100,9 +87,6 @@ export default {
     ]),
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
-    ]),
-    ...mapGetters('schedule', [
-      'listScheduleProposalStudent', 'listScheduleRegisterStudent',
     ]),
     isScheduleProposal () {
       if (!this.listScheduleProposalStudent || this.listScheduleProposalStudent.length < 1) return false;
@@ -120,10 +104,11 @@ export default {
       this.showErrorModal = true;
     }
     const { page, module, section } = this.$store.state.url;
+
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
-      this.$store.dispatch('url/updateModule', 'topic_register');
-      this.$store.dispatch('url/updateSection', 'topic_register-list');
+      this.$store.dispatch('url/updateModule', 'topic_proposal');
+      this.$store.dispatch('url/updateSection', 'topic_proposal-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
   },

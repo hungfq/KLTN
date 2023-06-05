@@ -70,19 +70,26 @@ class TopicViewAction
         }
 
         if ($dto->is_lecturer_mark) {
-            $query->where('topics.lecturer_id', Auth::id());
+            $query->where('topics.lecturer_id', Auth::id())
+                ->where('lecturer_approved', '=', 1)
+                ->whereNotNull('committees.president_id');
+
         }
 
         if ($dto->is_critical_mark) {
-            $query->where('topics.critical_id', Auth::id());
+            $query->where('topics.critical_id', Auth::id())
+                ->where('lecturer_approved', '=', 1)
+                ->whereNotNull('committees.president_id');
         }
 
         if ($dto->is_president_mark) {
-            $query->where('committees.president_id', Auth::id());
+            $query->where('committees.president_id', Auth::id())
+                ->where('lecturer_approved', '=', 1);
         }
 
         if ($dto->is_secretary_mark) {
-            $query->where('committees.secretary_id', Auth::id());
+            $query->where('committees.secretary_id', Auth::id())
+                ->where('lecturer_approved', '=', 1);
         }
 
         if ($dto->schedule_ids) {

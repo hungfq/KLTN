@@ -10,6 +10,7 @@ use App\Modules\Topic\Actions\TopicImportAction;
 use App\Modules\Topic\Actions\TopicLecturerApproveAction;
 use App\Modules\Topic\Actions\TopicLecturerDeclineAction;
 use App\Modules\Topic\Actions\TopicMarkAction;
+use App\Modules\Topic\Actions\TopicSetGradeAction;
 use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicShowStudentAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
@@ -17,13 +18,19 @@ use App\Modules\Topic\Actions\TopicStudentRegisterAction;
 use App\Modules\Topic\Actions\TopicStudentShowResultAction;
 use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
+use App\Modules\Topic\Actions\TopicUpdateStudentAction;
 use App\Modules\Topic\Actions\TopicViewAction;
+use App\Modules\Topic\Actions\TopicViewGradeAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
+use App\Modules\Topic\DTO\TopicViewGradeDTO;
 use App\Modules\Topic\Transformers\TopicUserViewTransformer;
+use App\Modules\Topic\Transformers\TopicViewGradeTransformer;
 use App\Modules\Topic\Transformers\TopicViewTransformer;
 use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicMarkValidator;
+use App\Modules\Topic\Validators\TopicSetGradeValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
+use App\Modules\Topic\Validators\TopicUpdateStudentValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +69,23 @@ class TopicController extends ApiController
     }
 
     public function update($id, TopicUpdateValidator $validator, TopicUpdateAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function updateStudent($id, TopicUpdateStudentValidator $validator, TopicUpdateStudentAction $action)
     {
         $this->request->merge([
             'id' => $id
@@ -175,6 +199,38 @@ class TopicController extends ApiController
     }
 
     public function mark($id, TopicMarkValidator $validator, TopicMarkAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function viewGrade($id, TopicViewGradeAction $action, TopicViewGradeTransformer $transformer)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $results = $action->handle(TopicViewGradeDTO::fromRequest());
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
+    }
+
+    public function setGrade($id, TopicSetGradeValidator $validator, TopicSetGradeAction $action)
     {
         $this->request->merge([
             'id' => $id
