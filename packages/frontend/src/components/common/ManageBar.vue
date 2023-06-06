@@ -47,6 +47,20 @@
       <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100 mt-2">
         {{ open ? 'Quá trình thực hiện' : '' }}
       </div>
+      <div
+        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
+      >
+        <a
+          v-for="item in listTasks"
+          :key="item.id"
+          class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+          :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
+          @click="updateModuleTask(item.id)"
+        >
+          <font-awesome-icon :icon="item.icon" />
+          <span v-if="open"> {{ item.value }} </span>
+        </a>
+      </div>
       <div class="mt-auto" />
       <!-- Notifications -->
       <div class="flex flex-col px-2 my-2">
@@ -162,6 +176,7 @@ export default {
   name: 'ManageBar',
   props: {
     listItems: [],
+    listTasks: [],
   },
   data () {
     return {
@@ -201,6 +216,12 @@ export default {
     },
   },
   methods: {
+    updateModuleTask (code) {
+      const number = parseInt(code.split('-')[1], 10);
+      this.$store.dispatch('url/updateModule', code);
+      this.$store.dispatch('task/updateTopicId', number);
+      console.log('🚀 ~ file: ManageBar.vue:223 ~ updateModuleTask ~ number:', number);
+    },
     updateModule (module) {
       this.$store.dispatch('url/updateModule', module);
       this.$store.dispatch('url/updateSection', `${module}-list`);

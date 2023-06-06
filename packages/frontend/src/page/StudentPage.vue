@@ -7,10 +7,11 @@
         <ManageBarStudentVue
           v-if="page === 'management'"
           :list-items="listItems"
+          :list-tasks="listTasks"
         />
         <TaskBarTopicVue v-if="page === 'task'" />
       </div>
-      <div class="flex grow flex-col overflow-x-clip">
+      <div class="flex grow flex-col">
         <HeaderBarVue
           :username="userName"
         />
@@ -24,7 +25,7 @@
               />
             </template>
           </template>
-          <template v-if="page === 'task'">
+          <template v-if="isTask">
             <TaskDraggableVue />
           </template>
         </div>
@@ -77,6 +78,7 @@ export default {
         { id: 'topic_register', value: 'Đăng ký đề tài', icon: 'fa-solid fa-user-check' },
         { id: 'topic_result', value: 'Kiểm tra kết quả', icon: 'fa-solid fa-bullseye' },
       ],
+      listTasks: [],
     };
   },
   computed: {
@@ -99,6 +101,9 @@ export default {
       // TODO: Check permission for date
       return true;
     },
+    isTask () {
+      return this.module.includes('task');
+    },
   },
   async mounted () {
     if (!this.isAuthenticated || this.userRole !== 'STUDENT') {
@@ -113,7 +118,8 @@ export default {
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
     const resultInProcess = await TopicApi.getResultRegisterInProcess(this.token);
-    console.log('🚀 ~ file: StudentPage.vue:116 ~ mounted ~ resultInProcess:', resultInProcess);
+    const taskOfTopic = resultInProcess.map((topic) => ({ id: `task-${topic._id}`, value: topic.code, icon: 'fa-solid fa-diagram-predecessor' }));
+    this.listTasks = taskOfTopic;
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;
