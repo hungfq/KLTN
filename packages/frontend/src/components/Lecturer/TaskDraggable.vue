@@ -266,6 +266,7 @@ export default {
   async mounted () {
     if (this.topicId) {
       await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+      await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
       this.tasks = this.listTask;
       this.calulateProgress();
     }

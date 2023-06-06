@@ -52,6 +52,7 @@ import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue'
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
 import BodyTopicApprovePage from '../components/Lecturer/ManageApprove/TopicApproveBodyPage.vue';
 import BodyMarkPage from '../components/Lecturer/ManageMark/MarkBodyPage.vue';
+import ScheduleApi from '../utils/api/schedule';
 
 export default {
   name: 'LecturerPage',
@@ -113,6 +114,8 @@ export default {
       this.$store.dispatch('url/updateSection', 'topic-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
+    const scheduleTask = await ScheduleApi.lecturerListScheduleTopicShort(this.token);
+    console.log('🚀 ~ file: LecturerPage.vue:118 ~ mounted ~ scheduleTask:', scheduleTask);
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;

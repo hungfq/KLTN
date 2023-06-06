@@ -6,7 +6,7 @@
       </p>
       <img
         class="w-6 h-6 rounded-full ml-3"
-        :src="defaultAvatarUrl"
+        :src="getImage(task.assignTo)"
         alt="Avatar"
       >
     </div>
@@ -34,7 +34,10 @@ export default {
   },
   computed: {
     ...mapGetters('task', [
-      'listMember',
+      'listStudents',
+    ]),
+    ...mapGetters('task', [
+      'listTask', 'topicId', 'listStudents',
     ]),
     defaultAvatarUrl () {
       const imageUrl = new URL('/src/assets/images/default_avatar.png', import.meta.url);
@@ -43,7 +46,12 @@ export default {
   },
   methods: {
     getAssignName (id) {
-      return this.listMember.find((e) => e._id === id);
+      return this.listStudents.find((e) => e._id === id);
+    },
+    getImage (id) {
+      if (!this.getAssignName(id)) return this.defaultAvatarUrl;
+      if (!this.getAssignName(id).picture) return this.defaultAvatarUrl;
+      return this.getAssignName(id).picture;
     },
   },
 };
