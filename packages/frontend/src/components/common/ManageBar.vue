@@ -61,6 +61,20 @@
           <span v-if="open"> {{ item.value }} </span>
         </a>
       </div>
+      <div
+        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
+      >
+        <a
+          v-for="item in listSchedules"
+          :key="item.id"
+          class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+          :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
+          @click="updateModuleTaskSchedule(item.id)"
+        >
+          <font-awesome-icon :icon="item.icon" />
+          <span v-if="open"> {{ item.value }} </span>
+        </a>
+      </div>
       <div class="mt-auto" />
       <!-- Notifications -->
       <div class="flex flex-col px-2 my-2">
@@ -177,6 +191,7 @@ export default {
   props: {
     listItems: [],
     listTasks: [],
+    listSchedules: [],
   },
   data () {
     return {
@@ -220,7 +235,12 @@ export default {
       const number = parseInt(code.split('-')[1], 10);
       this.$store.dispatch('url/updateModule', code);
       this.$store.dispatch('task/updateTopicId', number);
-      console.log('🚀 ~ file: ManageBar.vue:223 ~ updateModuleTask ~ number:', number);
+    },
+    updateModuleTaskSchedule (code) {
+      const number = parseInt(code.split('-')[2], 10);
+      console.log('🚀 ~ file: ManageBar.vue:241 ~ updateModuleTaskSchedule ~ number:', number);
+      this.$store.dispatch('url/updateModule', code);
+      this.$store.dispatch('task/updateScheduleId', number);
     },
     updateModule (module) {
       this.$store.dispatch('url/updateModule', module);
