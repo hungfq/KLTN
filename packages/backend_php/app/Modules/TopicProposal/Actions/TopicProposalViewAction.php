@@ -5,6 +5,7 @@ namespace App\Modules\TopicProposal\Actions;
 use App\Entities\TopicProposal;
 use App\Libraries\Helpers;
 use App\Modules\TopicProposal\DTO\TopicProposalViewDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class TopicProposalViewAction
@@ -14,11 +15,13 @@ class TopicProposalViewAction
      */
     public function handle($dto)
     {
+        $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
+
         $query = TopicProposal::query()
             ->with([
-               'students',
-               'schedule',
-               'lecturer',
+                'students',
+                'schedule',
+                'lecturer',
             ]);
 
         $query->addSelect([
@@ -51,6 +54,13 @@ class TopicProposalViewAction
 
         if ($dto->is_lecturer) {
             $query->where('topic_proposals.lecturer_id', Auth::id());
+        }
+
+        if ($dto->is_approve_time) {
+            $query->whereHas('schedule', function ($q) use ($now) {
+                $q->where('approve_start', '<=', $now)
+                    ->where('approve_end', '>=', $now);
+            });
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [
