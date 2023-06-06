@@ -42,11 +42,8 @@ class Task extends BaseSoftModel
         }
 
         $arr = explode('-', $task->code);
+        $lastNum = (int)$arr[count($arr) - 1];
 
-        if (!isset($arr[2])) {
-            return $defaultNum;
-        }
-
-        return sprintf('%s-%03d-%03d', $arr[0], $arr[1], ++$arr[2]);
+        return sprintf('%s-%03d', data_get($topic, 'code'), $lastNum + 1);
     }
 }

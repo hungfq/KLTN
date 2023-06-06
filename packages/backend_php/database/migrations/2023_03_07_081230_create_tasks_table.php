@@ -17,8 +17,8 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->unsignedBigInteger('topic_id');
             $table->string('status', 15)->nullable();
-            $table->string('code', 30);
-            $table->string('title', 100);
+            $table->string('code', 100);
+            $table->string('title', 255);
             $table->text('description')->nullable();
             $table->unsignedBigInteger('assignee_id')->nullable();
 
