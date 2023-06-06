@@ -1,7 +1,46 @@
 <template>
-  <div class="flex flex-col">
-    <div class="text-center font-semibold text-xl">
-      Danh sách đề tài trong quá trình thực hiện
+  <div class="flex flex-col h-[600px] mt-2">
+    <template v-if="!topicId">
+      <div class="text-center font-semibold text-xl">
+        Danh sách đề tài trong quá trình thực hiện
+      </div>
+      <div class="mx-4 mt-4">
+        <EasyDataTable
+          :headers="headers"
+          :items="listTopics"
+          hide-footer
+        >
+          <template #item-operation="item">
+            <div
+              class="tooltip tooltip-left"
+              data-tip="Xem quá trình thực hiện"
+            >
+              <font-awesome-icon
+                class="cursor-pointer"
+                :icon="['fas', 'diagram-predecessor']"
+                size="xl"
+                @click="showTask(item)"
+              />
+            </div>
+          </template>
+        </EasyDataTable>
+      </div>
+    </template>
+    <div
+      v-else
+      class="flex flex-col"
+    >
+      <div class="mt-2 ml-2">
+        <div
+          class="btn btn-secondary"
+          @click="rollBack"
+        >
+          Quay về
+        </div>
+      </div>
+      <div class="mt-4">
+        <TaskDraggable />
+      </div>
     </div>
   </div>
 </template>
@@ -11,58 +50,58 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { mapState, mapGetters, useStore } from 'vuex';
+import TaskDraggable from '../TaskDraggable.vue';
 
 export default {
 
   name: 'TaskBodyPage',
   components: {
+    TaskDraggable,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const store = useStore();
     const headers = [
       { text: 'Mã', value: 'code', sortable: true },
-      { text: 'Đề tài', value: 'title' },
+      { text: 'Đề tài', value: 'title', sortable: true },
+      { text: 'Xem quá trình', value: 'operation', width: 200 },
     ];
     const items = [];
-    const serverOptions = ref({
-      page: 1,
-      rowsPerPage: 10,
-      sortBy: 'updated_at',
-      sortType: 'desc',
-    });
+
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
+    const scheduleId = computed(() => store.getters['task/scheduleId']);
     const listTopics = computed(() => store.getters['task/listTopic']);
-
-    const showRow = (item) => {
-      store.dispatch('url/updateSection', `${modulePage.value}-view`);
-      store.dispatch('url/updateId', item.id);
+    const topicId = computed(() => store.getters['task/topicId']);
+    const showTask = (item) => {
+      console.log('🚀 ~ file: TaskBodyPage.vue:77 ~ showTask ~ item:', item);
+      // store.dispatch('url/updateSection', `${modulePage.value}-view`);
+      store.dispatch('task/updateTopicId', item._id);
     };
 
+    const rollBack = () => {
+      store.dispatch('task/updateTopicId', null);
+    };
     return {
       headers,
       items,
-      showRow,
-      loading,
-      serverOptions,
-      serverItemsLength,
-      rowItems,
+      showTask,
+      listTopics,
+      scheduleId,
       modulePage,
       BASE_API_URL,
+      rollBack,
+      topicId,
     };
   },
   computed: {
     ...mapGetters('url', {
       modulePage: 'module', section: 'section',
     }),
-    ...mapGetters('task', {
-      scheduleId: 'scheduleId', listTopic: 'listTopic',
-    }),
   },
   mounted () {
-    console.log('🚀 ~ file: TaskBodyPage.vue:24 ~ mounted ~ scheduleId:', this.scheduleId); z;
-    console.log(this.listTopic);
+    // console.log('🚀 ~ file: TaskBodyPage.vue:24 ~ mounted ~ scheduleId:', this.scheduleId);
+    // console.log(this.listTopic);
   },
 };
 </script>

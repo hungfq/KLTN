@@ -238,9 +238,9 @@ export default {
     },
     updateModuleTaskSchedule (code) {
       const number = parseInt(code.split('-')[2], 10);
-      console.log('🚀 ~ file: ManageBar.vue:241 ~ updateModuleTaskSchedule ~ number:', number);
       this.$store.dispatch('url/updateModule', code);
       this.$store.dispatch('task/updateScheduleId', number);
+      this.$store.dispatch('task/updateTopicId', null);
     },
     updateModule (module) {
       this.$store.dispatch('url/updateModule', module);
