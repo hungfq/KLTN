@@ -2,9 +2,8 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'LECTURER')">
-    <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
+    <div class="flex h-screen antialiased text-gray-900 bg-white">
       <div class="flex flex-shrink-0 transition-all">
-        <LeftMiniBarVue />
         <ManageBarLecturerVue
           v-if="page === 'management'"
           :list-items="listItems"
@@ -12,11 +11,11 @@
         />
         <TaskBarTopicVue v-if="page === 'task'" />
       </div>
-      <div class="flex grow flex-col overflow-x-clip">
+      <div class="flex grow flex-col h-1/5 w-full">
         <HeaderBarVue
           :username="userName"
         />
-        <div class="bg-white rounded overflow-auto">
+        <div class="bg-white rounded h-4/5 w-full">
           <template v-if="page === 'management'">
             <BodyTopicPage v-if="module === 'topic'" />
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
@@ -40,11 +39,9 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
-import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 
 import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
@@ -56,12 +53,10 @@ export default {
   name: 'LecturerPage',
   components: {
     ErrorModalVue,
-    LeftMiniBarVue,
     ManageBarLecturerVue,
     HeaderBarVue,
     BodyTaskPage,
     TaskBarTopicVue,
-    TaskDraggableVue,
     BodyTopicPage,
     BodyTopicProposalPage,
     BodyTopicApprovePage,

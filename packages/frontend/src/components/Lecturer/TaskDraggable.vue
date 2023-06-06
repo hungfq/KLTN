@@ -2,7 +2,7 @@
   <template
     v-if="topicId"
   >
-    <div class="mx-16">
+    <div class="mx-1">
       <button
         class=" mx-2"
         :class="[ showStatistic ? 'btn btn-active' : 'btn btn-secondary' ]"
@@ -25,7 +25,7 @@
           <option
             :key="`key-null`"
             :value="''"
-          />
+          >Tất cả</option>
           <option
             v-for="option in listStudents"
             :key="`key-${option._id}`"
@@ -46,30 +46,29 @@
   </template>
   <div
 
-    class="flex mt-4 justify-center min-h-[600px]"
-    :class="{'min-h-[600px]' : tasks.length === 0}"
+    class="flex mt-4 w-9/10 justify-center"
+    :class="{'min-h-[300px]' : tasks.length === 0}"
   >
     <div
-
       class="flex"
     >
       <template v-if="!showStatistic">
         <div
           v-for="column in columns"
           :key="column.title"
-          class="bg-gray-100 px-3 py-3 rounded mr-4 "
+          class="bg-gray-100 px-3 py-3 rounded mr-4"
         >
-          <div class="body mr-5">
+          <div class="body">
             <draggable
               v-model="values[column.value]"
               item-key="_id"
-              class="flex flex-col"
+              class="flex flex-col "
               :class="column.value"
               group="people"
               @change="log(column.value, $event)"
             >
               <template #header>
-                <div class="title flex justify-center w-64">
+                <div class="title flex justify-center w-52">
                   <p class="text-gray-700 font-semibold font-sans">
                     {{ column.title }}
                   </p>
@@ -97,79 +96,88 @@
         </div>
       </template>
       <template v-if="showStatistic">
-        <table class="w-full text-sm text-left text-gray-500">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-            <tr>
-              <th
-                scope="col"
-                class="py-3 px-6"
-              >
-                Mã
-              </th>
-              <th
-                scope="col"
-                class="py-3 px-6"
-              >
-                Tiêu đề
-              </th>
-              <th
-                scope="col"
-                class="py-3 px-6"
-              >
-                Trạng thái
-              </th>
-              <th
-                scope="col"
-                class="py-3 px-6"
-              >
-                Được phân công
-              </th>
+        <div class="flex flex-col">
+          <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-slate-100">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3 px-6"
+                >
+                  Mã
+                </th>
+                <th
+                  scope="col"
+                  class="py-3 px-6"
+                >
+                  Tiêu đề
+                </th>
+                <th
+                  scope="col"
+                  class="py-3 px-6"
+                >
+                  Trạng thái
+                </th>
+                <th
+                  scope="col"
+                  class="py-3 px-6"
+                >
+                  Được phân công
+                </th>
+              </tr>
+            </thead>
+            <tr
+              v-for="task in tasks"
+              :key="task._id"
+              class="bg-slate-300 hover:bg-gray-50"
+            >
+              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+                <!-- {{ task }} -->
+                {{ task.code }}
+              </td>
+              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+                {{ task.title }}
+              </td>
+              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+                <select
+                  v-model="task.status"
+                  disabled
+                  class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option
+                    v-for="option in columns"
+                    :key="`key-${option.value}`"
+                    :value="option.value"
+                  >
+                    {{ option.title }}
+                  </option>
+                </select>
+              </td>
+              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+                <select
+                  v-model="task.assignTo"
+                  disabled
+                  class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option
+                    v-for="option in listStudents"
+                    :key="`key-${option._id}`"
+                    :value="option._id"
+                  >
+                    {{ option.name }}
+                  </option>
+                </select>
+              </td>
             </tr>
-          </thead>
-          <tr
-            v-for="task in tasks"
-            :key="task._id"
-            class="bg-slate-300 hover:bg-gray-50"
-          >
-            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-              <!-- {{ task }} -->
-              {{ task.code }}
-            </td>
-            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-              {{ task.title }}
-            </td>
-            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-              <select
-                v-model="task.status"
-                disabled
-                class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              >
-                <option
-                  v-for="option in columns"
-                  :key="`key-${option.value}`"
-                  :value="option.value"
-                >
-                  {{ option.title }}
-                </option>
-              </select>
-            </td>
-            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-              <select
-                v-model="task.assignTo"
-                disabled
-                class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              >
-                <option
-                  v-for="option in listStudents"
-                  :key="`key-${option._id}`"
-                  :value="option._id"
-                >
-                  {{ option.name }}
-                </option>
-              </select>
-            </td>
-          </tr>
-        </table>
+          </table>
+          <div class="flex justify-between mt-4">
+            <div class="font-semibold">Tổng số: {{ tasks.length }}</div>
+            <div class="font-semibold">Chưa giải quyết: {{ values.PENDING.length }}</div>
+            <div class="font-semibold">Sẽ làm: {{ values['TODO'].length }}</div>
+            <div class="font-semibold">Đang làm: {{ values['IN_PROCESS'].length }}</div>
+            <div class="font-semibold">Hoàn thành: {{ values['DONE'].length }}</div>
+          </div>
+        </div>
       </template>
     </div>
   </div>

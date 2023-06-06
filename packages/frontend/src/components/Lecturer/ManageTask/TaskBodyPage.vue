@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-[600px] mt-2">
+  <div class="flex flex-col mt-2">
     <template v-if="!topicId">
       <div class="text-center font-semibold text-xl">
         Danh sách đề tài trong quá trình thực hiện
@@ -62,7 +62,7 @@ export default {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
     const store = useStore();
     const headers = [
-      { text: 'Mã', value: 'code', sortable: true },
+      { text: 'Mã', value: 'code', sortable: true, width: 200 },
       { text: 'Đề tài', value: 'title', sortable: true },
       { text: 'Xem quá trình', value: 'operation', width: 200 },
     ];
