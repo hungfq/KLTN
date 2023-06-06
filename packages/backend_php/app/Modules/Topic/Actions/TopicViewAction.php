@@ -5,6 +5,7 @@ namespace App\Modules\Topic\Actions;
 use App\Entities\Topic;
 use App\Libraries\Helpers;
 use App\Modules\Topic\DTO\TopicViewDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class TopicViewAction
@@ -14,6 +15,8 @@ class TopicViewAction
      */
     public function handle($dto)
     {
+        $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
+
         $query = Topic::query()
             ->with(['students', 'schedule', 'lecturer', 'critical'])
             ->leftJoin('committees', 'committees.id', '=', 'topics.committee_id');
@@ -72,24 +75,40 @@ class TopicViewAction
         if ($dto->is_lecturer_mark) {
             $query->where('topics.lecturer_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
-                ->whereNotNull('committees.president_id');
+                ->whereNotNull('committees.president_id')
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('approve_start', '<=', $now)
+                        ->where('approve_end', '>=', $now);
+                });
 
         }
 
         if ($dto->is_critical_mark) {
             $query->where('topics.critical_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
-                ->whereNotNull('committees.president_id');
+                ->whereNotNull('committees.president_id')
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('approve_start', '<=', $now)
+                        ->where('approve_end', '>=', $now);
+                });
         }
 
         if ($dto->is_president_mark) {
             $query->where('committees.president_id', Auth::id())
-                ->where('lecturer_approved', '=', 1);
+                ->where('lecturer_approved', '=', 1)
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('approve_start', '<=', $now)
+                        ->where('approve_end', '>=', $now);
+                });
         }
 
         if ($dto->is_secretary_mark) {
             $query->where('committees.secretary_id', Auth::id())
-                ->where('lecturer_approved', '=', 1);
+                ->where('lecturer_approved', '=', 1)
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('approve_start', '<=', $now)
+                        ->where('approve_end', '>=', $now);
+                });
         }
 
         if ($dto->schedule_ids) {

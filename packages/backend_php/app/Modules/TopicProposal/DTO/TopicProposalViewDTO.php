@@ -11,6 +11,7 @@ class TopicProposalViewDTO extends FlexibleDataTransferObject
     public $scheduleId;
     public $is_created;
     public $is_lecturer;
+    public $is_approve_time;
     public $limit;
     public $sort;
 
@@ -24,6 +25,7 @@ class TopicProposalViewDTO extends FlexibleDataTransferObject
             'scheduleId' => $request->input('scheduleId'),
             'is_created' => $request->input('is_created'),
             'is_lecturer' => $request->input('is_lecturer'),
+            'is_approve_time' => $request->input('is_approve_time'),
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);

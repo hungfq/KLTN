@@ -5,6 +5,7 @@ namespace App\Modules\Schedule\Actions;
 use App\Entities\Schedule;
 use App\Libraries\Helpers;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleViewAction
@@ -14,6 +15,8 @@ class ScheduleViewAction
      */
     public function handle($dto)
     {
+        $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
+
         $query = Schedule::query()
             ->with(['students']);
 
@@ -34,8 +37,8 @@ class ScheduleViewAction
         }
 
         if ($dto->is_approve_time) {
-            $query->whereDate('approve_start', '<=', date('Y-m-d H:i:s', time()))
-                ->whereDate('approve_end', '>=', date('Y-m-d H:i:s', time()));
+            $query->where('approve_start', '<=', $now)
+                ->where('approve_end', '>=', $now);
         }
 
         if ($dto->is_student) {

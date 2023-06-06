@@ -42,113 +42,131 @@
       Thêm nhiệm vụ
     </button>
   </template>
-  <div class="flex overflow-x-scroll max-w-full">
-    <div class="flex p-2 pr-0">
-      <template v-if="!showStatistic">
-        <div
-          v-for="column in columns"
-          :key="column.title"
-          class="bg-gray-100 px-3 py-3 column-width rounded mr-4"
-        >
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">
-            {{ column.title }}
-          </p>
-          <VueDraggableNext
-            :list="tasks"
-            :animation="200"
-            ghost-class="ghost-card"
-            group="tasks"
-            @add="onDragEnd(column)"
+  <div
+    class="flex mt-4 justify-center "
+    :class="{'min-h-[600px]' : tasks.length === 0}"
+  >
+    <div class="flex">
+      <div
+        v-for="column in columns"
+        :key="column.title"
+        class="bg-gray-100 px-3 py-3 rounded mr-4 "
+      >
+        <div class="body mr-5">
+          <draggable
+            v-model="values[column.value]"
+            item-key="_id"
+            class="flex flex-col"
+            :class="column.value"
+            group="people"
+            @change="log(column.value, $event)"
           >
-            <template v-for="(task) in tasks">
+            <template #header>
+              <div class="title flex justify-center w-64">
+                <p class="text-gray-700 font-semibold font-sans">
+                  {{ column.title }}
+                </p>
+              </div>
+            </template>
+            <template #item="{element}">
               <task-card
-                v-if="task.status === column.value"
-                :key="task._id"
-                :task="task"
+                :key="element._id"
+                :task="element"
                 class="mt-3 cursor-move"
-                @dragend="handleChange(task)"
-                @click="showTaskDetailModal(task._id)"
+                :class="element._id"
+                @click="showTaskDetailModal(element._id)"
               />
             </template>
-          </VueDraggableNext>
+            <template #footer>
+              <button
+                class="btn btn-primary mt-2"
+                @click="addPeople"
+              >
+                Thêm nhiệm vụ
+              </button>
+            </template>
+          </draggable>
         </div>
+      </div>
+      <div class="flex p-2 pr-0">
+        <template v-if="false && !showStatistic" />
+      </div>
+      <template v-if="showStatistic">
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-300">
+            <tr>
+              <th
+                scope="col"
+                class="py-3 px-6"
+              >
+                Mã
+              </th>
+              <th
+                scope="col"
+                class="py-3 px-6"
+              >
+                Tiêu đề
+              </th>
+              <th
+                scope="col"
+                class="py-3 px-6"
+              >
+                Trạng thái
+              </th>
+              <th
+                scope="col"
+                class="py-3 px-6"
+              >
+                Được phân công
+              </th>
+            </tr>
+          </thead>
+          <tr
+            v-for="task in tasks"
+            :key="task._id"
+            class="bg-slate-300 hover:bg-gray-50"
+          >
+            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <!-- {{ task }} -->
+              {{ task.code }}
+            </td>
+            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              {{ task.title }}
+            </td>
+            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <select
+                v-model="task.status"
+                disabled
+                class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              >
+                <option
+                  v-for="option in columns"
+                  :key="`key-${option.value}`"
+                  :value="option.value"
+                >
+                  {{ option.title }}
+                </option>
+              </select>
+            </td>
+            <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <select
+                v-model="task.assignTo"
+                disabled
+                class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              >
+                <option
+                  v-for="option in listStudents"
+                  :key="`key-${option._id}`"
+                  :value="option._id"
+                >
+                  {{ option.name }}
+                </option>
+              </select>
+            </td>
+          </tr>
+        </table>
       </template>
     </div>
-    <template v-if="showStatistic">
-      <table class="w-full text-sm text-left text-gray-500">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-300">
-          <tr>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Mã
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Tiêu đề
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Trạng thái
-            </th>
-            <th
-              scope="col"
-              class="py-3 px-6"
-            >
-              Được phân công
-            </th>
-          </tr>
-        </thead>
-        <tr
-          v-for="task in tasks"
-          :key="task._id"
-          class="bg-slate-300 hover:bg-gray-50"
-        >
-          <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-            <!-- {{ task }} -->
-            {{ task.code }}
-          </td>
-          <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-            {{ task.title }}
-          </td>
-          <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-            <select
-              v-model="task.status"
-              disabled
-              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-            >
-              <option
-                v-for="option in columns"
-                :key="`key-${option.value}`"
-                :value="option.value"
-              >
-                {{ option.title }}
-              </option>
-            </select>
-          </td>
-          <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
-            <select
-              v-model="task.assignTo"
-              disabled
-              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-            >
-              <option
-                v-for="option in listStudents"
-                :key="`key-${option._id}`"
-                :value="option._id"
-              >
-                {{ option.name }}
-              </option>
-            </select>
-          </td>
-        </tr>
-      </table>
-    </template>
   </div>
   <TaskDetailModalVue
     v-model="showTaskDetail"
@@ -159,8 +177,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { VueDraggableNext } from 'vue-draggable-next';
 import SearchInput from 'vue-search-input';
+import Draggable from 'vuedraggable';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 
@@ -168,9 +186,9 @@ export default {
   name: 'TaskDraggable',
   components: {
     TaskCard,
-    VueDraggableNext,
     TaskDetailModalVue,
     SearchInput,
+    Draggable,
   },
 
   data () {
@@ -200,6 +218,15 @@ export default {
       searchVal: '',
       selectVal: '',
       tasks: [],
+      preTasks: [],
+      statusEdit: false,
+      listTaskUpdate: new Map(),
+      values: {
+        PENDING: [],
+        TODO: [],
+        IN_PROCESS: [],
+        DONE: [],
+      },
     };
   },
   computed: {
@@ -219,11 +246,44 @@ export default {
         this.tasks = this.listTask;
       },
     },
+    tasks: {
+      handler () {
+        this.calulateProgress();
+      },
+    },
+    listTaskUpdate: {
+      async handler () {
+        [...this.listTaskUpdate.values()].forEach(async (task) => {
+          if (task) {
+            await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: task });
+            this.listTaskUpdate.delete(task._id);
+          }
+        });
+      },
+      deep: true,
+    },
   },
-  mounted () {
-    this.tasks = this.listTask;
+  async mounted () {
+    if (this.topicId) {
+      await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+      await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
+      this.tasks = this.listTask;
+      this.calulateProgress();
+    }
   },
   methods: {
+    calulateProgress () {
+      const values = {
+        PENDING: [],
+        TODO: [],
+        IN_PROCESS: [],
+        DONE: [],
+      };
+      this.tasks.forEach((task) => {
+        values[task.status].push(task);
+      });
+      this.values = values;
+    },
     showTaskDetailModal (id) {
       this.showTaskDetail = true;
       this.taskId = id;
@@ -240,19 +300,29 @@ export default {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
     async onDragEnd (column) {
-      await this.sleep(1);
+      // this.editUpdatePositionTask(column);
+      if (this.editTask) {
+        const updatedArray = this.tasks.map((obj) => {
+          if (this.editTask._id === obj._id) {
+            return { ...obj, status: column.value }; // create new object with updated values
+          }
+          return obj; // return original object
+        });
+        this.tasks = updatedArray;
+      }
+      this.editTask = null;
+      // this.statusEdit = false;
+    },
+    async editUpdatePositionTask (column) {
       if (this.editTask) {
         this.editTask.status = column.value;
         await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: this.editTask });
       }
-      if (this.topicId) {
-        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
-      }
       this.editTask = null;
     },
     handleChange (task) {
-      this.editTask = null;
       this.editTask = task;
+      this.listIdTaskUpdate.push(...new Set([...this.listIdTaskUpdate, task._id]));
     },
     search () {
       if (this.searchVal !== '') {
@@ -277,6 +347,16 @@ export default {
     },
     statisticHandler () {
       this.showStatistic = !this.showStatistic;
+    },
+    async log (status, event) {
+      if (event.added?.element?._id) {
+        const id = event.added.element._id;
+        const index = this.values[status].findIndex((obj) => parseInt(obj._id, 10) === parseInt(id, 10));
+        if (index !== -1) {
+          this.values[status][index] = { ...this.values[status][index], status };
+          await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: { ...this.values[status][index], status } });
+        }
+      }
     },
   },
 };

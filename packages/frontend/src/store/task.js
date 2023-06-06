@@ -50,10 +50,18 @@ const actions = {
       console.log(e.message);
     }
   },
+  async updateTopicId ({ commit }, id) {
+    try {
+      commit('setTopicId', id);
+    } catch (e) {
+      console.log(e.message);
+    }
+  },
   async fetchListMember ({ commit }, payload) {
     try {
       const { token, topicId } = payload;
       const listMember = await TopicApi.listTopicMember(token, topicId);
+      console.log('🚀 ~ file: task.js:64 ~ fetchListMember ~ listMember:', listMember);
       commit('setListMember', listMember);
     } catch (e) {
       console.log(e.message);

@@ -56,12 +56,9 @@ class Topic extends BaseSoftModel
             return $defaultNum;
         }
 
-        $arr =  explode('-', $topic->code);
+        $arr = explode('-', $topic->code);
+        $lastNum = (int)$arr[count($arr) - 1];
 
-        if (!isset($arr[1])) {
-            return $defaultNum;
-        }
-
-        return sprintf('%s-%03d', $arr[0], ++$arr[1]);
+        return sprintf('%s-%03d', data_get($schedule, 'code'), $lastNum + 1);
     }
 }

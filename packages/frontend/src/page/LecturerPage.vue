@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <!-- component -->
-  <div v-if="true || (isAuthenticated && userRole === 'LECTURER')">
+  <div v-if="(isAuthenticated && userRole === 'LECTURER')">
     <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
       <div class="flex flex-shrink-0 transition-all">
         <LeftMiniBarVue />
@@ -52,6 +52,7 @@ import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue'
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
 import BodyTopicApprovePage from '../components/Lecturer/ManageApprove/TopicApproveBodyPage.vue';
 import BodyMarkPage from '../components/Lecturer/ManageMark/MarkBodyPage.vue';
+import ScheduleApi from '../utils/api/schedule';
 
 export default {
   name: 'LecturerPage',
@@ -102,9 +103,9 @@ export default {
     },
   },
   async mounted () {
-    // if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
-    //   this.showErrorModal = true;
-    // }
+    if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
+      this.showErrorModal = true;
+    }
     const { page, module, section } = this.$store.state.url;
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
@@ -112,7 +113,9 @@ export default {
       this.$store.dispatch('url/updateSubModule', 'topic');
       this.$store.dispatch('url/updateSection', 'topic-list');
     }
-    await this.$store.dispatch('schedule/fetchListScheduleApproveLecturer', this.token);
+    await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
+    const scheduleTask = await ScheduleApi.lecturerListScheduleTopicShort(this.token);
+    console.log('🚀 ~ file: LecturerPage.vue:118 ~ mounted ~ scheduleTask:', scheduleTask);
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;
