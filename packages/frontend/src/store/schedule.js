@@ -5,6 +5,7 @@ const initState = {
   listScheduleProposalStudent: [],
   listScheduleRegisterStudent: [],
   listScheduleApproveLecturer: [],
+  listScheduleMarkLecturer: [],
   isPermit: false,
   isScheduleProposal: false,
   isScheduleRegister: false,
@@ -18,6 +19,7 @@ const getters = {
   listScheduleRegisterStudent: (state) => state.listScheduleRegisterStudent,
   listScheduleProposalStudent: (state) => state.listScheduleProposalStudent,
   listScheduleApproveLecturer: (state) => state.listScheduleApproveLecturer,
+  listScheduleMarkLecturer: (state) => state.listScheduleMarkLecturer,
   isPermit: (state) => state.isPermit,
   isScheduleProposal: (state) => state.isScheduleProposal,
   isScheduleRegister: (state) => state.isScheduleRegister,
@@ -122,6 +124,8 @@ const mutations = {
   setListScheduleToday: (state, listScheduleToday) => {
     state.listScheduleProposalStudent = listScheduleToday.proposal;
     state.listScheduleRegisterStudent = listScheduleToday.register;
+    state.listScheduleApproveLecturer = listScheduleToday.approve;
+    state.listScheduleMarkLecturer = listScheduleToday.mark;
   },
   setIsScheduleProposal: (state, value) => {
     state.isScheduleProposal = value;

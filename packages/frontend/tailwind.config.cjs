@@ -23,6 +23,7 @@ module.exports = {
           warning: '#fbbd23',
           error: '#f87272',
           'primary-content': '#FFFFFF',
+          'base-content': '#020617',
         },
       },
       'light',

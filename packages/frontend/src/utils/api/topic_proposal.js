@@ -7,7 +7,7 @@ axios.defaults.baseURL = apiDest;
 
 export default class TopicProposalApi {
   static async listAllTopicsByLecturer (token, options, scheduleId) {
-    let url = urlWithPagination('/topic-proposal?is_lecturer=1', options);
+    let url = urlWithPagination('/topic-proposal?is_lecturer=1&is_approve_time=1', options);
     if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {

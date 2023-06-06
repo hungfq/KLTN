@@ -102,9 +102,9 @@ export default {
     },
   },
   async mounted () {
-    // if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
-    //   this.showErrorModal = true;
-    // }
+    if (!this.isAuthenticated || this.userRole !== 'LECTURER') {
+      this.showErrorModal = true;
+    }
     const { page, module, section } = this.$store.state.url;
     if (!page && !module && !section) {
       this.$store.dispatch('url/updatePage', 'management');
@@ -112,7 +112,7 @@ export default {
       this.$store.dispatch('url/updateSubModule', 'topic');
       this.$store.dispatch('url/updateSection', 'topic-list');
     }
-    await this.$store.dispatch('schedule/fetchListScheduleApproveLecturer', this.token);
+    await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;

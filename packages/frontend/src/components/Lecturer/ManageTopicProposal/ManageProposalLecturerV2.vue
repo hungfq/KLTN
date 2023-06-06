@@ -1,79 +1,105 @@
 <template>
   <div class="flex flex-col">
-    <div>
-      <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
-            v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
+    <loading-process v-if="loading" />
+    <template v-else>
+      <template v-if=" !loading &&!isInApproveTime ">
+        <div class="relative">
+          <img
+            class="w-fit h-fit"
+            :src="imageUrl"
           >
-            <option
-              :key="`key-null`"
-              :value="'all'"
+          <button
+            class="btn btn-primary absolute bottom-0 left-0 !py-0"
+            @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+          >
+            Xem kết quả
+          </button>
+          <button
+            class="btn btn-primary absolute bottom-0 right-0 !py-0"
+            @click="$store.dispatch('url/updateSection', 'topic_proposal-list')"
+          >
+            Đề xuất đề tài
+          </button>
+        </div>
+      </template>
+      <div v-else>
+        <div
+          v-if="schedules.length > 1 "
+          class="flex"
+        >
+          <div class="inline-block p-2 rounded-md">
+            <select
+              v-model="selectSchedule"
+              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
+              @change="selectHandler"
             >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+              <option
+                :key="`key-null`"
+                :value="'all'"
+              >
+                Tất cả
+              </option>
+              <option
+                v-for="option in schedules"
+                :key="`key-${option._id}`"
+                :value="option._id"
+              >
+                {{ option.code }} : {{ option.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="shadow-md sm:rounded-lg m-4">
+          <SearchInput
+            v-model="searchVal"
+            :search-icon="true"
+            @keydown.space.enter="search"
+          />
+          <EasyDataTable
+            v-model:items-selected="itemsSelected"
+            v-model:server-options="serverOptions"
+            :server-items-length="serverItemsLength"
+            show-index
+            :headers="headers"
+            :items="topicShow"
+            :loading="loading"
+            buttons-pagination
+            :rows-items="rowItems"
+          >
+            <template #item-operation="item">
+              <div
+                class="flex flex-col"
+              >
+                <div class="m-1 cursor-pointer rounded-xl">
+                  <button
+                    class=" btn btn-primary w-36 py-1"
+                    @click="editItem(item)"
+                  >
+                    <span class="font-semibold px-1">Phê duyệt</span>
+                    <font-awesome-icon
+                      size="xl"
+                      :icon="['fas', 'check']"
+                    />
+                  </button>
+                </div>
+                <div class="m-1 cursor-pointer rounded">
+                  <button
+                    class=" btn btn-warning w-36 py-1"
+                    @click="handleRemoveTopic(item._id)"
+                  >
+                    <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
+                    <font-awesome-icon
+                      size="xl"
+                      :icon="['fas', 'ban']"
+                    />
+                  </button>
+                </div>
+              </div>
+            </template>
+          </EasyDataTable>
         </div>
       </div>
-      <div class="shadow-md sm:rounded-lg m-4">
-        <SearchInput
-          v-model="searchVal"
-          :search-icon="true"
-          @keydown.space.enter="search"
-        />
-        <EasyDataTable
-          v-model:items-selected="itemsSelected"
-          v-model:server-options="serverOptions"
-          :server-items-length="serverItemsLength"
-          show-index
-          :headers="headers"
-          :items="topicShow"
-          :loading="loading"
-          buttons-pagination
-          :rows-items="rowItems"
-        >
-          <template #item-operation="item">
-            <div
-              class="flex flex-col"
-            >
-              <div class="m-1 cursor-pointer rounded-xl">
-                <button
-                  class=" btn btn-primary w-36 py-1"
-                  @click="editItem(item)"
-                >
-                  <span class="font-semibold px-1">Phê duyệt</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'check']"
-                  />
-                </button>
-              </div>
-              <div class="m-1 cursor-pointer rounded">
-                <button
-                  class=" btn btn-warning w-36 py-1"
-                  @click="handleRemoveTopic(item._id)"
-                >
-                  <span class="font-semibold px-1 cursor-pointer">Từ chối</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'ban']"
-                  />
-                </button>
-              </div>
-            </div>
-          </template>
-        </EasyDataTable>
-      </div>
-    </div>
+    </template>
   </div>
   <ConfirmModal
     v-model="showConfirmModal"
@@ -101,16 +127,18 @@ import 'vue-search-input/dist/styles.css';
 // import 'vue-search-input/dist/styles.css';
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
+import LoadingProcess from '../../common/Loading.vue';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    LoadingProcess,
   },
   setup () {
+    const loading = ref(true);
     const store = useStore();
-    const loading = ref(false);
     const itemsSelected = ref([]);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
@@ -136,6 +164,8 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
+    const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
+    console.log('🚀 ~ file: ManageProposalLecturerV2.vue:140 ~ setup ~ listSchedules:', listSchedules);
     const modulePage = computed(() => store.getters['url/module']);
 
     const $toast = useToast();
@@ -167,6 +197,7 @@ export default {
 
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listScheduleApproveLecturer(token);
+      console.log('🚀 ~ file: ManageProposalLecturerV2.vue:172 ~ onMounted ~ listAllSchedule:', listAllSchedule);
       schedules.value = listAllSchedule.data;
       try {
         await loadToServer(serverOptions.value);
@@ -217,6 +248,8 @@ export default {
       else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
     };
 
+    const isInApproveTime = computed(() => schedules.value.length !== 0);
+
     const topicShow = computed(() => {
       if (!topics.value) return [];
       return topics.value.map((topic) => ({
@@ -252,6 +285,7 @@ export default {
       schedules,
       searchVal,
       search,
+      isInApproveTime,
     };
   },
   computed: {
@@ -271,8 +305,12 @@ export default {
       'studentId', 'studentEmail', 'student', 'listStudents',
     ]),
     ...mapGetters('schedule', [
-      'listSchedules',
+      'listSchedules', 'listScheduleApproveLecturer',
     ]),
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/not_approve.png', import.meta.url).href;
+      return imageUrl;
+    },
   },
   methods: {
     async handleUpdateTopic (id) {
