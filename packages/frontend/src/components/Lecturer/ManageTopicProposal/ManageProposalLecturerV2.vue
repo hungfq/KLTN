@@ -10,9 +10,9 @@
           >
           <button
             class="btn btn-primary absolute bottom-0 left-0 !py-0"
-            @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+            @click="$store.dispatch('url/updateSection', 'topic-list')"
           >
-            Xem kết quả
+            Xem đề tài
           </button>
           <button
             class="btn btn-primary absolute bottom-0 right-0 !py-0"
@@ -164,8 +164,7 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-    const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
-    console.log('🚀 ~ file: ManageProposalLecturerV2.vue:140 ~ setup ~ listSchedules:', listSchedules);
+    // const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
     const modulePage = computed(() => store.getters['url/module']);
 
     const $toast = useToast();
@@ -197,7 +196,6 @@ export default {
 
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listScheduleApproveLecturer(token);
-      console.log('🚀 ~ file: ManageProposalLecturerV2.vue:172 ~ onMounted ~ listAllSchedule:', listAllSchedule);
       schedules.value = listAllSchedule.data;
       try {
         await loadToServer(serverOptions.value);
