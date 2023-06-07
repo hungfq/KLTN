@@ -72,7 +72,6 @@ const actions = {
     try {
       const { token, topicId } = payload;
       const listMember = await TopicApi.listTopicMember(token, topicId);
-      console.log('🚀 ~ file: task.js:64 ~ fetchListMember ~ listMember:', listMember);
       commit('setListMember', listMember);
     } catch (e) {
       console.log(e.message);
@@ -178,12 +177,6 @@ const mutations = {
     state.taskDetail = taskDetail;
   },
 };
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
-console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
 
 export default {
   namespaced: true,
