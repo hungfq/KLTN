@@ -3,9 +3,8 @@
     <loading-process v-if="loading" />
     <template v-else>
       <template v-if=" !loading &&!isInApproveTime ">
-        <div class="relative">
+        <div class="relative h-1/3">
           <img
-            class="w-fit h-fit"
             :src="imageUrl"
           >
           <button

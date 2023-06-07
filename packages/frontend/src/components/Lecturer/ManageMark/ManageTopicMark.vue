@@ -5,9 +5,9 @@
     class="flex flex-col"
   >
     <template v-if=" !loading &&!isInProcessMark ">
-      <div class="relative">
+      <div class="relative h-2/3">
         <img
-          class="w-fit h-fit"
+          class="w-fit h-full"
           :src="imageUrl"
         >
         <button

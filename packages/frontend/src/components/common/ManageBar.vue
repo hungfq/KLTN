@@ -25,7 +25,10 @@
           <font-awesome-icon :icon="['fas', 'arrow-left']" />
         </div>
       </div>
-      <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100">
+      <div
+        v-if="userRole != 'ADMIN'"
+        class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100"
+      >
         {{ open ? 'Quản lý đăng ký' : '' }}
       </div>
 

@@ -1,7 +1,7 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'STUDENT')">
-    <div class="flex h-screen antialiased text-gray-900 bg-white">
+    <div class="flex antialiased text-gray-900 bg-white">
       <div class="flex flex-shrink-0 transition-all">
         <ManageBarStudentVue
           v-if="page === 'management'"
