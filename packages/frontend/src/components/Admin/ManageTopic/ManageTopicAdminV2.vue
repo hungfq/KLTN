@@ -83,6 +83,16 @@
               @click="editItem(item)"
             />
           </div>
+          <div
+            class="tooltip tooltip-bottom ml-2"
+            data-tip="Xóa đề tài"
+          >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="xl"
+              @click="handleRemoveTopic(item._id)"
+            />
+          </div>
         </div>
       </template>
     </EasyDataTable>
@@ -90,7 +100,7 @@
 
   <ConfirmModal
     v-model="showConfirmModal"
-    @confirm="confirmRemove"
+    @confirm="confirmRemove(removeId)"
     @cancel="showConfirmModal=false"
   >
     <template #title>
@@ -199,8 +209,10 @@ export default {
 
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
-      showConfirmModal.value = false;
       try {
+        await TopicApi.deleteTopicById(token, id);
+        showConfirmModal.value = false;
+        await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
