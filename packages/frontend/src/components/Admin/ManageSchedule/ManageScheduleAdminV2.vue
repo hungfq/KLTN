@@ -187,6 +187,7 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import moment from 'moment';
+import axios from 'axios';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import CriteriaApi from '../../../utils/api/criteria';
@@ -454,7 +455,28 @@ export default {
       await this.$store.dispatch('url/updateId', id);
     },
     getLink (id) {
-      return `${this.BASE_API_URL}/v1/schedule/${id}/export`;
+      axios
+        .get(`${this.BASE_API_URL}/api/v2/schedule/${id}/topic/export`, {
+          headers: {
+            authorization: `bearer ${this.token}`,
+          },
+          responseType: 'blob',
+        })
+        .then((res) => {
+          const url = window.URL.createObjectURL(new Blob([res.data]), {
+            type: res.data.type,
+          });
+          const a = document.createElement('a');
+          a.href = url;
+          const filename = 'Baocao.xlsx';
+          a.setAttribute('download', filename);
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     async handleExportSchedule (id) {
       await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });

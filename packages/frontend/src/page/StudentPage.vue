@@ -1,9 +1,8 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'STUDENT')">
-    <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
+    <div class="flex antialiased text-gray-900 bg-white">
       <div class="flex flex-shrink-0 transition-all">
-        <LeftMiniBarVue />
         <ManageBarStudentVue
           v-if="page === 'management'"
           :list-items="listItems"
@@ -15,7 +14,7 @@
         <HeaderBarVue
           :username="userName"
         />
-        <div class="bg-white border rounded overflow-y-auto overflow-x-auto">
+        <div class="bg-white rounded">
           <template v-if="page === 'management'">
             <TopicRegisterPage v-if="module === 'topic_register'" />
             <TopicProposalPage v-if="module === 'topic_proposal'" />

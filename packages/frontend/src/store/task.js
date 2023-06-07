@@ -4,6 +4,7 @@ import TaskApi from '../utils/api/task';
 
 const initState = {
   listScheduleTopic: [],
+  scheduleId: null,
   listTopic: [],
   topicId: null,
   listTask: [],
@@ -15,6 +16,7 @@ const initState = {
 const getters = {
   listScheduleTopic: (state) => state.listScheduleTopic,
   listTopic: (state) => state.listTopic,
+  scheduleId: (state) => state.scheduleId,
   topicId: (state) => state.topicId,
   listTask: (state) => state.listTask,
   listMember: (state) => state.listMember,
@@ -36,6 +38,15 @@ const actions = {
       const listSchedule = state.listScheduleTopic;
       const listTopic = listSchedule.find((element) => element._id === id);
       commit('setListTopic', listTopic.topics);
+    } catch (e) {
+      console.log(e.message);
+    }
+  },
+  async updateScheduleId ({ commit, state, dispatch }, id) {
+    try {
+      commit('setScheduleId', id);
+      console.log('🚀 ~ file: task.js:52 ~ updateScheduleId ~ id:', id);
+      dispatch('setListTopic', id);
     } catch (e) {
       console.log(e.message);
     }
@@ -151,6 +162,9 @@ const mutations = {
   setTopicId: (state, topicId) => {
     state.topicId = topicId;
   },
+  setScheduleId: (state, scheduleId) => {
+    state.scheduleId = scheduleId;
+  },
   setListTask: (state, listTask) => {
     state.listTask = listTask;
   },
@@ -164,6 +178,12 @@ const mutations = {
     state.taskDetail = taskDetail;
   },
 };
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
+console.log('🚀 ~ file: task.js:180 ~ mutations.scheduleId:', mutations.scheduleId);
 
 export default {
   namespaced: true,

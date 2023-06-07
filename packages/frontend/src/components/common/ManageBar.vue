@@ -25,7 +25,10 @@
           <font-awesome-icon :icon="['fas', 'arrow-left']" />
         </div>
       </div>
-      <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100">
+      <div
+        v-if="userRole != 'ADMIN'"
+        class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100"
+      >
         {{ open ? 'Quản lý đăng ký' : '' }}
       </div>
 
@@ -56,6 +59,20 @@
           class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
           :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
           @click="updateModuleTask(item.id)"
+        >
+          <font-awesome-icon :icon="item.icon" />
+          <span v-if="open"> {{ item.value }} </span>
+        </a>
+      </div>
+      <div
+        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
+      >
+        <a
+          v-for="item in listSchedules"
+          :key="item.id"
+          class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+          :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
+          @click="updateModuleTaskSchedule(item.id)"
         >
           <font-awesome-icon :icon="item.icon" />
           <span v-if="open"> {{ item.value }} </span>
@@ -120,9 +137,11 @@
                         {{ noti.title }}
                       </h3>
                     </div>
-                    <p class="text-xs text-gray-500">
-                      {{ timeAgo(noti.createdAt) }}
-                    </p>
+                    <div class="inline-flex">
+                      <p class="text-xs text-gray-500">
+                        {{ timeAgo(noti.createdAt) }}
+                      </p>
+                    </div>
                   </div>
                   <div class="inline-flex items-center justify-between w-full">
                     <p class="mt-1 text-sm text-left text-gray-900">
@@ -177,6 +196,7 @@ export default {
   props: {
     listItems: [],
     listTasks: [],
+    listSchedules: [],
   },
   data () {
     return {
@@ -215,12 +235,20 @@ export default {
       return imageUrlAvatar;
     },
   },
+  async mounted () {
+    await this.$store.dispatch('notification/fetchListNotifications', this.token);
+  },
   methods: {
     updateModuleTask (code) {
       const number = parseInt(code.split('-')[1], 10);
       this.$store.dispatch('url/updateModule', code);
       this.$store.dispatch('task/updateTopicId', number);
-      console.log('🚀 ~ file: ManageBar.vue:223 ~ updateModuleTask ~ number:', number);
+    },
+    updateModuleTaskSchedule (code) {
+      const number = parseInt(code.split('-')[2], 10);
+      this.$store.dispatch('url/updateModule', code);
+      this.$store.dispatch('task/updateScheduleId', number);
+      this.$store.dispatch('task/updateTopicId', null);
     },
     updateModule (module) {
       this.$store.dispatch('url/updateModule', module);

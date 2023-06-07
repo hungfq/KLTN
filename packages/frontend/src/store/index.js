@@ -46,6 +46,7 @@ const vuexLocal = createPersistedState({
     'task.isScheduleApprove',
     'task.listTopic',
     'task.topicId',
+    'task.scheduleId',
     'task.listTask',
     'task.listMember',
     'task.listStudents',

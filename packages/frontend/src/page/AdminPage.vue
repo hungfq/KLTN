@@ -2,7 +2,7 @@
 <template>
   <!-- component -->
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
-    <div class="flex h-screen text-gray-900 bg-gray-100">
+    <div class="flex text-gray-900 bg-gray-100">
       <div class="flex">
         <ManageBarVue :list-items="listItems" />
       </div>

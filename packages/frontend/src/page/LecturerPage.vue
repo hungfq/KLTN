@@ -2,30 +2,28 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'LECTURER')">
-    <div class="flex h-screen antialiased text-gray-900 bg-gray-100">
+    <div class="flex antialiased text-gray-900 bg-white">
       <div class="flex flex-shrink-0 transition-all">
-        <LeftMiniBarVue />
         <ManageBarLecturerVue
           v-if="page === 'management'"
           :list-items="listItems"
+          :list-schedules="listScheduleTopicTask"
         />
-        <TaskBarScheduleVue v-if="page === 'task'" />
         <TaskBarTopicVue v-if="page === 'task'" />
       </div>
-      <div class="flex grow flex-col overflow-x-clip">
+      <div class="flex grow flex-col h-1/5 w-full">
         <HeaderBarVue
           :username="userName"
         />
-        <div class="bg-white mx-4 rounded overflow-auto">
+        <div class="bg-white rounded h-4/5 w-full">
           <template v-if="page === 'management'">
             <BodyTopicPage v-if="module === 'topic'" />
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />
             <BodyTopicApprovePage v-if="module === 'topic_approve'" />
             <BodyMarkPage v-if="module === 'mark'" />
           </template>
-          <template v-if="page === 'task'">
-            <TaskDraggableVue />
-          </template>
+          <BodyTaskPage v-if="isTask" />
+          <!-- <TaskDraggableVue /> -->
         </div>
       </div>
     </div>
@@ -41,29 +39,24 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarLecturerVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
-import TaskBarScheduleVue from '../components/Lecturer/TaskBarSchedule.vue';
 import TaskBarTopicVue from '../components/Lecturer/TaskBarTopic.vue';
-import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
 
 import BodyTopicPage from '../components/Lecturer/ManageTopic/TopicBodyPage.vue';
 import BodyTopicProposalPage from '../components/Lecturer/ManageTopicProposal/TopicProposalBodyPage.vue';
 import BodyTopicApprovePage from '../components/Lecturer/ManageApprove/TopicApproveBodyPage.vue';
 import BodyMarkPage from '../components/Lecturer/ManageMark/MarkBodyPage.vue';
-import ScheduleApi from '../utils/api/schedule';
+import BodyTaskPage from '../components/Lecturer/ManageTask/TaskBodyPage.vue';
 
 export default {
   name: 'LecturerPage',
   components: {
     ErrorModalVue,
-    LeftMiniBarVue,
     ManageBarLecturerVue,
     HeaderBarVue,
-    TaskBarScheduleVue,
+    BodyTaskPage,
     TaskBarTopicVue,
-    TaskDraggableVue,
     BodyTopicPage,
     BodyTopicProposalPage,
     BodyTopicApprovePage,
@@ -81,6 +74,7 @@ export default {
         { id: 'topic_approve', value: 'Phê duyệt đề tài', icon: 'fa-solid fa-user-check' },
         { id: 'mark', value: 'Chấm điểm', icon: 'fa-solid fa-list-check' },
       ],
+      listScheduleTopicTask: [],
     };
   },
   computed: {
@@ -96,10 +90,16 @@ export default {
     ...mapGetters('schedule', [
       'listScheduleApproveLecturer',
     ]),
+    ...mapGetters('task', [
+      'listScheduleTopic',
+    ]),
     isScheduleApprove () {
       // if (!this.listScheduleApproveLecturer || this.listScheduleApproveLecturer.length < 1) return false;
       // TODO: Update the logic show approve time for topic
       return true;
+    },
+    isTask () {
+      return this.module.includes('task-schedule');
     },
   },
   async mounted () {
@@ -114,8 +114,9 @@ export default {
       this.$store.dispatch('url/updateSection', 'topic-list');
     }
     await this.$store.dispatch('schedule/fetchListScheduleToday', this.token);
-    const scheduleTask = await ScheduleApi.lecturerListScheduleTopicShort(this.token);
-    console.log('🚀 ~ file: LecturerPage.vue:118 ~ mounted ~ scheduleTask:', scheduleTask);
+    await this.$store.dispatch('task/fetchScheduleTopic', this.token);
+    const scheduleTopic = this.listScheduleTopic.map((schedule) => ({ id: `task-schedule-${schedule._id}`, value: schedule.code, icon: 'fa-calendar-days' }));
+    this.listScheduleTopicTask = scheduleTopic;
   },
   async created () {
     const { _id } = this.$store.state.auth.userInfo;

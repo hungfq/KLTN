@@ -1,87 +1,113 @@
 <template>
-  <div class="flex flex-col">
-    <div class="tabs tabs-boxed bg-white">
-      <a
-        v-for="option in headerTabs"
-        :key="option.code"
-        class="tab rounded-md"
-        :class="{'tab-active' : option.code === tab}"
-        @click="tab= option.code"
-      >{{ option.text }}</a>
-    </div>
-    <div>
-      <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
-            v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
+  <loading-process v-if="loading" />
+  <div
+    v-else
+    class="flex flex-col"
+  >
+    <template v-if=" !loading &&!isInProcessMark ">
+      <div class="relative h-2/3">
+        <img
+          class="w-fit h-full"
+          :src="imageUrl"
+        >
+        <button
+          class="btn btn-primary absolute bottom-0 left-0 !py-0"
+          @click="changePage('topic')"
+        >
+          Xem đề tài
+        </button>
+        <button
+          class="btn btn-primary absolute bottom-0 right-0 !py-0"
+          @click="changePage('topic_approve')"
+        >
+          Đề xuất đề tài
+        </button>
+      </div>
+    </template>
+    <template v-else>
+      <div class="tabs tabs-boxed bg-white">
+        <a
+          v-for="option in headerTabs"
+          :key="option.code"
+          class="tab rounded-md"
+          :class="{'tab-active' : option.code === tab}"
+          @click="tab= option.code"
+        >{{ option.text }}</a>
+      </div>
+      <div>
+        <div class="flex">
+          <div class="inline-block p-2 rounded-md">
+            <select
+              v-model="selectSchedule"
+              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
+              @change="selectHandler"
+            >
+              <option
+                :value="'all'"
+              >
+                Tất cả
+              </option>
+              <option
+                v-for="option in schedules"
+                :key="`key-${option._id}`"
+                :value="option._id"
+              >
+                {{ option.code }} : {{ option.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="shadow-md sm:rounded-lg m-4">
+          <SearchInput
+            v-model="searchVal"
+            :search-icon="true"
+            @keydown.space.enter="search"
+          />
+          <EasyDataTable
+            v-model:items-selected="itemsSelected"
+            v-model:server-options="serverOptions"
+            :server-items-length="serverItemsLength"
+            show-index
+            :headers="headers"
+            :items="topicShow"
+            :loading="loading"
+            buttons-pagination
+            :rows-items="rowItems"
           >
-            <option
-              :value="'all'"
-            >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+            <template #item-import-export="students">
+              <div class-="flex flex-col">
+                <ul>
+                  <li
+                    v-for="student in students"
+                    :key="`${student}`"
+                  >
+                    {{ student }}
+                  </li>
+                </ul>
+              </div>
+            </template>
+            <template #item-operation="item">
+              <div
+                class="flex flex-col"
+              >
+                <div class="m-1 cursor-pointer rounded-xl">
+                  <button
+                    class=" btn btn-primary "
+                    @click="editItem(item._id)"
+                  >
+                    <span class="font-semibold px-1">Chấm điểm</span>
+                    <font-awesome-icon
+                      size="xl"
+                      :icon="['fas', 'bullseye']"
+                    />
+                  </button>
+                </div>
+              </div>
+            </template>
+          </EasyDataTable>
         </div>
       </div>
-      <div class="shadow-md sm:rounded-lg m-4">
-        <SearchInput
-          v-model="searchVal"
-          :search-icon="true"
-          @keydown.space.enter="search"
-        />
-        <EasyDataTable
-          v-model:items-selected="itemsSelected"
-          v-model:server-options="serverOptions"
-          :server-items-length="serverItemsLength"
-          show-index
-          :headers="headers"
-          :items="topicShow"
-          :loading="loading"
-          buttons-pagination
-          :rows-items="rowItems"
-        >
-          <template #item-import-export="students">
-            <div class-="flex flex-col">
-              <ul>
-                <li
-                  v-for="student in students"
-                  :key="`${student}`"
-                >
-                  {{ student }}
-                </li>
-              </ul>
-            </div>
-          </template>
-          <template #item-operation="item">
-            <div
-              class="flex flex-col"
-            >
-              <div class="m-1 cursor-pointer rounded-xl">
-                <button
-                  class=" btn btn-primary "
-                  @click="editItem(item._id)"
-                >
-                  <span class="font-semibold px-1">Chấm điểm</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'bullseye']"
-                  />
-                </button>
-              </div>
-            </div>
-          </template>
-        </EasyDataTable>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -93,14 +119,16 @@ import { useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import 'vue-search-input/dist/styles.css';
+import LoadingProcess from '../../common/Loading.vue';
 
-import ScheduleApi from '../../../utils/api/schedule';
+// import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
+    LoadingProcess,
   },
   setup () {
     const store = useStore();
@@ -144,6 +172,7 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
+    const scheduleMark = store.getters['schedule/listScheduleMarkLecturer'];
     const modulePage = computed(() => store.getters['url/module']);
     store.dispatch('url/updateType', mapValue[tab.value]);
     // TODO: Update API get mark and update mark in committee
@@ -171,8 +200,8 @@ export default {
     const $toast = useToast();
 
     onMounted(async () => {
-      const listAllSchedule = await ScheduleApi.listAllSchedule(token);
-      schedules.value = listAllSchedule.data;
+      // const listAllSchedule = await ScheduleApi.listAllSchedule(token);
+      schedules.value = scheduleMark;
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -209,6 +238,8 @@ export default {
       else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
     };
 
+    const isInProcessMark = computed(() => schedules.value.length > 0);
+
     const topicShow = computed(() => {
       if (!topics.value) return [];
       return topics.value.map((topic) => ({
@@ -222,6 +253,16 @@ export default {
       }));
     });
 
+    const imageUrl = computed(() => {
+      const imageUrlBg = new URL('/src/assets/images/not_mark.png', import.meta.url).href;
+      return imageUrlBg;
+    });
+
+    const changePage = (module) => {
+      store.dispatch('url/updateModule', module);
+      store.dispatch('url/updateSection', `${module}-list`);
+    };
+
     return {
       headers,
       items,
@@ -231,6 +272,7 @@ export default {
       topics,
       serverItemsLength,
       rowItems,
+      changePage,
       editItem,
       modulePage,
       handleImport,
@@ -239,10 +281,12 @@ export default {
       topicShow,
       selectHandler,
       schedules,
+      imageUrl,
       headerTabs,
       tab,
       searchVal,
       search,
+      isInProcessMark,
     };
   },
 };
