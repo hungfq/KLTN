@@ -32,7 +32,8 @@ class TopicStoreAction
         foreach (data_get($this->dto, 'students', []) as $studentCode) {
             $student = User::role(Role::ROLE_STUDENT)->where('code', $studentCode)->first();
             if (!$student) {
-                throw new UserException("Student not found!");
+//                throw new UserException("Student not found!");
+                throw new UserException('Sinh viên không tồn tại trong hệ thống!', 400);
             }
 
             $studentAlreadyRegistered = Topic::query()
@@ -41,14 +42,16 @@ class TopicStoreAction
                     $q->where('id', data_get($student, 'id'));
                 })->exists();
             if ($studentAlreadyRegistered) {
-                throw new UserException('Some student already has register in another topic');
+//                throw new UserException('Some student already has register in another topic');
+                throw new UserException(sprintf('Sinh viên %s đã đăng ký đề tài khác!', data_get($student, 'code')), 400);
             }
             $this->studentIds[] = $student->id;
         }
 
         $schedule = Schedule::query()->find($this->dto->schedule_id);
         if (!$schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
         }
 
         if (!$this->dto->code) {

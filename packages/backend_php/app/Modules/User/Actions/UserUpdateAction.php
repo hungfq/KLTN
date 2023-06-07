@@ -28,14 +28,16 @@ class UserUpdateAction
     {
         $this->user = User::find($this->dto->id);
         if (!$this->user) {
-            throw new UserException("User is not exists!");
+//            throw new UserException("User is not exists!");
+            throw new UserException("Người dùng không tồn tại trong hệ thống!", 400);
         }
 
         $isExists = User::where('email', $this->dto->email)
             ->where('id', '!=', $this->dto->id)
             ->exists();
         if ($isExists) {
-            throw new UserException("Email already exists!");
+//            throw new UserException("Email already exists!");
+            throw new UserException("Email đã tồn tại trong hệ thống!", 400);
         }
 
         return $this;

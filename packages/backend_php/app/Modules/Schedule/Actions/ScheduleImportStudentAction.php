@@ -22,13 +22,15 @@ class ScheduleImportStudentAction
     {
         $schedule = Schedule::find($dto->id);
         if (!$schedule) {
-            throw new UserException("Schedule is not exists!");
+//            throw new UserException("Schedule is not exists!");
+            throw new UserException('Đợt đăng ký không tồn tại!', 400);
         }
         $studentIds = [];
 
         $role = Role::where('name', Role::ROLE_STUDENT)->first();
         if (!$role) {
-            throw new UserException("Role is not exists!");
+//            throw new UserException("Role is not exists!");
+            throw new UserException('Vai trò không tồn tại!', 400);
         }
 
         $file = $dto->file;
@@ -48,15 +50,18 @@ class ScheduleImportStudentAction
         $total = count($arrFile);
 
         if ($total < 1) {
-            throw new UserException(('File is empty'));
+//            throw new UserException(('File is empty'));
+            throw new UserException('Tệp rỗng!', 400);
         }
 
         if (count($headingFile) != count($heading)) {
-            throw new UserException(('The format of imported file is invalid.'));
+//            throw new UserException(('The format of imported file is invalid.'));
+            throw new UserException('Định dạng tệp không hợp lệ!', 400);
         }
 
         if ($total > 1000) {
-            throw new UserException('The maximum rows of file is {0}', 1000);
+//            throw new UserException('The maximum rows of file is {0}', 1000);
+            throw new UserException(sprintf('Số lượng dòng tối đa là %d', 1000), 400);
         }
 
 
@@ -75,7 +80,8 @@ class ScheduleImportStudentAction
         }
 
         if (empty($arrFile)) {
-            throw new UserException(('File is empty'));
+//            throw new UserException(('File is empty'));
+            throw new UserException('Tệp rỗng!', 400);
         }
 
         $arrValidRequire = [

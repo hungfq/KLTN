@@ -27,7 +27,8 @@ class TopicProposalApproveAction
     {
         $this->topicProposal = TopicProposal::query()->find($this->id);
         if (!$this->topicProposal) {
-            throw new UserException('Topic proposal not found');
+//            throw new UserException('Topic proposal not found');
+            throw new UserException('Đề xuất không tồn tại trong hệ thống!', 400);
         }
 
         $this->studentIds = $this->topicProposal->students->map(function ($student) {
@@ -40,7 +41,8 @@ class TopicProposalApproveAction
                 $q->whereIn('id', $this->studentIds);
             })->exists();
         if ($studentAlreadyRegistered) {
-            throw new UserException('Some student already has register in another topic');
+//            throw new UserException('Some student already has register in another topic');
+            throw new UserException('Sinh viên đã đăng ký đề tài khác!', 400);
         }
 
         return $this;

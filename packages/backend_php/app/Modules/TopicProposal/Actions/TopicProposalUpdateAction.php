@@ -29,13 +29,15 @@ class TopicProposalUpdateAction
     {
         $this->topicProposal = TopicProposal::find($this->dto->id);
         if (!$this->topicProposal) {
-            throw new UserException('Topic proposal not found');
+//            throw new UserException('Topic proposal not found');
+            throw new UserException('Đề xuất không tồn tại trong hệ thống!', 400);
         }
 
         foreach (data_get($this->dto, 'students', []) as $studentCode) {
             $student = User::role(Role::ROLE_STUDENT)->where('code', $studentCode)->first();
             if (!$student) {
-                throw new UserException("Student not found!");
+//                throw new UserException("Student not found!");
+                throw new UserException('Sinh viên không tồn tại trong hệ thống!', 400);
             }
             $this->studentIds[] = $student->id;
         }

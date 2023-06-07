@@ -26,7 +26,8 @@ class CriteriaUpdateAction
     {
         $this->criteria = Criteria::query()->find($this->dto->id);
         if (!$this->criteria) {
-            throw new UserException('Criteria not found');
+//            throw new UserException('Criteria not found');
+            throw new UserException('Tiêu chí không tồn tại!', 400);
         }
 
         return $this;

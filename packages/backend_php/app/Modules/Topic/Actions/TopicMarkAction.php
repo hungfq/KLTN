@@ -30,7 +30,8 @@ class TopicMarkAction
         $this->topic = Topic::find($this->dto->id);
 
         if (!$this->topic) {
-            throw new UserException("Topic not found!");
+//            throw new UserException("Topic not found!");
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         return $this;
@@ -40,7 +41,8 @@ class TopicMarkAction
     {
         if ($this->dto->lecturer_grade) {
             if (data_get($this->topic, 'lecturer_id') != Auth::id()) {
-                throw new UserException("You not are lecturer this topic");
+//                throw new UserException("You not are lecturer this topic");
+                throw new UserException('Bạn không phải GVHD của đề tài này!', 400);
             }
 
             $this->topic->lecturer_grade = $this->dto->lecturer_grade;
@@ -48,7 +50,8 @@ class TopicMarkAction
 
         if ($this->dto->critical_grade) {
             if (data_get($this->topic, 'critical_id') != Auth::id()) {
-                throw new UserException("You not are critical this topic");
+//                throw new UserException("You not are critical this topic");
+                throw new UserException('Bạn không phải GVPB của đề tài này!', 400);
             }
 
             $this->topic->critical_grade = $this->dto->critical_grade;
@@ -56,7 +59,8 @@ class TopicMarkAction
 
         if ($this->dto->committee_president_grade) {
             if (data_get($this->topic, 'committee.president_id') != Auth::id()) {
-                throw new UserException("You not are committee president this topic");
+//                throw new UserException("You not are committee president this topic");
+                throw new UserException('Bạn không Chủ tịch hội đồng của đề tài này!', 400);
             }
 
             $this->topic->committee_president_grade = $this->dto->committee_president_grade;
@@ -64,7 +68,8 @@ class TopicMarkAction
 
         if ($this->dto->committee_secretary_grade) {
             if (data_get($this->topic, 'committee.secretary_id') != Auth::id()) {
-                throw new UserException("You not are committee secretary this topic");
+//                throw new UserException("You not are committee secretary this topic");
+                throw new UserException('Bạn không Thư ký hội đồng của đề tài này!', 400);
             }
 
             $this->topic->committee_secretary_grade = $this->dto->committee_secretary_grade;

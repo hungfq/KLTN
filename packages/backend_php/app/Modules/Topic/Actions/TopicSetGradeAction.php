@@ -39,17 +39,20 @@ class TopicSetGradeAction
     {
         $this->topic = Topic::find($this->dto->id);
         if (!$this->topic) {
-            throw new UserException("Topic not found!");
+//            throw new UserException("Topic not found!");
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         $this->students = $this->topic->students;
         if (!$this->students) {
-            throw new UserException("Topic does not have students!");
+//            throw new UserException("Topic does not have students!");
+            throw new UserException('Đề tài không có sinh viên!', 400);
         }
 
         $this->schedule = $this->topic->schedule;
         if (!$this->schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
         }
 
         $this->details = $this->dto->details;

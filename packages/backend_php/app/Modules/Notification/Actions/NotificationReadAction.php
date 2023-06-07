@@ -16,7 +16,8 @@ class NotificationReadAction
             ->first();
 
         if (!$notify) {
-            throw new UserException('Notification is not exist');
+//            throw new UserException('Notification is not exist');
+            throw new UserException('Thông báo không tồn tại!', 400);
         }
 
         $notify->is_read = true;
