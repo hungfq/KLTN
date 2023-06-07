@@ -25,14 +25,14 @@ class TopicImportAction
         $arrFile = Excel::toArray(new Collection(), $file)[0];
 
         $heading = [
-            'code' => 'Code(*)',
-            'title' => 'Title(*)',
-            'limit' => 'Limit(*)',
-            'thesis_defense_date' => 'Thesis Defense Date',
-            'schedule_code' => 'Schedule Code',
-            'lecturer_code' => 'Lecturer Code',
-            'critical_code' => 'Critical Code',
-            'description' => 'Description',
+            'code' => 'Mã đề tài(*)',
+            'title' => 'Tiêu đề(*)',
+            'limit' => 'Số lượng SV(*)',
+//            'thesis_defense_date' => 'Thesis Defense Date',
+            'schedule_code' => 'Mã đợt',
+            'lecturer_code' => 'Mã GVHD',
+            'critical_code' => 'Mã GVPB',
+            'description' => 'Mô tả',
         ];
 
         $headingFile = $arrFile[0];
@@ -88,9 +88,7 @@ class TopicImportAction
             'limit'
         ];
 
-        $arrValidDate = [
-            'expt_date'
-        ];
+        $arrValidDate = [];
 
         $msgEmpty = (ImportHelpers::MSG_EMPTY);
         $msgNotExist = (ImportHelpers::MSG_NOT_EXIST);
@@ -198,7 +196,7 @@ class TopicImportAction
                     "title" => data_get($input, 'title'),
                     "description" => data_get($input, 'description'),
                     "limit" => data_get($input, 'limit'),
-                    "thesis_defense_date" => $input['thesis_defense_date'] ?: null,
+//                    "thesis_defense_date" => $input['thesis_defense_date'] ?: null,
                     "schedule_id" => data_get($schedule, 'id'),
                     "lecturer_id" => data_get($lecturer, 'id'),
                     "critical_id" => data_get($critical, 'id'),

@@ -31,10 +31,10 @@ class UserImportAction
         $arrFile = Excel::toArray(new Collection(), $file)[0];
 
         $heading = [
-            'code' => 'Code(*)',
-            'name' => 'Name(*)',
+            'code' => 'Mã(*)',
+            'name' => 'Họ và Tên(*)',
             'email' => 'Email(*)',
-            'gender' => 'Gender',
+            'gender' => 'Giới tính',
         ];
 
         $headingFile = $arrFile[0];
