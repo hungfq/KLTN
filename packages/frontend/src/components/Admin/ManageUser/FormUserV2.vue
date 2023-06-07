@@ -152,7 +152,8 @@ export default {
         this.rollBack();
       } catch (e) {
         this.loading = false;
-        this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.');
+        if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+        else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
       }
     },
   },

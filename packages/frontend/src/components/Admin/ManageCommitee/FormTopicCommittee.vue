@@ -8,7 +8,7 @@
   </div>
   <div class="p-4 w-full mx-auto mt-[10px] ">
     <!-- Modal content -->
-    <div class="bg-white rounded-lg shadow h-[350px]">
+    <div class="bg-white rounded-lg shadow">
       <!-- Modal header -->
       <div class="flex justify-between items-start p-4 rounded-t border-b">
         <h3 class="text-xl font-semibold text-gray-900">
@@ -21,14 +21,16 @@
             Danh đề tài được GVHD và GVPB duyệt
           </span>
           <div class="mx-auto" />
-          <ButtonImport
+          <!-- <ButtonImport
+
             :handle-import="handleImport"
             :title="'Nhập bằng file excel'"
-          />
+          /> -->
         </div>
         <div class="mt-1">
           <div class="max-h-96 overflow-y-auto">
             <EasyDataTable
+              v-model:items-selected="itemsSelected"
               v-model:server-options="serverOptions"
               :server-items-length="serverItemsLength"
               show-index
@@ -112,7 +114,7 @@ export default {
     }));
     const loadToServer = async (options) => {
       loading.value = true;
-      const response = await TopicApi.listAllTopicsByCritical(token, options, criticalId.value, selectSchedule.value);
+      const response = await TopicApi.listAllTopicsByCritical(token, criticalId.value, options, selectSchedule.value);
       topics.value = response.data;
       store.state.topic.listTopics = topics.value;
       serverItemsLength.value = response.meta.pagination.total;
@@ -180,18 +182,9 @@ export default {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
-    const selectHandlerLecturer = async (value) => {
-      selectLecturer.value = value;
+    const handleAddTopicAdmin = async () => {
       try {
-        await loadToServer(serverOptions.value);
-      } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
-      }
-    };
-    const changeStudents = async (students) => {
-      //  TODO: Add api update student for topic
-      console.log('🚀 ~ file: ManageTopicAdminV2.vue:239 ~ changeStudents ~ students:', students);
-      try {
+        console.log('🚀 ~ file: FormTopicCommittee.vue:195 ~ handleAddTopicAdmin ~ itemsSelected:', itemsSelected.value);
         showSelectStudent.value = false;
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
@@ -202,6 +195,10 @@ export default {
       selectStudentScheduleId.value = item.scheduleId._id;
       showSelectStudent.value = true;
       listTopicsSelected.value = item.list_students;
+    };
+
+    const rollBack = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-list`);
     };
 
     return {
@@ -227,10 +224,9 @@ export default {
       BASE_API_URL,
       showSelectStudent,
       selectStudents,
-
+      rollBack,
       selectHandlerSchedule,
-      selectHandlerLecturer,
-      changeStudents,
+      handleAddTopicAdmin,
     };
   },
   computed: {

@@ -37,11 +37,11 @@
             <a
               class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               @click="handleAddTopic(item._id)"
-            >Nhập đề tài bằng file excel</a>
-            <a
+            >Nhập đề tài</a>
+            <!-- <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               :href="getLink(item._id)"
-            >Xuất báo cáo</a>
+            >Xuất báo cáo</a> -->
           </div>
         </template>
         <template #item-operation="item">

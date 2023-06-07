@@ -212,12 +212,20 @@ export default {
   methods: {
     async upload (files) {
       if (files.length > 0) {
-        await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })
-          .then((data) => {
-            if (data.status === 201) {
-              this.$toast.success('Đã nhập thành công!');
-            }
-          });
+        try {
+          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })
+            .then((data) => {
+              console.log("🚀 ~ file: ManageStudentAdminV2.vue:218 ~ .then ~ data.headers.get('Content-Type'):", data.headers.get('Content-Type'));
+              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                this.$toast.error('File không đúng chuẩn hoặc người dùng đã tồn tại');
+              } else if (data.status === 200) {
+                this.$toast.success('Đã nhập thành công!');
+              }
+              console.log('🚀 ~ file: ManageStudentAdminV2.vue:222 ~ .then ~ data:', data);
+            });
+        } catch (e) {
+          this.$toast.error('File không đúng chuẩn!');
+        }
       } else {
         this.$toast.error('File không tồn tại');
       }

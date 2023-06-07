@@ -32,8 +32,8 @@
     </div>
     <div class="inline-block p-2 rounded-md mt-4">
       <a
-        class=" rounded ml-auto mr-4 my-2 bg-gray-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        href="http://localhost:8001/api/v2/template?type=Topic"
+        class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+        :href="`${BASE_API_URL}/api/v2/template?type=Topic`"
       >Tải mẫu tệp excel</a>
     </div>
   </div>
@@ -241,7 +241,6 @@ export default {
       try {
         showSelectStudent.value = false;
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
-        console.log('🚀 ~ file: ManageTopicAdminV2.vue:244 ~ changeStudents ~ topicStudentId.value:', topicStudentId.value);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -335,14 +334,18 @@ export default {
     },
     async upload (files) {
       if (files.length > 0) {
-        await this.$store.dispatch('topic/importTopic', { token: this.token, xlsx: files[0] })
-          .then((data) => {
-            if (data.status === 201) {
-              this.$toast.success('Đã nhập thành công!');
-            }
-          });
-        await this.$store.dispatch('topic/fetchListTopicByLecturerSchedule', { token: this.token, lecturerId: this.selectLecturer, scheduleId: this.selectSchedule });
-        this.search();
+        try {
+          await this.$store.dispatch('topic/importTopic', { token: this.token, xlsx: files[0] })
+            .then((data) => {
+              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                this.$toast.error('Đề tài và mã đã tồn tại hoặc dữ liệu không chính xác');
+              } else if (data.status === 200) {
+                this.$toast.success('Đã nhập thành công!');
+              }
+            });
+        } catch (e) {
+          this.$toast.error('File không đúng chuẩn!');
+        }
       } else {
         this.$toast.error('File không tồn tại');
       }
