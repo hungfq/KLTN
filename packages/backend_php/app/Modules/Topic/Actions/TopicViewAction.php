@@ -77,8 +77,8 @@ class TopicViewAction
                 ->where('lecturer_approved', '=', 1)
                 ->whereNotNull('committees.president_id')
                 ->whereHas('schedule', function ($q) use ($now) {
-                    $q->where('approve_start', '<=', $now)
-                        ->where('approve_end', '>=', $now);
+                    $q->where('mark_start', '<=', $now)
+                        ->where('mark_end', '>=', $now);
                 });
 
         }
@@ -88,8 +88,8 @@ class TopicViewAction
                 ->where('lecturer_approved', '=', 1)
                 ->whereNotNull('committees.president_id')
                 ->whereHas('schedule', function ($q) use ($now) {
-                    $q->where('approve_start', '<=', $now)
-                        ->where('approve_end', '>=', $now);
+                    $q->where('mark_start', '<=', $now)
+                        ->where('mark_end', '>=', $now);
                 });
         }
 
@@ -97,8 +97,8 @@ class TopicViewAction
             $query->where('committees.president_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
                 ->whereHas('schedule', function ($q) use ($now) {
-                    $q->where('approve_start', '<=', $now)
-                        ->where('approve_end', '>=', $now);
+                    $q->where('mark_start', '<=', $now)
+                        ->where('mark_end', '>=', $now);
                 });
         }
 
@@ -106,8 +106,8 @@ class TopicViewAction
             $query->where('committees.secretary_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
                 ->whereHas('schedule', function ($q) use ($now) {
-                    $q->where('approve_start', '<=', $now)
-                        ->where('approve_end', '>=', $now);
+                    $q->where('mark_start', '<=', $now)
+                        ->where('mark_end', '>=', $now);
                 });
         }
 
