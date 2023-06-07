@@ -37,11 +37,11 @@
             <a
               class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               @click="handleAddTopic(item._id)"
-            >Nhập đề tài bằng file excel</a>
-            <a
+            >Nhập đề tài</a>
+            <!-- <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               :href="getLink(item._id)"
-            >Xuất báo cáo</a>
+            >Xuất báo cáo</a> -->
           </div>
         </template>
         <template #item-operation="item">
@@ -57,16 +57,27 @@
                 @click="showRow(item)"
               />
             </div>
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-              class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-              @click="editItem(item)"
+            <div
+              class="tooltip tooltip-bottom mr-2"
+              data-tip="Chỉnh sửa hội đồng"
             >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="xl"
-              @click="handleRemoveSchedule(item._id)"
-            />
+              <font-awesome-icon
+                class="cursor-pointer"
+                :icon="['fas', 'pen-to-square']"
+                size="xl"
+                @click="editItem(item)"
+              />
+            </div>
+            <div
+              class="tooltip tooltip-bottom"
+              data-tip="Xóa hội đồng"
+            >
+              <font-awesome-icon
+                icon="fa-solid fa-trash-can"
+                size="xl"
+                @click="handleRemoveSchedule(item._id)"
+              />
+            </div>
           </div>
         </template>
       </EasyDataTable>
@@ -171,11 +182,11 @@ export default {
 
     const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
-      await CommitteeApi.deleteCommittee(this.token, id);
-      showConfirmModal.value = false;
-      removeId.value = 0;
-
       try {
+        await CommitteeApi.deleteCommittee(token, removeId.value);
+        showConfirmModal.value = false;
+        removeId.value = 0;
+        await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');

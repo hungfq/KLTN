@@ -8,7 +8,7 @@
   </div>
   <div class="p-4 w-full mx-auto mt-[10px] ">
     <!-- Modal content -->
-    <div class="bg-white rounded-lg shadow h-[350px]">
+    <div class="bg-white rounded-lg shadow">
       <!-- Modal header -->
       <div class="flex justify-between items-start p-4 rounded-t border-b">
         <h3 class="text-xl font-semibold text-gray-900">
@@ -21,21 +21,20 @@
             Danh đề tài được GVHD và GVPB duyệt
           </span>
           <div class="mx-auto" />
-          <ButtonImport
-            :handle-import="handleImport"
-            :title="'Nhập bằng file excel'"
-          />
+          {{ itemsSelected }}
         </div>
         <div class="mt-1">
           <div class="max-h-96 overflow-y-auto">
             <EasyDataTable
+              v-model:items-selected="listTopicsSelected"
               v-model:server-options="serverOptions"
               :server-items-length="serverItemsLength"
               show-index
               :headers="headers"
-              :items="topicShow"
+              :items="topics"
               :loading="loading"
-              buttons-pagination
+              buttons-pagination="false"
+              hide-footer
               :rows-items="rowItems"
             />
           </div>
@@ -88,6 +87,8 @@ export default {
     const selectStudentScheduleId = ref(null);
     const listTopicsSelected = ref([]);
     const criticalId = ref(0);
+    const currentCommittee = ref(null);
+    const data = ref([]);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
@@ -106,26 +107,39 @@ export default {
     const modulePage = computed(() => store.getters['url/module']);
     // Get id from store
     const transformTopic = (listTopics) => listTopics.map((topic) => ({
-      id: topic._id || topic.id,
+      _id: topic._id || topic.id,
       title: topic.title,
       code: topic.code,
     }));
     const loadToServer = async (options) => {
       loading.value = true;
-      const response = await TopicApi.listAllTopicsByCritical(token, options, criticalId.value, selectSchedule.value);
-      topics.value = response.data;
+      const response = await TopicApi.listAllTopicsByCritical(token, criticalId.value, options, selectSchedule.value);
+      topics.value = transformTopic(response.data);
       store.state.topic.listTopics = topics.value;
       serverItemsLength.value = response.meta.pagination.total;
       loading.value = false;
     };
 
     const $toast = useToast();
+    const topicShow = computed(() => {
+      if (!topics.value) return [];
+      return topics.value.map((topic) => ({
+        _id: topic._id,
+        code: topic.code,
+        title: topic.title,
+      }));
+    });
+    const rollBack = () => {
+      store.dispatch('url/updateSection', `${modulePage.value}-list`);
+    };
 
     onMounted(async () => {
       try {
         const committeeId = store.getters['url/id'];
         const committee = await CommitteeApi.getCommittee(token, committeeId);
-        listTopicsSelected.value = transformTopic(committee.list_topics);
+        currentCommittee.value = committee;
+        const selected = transformTopic(committee.list_topics);
+        listTopicsSelected.value = [...selected];
         criticalId.value = committee.critical_id;
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -159,19 +173,6 @@ export default {
       }
     };
 
-    const topicShow = computed(() => {
-      if (!topics.value) return [];
-      return topics.value.map((topic) => ({
-        _id: topic._id,
-        code: topic.code,
-        title: topic.title,
-        lecturer: topic.lecturerId.name || '',
-        critical: topic.criticalLecturerId.name || '',
-        schedule: topic.scheduleId.name || '',
-        scheduleId: topic.scheduleId || '',
-        list_students: topic.list_students,
-      }));
-    });
     const selectHandlerSchedule = async (value) => {
       selectSchedule.value = value;
       try {
@@ -180,20 +181,13 @@ export default {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
-    const selectHandlerLecturer = async (value) => {
-      selectLecturer.value = value;
+    const handleAddTopicAdmin = async () => {
       try {
-        await loadToServer(serverOptions.value);
-      } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
-      }
-    };
-    const changeStudents = async (students) => {
-      //  TODO: Add api update student for topic
-      console.log('🚀 ~ file: ManageTopicAdminV2.vue:239 ~ changeStudents ~ students:', students);
-      try {
-        showSelectStudent.value = false;
+        const committeeId = store.getters['url/id'];
+        const valueTopics = listTopicsSelected.value.map((item) => item._id);
+        await CommitteeApi.updateCommittee(token, committeeId, { ...currentCommittee.value, topics: valueTopics });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+        rollBack();
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
@@ -227,10 +221,9 @@ export default {
       BASE_API_URL,
       showSelectStudent,
       selectStudents,
-
+      rollBack,
       selectHandlerSchedule,
-      selectHandlerLecturer,
-      changeStudents,
+      handleAddTopicAdmin,
     };
   },
   computed: {

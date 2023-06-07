@@ -30,7 +30,7 @@ class UserStoreAction
         $isExists = User::where('email', $this->dto->email)
             ->exists();
         if ($isExists) {
-            throw new UserException("Email already exists!");
+            throw new UserException("Email đã tồn tại trong hệ thống!", 400);
         }
 
         $this->role = Role::where('name', $this->dto->type)->first();

@@ -148,7 +148,7 @@
       </template>
     </EasyDataTable>
     <ConfirmModal
-      v-model="showConfirmModal.value"
+      v-model="showConfirmModal"
       @confirm="confirmRemove"
       @cancel="showConfirmModal=false"
     >
@@ -215,6 +215,7 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const schedules = ref([]);
+    const showConfirmModal = ref(false);
     const showSelectStudent = ref(false);
     const showSelectCriteria = ref(false);
     const showLecturerRate = ref(false);
@@ -279,14 +280,15 @@ export default {
       store.dispatch('url/updateSection', `${modulePage.value}-import`);
     };
 
-    const showConfirmModal = ref(false);
     const confirmRemove = async (id) => {
       try {
-        await ScheduleApi.removeSchedule(this.token, id);
+        await ScheduleApi.removeSchedule(token, removeId.value);
         showConfirmModal.value = false;
         removeId.value = 0;
         $toast.success('Đã xóa thành công!');
+        loadToServer(serverOptions.value);
       } catch (e) {
+        console.log(e.message);
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };

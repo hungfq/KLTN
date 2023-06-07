@@ -101,9 +101,9 @@
         </template>
         <template v-if="currentPage===1">
           <div class="max-h-96 pl-6 pr-2 overflow-y-auto">
-            <table class="table table-compact w-full">
-              <thead>
-                <tr>
+            <table class="table table-compact w-full !bg-white">
+              <thead class="!bg-slate-300">
+                <tr class="!bg-slate-300">
                   <th />
                   <th>Tiêu chí</th>
                   <th>Tỷ lệ điểm</th>
@@ -348,3 +348,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+th {
+  background: white
+  }
+</style>

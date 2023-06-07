@@ -50,16 +50,6 @@
           :disabled="isView"
           :validation-messages="{ min: 'Phải có ít nhất 1 thành viên', max:'Có tối đa 3 thành viên' }"
         />
-        <FormKit
-          v-model="
-            thesisDefenseDate"
-          name="thesisDefenseDate"
-          type="date"
-          label="Thời hạn phản biện"
-          validation="required"
-          :disabled="isView"
-          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-        />
         <div class="w-3/5">
           <span class="font-bold text-sm">
             Giáo viên hướng dẫn
@@ -88,7 +78,7 @@
             />
           </div>
         </div>
-        <div class="my-2-1 w-3/5">
+        <!-- <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Sinh viên đăng kí
           </span>
@@ -101,10 +91,10 @@
               :create-option="true"
               :options="listStudents"
               :disabled="isView"
-              class="w-[400px]"
+              class="w-[400px] h-3"
             />
           </div>
-        </div>
+        </div> -->
         <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Đợt đăng ký
@@ -121,24 +111,28 @@
           </div>
         </div>
         <FormKit
+          v-if="!isSave"
           v-model="advisorLecturerGrade"
           type="number"
           label="Điểm của giảng viên hướng dẫn"
           :disabled="isView"
         />
         <FormKit
+          v-if="!isSave"
           v-model="criticalLecturerGrade"
           type="number"
           label="Điểm của giảng viên phản biện"
           :disabled="isView"
         />
         <FormKit
+          v-if="!isSave"
           v-model="committeePresidentGrade"
           type="number"
           label="Điểm của chủ tịch hội đồng"
           :disabled="isView"
         />
         <FormKit
+          v-if="!isSave"
           v-model="committeeSecretaryGrade"
           name="limit"
           type="number"
@@ -378,5 +372,8 @@ export default {
 </script>
 
 <style src="@vueform/multiselect/themes/default.css">
+.multiselect-tags-search-wrapper{
+  height: 30px;
+}
 
 </style>
