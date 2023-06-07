@@ -396,6 +396,7 @@ export default {
     return {
       importType: '',
       importId: '',
+      loadingImports: false,
     };
   },
   computed: {
@@ -426,28 +427,31 @@ export default {
     },
     async upload () {
       const { files } = this.$refs.uploadBtn;
-      if (files.length > 0) {
-        if (this.importType === 'student') {
-          await this.$store.dispatch('schedule/importStudent', { token: this.token, id: this.importId, xlsx: files[0] })
-            .then((data) => {
-              if (data.status === 201) {
+      try {
+        if (files.length > 0) {
+          this.loadingImports = true;
+          if (this.importType === 'student') {
+            await this.$store.dispatch('schedule/importStudent', { token: this.token, id: this.importId, xlsx: files[0] })
+              .then((data) => {
                 this.$toast.success('Đã nhập thành công!');
-              }
-            });
-        } else if (this.importType === 'topic') {
-          await this.$store.dispatch('schedule/importTopic', { token: this.token, id: this.importId, xlsx: files[0] })
-            .then((data) => {
-              if (data.status === 201) {
+              });
+          } else if (this.importType === 'topic') {
+            await this.$store.dispatch('schedule/importTopic', { token: this.token, id: this.importId, xlsx: files[0] })
+              .then((data) => {
                 this.$toast.success('Đã nhập thành công!');
-              }
-            });
+              });
+          }
+          this.loadingImports = false;
+          this.importId = '';
+          this.importType = '';
+          this.$refs.uploadBtn.value = '';
+          this.search();
+        } else {
+          this.$toast.error('File không tồn tại');
         }
-        this.importId = '';
-        this.importType = '';
-        this.$refs.uploadBtn.value = '';
-        this.search();
-      } else {
-        this.$toast.error('File không tồn tại');
+      } catch (e) {
+        this.loadingImports = false;
+        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     async handleUpdateSchedule (id) {

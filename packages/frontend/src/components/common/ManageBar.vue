@@ -47,37 +47,39 @@
           <span v-if="open"> {{ item.value }} </span>
         </a>
       </div>
-      <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100 mt-2">
-        {{ open ? 'Quá trình thực hiện' : '' }}
-      </div>
-      <div
-        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
-      >
-        <a
-          v-for="item in listTasks"
-          :key="item.id"
-          class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
-          :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
-          @click="updateModuleTask(item.id)"
+      <tenplate v-if="userRole != 'ADMIN'">
+        <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100 mt-2">
+          {{ open ? 'Quá trình thực hiện' : '' }}
+        </div>
+        <div
+          class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
         >
-          <font-awesome-icon :icon="item.icon" />
-          <span v-if="open"> {{ item.value }} </span>
-        </a>
-      </div>
-      <div
-        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
-      >
-        <a
-          v-for="item in listSchedules"
-          :key="item.id"
-          class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
-          :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
-          @click="updateModuleTaskSchedule(item.id)"
+          <a
+            v-for="item in listTasks"
+            :key="item.id"
+            class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+            :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
+            @click="updateModuleTask(item.id)"
+          >
+            <font-awesome-icon :icon="item.icon" />
+            <span v-if="open"> {{ item.value }} </span>
+          </a>
+        </div>
+        <div
+          class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
         >
-          <font-awesome-icon :icon="item.icon" />
-          <span v-if="open"> {{ item.value }} </span>
-        </a>
-      </div>
+          <a
+            v-for="item in listSchedules"
+            :key="item.id"
+            class="cursor-pointer flex p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+            :class="[ item.id == module ? ' text-white bg-blue-900' : 'text-blue-900 transition-colors hover:bg-blue-900 hover:text-white']"
+            @click="updateModuleTaskSchedule(item.id)"
+          >
+            <font-awesome-icon :icon="item.icon" />
+            <span v-if="open"> {{ item.value }} </span>
+          </a>
+        </div>
+      </tenplate>
       <div class="mt-auto" />
       <!-- Notifications -->
       <div class="flex flex-col px-2 my-2">
@@ -159,7 +161,7 @@
         </a>
         <!-- Sign out -->
         <a
-          class="cursor-pointer flex p-2 items-center space-x-2  mt-2 rounded-lg text-blue-900 transition-colors hover:bg-blue-900 hover:text-white ml-2 mr-2 shadow-lg font-semibold"
+          class="cursor-pointer flex p-2 items-center space-x-2  mt-2 rounded-lg text-red-900 transition-colors hover:bg-red-900 hover:text-white ml-2 mr-2 shadow-lg font-semibold"
           @click="signOut"
         >
           <font-awesome-icon :icon="['fas', 'right-to-bracket']" />

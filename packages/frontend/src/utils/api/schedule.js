@@ -127,9 +127,9 @@ export default class ScheduleApi {
   static async importStudent (token, id, xlsx) {
     const formData = new FormData();
 
-    formData.append('xlsx', xlsx);
+    formData.append('file', xlsx);
     const res = await axios.post(
-      `/schedule/${id}/student`,
+      `/schedule/${id}/student/import`,
       formData,
       {
         headers: {
