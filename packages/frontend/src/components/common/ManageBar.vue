@@ -137,9 +137,11 @@
                         {{ noti.title }}
                       </h3>
                     </div>
-                    <p class="text-xs text-gray-500">
-                      {{ timeAgo(noti.createdAt) }}
-                    </p>
+                    <div class="inline-flex">
+                      <p class="text-xs text-gray-500">
+                        {{ timeAgo(noti.createdAt) }}
+                      </p>
+                    </div>
                   </div>
                   <div class="inline-flex items-center justify-between w-full">
                     <p class="mt-1 text-sm text-left text-gray-900">
@@ -232,6 +234,9 @@ export default {
       const imageUrlAvatar = new URL('/src/assets/images/default_avatar.png', import.meta.url);
       return imageUrlAvatar;
     },
+  },
+  async mounted () {
+    await this.$store.dispatch('notification/fetchListNotifications', this.token);
   },
   methods: {
     updateModuleTask (code) {
