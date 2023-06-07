@@ -477,7 +477,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      return `${this.BASE_API_URL}/v1/schedule/${id}/export`;
     },
     async handleExportSchedule (id) {
       await this.$store.dispatch('schedule/exportExcel', { token: this.token, id });
