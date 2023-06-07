@@ -15,10 +15,9 @@ class ScheduleSyncCriteriaAction
     {
         $schedule = Schedule::find($dto->id);
         if (!$schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
         }
-
-//        $schedule->update($dto->all());
 
         $details = $dto->details;
         $criteriaIds = array_column($details, 'criteria_id');

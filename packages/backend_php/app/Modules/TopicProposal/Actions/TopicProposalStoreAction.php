@@ -35,7 +35,8 @@ class TopicProposalStoreAction
         foreach (data_get($this->dto, 'students', []) as $studentCode) {
             $student = User::role(Role::ROLE_STUDENT)->where('code', $studentCode)->first();
             if (!$student) {
-                throw new UserException("Student not found!");
+//                throw new UserException("Student not found!");
+                throw new UserException('Sinh viên không tồn tại trong hệ thống!', 400);
             }
             $this->studentIds[] = $student->id;
         }
@@ -43,13 +44,15 @@ class TopicProposalStoreAction
         if ($lecturerId = $this->dto->lecturer_id) {
             $this->lecturer = User::role(Role::ROLE_LECTURER)->find($lecturerId);
             if (!$this->lecturer) {
-                throw new UserException("Lecturer not found!");
+//                throw new UserException("Lecturer not found!");
+                throw new UserException('GVHD không tồn tại trong hệ thống!', 400);
             }
         }
 
         $schedule = Schedule::query()->find($this->dto->schedule_id);
         if (!$schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
         }
 
         if (!$this->dto->code) {

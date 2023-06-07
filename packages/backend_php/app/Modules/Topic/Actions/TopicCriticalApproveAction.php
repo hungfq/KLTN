@@ -28,15 +28,18 @@ class TopicCriticalApproveAction
     {
         $this->topic = Topic::find($this->id);
         if (!$this->topic) {
-            throw new UserException("Topic not found!");
+//            throw new UserException("Topic not found!");
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         if ($this->topic->critical_id != Auth::id()) {
-            throw new UserException("You are not as critical this topic!");
+//            throw new UserException("You are not as critical this topic!");
+            throw new UserException('Bạn không phải GVPB của đề tài này!', 400);
         }
 
         if ($this->topic->critical_approved) {
-            throw new UserException("Topic already approved!");
+//            throw new UserException("Topic already approved!");
+            throw new UserException('Đề tài đã được chấp thuận!', 400);
         }
 
         return $this;

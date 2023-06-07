@@ -35,7 +35,8 @@ class UserStoreAction
 
         $this->role = Role::where('name', $this->dto->type)->first();
         if (!$this->role) {
-            throw new UserException("Role is not exists!");
+//            throw new UserException("Role is not exists!");
+            throw new UserException("Vai trò không tồn tại trong hệ thống!", 400);
         }
 
         return $this;

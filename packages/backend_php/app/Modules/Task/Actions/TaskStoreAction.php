@@ -27,7 +27,8 @@ class TaskStoreAction
     {
         $topic = Topic::query()->find($this->dto->topic_id);
         if (!$topic) {
-            throw new UserException('Topic not found');
+//            throw new UserException('Topic not found');
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         $existsCode = Task::query()
@@ -35,7 +36,8 @@ class TaskStoreAction
             ->where('code', $this->dto->code)
             ->exists();
         if ($existsCode) {
-            throw new UserException('Code already exists');
+//            throw new UserException('Code already exists');
+            throw new UserException('Mã đã tồn tại trong hệ thống!', 400);
         }
 
         if (!$this->dto->code) {

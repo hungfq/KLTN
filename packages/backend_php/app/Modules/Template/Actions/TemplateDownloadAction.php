@@ -19,7 +19,8 @@ class TemplateDownloadAction
 
         $exists = file_exists(public_path($path));
         if (!$exists) {
-            throw new UserException('File not found');
+//            throw new UserException('File not found');
+            throw new UserException('Tệp mẫu không tồn tại trong hệ thống!', 400);
         }
 
         return $path;

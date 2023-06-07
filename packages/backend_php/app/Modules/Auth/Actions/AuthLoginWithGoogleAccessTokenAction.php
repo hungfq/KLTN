@@ -71,7 +71,8 @@ class AuthLoginWithGoogleAccessTokenAction
 
         $this->user = User::role($this->dto->type)->where('email', $email)->first();
         if (!$this->user) {
-            throw new UserException('User not found');
+//            throw new UserException('User not found');
+            throw new UserException('Email không tồn tại!', 400);
         }
 
         return $this;

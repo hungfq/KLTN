@@ -15,7 +15,8 @@ class UserDeleteAction
     {
         $user = User::find($id);
         if (!$user) {
-            throw new UserException("User is not exists!");
+//            throw new UserException("User is not exists!");
+            throw new UserException('Người dùng không tồn tại trong hệ thống!', 400);
         }
 
         $user->delete();

@@ -12,7 +12,8 @@ class ScheduleViewCriteriaAction
     {
         $schedule = Schedule::find($id);
         if (!$schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
         }
 
         $query = ScheduleCriteria::query()

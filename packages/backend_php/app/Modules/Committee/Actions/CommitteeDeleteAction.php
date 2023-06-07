@@ -25,7 +25,8 @@ class CommitteeDeleteAction
     {
         $this->committee = Committee::find($this->id);
         if (!$this->committee) {
-            throw new UserException("Committee not found!");
+//            throw new UserException("Committee not found!");
+            throw new UserException("Hội đồng không ồn tại!", 400);
         }
 
         return $this;

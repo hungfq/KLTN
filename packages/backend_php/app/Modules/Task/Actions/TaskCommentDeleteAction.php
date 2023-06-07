@@ -11,7 +11,8 @@ class TaskCommentDeleteAction
     {
         $comment = TaskComment::query()->find($id);
         if (!$comment) {
-            throw new UserException('Comment not found');
+//            throw new UserException('Comment not found');
+            throw new UserException('Nhận xét không tồn tại trong hệ thống!', 400);
         }
 
         $comment->delete();

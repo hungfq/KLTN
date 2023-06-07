@@ -18,7 +18,8 @@ class ScheduleExportTopicAction
             'topics.critical',
         ])->find($id);
         if (!$schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại!', 400);
         }
 
         $today = Carbon::now();

@@ -24,7 +24,8 @@ class TopicProposalDeclineAction
     {
         $this->topicProposal = TopicProposal::query()->find($this->id);
         if (!$this->topicProposal) {
-            throw new UserException('Topic proposal not found');
+//            throw new UserException('Topic proposal not found');
+            throw new UserException('Đề xuất không tồn tại trong hệ thống!', 400);
         }
 
         return $this;

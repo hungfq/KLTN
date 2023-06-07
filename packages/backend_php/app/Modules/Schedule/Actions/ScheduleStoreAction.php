@@ -30,13 +30,16 @@ class ScheduleStoreAction
         $isExists = Schedule::where('code', $this->dto->code)
             ->exists();
         if ($isExists) {
-            throw new UserException("Schedule code already exists!");
+//            throw new UserException("Schedule code already exists!");
+            throw new UserException('Mã đợt đã tồn tại trong hệ thống!', 400);
         }
 
         foreach (data_get($this->dto, 'students', []) as $studentCode) {
             $student = User::where('code', $studentCode)->first();
             if (!$student) {
-                throw new UserException("Student not found!");
+//                throw new UserException("Student not found!");
+                throw new UserException('Sinh viên không tồn tại trong hệ thống!', 400);
+
             }
             $this->studentIds[] = $student->id;
         }

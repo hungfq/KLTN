@@ -21,20 +21,21 @@ class TaskCommentAddAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->createTopic();
+            ->createComment();
     }
 
     protected function checkData()
     {
         $this->task = Task::query()->find($this->dto->id);
         if (!$this->task) {
-            throw new UserException('Task not found');
+//            throw new UserException('Task not found');
+            throw new UserException('Nhiệm vụ không tồn tại trong hệ thống!', 400);
         }
 
         return $this;
     }
 
-    protected function createTopic()
+    protected function createComment()
     {
         $comment = new TaskComment();
         $comment->message = $this->dto->message;

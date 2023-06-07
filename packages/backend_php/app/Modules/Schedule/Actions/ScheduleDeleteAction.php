@@ -26,7 +26,8 @@ class ScheduleDeleteAction
     {
         $this->schedule = Schedule::find($this->id);
         if (!$this->schedule) {
-            throw new UserException("Schedule not found!");
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại!', 400);
         }
 
         return $this;

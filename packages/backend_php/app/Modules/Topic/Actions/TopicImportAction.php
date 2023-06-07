@@ -41,15 +41,18 @@ class TopicImportAction
         $total = count($arrFile);
 
         if ($total < 1) {
-            throw new UserException(('File is empty'));
+//            throw new UserException(('File is empty'));
+            throw new UserException('Tệp rỗng!', 400);
         }
 
         if (count($headingFile) != count($heading)) {
-            throw new UserException(('The format of imported file is invalid.'));
+//            throw new UserException(('The format of imported file is invalid.'));
+            throw new UserException('Định dạng tệp không hợp lệ!', 400);
         }
 
         if ($total > 1000) {
-            throw new UserException('The maximum rows of file is {0}', 1000);
+//            throw new UserException('The maximum rows of file is {0}', 1000);
+            throw new UserException(sprintf('Số lượng dòng tối đa là %d', 1000), 400);
         }
 
         foreach ($arrFile as $index => $row) {
@@ -67,7 +70,8 @@ class TopicImportAction
         }
 
         if (empty($arrFile)) {
-            throw new UserException(('File is empty'));
+//            throw new UserException(('File is empty'));
+            throw new UserException('Tệp rỗng!', 400);
         }
 
         $arrValidRequire = [
@@ -145,12 +149,12 @@ class TopicImportAction
 
             if ($arrFile->where('code', $input['code'])
                     ->count() > 1) {
-                $error[] = str_replace('{0}', 'Topic', $msgDuplicate);
+                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
             }
 
             if ($topics->where('code', $input['code'])
                 ->first()) {
-                $error[] = str_replace('{0}', 'Topic', $msgDuplicate);
+                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
             }
 
             $schedule = null;

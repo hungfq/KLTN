@@ -32,21 +32,24 @@ class CommitteeStoreAction
         if ($this->dto->president_id) {
             $president = User::role(Role::ROLE_LECTURER)->find($this->dto->president_id);
             if (!$president) {
-                throw new UserException("President not found!");
+//                throw new UserException("President not found!");
+                throw new UserException("Chủ tịch hội đồng không ồn tại!", 400);
             }
         }
 
         if ($this->dto->secretary_id) {
             $secretary = User::role(Role::ROLE_LECTURER)->find($this->dto->secretary_id);
             if (!$secretary) {
-                throw new UserException("Secretary not found!");
+//                throw new UserException("Secretary not found!");
+                throw new UserException("Thư ký hội đồng không ồn tại!", 400);
             }
         }
 
         if ($this->dto->critical_id) {
             $critical = User::role(Role::ROLE_LECTURER)->find($this->dto->critical_id);
             if (!$critical) {
-                throw new UserException("Critical not found!");
+//                throw new UserException("Critical not found!");
+                throw new UserException("GVPB không ồn tại!", 400);
             }
         }
 
@@ -65,7 +68,8 @@ class CommitteeStoreAction
         foreach (data_get($this->dto, 'topics', []) as $topicId) {
             $topic = Topic::find($topicId);
             if (!$topic) {
-                throw new UserException("Topic not found!");
+//                throw new UserException("Topic not found!");
+                throw new UserException("Đề tàu không ồn tại trong hệ thống!", 400);
             }
 
             $topic->committee_id = $this->committee->id;

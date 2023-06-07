@@ -25,7 +25,8 @@ class TopicDeleteAction
     {
         $this->topic = Topic::find($this->id);
         if (!$this->topic) {
-            throw new UserException("Topic not found!");
+//            throw new UserException("Topic not found!");
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         return $this;

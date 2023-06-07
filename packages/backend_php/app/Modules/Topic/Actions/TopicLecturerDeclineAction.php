@@ -28,11 +28,13 @@ class TopicLecturerDeclineAction
     {
         $this->topic = Topic::find($this->id);
         if (!$this->topic) {
-            throw new UserException("Topic not found!");
+//            throw new UserException("Topic not found!");
+            throw new UserException('Đề tài không tồn tại trong hệ thống!', 400);
         }
 
         if ($this->topic->lecturer_id != Auth::id()) {
-            throw new UserException("You are not as advisor this topic!");
+//            throw new UserException("You are not as advisor this topic!");
+            throw new UserException('Bạn không phải GVHD của đề tài này!', 400);
         }
 
         return $this;
