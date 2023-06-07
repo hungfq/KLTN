@@ -34,6 +34,15 @@ class TopicStoreAction
             if (!$student) {
                 throw new UserException("Student not found!");
             }
+
+            $studentAlreadyRegistered = Topic::query()
+                ->where('schedule_id', $this->dto->schedule_id)
+                ->whereHas('students', function ($q) use ($student) {
+                    $q->where('id', data_get($student, 'id'));
+                })->exists();
+            if ($studentAlreadyRegistered) {
+                throw new UserException('Some student already has register in another topic');
+            }
             $this->studentIds[] = $student->id;
         }
 
