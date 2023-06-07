@@ -5,7 +5,7 @@
     </div>
   </template>
   <template v-if="open">
-    <div class="tabs tabs-boxed bg-white">
+    <div class="tabs tabs-boxed bg-white ml-4">
       <a
         v-for="option in headerTabs"
         :key="option"
@@ -29,7 +29,7 @@
                 <div class="md:w-1/2">
                   <LineItem
                     :title="'Mã đề tài: '"
-                    :content="currentTopic.name"
+                    :content="currentTopic.code"
                   />
                   <LineItem
                     :title="'Ngày phản biện: '"
@@ -249,7 +249,7 @@ export default {
         await TopicApi.removeRegisterTopicStudent(this.token, this.currentTopic._id);
         this.$toast.success('Đã xóa thành công, vui lòng xem kết quả!');
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        if (e.response.data.error.message === 'Schedule is not in register time!') { this.$toast.error('Không trong thời gian đăng ký nên bạn không thể hủy!'); } else { this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên '); }
       }
     },
   },
