@@ -15,8 +15,8 @@ class TopicUpdateDTO extends FlexibleDataTransferObject
     public $schedule_id;
     public $lecturer_id;
     public $critical_id;
-    public $lecturer_approved;
-    public $critical_approved;
+//    public $lecturer_approved;
+//    public $critical_approved;
     public $lecturer_grade;
     public $critical_grade;
     public $committee_president_grade;
@@ -38,8 +38,8 @@ class TopicUpdateDTO extends FlexibleDataTransferObject
             'schedule_id' => $request->input('scheduleId'),
             'lecturer_id' => $request->input('lecturerId'),
             'critical_id' => $request->input('criticalLecturerId'),
-            'lecturer_approved' => false,
-            'critical_approved' => false,
+//            'lecturer_approved' => false,
+//            'critical_approved' => false,
             'lecturer_grade' => $request->input('advisorLecturerGrade'),
             'critical_grade' => $request->input('criticalLecturerGrade'),
             'committee_president_grade' => $request->input('committeePresidentGrade'),
