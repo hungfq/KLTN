@@ -15,6 +15,7 @@ use App\Modules\Topic\Actions\TopicShowAction;
 use App\Modules\Topic\Actions\TopicShowStudentAction;
 use App\Modules\Topic\Actions\TopicStoreAction;
 use App\Modules\Topic\Actions\TopicStudentRegisterAction;
+use App\Modules\Topic\Actions\TopicStudentShowGradeAction;
 use App\Modules\Topic\Actions\TopicStudentShowResultAction;
 use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
@@ -23,6 +24,7 @@ use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\Actions\TopicViewGradeAction;
 use App\Modules\Topic\DTO\TopicViewDTO;
 use App\Modules\Topic\DTO\TopicViewGradeDTO;
+use App\Modules\Topic\Transformers\TopicStudentShowGradeTransformer;
 use App\Modules\Topic\Transformers\TopicUserViewTransformer;
 use App\Modules\Topic\Transformers\TopicViewGradeTransformer;
 use App\Modules\Topic\Transformers\TopicViewTransformer;
@@ -245,5 +247,21 @@ class TopicController extends ApiController
         });
 
         return $this->responseSuccess();
+
+    }
+
+    public function viewStudentGrade($id, TopicStudentShowGradeAction $action, TopicStudentShowGradeTransformer $transformer)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        $results = $action->handle(TopicViewGradeDTO::fromRequest());
+
+        if ($results instanceof Collection) {
+            return $this->response->collection($results, $transformer);
+        }
+
+        return $this->response->paginator($results, $transformer);
     }
 }
