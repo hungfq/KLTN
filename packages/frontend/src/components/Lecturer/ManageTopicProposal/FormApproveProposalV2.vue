@@ -46,6 +46,9 @@
             <Multiselect
               v-model="lecturerId"
               :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :options="listLecturers"
               :close-on-select="false"
               :disabled="isView"

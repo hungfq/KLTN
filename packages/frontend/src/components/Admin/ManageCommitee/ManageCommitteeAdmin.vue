@@ -205,6 +205,13 @@ export default {
 
     const getLink = (id) => `${BASE_API_URL.value}/v1/schedule/${id}/export`;
 
+    const searchVal = ref('');
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
     return {
       headers,
       items,
@@ -224,13 +231,8 @@ export default {
       handleRemoveSchedule,
       getLink,
       BASE_API_URL,
-    };
-  },
-  data () {
-    return {
-      // showConfirmModal: false,
-      removeId: '',
-      searchVal: '',
+      searchVal,
+      search,
     };
   },
   computed: {
@@ -276,20 +278,6 @@ export default {
       } else {
         this.$toast.error('File không tồn tại');
       }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const committeeFilters = this.listCommittee.filter((st) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (st.name.match(re)) return true;
-          if (st.code.match(re)) return true;
-          if (st.committeePresidentId && st.committeePresidentId.name.match(re)) return true;
-          if (st.committeeSecretaryId && st.committeeSecretaryId.name.match(re)) return true;
-          if (st.criticalLecturerId && st.criticalLecturerId.name.match(re)) return true;
-          return false;
-        });
-        this.committees = committeeFilters;
-      } else this.committees = this.listCommittee;
     },
   },
 };

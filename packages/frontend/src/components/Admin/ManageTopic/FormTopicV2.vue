@@ -57,6 +57,9 @@
           <div class="mt-1">
             <Multiselect
               v-model="lecturerId"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :options="listLecturers"
               :can-clear="false"
               :searchable="true"
@@ -72,6 +75,9 @@
             <Multiselect
               v-model="criticalLecturerId"
               :options="listLecturers"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :can-clear="false"
               :searchable="true"
               :disabled="isView"
@@ -87,6 +93,9 @@
               v-model="scheduleId"
               :options="listSchedules"
               :searchable="true"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :can-clear="false"
               :disabled="isView"
               class="w-[400px]"

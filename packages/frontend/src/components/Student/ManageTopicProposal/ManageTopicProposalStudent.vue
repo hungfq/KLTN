@@ -27,6 +27,9 @@
           <Multiselect
             v-if="scheduleSelectOption.length > 2"
             v-model="selectSchedule"
+            :can-deselect="false"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
             :options="scheduleSelectOption"
             :can-clear="false"
             @change="selectHandler"

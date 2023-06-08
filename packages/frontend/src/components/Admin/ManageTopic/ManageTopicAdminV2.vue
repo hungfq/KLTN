@@ -6,6 +6,9 @@
         :options="listScheduleSelect"
         :searchable="true"
         :can-clear="false"
+        :can-deselect="false"
+        no-results-text="Không có kết quả"
+        no-options-text="Không có lựa lựa chọn"
         @change="selectHandlerSchedule"
       />
     </div>
@@ -13,7 +16,10 @@
       <Multiselect
         v-model="selectLecturer"
         :options="listLecturerSelect"
+        :can-deselect="false"
         :searchable="true"
+        no-results-text="Không có kết quả"
+        no-options-text="Không có lựa lựa chọn"
         :can-clear="false"
         @change="selectHandlerLecturer"
       />
@@ -270,6 +276,13 @@ export default {
       listStudentSelected.value = item.list_students;
     };
 
+    const searchVal = ref('');
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
     return {
       headers,
       items,
@@ -293,10 +306,11 @@ export default {
       BASE_API_URL,
       showSelectStudent,
       selectStudents,
-
+      search,
       selectHandlerSchedule,
       selectHandlerLecturer,
       changeStudents,
+      searchVal,
     };
   },
   computed: {
@@ -319,14 +333,14 @@ export default {
       'listLecturer',
     ]),
     listLecturerSelect () {
-      const arr = [{ value: 0, label: 'Chọn giảng viên' }];
+      const arr = [{ value: 0, label: 'Tất cả giảng viên' }];
       this.listLecturer.forEach((lecturer) => {
         arr.push({ value: lecturer._id, label: lecturer.name });
       });
       return arr;
     },
     listScheduleSelect () {
-      const arr = [{ value: 0, label: 'Chọn đợt' }];
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
       this.listSchedules.forEach((schedule) => {
         arr.push({ value: schedule._id, label: schedule.name });
       });
@@ -346,9 +360,6 @@ export default {
       this.removeId = id;
       this.showConfirmModal = true;
     },
-    displayLecturer (lecturer) {
-      return lecturer ? lecturer.name : '';
-    },
     async upload (files) {
       if (files.length > 0) {
         try {
@@ -366,20 +377,6 @@ export default {
       } else {
         this.$toast.error('File không tồn tại');
       }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const topicFilter = this.listTopicsByLecturerSchedule.filter((topic) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (topic.title.match(re)) return true;
-          if (topic.code.match(re)) return true;
-          if (!topic.lecturerId) return false;
-          if (topic.lecturerId.name.match(re)) return true;
-          return false;
-        });
-
-        this.topics = topicFilter;
-      } else this.topics = this.listTopicsByLecturerSchedule;
     },
     handleNewButtonClick () {
       this.$refs.submitBtn.click();

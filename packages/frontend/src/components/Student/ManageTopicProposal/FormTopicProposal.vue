@@ -70,6 +70,9 @@
                   <Multiselect
                     v-model="scheduleId"
                     :options="scheduleSelect"
+                    :can-deselect="false"
+                    no-results-text="Không có kết quả"
+                    no-options-text="Không có lựa lựa chọn"
                     :can-clear="false"
                     :searchable="true"
                     :disabled="isView || isUpdate"

@@ -47,6 +47,9 @@
                 v-model="criticalLecturerId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :can-clear="false"
                 :disabled="isView"
               />
@@ -61,6 +64,9 @@
                 v-model="committeePresidentId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :can-clear="false"
                 :disabled="isView"
               />
@@ -76,6 +82,9 @@
                 :options="listLecturers"
                 :searchable="true"
                 :can-clear="false"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :disabled="isView"
               />
             </div>

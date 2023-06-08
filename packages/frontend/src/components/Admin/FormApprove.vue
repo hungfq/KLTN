@@ -75,6 +75,11 @@
               v-model="lecturerId"
               :options="listLecturers"
               :close-on-select="false"
+              :searchable="true"
+              :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :disabled="isView"
             />
           </div>

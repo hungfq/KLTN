@@ -73,6 +73,9 @@
           <div class="mt-1">
             <Multiselect
               v-model="lecturerId"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :options="listLecturers"
               :can-clear="false"
               :close-on-select="false"

@@ -101,6 +101,7 @@ export default {
     const store = useStore();
     const loading = ref(false);
     const itemsSelected = ref([]);
+    const searchVal = ref('');
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const users = ref([]);
@@ -167,7 +168,15 @@ export default {
       }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
-    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+    watch(modulePage, async () => {
+      serverOptions.value = {
+        page: 1,
+        rowsPerPage: 10,
+        sortBy: 'updated_at',
+        sortType: 'desc',
+      };
+      await loadToServer(serverOptions.value);
+    });
 
     const usersShow = computed(() => {
       if (!users.value) return [];
@@ -191,6 +200,11 @@ export default {
       }
       return 'quản trị viên';
     });
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
     return {
       headers,
       items,
@@ -209,11 +223,8 @@ export default {
       handleImport,
       BASE_API_URL,
       nameRole,
-    };
-  },
-  data () {
-    return {
-      searchVal: '',
+      searchVal,
+      search,
     };
   },
   computed: {
@@ -230,13 +241,11 @@ export default {
         try {
           await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })
             .then((data) => {
-              console.log("🚀 ~ file: ManageStudentAdminV2.vue:218 ~ .then ~ data.headers.get('Content-Type'):", data.headers.get('Content-Type'));
               if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
                 this.$toast.error('File không đúng chuẩn hoặc người dùng đã tồn tại');
               } else if (data.status === 200) {
                 this.$toast.success('Đã nhập thành công!');
               }
-              console.log('🚀 ~ file: ManageStudentAdminV2.vue:222 ~ .then ~ data:', data);
             });
         } catch (e) {
           this.$toast.error('File không đúng chuẩn!');
