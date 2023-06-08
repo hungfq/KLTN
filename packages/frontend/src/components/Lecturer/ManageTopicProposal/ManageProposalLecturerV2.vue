@@ -3,10 +3,13 @@
     <loading-process v-if="loading" />
     <template v-else>
       <template v-if=" !loading &&!isInApproveTime ">
-        <div class="relative h-1/3">
-          <img
-            :src="imageUrl"
-          >
+        <div class="relative grow">
+          <div class="">
+            <img
+              :src="imageUrl"
+              class="min-h-full min-w-full block "
+            >
+          </div>
           <button
             class="btn btn-primary absolute bottom-0 left-0 !py-0"
             @click="$store.dispatch('url/updateSection', 'topic-list')"

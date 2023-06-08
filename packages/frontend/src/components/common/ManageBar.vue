@@ -9,20 +9,40 @@
     >
       <!-- Logo -->
       <div
-        class="flex items-center justify-center flex-shrink-0 py-10 relative"
+        class="flex items-center justify-center relative"
       >
-        <a>
+        <div
+          class="flex justify-center m-2"
+          :class="{ '!h-40 w-52 p-4' : open}"
+        >
           <img
-            class="w-2/3 mx-auto"
             :src="imageLogoUrl"
+            class="min-h-full min-w-full block"
           >
-        </a>
+        </div>
         <div
           class="font-bold text-xl absolute -right-6 top-8 px-1 py-1 bg-blue-900  text-white rounded shadow-2xl"
           :class="{'rotate-180': !open}"
           @click="open =!open"
         >
           <font-awesome-icon :icon="['fas', 'arrow-left']" />
+        </div>
+      </div>
+      <div
+        class="flex pl-2 border-y-2 bg-slate-300 mt-1"
+      >
+        <div class="flex my-1 items-center justify-between">
+          <img
+            class="w-8 h-8 rounded-full mx-2"
+            :src="userInfo ? userInfo.picture : defaultAvatarUrl"
+            alt="Avatar"
+          >
+          <span
+            v-if="open"
+            class="font-semibold text-blue-800"
+          >
+            {{ userName }}
+          </span>
         </div>
       </div>
       <div
@@ -34,7 +54,7 @@
 
       <!-- Management -->
       <div
-        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-2"
+        class="flex flex-col px-4 space-y-2 overflow-hidden hover:overflow-auto mt-1"
       >
         <a
           v-for="item in listItems"
@@ -167,22 +187,6 @@
           <font-awesome-icon :icon="['fas', 'right-to-bracket']" />
           <span v-if="open">Đăng xuất</span>
         </a>
-      </div>
-      <div
-        class="flex pl-2 border-y-2 bg-slate-300"
-      >
-        <div class="flex my-1 items-center">
-          <img
-            class="w-8 h-8 rounded-full ml-2"
-            :src="userInfo ? userInfo.picture : defaultAvatarUrl"
-            alt="Avatar"
-          > <span
-            v-if="open"
-            class="mx-2 font-semibold text-blue-800"
-          >
-            {{ userName }}
-          </span>
-        </div>
       </div>
     </nav>
   </div>

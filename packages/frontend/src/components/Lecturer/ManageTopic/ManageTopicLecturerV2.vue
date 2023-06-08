@@ -33,7 +33,6 @@
           </select>
         </div>
         <div
-          v-if="canEdit"
           class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
           @click="$store.dispatch('url/updateSection', 'topic-import')"
         >

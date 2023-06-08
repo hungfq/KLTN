@@ -6,67 +6,68 @@
         title="Thêm tiêu chí"
       />
     </div>
-    <div class="shadow-md sm:rounded-lg m-4">
+    <div class="mx-4 mt-2">
       <SearchInput
         v-model="searchVal"
         :search-icon="true"
         @keydown.space.enter="search"
       />
-      <EasyDataTable
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="criteriaShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #item-operation="item">
-          <div class="flex justify-self-auto">
-            <div
-              class="tooltip tooltip-bottom pr-3"
-              data-tip="Xem tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                icon="fa-solid fa-eye"
-                size="xl"
-                @click="showRow(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom"
-              data-tip="Chỉnh sửa tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                :icon="['fas', 'pen-to-square']"
-                size="xl"
-                @click="editItem(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom pl-3"
-              data-tip="Xóa tiêu chí"
-            >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xl"
-                @click="handleRemove(item.id)"
-              />
-            </div>
-          </div>
-        </template>
-        <template #item-description="item">
-          <div
-            class="max-w-xl rounded break-words overflow-hidden"
-          >
-            {{ item.description }}
-          </div>
-        </template>
-      </EasyDataTable>
     </div>
+    <EasyDataTable
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      show-index
+      table-class-name="mx-4"
+      :headers="headers"
+      :items="criteriaShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #item-operation="item">
+        <div class="flex justify-self-auto">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem tiêu chí"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa tiêu chí"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
+          </div>
+          <div
+            class="tooltip tooltip-bottom pl-3"
+            data-tip="Xóa tiêu chí"
+          >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="xl"
+              @click="handleRemove(item.id)"
+            />
+          </div>
+        </div>
+      </template>
+      <template #item-description="item">
+        <div
+          class="max-w-xl rounded break-words overflow-hidden"
+        >
+          {{ item.description }}
+        </div>
+      </template>
+    </EasyDataTable>
   </div>
   <ConfirmModal
     v-model="showConfirmModal"

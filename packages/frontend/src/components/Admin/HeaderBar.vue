@@ -2,7 +2,7 @@
 <template>
   <div class="flex flex-col">
     <img
-      class="w-fit h-fit"
+      class="max-w-full max-h-full block"
       :src="imageUrlBanner"
     >
   </div>

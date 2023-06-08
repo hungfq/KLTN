@@ -78,23 +78,6 @@
             />
           </div>
         </div>
-        <!-- <div class="my-2-1 w-3/5">
-          <span class="font-bold text-sm py-4 my-4">
-            Sinh viên đăng kí
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="studentIds"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :create-option="true"
-              :options="listStudents"
-              :disabled="isView"
-              class="w-[400px] h-3"
-            />
-          </div>
-        </div> -->
         <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Đợt đăng ký

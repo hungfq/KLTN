@@ -1,98 +1,96 @@
 <template>
-  <div class="flex">
-    <div
-      class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-      @click="$store.dispatch('url/updateSection', 'committee-import')"
-    >
-      Thêm hội đồng
+  <div class="flex flex-col">
+    <div class="flex justify-end mr-4 my-2">
+      <ButtonAddItem
+        :title="'Thêm hội đồng'"
+        @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
+      />
     </div>
-    <!-- <UploadButtonVue @uploadFileExcel="upload" /> -->
-  </div>
-  <div class="shadow-md sm:rounded-lg m-4">
-    <SearchInput
-      v-model="searchVal"
-      :search-icon="true"
-      @keydown.space.enter="search"
-    />
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="committeesShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #header-import-export="header">
+    <div class="mx-4">
+      <SearchInput
+        v-model="searchVal"
+        :search-icon="true"
+        @keydown.space.enter="search"
+      />
+    </div>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      table-class-name="mx-4"
+      show-index
+      :headers="headers"
+      :items="committeesShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #header-import-export="header">
+        <a
+          class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
+          :href="`${BASE_API_URL}/api/v2/template?type=User`"
+        >Tải mẫu nhập đề tài</a>
+      </template>
+      <template #item-import-export="item">
+        <div class-="flex">
           <a
-            class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            :href="`${BASE_API_URL}/api/v2/template?type=User`"
-          >Tải mẫu nhập đề tài</a>
-        </template>
-        <template #item-import-export="item">
-          <div class-="flex">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleAddTopic(item._id)"
-            >Nhập đề tài</a>
-            <!-- <a
+            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+            @click="handleAddTopic(item._id)"
+          >Nhập đề tài</a>
+          <!-- <a
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
               :href="getLink(item._id)"
             >Xuất báo cáo</a> -->
+        </div>
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem đề tài"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
           </div>
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <div
-              class="tooltip tooltip-bottom pr-3"
-              data-tip="Xem đề tài"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                icon="fa-solid fa-eye"
-                size="xl"
-                @click="showRow(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom mr-2"
-              data-tip="Chỉnh sửa hội đồng"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                :icon="['fas', 'pen-to-square']"
-                size="xl"
-                @click="editItem(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom"
-              data-tip="Xóa hội đồng"
-            >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xl"
-                @click="handleRemoveSchedule(item._id)"
-              />
-            </div>
+          <div
+            class="tooltip tooltip-bottom mr-2"
+            data-tip="Chỉnh sửa hội đồng"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
           </div>
-        </template>
-      </EasyDataTable>
-    </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Xóa hội đồng"
+          >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="xl"
+              @click="handleRemoveSchedule(item._id)"
+            />
+          </div>
+        </div>
+      </template>
+    </EasyDataTable>
+    <ConfirmModal
+      v-model="showConfirmModal"
+      @confirm="confirmRemove"
+      @cancel="showConfirmModal=false"
+    >
+      <template #title>
+        Xác nhận
+      </template>
+      <div>Bạn có xác nhận xóa hội đồng này không?</div>
+    </ConfirmModal>
   </div>
-  <ConfirmModal
-    v-model="showConfirmModal"
-    @confirm="confirmRemove"
-    @cancel="showConfirmModal=false"
-  >
-    <template #title>
-      Xác nhận
-    </template>
-    <div>Bạn có xác nhận xóa hội đồng này không?</div>
-  </ConfirmModal>
 </template>
 
 <script>
@@ -105,12 +103,14 @@ import {
 import { useToast } from 'vue-toast-notification';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
 
 export default {
   name: 'ManageStudentAdmin',
   components: {
     SearchInput,
     ConfirmModal,
+    ButtonAddItem,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');

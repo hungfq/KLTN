@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <form
-    class="flex items-center justify-center"
+    class="flex justify-center"
     @submit.prevent="upload"
   >
     <input
@@ -13,9 +13,12 @@
       @change="handleNewButtonClick"
     >
     <label
-      class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
+      class=" btn btn-primary"
       for="upload123"
-    >Tải lên tệp excel</label>
+    > <font-awesome-icon
+      :icon="['fas', 'file-import']"
+      class="mr-2"
+    />Tải lên tệp excel</label>
     <button
       ref="submitBtn"
       type="submit"

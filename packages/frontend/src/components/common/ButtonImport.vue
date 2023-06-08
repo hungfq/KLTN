@@ -1,6 +1,6 @@
 <template>
   <div
-    class=" rounded bg-blue-800 text-white font-sans font-semibold py-2 px-2 cursor-pointer my-2"
+    class=" btn btn-primary"
     @click="handleImport"
   >
     <font-awesome-icon :icon="['fas', 'circle-plus']" />

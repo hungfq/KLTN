@@ -2,13 +2,11 @@
 <template>
   <!-- component -->
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
-    <div class="flex text-gray-900 bg-gray-100">
-      <div class="flex">
-        <ManageBarVue :list-items="listItems" />
-      </div>
-      <div class="flex grow flex-col">
+    <div class="flex h-full">
+      <ManageBarVue :list-items="listItems" />
+      <div class="flex flex-col">
         <HeaderBarVue :username="userName" />
-        <div class="bg-white border rounded-2 overflow-auto h-full mb-1">
+        <div class="bg-white border rounded-2 overflow-y-auto">
           <BodyUserPage
             v-if="['student','lecturer', 'admin'].includes(module)"
             :type-user="module"

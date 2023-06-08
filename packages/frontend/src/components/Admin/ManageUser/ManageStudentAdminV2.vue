@@ -1,76 +1,78 @@
 <template>
   <div class="flex flex-col">
-    <div class="flex mt-4">
-      <div class="inline-block p-2 rounded-md">
-        <ButtonImport :handle-import="handleImport" />
+    <div class="flex mt-2 justify-end">
+      <div class="mr-4">
+        <ButtonImport
+          :handle-import="handleImport"
+          :title="`Thêm ${nameRole}`"
+        />
       </div>
-      <div class="inline-block p-2 rounded-md">
-        <UploadButtonVue @uploadFileExcel="upload" />
-      </div>
-      <div class="inline-block p-2 rounded-md mt-4">
-        <a
-          class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-          :href="`${BASE_API_URL}/api/v2/template?type=User`"
-        >Tải mẫu tệp excel</a>
-      </div>
+      <UploadButtonVue @uploadFileExcel="upload" />
+      <ButtDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=User`" />
     </div>
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="usersShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #item-gender="item">
-          <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
-        </template>
-        <template #item-status="item">
-          <img
-            v-if="item.status"
-            src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
-            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-            @click="toggleActive(item)"
+    <div class="mx-4 mt-2">
+      <SearchInput
+        v-model="searchVal"
+        :search-icon="true"
+        @keydown.space.enter="search"
+      />
+    </div>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      table-class-name="mx-4"
+      show-index
+      :headers="headers"
+      :items="usersShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #item-gender="item">
+        <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
+      </template>
+      <template #item-status="item">
+        <img
+          v-if="item.status"
+          src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
+          class="operation-icon w-10 h-10 mx-2 cursor-pointer"
+          @click="toggleActive(item)"
+        >
+        <img
+          v-if="!item.status"
+          src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
+          class="operation-icon w-10 h-10 mx-2 cursor-pointer"
+          @click="toggleActive(item)"
+        >
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem tiêu chí"
           >
-          <img
-            v-if="!item.status"
-            src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
-            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-            @click="toggleActive(item)"
-          >
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <div
-              class="tooltip tooltip-bottom pr-3"
-              data-tip="Xem tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                icon="fa-solid fa-eye"
-                size="xl"
-                @click="showRow(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom"
-              data-tip="Chỉnh sửa tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                :icon="['fas', 'pen-to-square']"
-                size="xl"
-                @click="editItem(item)"
-              />
-            </div>
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
           </div>
-        </template>
-      </EasyDataTable>
-    </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa tiêu chí"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
+          </div>
+        </div>
+      </template>
+    </EasyDataTable>
   </div>
 </template>
 
@@ -80,14 +82,18 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import SearchInput from 'vue-search-input';
 import UploadButtonVue from '../UploadButton.vue';
 import UserApi from '../../../utils/api/user';
 import ButtonImport from '../../common/ButtonImport.vue';
+import ButtDownloadTemplate from '../../common/ButtonDownLoadTemplate.vue';
 
 export default {
   name: 'ManageUser',
   components: {
+    ButtDownloadTemplate,
     UploadButtonVue,
+    SearchInput,
     ButtonImport,
   },
   setup () {
@@ -177,6 +183,14 @@ export default {
     const handleImport = () => {
       store.dispatch('url/updateSection', `${modulePage.value}-import`);
     };
+    const nameRole = computed(() => {
+      if (modulePage.value === 'student') {
+        return 'sinh viên';
+      } if (modulePage.value === 'lecturer') {
+        return 'giảng viên';
+      }
+      return 'quản trị viên';
+    });
     return {
       headers,
       items,
@@ -194,6 +208,7 @@ export default {
       modulePage,
       handleImport,
       BASE_API_URL,
+      nameRole,
     };
   },
   data () {

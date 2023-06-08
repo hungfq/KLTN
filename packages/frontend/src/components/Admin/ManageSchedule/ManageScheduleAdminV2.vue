@@ -1,12 +1,5 @@
 <template>
-  <div class="flex">
-    <div
-      class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-      @click="$store.dispatch('url/updateSection', 'schedule-import')"
-    >
-      <font-awesome-icon :icon="['fas', 'circle-plus']" />
-      <span class="ml-2"> Thêm đợt đăng ký</span>
-    </div>
+  <div class="flex justify-between">
     <form
       class="flex"
       @submit.prevent="upload"
@@ -32,132 +25,139 @@
         student
       </button>
     </form>
+    <div class="mt-2 mr-4">
+      <ButtonAddItem
+        :title="'Thêm đợt đăng ký'"
+        @handle-import="$store.dispatch('url/updateSection', 'schedule-import')"
+      />
+    </div>
   </div>
-  <div class="shadow-md sm:rounded-lg m-4 px-4">
+  <div class="mx-4 mt-2">
     <SearchInput
       v-model="searchVal"
       :search-icon="true"
       @keydown.space.enter="search"
     />
-    <EasyDataTable
-      v-model:server-options="serverOptions"
-      :server-items-length="serverItemsLength"
-      show-index
-      :headers="headers"
-      :items="schedulesShow"
-      :loading="loading"
-      buttons-pagination
-      :rows-items="rowItems"
-    >
-      <template #item-startDate="item">
-        {{ formatDate(item.startDate) }}
-      </template>
-      <template #item-deadline="item">
-        {{ formatDate(item.deadline) }}
-      </template>
-      <template #item-import-export="item">
-        <div class-="flex flex-col">
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Chọn sinh viên"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'people-group']"
-              size="2xl"
-              @click="selectStudents(item._id)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Xuất báo cáo"
-          >
-            <font-awesome-icon
-              size="2xl"
-              class="cursor-pointer"
-              :icon="['fas', 'file-export']"
-              @click="getLink(item._id)"
-            />
-          </div>
-        </div>
-      </template>
-      <template #item-score-rate="item">
-        <div class-="flex flex-col">
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Chọn tiêu chí chấm điểm"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              icon="fa-solid fa-list-check"
-              size="xl"
-              @click="selectCriteria(item._id)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Chọn tỷ lệ điểm chấm điểm"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              icon="fa-solid fa-scale-balanced"
-              size="xl"
-              @click="changeLecturerRate(item._id, { advisor_score_rate: item.advisor_score_rate ,
-                                                     critical_score_rate: item.critical_score_rate,
-                                                     president_score_rate: item.president_score_rate,
-                                                     secretary_score_rate: item.secretary_score_rate,})"
-            />
-          </div>
-        </div>
-      </template>
-      <template #item-operation="item">
-        <div class="flex">
-          <div
-            class="tooltip tooltip-bottom pr-3"
-            data-tip="Xem đợt đăng ký"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              icon="fa-solid fa-eye"
-              size="2xl"
-              @click="showRow(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom"
-            data-tip="Chỉnh sửa đợt đăng ký"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'pen-to-square']"
-              size="2xl"
-              @click="editItem(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom pl-3"
-            data-tip="Xóa đợt đăng ký"
-          >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="2xl"
-              @click="handleRemoveSchedule(item._id)"
-            />
-          </div>
-        </div>
-      </template>
-    </EasyDataTable>
-    <ConfirmModal
-      v-model="showConfirmModal"
-      @confirm="confirmRemove"
-      @cancel="showConfirmModal=false"
-    >
-      <template #title>
-        Xác nhận
-      </template>
-      <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
-    </ConfirmModal>
   </div>
+  <EasyDataTable
+    v-model:server-options="serverOptions"
+    :server-items-length="serverItemsLength"
+    show-index
+    :headers="headers"
+    table-class-name="mx-4"
+    :items="schedulesShow"
+    :loading="loading"
+    buttons-pagination
+    :rows-items="rowItems"
+  >
+    <template #item-startDate="item">
+      {{ formatDate(item.startDate) }}
+    </template>
+    <template #item-deadline="item">
+      {{ formatDate(item.deadline) }}
+    </template>
+    <template #item-import-export="item">
+      <div class-="flex flex-col">
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Chọn sinh viên"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'people-group']"
+            size="2xl"
+            @click="selectStudents(item._id)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Xuất báo cáo"
+        >
+          <font-awesome-icon
+            size="2xl"
+            class="cursor-pointer"
+            :icon="['fas', 'file-export']"
+            @click="getLink(item._id)"
+          />
+        </div>
+      </div>
+    </template>
+    <template #item-score-rate="item">
+      <div class-="flex flex-col">
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Chọn tiêu chí chấm điểm"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            icon="fa-solid fa-list-check"
+            size="xl"
+            @click="selectCriteria(item._id)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Chọn tỷ lệ điểm chấm điểm"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            icon="fa-solid fa-scale-balanced"
+            size="xl"
+            @click="changeLecturerRate(item._id, { advisor_score_rate: item.advisor_score_rate ,
+                                                   critical_score_rate: item.critical_score_rate,
+                                                   president_score_rate: item.president_score_rate,
+                                                   secretary_score_rate: item.secretary_score_rate,})"
+          />
+        </div>
+      </div>
+    </template>
+    <template #item-operation="item">
+      <div class="flex">
+        <div
+          class="tooltip tooltip-bottom pr-3"
+          data-tip="Xem đợt đăng ký"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            icon="fa-solid fa-eye"
+            size="2xl"
+            @click="showRow(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom"
+          data-tip="Chỉnh sửa đợt đăng ký"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'pen-to-square']"
+            size="2xl"
+            @click="editItem(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom pl-3"
+          data-tip="Xóa đợt đăng ký"
+        >
+          <font-awesome-icon
+            icon="fa-solid fa-trash-can"
+            size="2xl"
+            @click="handleRemoveSchedule(item._id)"
+          />
+        </div>
+      </div>
+    </template>
+  </EasyDataTable>
+  <ConfirmModal
+    v-model="showConfirmModal"
+    @confirm="confirmRemove"
+    @cancel="showConfirmModal=false"
+  >
+    <template #title>
+      Xác nhận
+    </template>
+    <div>Bạn có xác nhận xóa đợt đăng ký này không?</div>
+  </ConfirmModal>
   <SelectStudent
     v-model="showSelectStudent"
     :schedule-id="selectStudentScheduleId"
@@ -194,12 +194,14 @@ import CriteriaApi from '../../../utils/api/criteria';
 import SelectStudent from '../../Modal/SelectStudent.vue';
 import SelectCriteriaModal from '../../Modal/SelectCriteria.vue';
 import LecturerRateModal from '../../Modal/LecturerRate.vue';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
 import 'moment/dist/locale/vi';
 
 export default {
   name: 'ManageScheduleAdmin',
   components: {
     SearchInput,
+    ButtonAddItem,
     ConfirmModal,
     SelectStudent,
     SelectCriteriaModal,

@@ -26,7 +26,7 @@ import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
-  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor,
+  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload,
 } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
@@ -58,6 +58,8 @@ library.add(
   faBullseye,
   faUserCheck,
   faDiagramPredecessor,
+  faFileImport,
+  faDownload,
 );
 
 const app = createApp(App);

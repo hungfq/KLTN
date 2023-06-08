@@ -19,84 +19,83 @@
       />
     </div>
     <div class="mx-auto" />
-    <div class="inline-block p-2 rounded-md">
-      <div
-        class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        @click="$store.dispatch('url/updateSection', 'topic-import')"
-      >
-        Thêm đề tài
+    <div class="flex mt-4 mr-4">
+      <div class="mr-2">
+        <ButtonAddItem
+          :title="'Thêm đề tài'"
+          @handle-import="$store.dispatch('url/updateSection', 'topic-import')"
+        />
       </div>
-    </div>
-    <div class="inline-block p-2 rounded-md">
       <UploadButtonVue @uploadFileExcel="upload" />
-    </div>
-    <div class="inline-block p-2 rounded-md mt-4">
-      <a
-        class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        :href="`${BASE_API_URL}/api/v2/template?type=Topic`"
-      >Tải mẫu tệp excel</a>
+      <ButtonDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=Topic`" />
     </div>
   </div>
-  <div class="shadow-md sm:rounded-lg m-4">
-    <EasyDataTable
-      v-model:server-options="serverOptions"
-      :server-items-length="serverItemsLength"
-      show-index
-      :headers="headers"
-      :items="topicShow"
-      :loading="loading"
-      buttons-pagination
-      :rows-items="rowItems"
-    >
-      <template #item-operation="item">
-        <div class="flex">
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Chọn sinh viên"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'people-group']"
-              size="xl"
-              @click="selectStudents(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom pr-3"
-            data-tip="Xem đề tài"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              icon="fa-solid fa-eye"
-              size="xl"
-              @click="showRow(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom"
-            data-tip="Chỉnh sửa đề tài"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'pen-to-square']"
-              size="xl"
-              @click="editItem(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom ml-2"
-            data-tip="Xóa đề tài"
-          >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="xl"
-              @click="handleRemoveTopic(item._id)"
-            />
-          </div>
+  <div class="mx-4 mt-2">
+    <SearchInput
+      v-model="searchVal"
+      :search-icon="true"
+      @keydown.space.enter="search"
+    />
+  </div>
+  <EasyDataTable
+    v-model:server-options="serverOptions"
+    :server-items-length="serverItemsLength"
+    show-index
+    table-class-name="mx-4"
+    :headers="headers"
+    :items="topicShow"
+    :loading="loading"
+    buttons-pagination
+    :rows-items="rowItems"
+  >
+    <template #item-operation="item">
+      <div class="flex">
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Chọn sinh viên"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'people-group']"
+            size="xl"
+            @click="selectStudents(item)"
+          />
         </div>
-      </template>
-    </EasyDataTable>
-  </div>
+        <div
+          class="tooltip tooltip-bottom pr-3"
+          data-tip="Xem đề tài"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            icon="fa-solid fa-eye"
+            size="xl"
+            @click="showRow(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom"
+          data-tip="Chỉnh sửa đề tài"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'pen-to-square']"
+            size="xl"
+            @click="editItem(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom ml-2"
+          data-tip="Xóa đề tài"
+        >
+          <font-awesome-icon
+            icon="fa-solid fa-trash-can"
+            size="xl"
+            @click="handleRemoveTopic(item._id)"
+          />
+        </div>
+      </div>
+    </template>
+  </EasyDataTable>
 
   <ConfirmModal
     v-model="showConfirmModal"
@@ -128,10 +127,13 @@ import {
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import Multiselect from '@vueform/multiselect';
+import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import UploadButtonVue from '../UploadButton.vue';
 import TopicApi from '../../../utils/api/topic';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
 
 export default {
   name: 'ManageTopicAdmin',
@@ -140,6 +142,9 @@ export default {
     SelectStudent,
     UploadButtonVue,
     Multiselect,
+    ButtonDownloadTemplate,
+    ButtonAddItem,
+    SearchInput,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
