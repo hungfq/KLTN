@@ -91,6 +91,11 @@ $api->group([
             'as' => '',
             'uses' => 'TopicController@setGrade',
         ]);
+
+        $api->get('/grade/student', [
+            'as' => '',
+            'uses' => 'TopicController@viewStudentGrade',
+        ]);
     });
 
     $api->post('/import', [

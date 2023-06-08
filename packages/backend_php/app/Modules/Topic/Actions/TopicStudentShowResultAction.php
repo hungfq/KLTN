@@ -15,7 +15,14 @@ class TopicStudentShowResultAction
     public function handle($dto)
     {
         $query = Topic::query()
-            ->with(['schedule', 'lecturer', 'critical'])
+            ->with([
+                'schedule',
+                'lecturer',
+                'critical',
+                'committee.president',
+                'committee.secretary',
+                'committee.critical',
+            ])
             ->whereHas('students', function ($q) {
                 $q->where('id', Auth::id());
             });
