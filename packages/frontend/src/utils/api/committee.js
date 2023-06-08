@@ -6,8 +6,17 @@ const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class CommitteeApi {
-  static async listAllCommittee (token, options) {
-    const url = urlWithPagination('/committee', options);
+  static async listAllCommittee (token, options, criticalId, presidentId, secretaryId) {
+    let url = urlWithPagination('/committee', options);
+    if (criticalId) {
+      url += `&critical_id=${criticalId}`;
+    }
+    if (presidentId) {
+      url += `&president_id=${presidentId}`;
+    }
+    if (secretaryId) {
+      url += `&secretary_id=${secretaryId}`;
+    }
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

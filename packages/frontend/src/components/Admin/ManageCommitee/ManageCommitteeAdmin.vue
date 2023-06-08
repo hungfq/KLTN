@@ -1,6 +1,45 @@
 <template>
   <div class="flex flex-col">
     <div class="flex justify-end mr-4 my-2">
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectCritical"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :placeholder="'Giảng viên phản biện'"
+          :can-clear="false"
+          @change="selectHandlerLecturer('CRITICAL', $event)"
+        />
+      </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectPresident"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          :placeholder="'Chủ tịch hội đồng'"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :can-clear="false"
+          @change="selectHandlerLecturer('PRESIDENT', $event)"
+        />
+      </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectSecretary"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          :placeholder="'Thư ký hội đồng'"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :can-clear="false"
+          @change="selectHandlerLecturer( 'SECRETARY', $event)"
+        />
+      </div>
       <ButtonAddItem
         :title="'Thêm hội đồng'"
         @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
@@ -37,10 +76,6 @@
             class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
             @click="handleAddTopic(item._id)"
           >Nhập đề tài</a>
-          <!-- <a
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              :href="getLink(item._id)"
-            >Xuất báo cáo</a> -->
         </div>
       </template>
       <template #item-operation="item">
@@ -101,6 +136,7 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
@@ -109,6 +145,7 @@ export default {
   name: 'ManageStudentAdmin',
   components: {
     SearchInput,
+    Multiselect,
     ConfirmModal,
     ButtonAddItem,
   },
@@ -119,6 +156,9 @@ export default {
     const $toast = useToast();
     const loading = ref(false);
     const itemsSelected = ref([]);
+    const selectPresident = ref(null);
+    const selectCritical = ref(null);
+    const selectSecretary = ref(null);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const committees = ref([]);
@@ -143,7 +183,7 @@ export default {
     const loadToServer = async (options) => {
       loading.value = true;
       try {
-        const response = await CommitteeApi.listAllCommittee(token, options);
+        const response = await CommitteeApi.listAllCommittee(token, options, selectCritical.value, selectPresident.value, selectSecretary.value);
         committees.value = response.data;
         store.state.committee.listCommittee = response.data;
         serverItemsLength.value = response.meta.pagination.total;
@@ -212,6 +252,12 @@ export default {
       else await loadToServer({ ...serverOptions.value, search: searchVal.value });
     };
 
+    const selectHandlerLecturer = async (type, event) => {
+      if (type === 'CRITICAL') selectCritical.value = event;
+      else if (type === 'PRESIDENT') selectPresident.value = event;
+      else if (type === 'SECRETARY') selectSecretary.value = event;
+      await loadToServer(serverOptions.value);
+    };
     return {
       headers,
       items,
@@ -232,6 +278,10 @@ export default {
       getLink,
       BASE_API_URL,
       searchVal,
+      selectCritical,
+      selectSecretary,
+      selectPresident,
+      selectHandlerLecturer,
       search,
     };
   },
@@ -248,6 +298,16 @@ export default {
     ...mapGetters('lecturer', [
       'listLecturer',
     ]),
+    listLecturerSelect () {
+      const arr = [{ value: 0, label: 'Tất cả giảng viên' }];
+      this.listLecturer.forEach((lecturer) => {
+        arr.push({ value: lecturer._id, label: lecturer.name });
+      });
+      return arr;
+    },
+  },
+  async mounted () {
+    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
   },
   methods: {
     handleAddTopic (id) {

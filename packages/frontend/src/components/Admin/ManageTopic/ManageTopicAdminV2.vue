@@ -347,6 +347,9 @@ export default {
       return arr;
     },
   },
+  async mounted () {
+    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+  },
   methods: {
     handleUpdateTopic (id) {
       this.$store.dispatch('url/updateSection', `${this.module}-update`);
