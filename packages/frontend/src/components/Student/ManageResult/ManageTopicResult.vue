@@ -109,14 +109,18 @@
 
             <BodyAndShadow>
               <TitleItem :title="'Danh sách hội đồng'" />
-              <div class="px-4 py-3 bg-white">
-                <div class="md:w-1/2">
-                  <ol class="list-decimal pl-4">
-                    <li>Coffee</li>
-                    <li>Tea</li>
-                    <li>Milk</li>
-                  </ol>
+              <div class="px-4 py-3 bg-white h-24">
+                <div v-if="!currentTopic.committee">
+                  Hiện tại chưa có hội đồng cho đề tài này
                 </div>
+                <ol
+                  v-else
+                  class="list-decimal pl-4"
+                >
+                  <li><span class="font-semibold">Giáo viên phản biện:</span> {{ currentTopic.committee.critical ? currentTopic.committee.critical.name : '' }}</li>
+                  <li><span class="font-semibold">Chủ tịch  hội đồng:</span> {{ currentTopic.committee.president ? currentTopic.committee.president.name : '' }}</li>
+                  <li><span class="font-semibold">Thư ký  hội đồng:</span> {{ currentTopic.committee.secretary ? currentTopic.committee.secretary.name : '' }}</li>
+                </ol>
               </div>
             </BodyAndShadow>
             <div class="flex justify-between my-4 mx-4">
