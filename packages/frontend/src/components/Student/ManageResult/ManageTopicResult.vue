@@ -1,10 +1,8 @@
 <template>
-  <template v-if="!open">
-    <div class="py-2 mx-2 font-medium text-red-600 ">
-      Hiện tại đang không có đợt kết quả đăng ký, vui lòng chọn mục khác!
-    </div>
+  <template v-if="loading">
+    <LoadingProcessor />
   </template>
-  <template v-if="open">
+  <template v-else>
     <div class="tabs tabs-boxed bg-white ml-4">
       <a
         v-for="option in headerTabs"
@@ -16,76 +14,84 @@
     </div>
     <div v-if="tab">
       <div class="flex flex-col">
-        <div class="flex my-8">
-          <div class="w-3/5 bg-white mx-4 border rounded-lg shadow-md">
-            <div class="bg-gray-200 px-4 py-3 flex items-center">
-              <h1 class="font-bold text-xl text-gray-800">
-                {{ currentTopic.title || '' }}
-              </h1>
-            </div>
-
-            <div class="px-4 py-3 bg-white">
+        <div class="flex">
+          <div class="w-3/5">
+            <BodyAndShadow>
+              <TitleItem :title="`Đề tài: ${currentTopic.title}`" />
+              <div class="flex flex-col 2xl:min-h-[500px] lg:min-h-[250px]">
+                <div class="flex">
+                  <div class="w-1/2">
+                    <LineItem
+                      :title="'Mã đề tài: '"
+                      :content="currentTopic.code"
+                    />
+                    <LineItem
+                      :title="'Giáo viên phản biện: '"
+                      :content="currentTopic.criticalLecturerId?.name || ''"
+                    />
+                  </div>
+                  <div class="w-1/2">
+                    <LineItem
+                      :title="'Đợt đăng ký: '"
+                      :content="`${currentTopic.scheduleId.code}: ${currentTopic.scheduleId.name}`"
+                    />
+                    <LineItem
+                      :title="'Giáo viên hướng dẫn: '"
+                      :content="currentTopic.lecturerId?.name || ''"
+                    />
+                  </div>
+                </div>
+                <LineItem
+                  :title="'Mô tả: '"
+                  :content="currentTopic.description"
+                />
+              </div>
+            </BodyAndShadow>
+            <BodyAndShadow>
+              <TitleItem :title="'Điểm số'" />
               <div class="flex flex-col md:flex-row md:items-center">
-                <div class="md:w-1/2">
+                <div class="w-1/2 py-2">
                   <LineItem
-                    :title="'Mã đề tài: '"
-                    :content="currentTopic.code"
+                    :title="'Điểm của giáo viên hướng dẫn:'"
+                    :content="currentTopic.advisorLecturerGrade || 0"
                   />
                   <LineItem
-                    :title="'Ngày phản biện: '"
-                    :content="currentTopic.thesisDefenseDate || ''"
-                  />
-                  <LineItem
-                    :title="'Mô tả: '"
-                    :content="currentTopic.description"
+                    :title="'Điểm của giáo viên phản biện:'"
+                    :content="currentTopic.criticalLecturerGrade || 0"
                   />
                 </div>
-                <div class="md:w-1/2">
+                <div class="w-1/2">
                   <LineItem
-                    :title="'Đợt đăng ký: '"
-                    :content="`${currentTopic.scheduleId.code}: ${currentTopic.scheduleId.name}`"
+                    :title="'Điểm của chủ tịch hội đồng:'"
+                    :content="currentTopic.committeePresidentGrade || 0"
                   />
                   <LineItem
-                    :title="'Giáo viên phản biện: '"
-                    :content="currentTopic.criticalLecturerId?.name || ''"
-                  />
-                  <LineItem
-                    :title="'Giáo viên hướng dẫn: '"
-                    :content="currentTopic.lecturerId?.name || ''"
+                    :title="'Điểm của thư ký hội đồng:'"
+                    :content="currentTopic.committeeSecretaryGrade || 0"
                   />
                 </div>
               </div>
-            </div>
+            </BodyAndShadow>
           </div>
 
           <div class="w-2/5 flex flex-col">
-            <div class="bg-white mx-4 border rounded-lg shadow-md">
-              <div class="bg-gray-200 px-4 py-3 flex items-center">
-                <h1 class="font-bold text-xl text-gray-800">
-                  Danh sách thành viên
-                </h1>
-              </div>
+            <BodyAndShadow>
+              <TitleItem :title="'Danh sách thành viên'" />
 
-              <div class="px-4 py-3 bg-white">
-                <div class="md:w-1/2">
-                  <ol class="list-decimal pl-4">
-                    <li
-                      v-for="student in currentTopic.students"
-                      :key="student"
-                    >
-                      {{ student }}
-                    </li>
-                  </ol>
-                </div>
+              <div class="px-4 py-3 h-24">
+                <ol class="list-decimal pl-4">
+                  <li
+                    v-for="student in currentTopic.students"
+                    :key="student"
+                  >
+                    {{ student }}
+                  </li>
+                </ol>
               </div>
-            </div>
+            </BodyAndShadow>
 
-            <div class="bg-white mx-4 border rounded-lg shadow-md my-4">
-              <div class="bg-gray-200 px-4 py-3 flex items-center">
-                <h1 class="font-bold text-xl text-gray-800">
-                  Phê duyệt ra hội đồng
-                </h1>
-              </div>
+            <BodyAndShadow>
+              <TitleItem :title="'Phê duyệt ra hội đồng'" />
 
               <div class="px-4 py-3 bg-white">
                 <div class="flex flex-col">
@@ -99,15 +105,10 @@
                   />
                 </div>
               </div>
-            </div>
+            </BodyAndShadow>
 
-            <div class="bg-white mx-4 border rounded-lg shadow-md">
-              <div class="bg-gray-200 px-4 py-3 flex items-center">
-                <h1 class="font-bold text-xl text-gray-800">
-                  Danh sách hội đồng
-                </h1>
-              </div>
-
+            <BodyAndShadow>
+              <TitleItem :title="'Danh sách hội đồng'" />
               <div class="px-4 py-3 bg-white">
                 <div class="md:w-1/2">
                   <ol class="list-decimal pl-4">
@@ -117,46 +118,22 @@
                   </ol>
                 </div>
               </div>
+            </BodyAndShadow>
+            <div class="flex justify-between my-4 mx-4">
+              <button
+                class="btn btn-secondary"
+                @click="showConfirmModal=true"
+              >
+                Xem chi tiết điểm
+              </button>
+              <button
+                class="btn btn-error"
+                @click="removeRegister"
+              >
+                Hủy đăng ký
+              </button>
             </div>
           </div>
-        </div>
-
-        <div class="bg-white mx-4 border rounded-lg shadow-md overflow-hidden">
-          <div class="bg-gray-200 px-4 py-3 flex items-center">
-            <h1 class="font-bold text-xl text-gray-800">
-              Điểm số
-            </h1>
-          </div>
-
-          <div class="px-4 py-3 bg-white">
-            <div>
-              <LineItem
-                :title="'Điểm của giáo viên hướng dẫn:'"
-                :content="currentTopic.advisorLecturerGrade || 0"
-              />
-              <LineItem
-                :title="'Điểm của giáo viên phản biện:'"
-                :content="currentTopic.criticalLecturerGrade || 0"
-              />
-              <LineItem
-                :title="'Điểm của chủ tịch hội đồng:'"
-                :content="currentTopic.committeePresidentGrade || 0"
-              />
-              <LineItem
-                :title="'Điểm của thư ký hội đồng:'"
-                :content="currentTopic.committeeSecretaryGrade || 0"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="my-4 mx-4">
-          <button
-            class="btn btn-error"
-            @click="removeRegister"
-          >
-            Hủy đăng ký
-          </button>
         </div>
       </div>
     </div>
@@ -179,12 +156,18 @@ import 'vue-search-input/dist/styles.css';
 import TopicApi from '../../../utils/api/topic';
 import LineItem from '../LineItem.vue';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
+import TitleItem from './TitleItem.vue';
+import BodyAndShadow from './BorderAndShadow.vue';
+import LoadingProcessor from '../../common/Loading.vue';
 
 export default {
   name: 'ManageTopicStudent',
   components: {
     LineItem,
     ConfirmModal,
+    TitleItem,
+    BodyAndShadow,
+    LoadingProcessor,
   },
   props: {
     open: {
@@ -202,6 +185,8 @@ export default {
       hashTopics: new Map(),
       tab: '',
       showConfirmModal: false,
+      loading: false,
+
     };
   },
   computed: {
@@ -230,6 +215,7 @@ export default {
   },
   methods: {
     async fetch () {
+      this.loading = true;
       const topicResult = await TopicApi.getResultRegister(this.token);
       topicResult.forEach((topic) => {
         const { scheduleId } = topic;
@@ -237,8 +223,9 @@ export default {
         this.hashTopics.set(scheduleId.code, topic);
       });
       this.headerTabs = [...this.hashTopics.keys()];
-      if (this.headerTabs.length > 0) this.tab = this.headerTabs[0];
+      if (this.headerTabs.length > 0) [this.tab] = this.headerTabs;
       this.topics = this.topicResult;
+      this.loading = false;
     },
     async removeRegister () {
       this.showConfirmModal = true;

@@ -349,12 +349,16 @@ export default {
         this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
         return false;
       }
+      if (this.lecturerId === this.criticalLecturerId) {
+        this.$toast.error('Giảng viên hướng dẫn phải khác giảng viên phản biện');
+        return false;
+      }
       if (this.studentIds.length > this.limit) {
         this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
         return false;
       }
       if (!this.scheduleId) {
-        this.$toast.error('Vui long chon dot dang ky');
+        this.$toast.error('Vui lòng chọn đợt đăng ký');
         return false;
       }
       return true;

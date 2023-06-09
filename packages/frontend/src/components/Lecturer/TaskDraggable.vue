@@ -25,7 +25,9 @@
           <option
             :key="`key-null`"
             :value="''"
-          >Tất cả</option>
+          >
+            Tất cả
+          </option>
           <option
             v-for="option in listStudents"
             :key="`key-${option._id}`"
@@ -34,6 +36,19 @@
             {{ option.name }}
           </option>
         </select>
+        <div class="w-64 mx-2">
+          <Multiselect
+            v-model="selectVal"
+            :options="listStudentSelect"
+            :can-deselect="false"
+            :searchable="true"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :placeholder="'Sinh viên'"
+            :can-clear="false"
+            @change="selectHandler"
+          />
+        </div>
       </div>
       <button
         v-if="!showStatistic"
@@ -45,11 +60,10 @@
     </div>
   </template>
   <div
-
-    class="flex mt-4 w-9/10 justify-center"
-    :class="{'min-h-[300px]' : tasks.length === 0}"
+    class="flex mt-4 w-9/10 justify-center 2xl:min-h-[730px] lg:min-h-[550px]"
   >
     <div
+      v-if="!loading"
       class="flex"
     >
       <template v-if="!showStatistic">
@@ -61,9 +75,10 @@
           <div class="body">
             <draggable
               v-model="values[column.value]"
-              item-key="_id"
+              item-key="code"
               class="flex flex-col "
               :class="column.value"
+              :sort="false"
               group="people"
               @change="log(column.value, $event)"
             >
@@ -171,15 +186,26 @@
             </tr>
           </table>
           <div class="flex justify-between mt-4">
-            <div class="font-semibold">Tổng số: {{ tasks.length }}</div>
-            <div class="font-semibold">Chưa giải quyết: {{ values.PENDING.length }}</div>
-            <div class="font-semibold">Sẽ làm: {{ values['TODO'].length }}</div>
-            <div class="font-semibold">Đang làm: {{ values['IN_PROCESS'].length }}</div>
-            <div class="font-semibold">Hoàn thành: {{ values['DONE'].length }}</div>
+            <div class="font-semibold">
+              Tổng số: {{ tasks.length }}
+            </div>
+            <div class="font-semibold">
+              Chưa giải quyết: {{ values.PENDING.length }}
+            </div>
+            <div class="font-semibold">
+              Sẽ làm: {{ values['TODO'].length }}
+            </div>
+            <div class="font-semibold">
+              Đang làm: {{ values['IN_PROCESS'].length }}
+            </div>
+            <div class="font-semibold">
+              Hoàn thành: {{ values['DONE'].length }}
+            </div>
           </div>
         </div>
       </template>
     </div>
+    <LoadingProcess v-else />
   </div>
   <TaskDetailModalVue
     v-model="showTaskDetail"
@@ -194,6 +220,7 @@ import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
+import LoadingProcess from '../common/Loading.vue';
 
 export default {
   name: 'TaskDraggable',
@@ -201,6 +228,7 @@ export default {
     TaskCard,
     TaskDetailModalVue,
     SearchInput,
+    LoadingProcess,
     Draggable,
   },
 
@@ -240,6 +268,7 @@ export default {
         IN_PROCESS: [],
         DONE: [],
       },
+      loading: false,
     };
   },
   computed: {
@@ -252,6 +281,13 @@ export default {
     ...mapGetters('task', [
       'listTask', 'topicId', 'listStudents',
     ]),
+    listStudentSelect () {
+      const arr = [{ value: 0, label: 'Tất cả sinh viên' }];
+      this.listStudents.forEach((st) => {
+        arr.push({ value: st._id, label: st.name });
+      });
+      return arr;
+    },
   },
   watch: {
     listTask: {
@@ -266,25 +302,38 @@ export default {
     },
     listTaskUpdate: {
       async handler () {
-        [...this.listTaskUpdate.values()].forEach(async (task) => {
+        await Promise.all([...this.listTaskUpdate.values()].map((task) => {
           if (task) {
-            await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: task });
-            this.listTaskUpdate.delete(task._id);
+            return this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: task })
+              .then(() => {
+                this.listTaskUpdate.delete(task._id);
+              });
           }
-        });
+          return Promise.resolve();
+        }));
       },
       deep: true,
     },
+    topicId: {
+      async handler () {
+        await this.fetch();
+      },
+    },
   },
   async mounted () {
-    if (this.topicId) {
-      await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
-      await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
-      this.tasks = this.listTask;
-      this.calulateProgress();
-    }
+    await this.fetch();
   },
   methods: {
+    async  fetch () {
+      this.loading = true;
+      if (this.topicId) {
+        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
+        this.tasks = this.listTask;
+        this.calulateProgress();
+      }
+      this.loading = false;
+    },
     calulateProgress () {
       const values = {
         PENDING: [],
@@ -350,8 +399,9 @@ export default {
         this.tasks = this.listTask;
       }
     },
-    selectHandler () {
-      if (this.selectVal !== '') {
+    selectHandler (value) {
+      this.selectVal = value;
+      if (this.selectVal) {
         const taskFilters = this.listTask.filter((st) => st.assignTo === this.selectVal);
         this.tasks = taskFilters;
       } else {

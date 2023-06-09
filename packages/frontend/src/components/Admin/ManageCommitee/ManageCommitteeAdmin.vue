@@ -40,6 +40,7 @@
           @change="selectHandlerLecturer( 'SECRETARY', $event)"
         />
       </div>
+      <div class="mx-auto" />
       <ButtonAddItem
         :title="'Thêm hội đồng'"
         @handle-import="$store.dispatch('url/updateSection', 'committee-import')"

@@ -32,7 +32,6 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
@@ -45,7 +44,6 @@ export default {
   name: 'AdminPage',
   components: {
     ErrorModalVue,
-    LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
     BodySchedulePage,
@@ -78,7 +76,7 @@ export default {
         },
         {
           id: 'admin',
-          value: 'Quản lý admin',
+          value: 'Quản lý quản trị viên',
           icon: 'fa-solid fa-shield-halved',
         },
         {

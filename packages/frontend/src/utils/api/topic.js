@@ -6,7 +6,7 @@ const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TopicApi {
-  static async listAllTopics(token, options, lecturerId, scheduleId) {
+  static async listAllTopics (token, options, lecturerId, scheduleId) {
     let url = urlWithPagination('/topic', options);
     if (lecturerId) url += `&lecturerId=${lecturerId}`;
     if (scheduleId) url += `&scheduleId=${scheduleId}`;
@@ -19,7 +19,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async getTopic(token, id) {
+  static async getTopic (token, id) {
     const res = await axios.get(`/topic/${id}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -29,7 +29,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listAllTopicsByLecturerId(token, lecturerId, options) {
+  static async listAllTopicsByLecturerId (token, lecturerId, options) {
     const url = urlWithPagination(`/topic?lecturerId=${lecturerId}`, options);
     const res = await axios.get(url, {
       headers: {
@@ -40,7 +40,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsMarkGrade(token, options, type, scheduleId) {
+  static async listAllTopicsMarkGrade (token, options, type, scheduleId) {
     let url = urlWithPagination('/topic', options);
     let lecturer = 'is_lecturer_mark=1';
     if (type === 'CR') lecturer = 'is_critical_mark=1';
@@ -57,7 +57,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByCritical(token, criticalId, options) {
+  static async listAllTopicsByCritical (token, criticalId, options) {
     const url = urlWithPagination(`/topic?criticalId=${criticalId}`, options);
     console.log('🚀 ~ file: topic.js:63 ~ TopicApi ~ listAllTopicsByCritical ~ url:', url);
     const res = await axios.get(url, {
@@ -69,7 +69,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByCriticalAndScheduleId(token, criticalId, scheduleId, options) {
+  static async listAllTopicsByCriticalAndScheduleId (token, criticalId, scheduleId, options) {
     let url = urlWithPagination('/topic', options);
     if (criticalId) url += `&criticalId=${criticalId}`;
     if (scheduleId) url += `&scheduleId=${scheduleId}`;
@@ -82,7 +82,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async updateGradeForTopic(token, topicId, value) {
+  static async updateGradeForTopic (token, topicId, value) {
     const res = await axios.put(`/topic/${topicId}/grade`, value, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async getGradeForTopicByLecturer(token, topicId, type) {
+  static async getGradeForTopicByLecturer (token, topicId, type) {
     const res = await axios.get(`/topic/${topicId}/grade?type=${type}`, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByLecturerIdAndScheduleId(token, lecturerId, scheduleId, options) {
+  static async listAllTopicsByLecturerIdAndScheduleId (token, lecturerId, scheduleId, options) {
     const url = urlWithPagination(`/topic?lecturerId=${lecturerId}&scheduleId=${scheduleId}`, options);
     const res = await axios.get(url, {
       headers: {
@@ -113,7 +113,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByScheduleIds(token, scheduleIds, options) {
+  static async listAllTopicsByScheduleIds (token, scheduleIds, options) {
     const scheduleParams = scheduleIds.join(',');
     const url = urlWithPagination(`/topic?schedule_ids[]=${scheduleParams}`, options);
     const res = await axios.get(url, {
@@ -125,7 +125,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByScheduleId(token, scheduleId, options) {
+  static async listAllTopicsByScheduleId (token, scheduleId, options) {
     const url = urlWithPagination(`/topic?scheduleId=${scheduleId}`, options);
     const res = await axios.get(url, {
       headers: {
@@ -136,7 +136,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicWithName(token, value, type) {
+  static async listTopicWithName (token, value, type) {
     const res = await axios.get(`/topic-search?value=${value}&type=${type}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -145,7 +145,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicById(token, id) {
+  static async listTopicById (token, id) {
     const res = await axios.get(`/topic/${id}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -155,7 +155,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listAllTopicsWithMajor(token, majorId) {
+  static async listAllTopicsWithMajor (token, majorId) {
     const res = await axios.get(`/topic?majorId=${majorId}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -164,7 +164,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicSearch(token, value) {
+  static async listTopicSearch (token, value) {
     const res = await axios.get(`/topic-search?value=${value}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -173,7 +173,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicSearchWithTitle(token, value) {
+  static async listTopicSearchWithTitle (token, value) {
     const res = await axios.get(`/topic-search?type=title&value=${value}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -182,7 +182,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicSearchWithNameTeacher(token, nameTeacher) {
+  static async listTopicSearchWithNameTeacher (token, nameTeacher) {
     const res = await axios.get(`/topic-search?type=teacher&value=${nameTeacher}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -191,7 +191,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async createTopic(token, value) {
+  static async createTopic (token, value) {
     const res = await axios.post('/topic', value, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -201,7 +201,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async updateTopicById(token, value) {
+  static async updateTopicById (token, value) {
     const res = await axios.put(`/topic/${value._id}`, value, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -211,7 +211,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async deleteTopicById(token, id) {
+  static async deleteTopicById (token, id) {
     const res = await axios.delete(`/topic/${id}`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -221,7 +221,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listTopicAcceptRegisters(token) {
+  static async listTopicAcceptRegisters (token) {
     const res = await axios.get('/topic-proposal/student', {
       headers: {
         authorization: `bearer ${token}`,
@@ -231,7 +231,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async addRegisterTopic(token, id) {
+  static async addRegisterTopic (token, id) {
     const res = await axios.post(`/topic-student/${id}`, {}, {
       headers: {
         authorization: `bearer ${token}`,
@@ -241,7 +241,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async addRegisterTopicNew(token, id) {
+  static async addRegisterTopicNew (token, id) {
     const res = await axios.post(`/topic/${id}/register`, {}, {
       headers: {
         authorization: `bearer ${token}`,
@@ -251,7 +251,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async removeRegisterTopicStudent(token, id) {
+  static async removeRegisterTopicStudent (token, id) {
     const res = await axios.delete(`/topic/${id}/register`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -261,7 +261,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async getResultRegister(token) {
+  static async getResultRegister (token) {
     const res = await axios.get('/topic/student/result', {
       headers: {
         authorization: `bearer ${token}`,
@@ -271,7 +271,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async getResultRegisterInProcess(token) {
+  static async getResultRegisterInProcess (token) {
     const res = await axios.get('/topic/student/result?is_in_progress', {
       headers: {
         authorization: `bearer ${token}`,
@@ -281,7 +281,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listTopicMember(token, topicId) {
+  static async listTopicMember (token, topicId) {
     const res = await axios.get(`/topic/${topicId}/members`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -291,7 +291,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicStudents(token, topicId) {
+  static async listTopicStudents (token, topicId) {
     const res = await axios.get(`/topic/${topicId}/students`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -301,7 +301,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async listTopicAdvisorApprove(token, options, scheduleId) {
+  static async listTopicAdvisorApprove (token, options, scheduleId) {
     let url = urlWithPagination('/topic?is_lecturer_approve=1', options);
     if (scheduleId) url += `&schedule_id=${scheduleId}`;
     const res = await axios.get(url, {
@@ -313,7 +313,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listTopicCriticalApprove(token, options, scheduleId) {
+  static async listTopicCriticalApprove (token, options, scheduleId) {
     let url = urlWithPagination('/topic?is_critical_approve=1', options);
     if (scheduleId) url += `&schedule_id=${scheduleId}`;
     const res = await axios.get(url, {
@@ -325,7 +325,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async topicAdvisorApprove(token, id) {
+  static async topicAdvisorApprove (token, id) {
     const res = await axios.post(`/topic/${id}/lecturer/approve`, {}, {
       headers: {
         authorization: `bearer ${token}`,
@@ -335,7 +335,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async topicAdvisorDecline(token, id) {
+  static async topicAdvisorDecline (token, id) {
     const res = await axios.delete(`/topic/${id}/lecturer/decline`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -345,7 +345,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async topicCriticalApprove(token, id) {
+  static async topicCriticalApprove (token, id) {
     const res = await axios.post(`/topic/${id}/critical/approve`, {}, {
       headers: {
         authorization: `bearer ${token}`,
@@ -355,7 +355,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async topicCriticalDecline(token, id) {
+  static async topicCriticalDecline (token, id) {
     const res = await axios.delete(`/topic/${id}/critical/decline`, {
       headers: {
         authorization: `bearer ${token}`,
@@ -365,7 +365,7 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async topicCommitteeByCritical(token, id) {
+  static async topicCommitteeByCritical (token, id) {
     const res = await axios.get('/topic?as_least_lecturer_approve=1', {
       headers: {
         authorization: `bearer ${token}`,
@@ -375,7 +375,7 @@ export default class TopicApi {
     return res.data.data;
   }
 
-  static async importTopic(token, xlsx) {
+  static async importTopic (token, xlsx) {
     const formData = new FormData();
 
     formData.append('file', xlsx);
@@ -393,7 +393,7 @@ export default class TopicApi {
     return res;
   }
 
-  static async importStudentToTopic(token, id, students) {
+  static async importStudentToTopic (token, id, students) {
     const res = await axios.put(`/topic/${id}/student`, students, {
       headers: {
         authorization: `bearer ${token}`,

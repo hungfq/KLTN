@@ -9,6 +9,7 @@
         :can-deselect="false"
         no-results-text="Không có kết quả"
         no-options-text="Không có lựa lựa chọn"
+        :placeholder="'Đợt đăng ký'"
         @change="selectHandlerSchedule"
       />
     </div>
@@ -21,6 +22,7 @@
         no-results-text="Không có kết quả"
         no-options-text="Không có lựa lựa chọn"
         :can-clear="false"
+        :placeholder="'Giảng viên hướng dẫn'"
         @change="selectHandlerLecturer"
       />
     </div>
@@ -160,8 +162,8 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const topics = ref([]);
-    const selectSchedule = ref(0);
-    const selectLecturer = ref(0);
+    const selectSchedule = ref(null);
+    const selectLecturer = ref(null);
     const showSelectStudent = ref(false);
     const selectStudentScheduleId = ref(null);
     const listStudentSelected = ref([]);
