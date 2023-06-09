@@ -126,7 +126,7 @@
             <div class="flex justify-between my-4 mx-4">
               <button
                 class="btn btn-secondary"
-                @click="showConfirmModal=true"
+                @click="showGradeModal=true"
               >
                 Xem chi tiết điểm
               </button>
@@ -152,6 +152,12 @@
     </template>
     <div>Bạn có xác nhận xóa đăng ký này?</div>
   </ConfirmModal>
+  <ShowGradeStudentModal
+    v-model="showGradeModal"
+    :topic-id="currentTopicId"
+    @confirm="showGradeModal=false"
+    @cancel="showGradeModal=false"
+  />
 </template>
 
 <script>
@@ -160,6 +166,7 @@ import 'vue-search-input/dist/styles.css';
 import TopicApi from '../../../utils/api/topic';
 import LineItem from '../LineItem.vue';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
+import ShowGradeStudentModal from '../../Modal/ShowGradeStudent.vue';
 import TitleItem from './TitleItem.vue';
 import BodyAndShadow from './BorderAndShadow.vue';
 import LoadingProcessor from '../../common/Loading.vue';
@@ -172,6 +179,7 @@ export default {
     TitleItem,
     BodyAndShadow,
     LoadingProcessor,
+    ShowGradeStudentModal,
   },
   props: {
     open: {
@@ -189,6 +197,7 @@ export default {
       hashTopics: new Map(),
       tab: '',
       showConfirmModal: false,
+      showGradeModal: false,
       loading: false,
 
     };
@@ -212,6 +221,12 @@ export default {
     currentTopic () {
       if (!this.tab) return null;
       return this.hashTopics.get(this.tab);
+    },
+    currentTopicId () {
+      if (this.currentTopic) {
+        return this.currentTopic._id || '';
+      }
+      return null;
     },
   },
   async mounted () {

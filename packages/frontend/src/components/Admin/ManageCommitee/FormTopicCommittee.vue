@@ -61,11 +61,8 @@ import {
 } from 'vue';
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
-import Multiselect from '@vueform/multiselect';
 import ButtonImport from '../../common/ButtonImport.vue';
 import TopicApi from '../../../utils/api/topic';
-import ConfirmModal from '../../Modal/ConfirmModal.vue';
-import UploadButtonVue from '../UploadButton.vue';
 import CommitteeApi from '../../../utils/api/committee';
 
 export default {

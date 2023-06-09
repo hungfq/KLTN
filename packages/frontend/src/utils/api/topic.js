@@ -29,6 +29,16 @@ export default class TopicApi {
     return res.data.data;
   }
 
+  static async getGradeTopicByStudent (token, id) {
+    const res = await axios.get(`/topic/${id}/grade/student`, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
   static async listAllTopicsByLecturerId (token, lecturerId, options) {
     const url = urlWithPagination(`/topic?lecturerId=${lecturerId}`, options);
     const res = await axios.get(url, {
