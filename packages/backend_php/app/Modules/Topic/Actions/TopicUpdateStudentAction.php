@@ -40,6 +40,17 @@ class TopicUpdateStudentAction
 //                throw new UserException("Student not found!");
                 throw new UserException('Sinh viên không tồn tại trong hệ thống!', 400);
             }
+            $studentAlreadyRegistered = Topic::query()
+                ->where('id', '<>', $this->dto->id)
+                ->where('schedule_id', $this->topic->schedule_id)
+                ->whereHas('students', function ($q) use ($student) {
+                    $q->where('id', data_get($student, 'id'));
+                })->exists();
+            if ($studentAlreadyRegistered) {
+//                throw new UserException('Some student already has register in another topic');
+                throw new UserException(sprintf('Sinh viên %s đã đăng ký đề tài khác!', data_get($student, 'code')), 400);
+            }
+
             $this->studentIds[] = $student->id;
         }
 
