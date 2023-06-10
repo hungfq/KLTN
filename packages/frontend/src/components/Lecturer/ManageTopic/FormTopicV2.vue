@@ -50,7 +50,7 @@
           :disabled="isView"
           :validation-messages="{ min: 'Phải có ít nhất 1 thành viên', max:'Có tối đa 3 thành viên' }"
         />
-        <div class="my-2-1 w-3/5">
+        <!-- <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Sinh viên đăng kí
           </span>
@@ -70,7 +70,7 @@
               class="w-[400px]"
             />
           </div>
-        </div>
+        </div> -->
         <FormKit
           v-model="description"
           name="description"
@@ -88,7 +88,8 @@
         <button
           v-if="!isView && !loading "
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="btn btn-primary"
+          :disabled="!isValid"
           @click="handleAddTopicAdmin"
         >
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
@@ -160,6 +161,21 @@ export default {
     isView () {
       return this.section === 'topic-view';
     },
+    isValid () {
+      if (!this.title) {
+        return false;
+      }
+      if (!this.limit) {
+        return false;
+      }
+      if (!this.description) {
+        return false;
+      }
+      if (Number(this.limit) < 1 || Number(this.limit) > 3) {
+        return false;
+      }
+      return true;
+    },
   },
   async mounted () {
     this.loading = true;
@@ -189,8 +205,8 @@ export default {
         this.limit = topic.limit;
         this.studentIds = topic.students;
       }
-      this.loading = false;
     }
+    this.loading = false;
   },
   methods: {
     rollBack () {
@@ -206,7 +222,6 @@ export default {
         code: this.code,
         limit: this.limit,
         students: studentIds,
-        thesisDefenseDate: this.topicOld.thesisDefenseDate,
         scheduleId: this.topicOld.scheduleId._id || 1,
         lecturerId: this.topicOld.lecturerId._id,
         criticalLecturerId: this.topicOld.criticalLecturerId._id,
@@ -246,12 +261,9 @@ export default {
         this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
         return false;
       }
-      if (this.studentIds.length > this.limit) {
-        this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
-        return false;
-      }
       return true;
     },
+
   },
 };
 </script>

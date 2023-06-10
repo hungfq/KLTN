@@ -173,6 +173,7 @@ export default {
     const selectStudentScheduleId = ref(null);
     const listStudentSelected = ref([]);
     const topicStudentId = ref(0);
+    const topicStudentLimit = ref(3);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
@@ -267,8 +268,11 @@ export default {
       }
     };
     const changeStudents = async (students) => {
-      //  TODO: Add api update student for topic
       try {
+        if (students.length !== topicStudentLimit.value) {
+          $toast.error('Số lượng sinh viên phải bằng số lượng sinh viên quy định trên đề tài!');
+          return;
+        }
         showSelectStudent.value = false;
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
@@ -281,6 +285,7 @@ export default {
       topicStudentId.value = item._id;
       showSelectStudent.value = true;
       listStudentSelected.value = item.list_students;
+      topicStudentLimit.value = item.limit;
     };
 
     const searchVal = ref('');
@@ -318,6 +323,7 @@ export default {
       selectHandlerLecturer,
       changeStudents,
       searchVal,
+      topicStudentLimit,
     };
   },
   computed: {

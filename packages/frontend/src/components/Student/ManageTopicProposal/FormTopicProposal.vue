@@ -263,10 +263,7 @@ export default {
     this.studentIds = [this.userInfo.code];
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
-      console.log('🚀 ~ file: FormTopicProposal.vue:263 ~ mounted ~ id:', id);
-      // const topics = this.$store.state.topic.listTopicProposalStudent;
       const topic = await TopicProposalApi.getTopicProposal(this.token, id);
-      console.log('🚀 ~ file: FormTopicProposal.vue:265 ~ mounted ~ topic:', topic);
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;

@@ -46,7 +46,6 @@
           @keydown.space.enter="search"
         />
         <EasyDataTable
-          v-model:items-selected="itemsSelected"
           v-model:server-options="serverOptions"
           :server-items-length="serverItemsLength"
           show-index
@@ -54,8 +53,6 @@
           :items="topicShow"
           :loading="loading"
           buttons-pagination
-          :rows-items="rowItems"
-          @click-row="showRow"
         >
           <template #empty-message>
             <div class="text-center text-gray-500">
@@ -66,59 +63,19 @@
             <div
               class="flex"
             >
-              <div class="flex flex-col grow">
-                <div>Danh sach sinh vien</div>
-                <ul>
+              <div class="flex flex-col ml-16">
+                <div class="font-semibold">
+                  Danh sách sinh viên
+                </div>
+                <ul class="list-decimal mx-4">
                   <li
-                    v-for="student in item.students"
-                    :key="`${student}`"
+                    v-for="student in item.list_students"
+                    :key="`st-${student._id}`"
                   >
-                    {{ student }}
+                    {{ student.code }} : {{ student.name }}
                   </li>
                 </ul>
               </div>
-              <div class="flex flex-col grow">
-                <div>Diem so</div>
-                <div class="flex">
-                  <div> Giao vien huong dan: </div>
-                  <div>{{ item.advisorLecturerGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div> Giao vien phan vien: </div>
-                  <div>{{ item.criticalLecturerGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div>Chu tich hoi dong: </div>
-                  <div>{{ item.committeePresidentGrade }}</div>
-                </div>
-                <div class="flex">
-                  <div> Thu ky hoi dong: </div>
-                  <div>{{ item.advisorLecturerGrade }}</div>
-                </div>
-              </div>
-              <div class="flex flex-col grow">
-                <div>Chap thuan ra hoi dong</div>
-                <div class="flex">
-                  <div> Giao vien huong dan: </div>
-                  <div>{{ item.advisorLecturerApprove ? 'Dong y' : 'Khong dong y' }}</div>
-                </div>
-                <div class="flex">
-                  <div> Giao vien phan bien: </div>
-                  <div>{{ item.criticalLecturerApprove ? 'Dong y' : 'Khong dong y' }}</div>
-                </div>
-              </div>
-            </div>
-          </template>
-          <template #item-import-export="students">
-            <div class-="flex flex-col">
-              <ul>
-                <li
-                  v-for="student in students"
-                  :key="`${student}`"
-                >
-                  {{ student }}
-                </li>
-              </ul>
             </div>
           </template>
           <template #item-operation="item">
@@ -126,15 +83,24 @@
               v-if="checkCanEdit(item.scheduleId)"
               class="flex"
             >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png"
-                class="operation-icon w-6 h-6 mx-2 cursor-pointer"
-                @click="editItem(item)"
-              >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xl"
-                @click="handleRemoveSchedule(item._id)"
+              <IconTooltip
+                title="Chọn sinh viên"
+                :icon="'fa-solid fa-people-group'"
+                @click-icon="selectStudents(item)"
+              />
+              <IconTooltip
+                title="Xem đề tài"
+                @click-icon="showRow(item)"
+              />
+              <IconTooltip
+                title="Sửa đề tài"
+                :icon="'fa-solid fa-pen-to-square'"
+                @click-icon="editItem(item)"
+              />
+              <IconTooltip
+                title="Xóa đề tài"
+                :icon="'fa-solid fa-trash-can'"
+                @click-icon="handleRemoveSchedule(item._id)"
               />
             </div>
           </template>
@@ -152,8 +118,15 @@
     </template>
     <div>Bạn có xác nhận xóa đề tài này không?</div>
   </ConfirmModal>
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="selectStudentScheduleId"
+    :type="'TOPIC'"
+    :selected="listStudentSelected"
+    :enabled-excel="true"
+    @change-students="changeStudents"
+  />
 </template>
-
 <script>
 // import { mapState, mapGetters } from 'vuex';
 import {
@@ -169,12 +142,16 @@ import 'vue-search-input/dist/styles.css';
 // import 'vue-search-input/dist/styles.css';
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
+import IconTooltip from '../../common/IconTooltip.vue';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    IconTooltip,
+    SelectStudent,
   },
   setup () {
     const store = useStore();
@@ -182,14 +159,22 @@ export default {
     const itemsSelected = ref([]);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
+    const showSelectStudent = ref(false);
+    const selectStudentScheduleId = ref(null);
+    const listStudentSelected = ref([]);
+    const topicStudentId = ref(0);
+    const topicStudentLimit = ref(0);
     // Init value
     const topics = ref([]);
     const schedules = ref([]);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
-      { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Sinh vien', value: 'students' },
+      {
+        text: 'Tên đề tài ', value: 'title', sortable: true, width: 300,
+      },
+      { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Số lượng', value: 'limit' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -301,6 +286,28 @@ export default {
       else await loadToServer({ ...serverOptions.value, search: `${searchVal.value}` });
     };
 
+    const changeStudents = async (students) => {
+      try {
+        if (students.length !== topicStudentLimit.value) {
+          $toast.error('Số lượng sinh viên phải bằng số lượng sinh viên quy định trên đề tài!');
+          return;
+        }
+        showSelectStudent.value = false;
+        await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
+        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
+    const selectStudents = (item) => {
+      selectStudentScheduleId.value = item.scheduleId;
+      topicStudentId.value = item._id;
+      showSelectStudent.value = true;
+      listStudentSelected.value = item.list_students;
+      topicStudentLimit.value = item.limit;
+    };
+
     const topicShow = computed(() => {
       if (!topics.value) return [];
       return topics.value.map((topic) => ({
@@ -317,6 +324,8 @@ export default {
         criticalLecturerGrade: topic.criticalLecturerGrade || 0,
         criticalLecturerApprove: topic.criticalLecturerApprove || false,
         advisorLecturerApprove: topic.advisorLecturerApprove || false,
+        list_students: topic.list_students,
+        limit: topic.limit,
       }));
     });
 
@@ -327,6 +336,7 @@ export default {
       itemsSelected,
       loading,
       serverOptions,
+      topicStudentLimit,
       topics,
       serverItemsLength,
       rowItems,
@@ -345,16 +355,17 @@ export default {
       tab,
       searchVal,
       search,
+      showSelectStudent,
+      selectStudentScheduleId,
+      listStudentSelected,
+      topicStudentId,
+      changeStudents,
+      selectStudents,
     };
   },
   data () {
     return {
-      // selectVal: '',
-      // searchVal: '',
-      // topics: [],
       canEdit: false,
-      // showConfirmModal: false,
-      // listSchedules: [],
     };
   },
   computed: {
