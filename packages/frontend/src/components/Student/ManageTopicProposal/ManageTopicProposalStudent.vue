@@ -43,7 +43,7 @@
         </div>
       </div>
       <div
-        class="shadow-md sm:rounded-lg m-4"
+        class="m-4 2xl:min-h-[710px] lg:min-h-[530px]"
       >
         <SearchInput
           v-model="searchVal"
@@ -109,6 +109,11 @@
                   @click="handleRemoveTopicProposal(item._id)"
                 />
               </div>
+            </div>
+          </template>
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
             </div>
           </template>
         </EasyDataTable>

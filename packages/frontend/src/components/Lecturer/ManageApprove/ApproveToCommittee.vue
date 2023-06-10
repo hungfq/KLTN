@@ -49,6 +49,11 @@
           buttons-pagination
           :rows-items="rowItems"
         >
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
+            </div>
+          </template>
           <template #item-import-export="students">
             <div class-="flex flex-col">
               <ul>

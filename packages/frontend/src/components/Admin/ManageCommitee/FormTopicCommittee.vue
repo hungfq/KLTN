@@ -36,7 +36,13 @@
               buttons-pagination="false"
               hide-footer
               :rows-items="rowItems"
-            />
+            >
+              <template #empty-message>
+                <div class="text-center text-gray-500">
+                  Không có dữ liệu
+                </div>
+              </template>
+            </EasyDataTable>
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@
             />
           </div>
         </div>
-        <div class="shadow-md sm:rounded-lg m-4">
+        <div class="2xl:min-h-[770px] lg:min-h-[590px] m-4">
           <SearchInput
             v-model="searchVal"
             :search-icon="true"
@@ -95,6 +95,11 @@
             <template #item-limit="item">
               <div class="m-1 flex items-center  justify-center ml-2">
                 {{ `${item.current_register} / ${item.limit}` }}
+              </div>
+            </template>
+            <template #empty-message>
+              <div class="text-center text-gray-500">
+                Không có dữ liệu
               </div>
             </template>
           </EasyDataTable>

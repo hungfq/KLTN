@@ -57,6 +57,11 @@
           :rows-items="rowItems"
           @click-row="showRow"
         >
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
+            </div>
+          </template>
           <template #expand="item">
             <div
               class="flex"

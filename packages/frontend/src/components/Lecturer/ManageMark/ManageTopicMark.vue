@@ -104,6 +104,11 @@
                 </div>
               </div>
             </template>
+            <template #empty-message>
+              <div class="text-center text-gray-500">
+                Không có dữ liệu
+              </div>
+            </template>
           </EasyDataTable>
         </div>
       </div>
