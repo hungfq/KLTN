@@ -5,11 +5,14 @@ namespace App\Modules\Task\Actions;
 use App\Entities\Task;
 use App\Entities\Topic;
 use App\Exceptions\UserException;
+use App\Libraries\Socket;
 use App\Modules\Task\DTO\TaskStoreDTO;
+use Illuminate\Support\Collection;
 
 class TaskStoreAction
 {
     public TaskStoreDTO $dto;
+    public $task;
 
     /***
      * @param TaskStoreDTO $dto
@@ -49,7 +52,15 @@ class TaskStoreAction
 
     protected function createTask()
     {
-        Task::create($this->dto->all());
+        $this->task = Task::create($this->dto->all());
+        $members = data_get($this->task, 'topic.students', []);
+        $ids = $members->pluck('id');
+
+        $ids[] = data_get($this->task, 'topic.lecturer_id');
+        if ($ids instanceof Collection) {
+            $ids = $ids->toArray();
+        }
+        Socket::sendUpdateTaskRequest($ids, $this->task->topic_id);
         return $this;
     }
 }
