@@ -46,6 +46,10 @@ class TopicViewAction
             $query->where('schedule_id', $scheduleId);
         }
 
+        if ($committee_id = $dto->committee_id) {
+            $query->where('committee_id', $committee_id);
+        }
+
         if ($criticalId = $dto->criticalId) {
             $query->where('topics.critical_id', $criticalId);
         }
