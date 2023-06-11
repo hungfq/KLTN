@@ -11,11 +11,11 @@ class TopicProposalUpdateValidator extends AbstractValidator
     {
         return [
             'id' => 'required',
-            'code' => 'nullable',
+//            'code' => 'nullable',
             'title' => 'required',
             'description' => 'nullable',
             'limit' => 'required',
-            'scheduleId' => 'nullable',
+//            'scheduleId' => 'nullable',
             'lecturerId' => 'nullable',
 
             'students' => 'nullable|array',
