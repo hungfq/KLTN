@@ -210,6 +210,29 @@ export default {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
       else await loadToServer({ ...serverOptions.value, search: searchVal.value });
     };
+
+    const upload = async (files) => {
+      if (files.length > 0) {
+        try {
+          loading.value = true;
+          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0], type: this.module.toUpperCase() })
+            .then((data) => {
+              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                $toast.error('Người dùng đã tồn tại!');
+              } else if (data.status === 200) {
+                $toast.success('Đã nhập thành công!');
+              }
+            });
+          loading.value = false;
+        } catch (e) {
+          loading.value = false;
+          $toast.error('File không đúng chuẩn!');
+        }
+      } else {
+        $toast.error('File không tồn tại');
+      }
+      await loadToServer(serverOptions.value);
+    };
     return {
       headers,
       items,
@@ -230,6 +253,7 @@ export default {
       nameRole,
       searchVal,
       search,
+      upload,
     };
   },
   computed: {
@@ -242,26 +266,6 @@ export default {
     ...mapGetters('url', [
       'page', 'module', 'section', 'id',
     ]),
-  },
-  methods: {
-    async upload (files) {
-      if (files.length > 0) {
-        try {
-          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0], type: this.module.toUpperCase() })
-            .then((data) => {
-              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                this.$toast.error('File không đúng chuẩn hoặc người dùng đã tồn tại');
-              } else if (data.status === 200) {
-                this.$toast.success('Đã nhập thành công!');
-              }
-            });
-        } catch (e) {
-          this.$toast.error('File không đúng chuẩn!');
-        }
-      } else {
-        this.$toast.error('File không tồn tại');
-      }
-    },
   },
 };
 </script>

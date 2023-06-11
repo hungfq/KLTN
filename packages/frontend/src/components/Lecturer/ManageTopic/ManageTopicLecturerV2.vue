@@ -32,12 +32,12 @@
             </option>
           </select>
         </div>
-        <div
+        <!-- <div
           class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
           @click="$store.dispatch('url/updateSection', 'topic-import')"
         >
           Thêm đề tài
-        </div>
+        </div> -->
       </div>
       <div class="shadow-md sm:rounded-lg m-4">
         <SearchInput
