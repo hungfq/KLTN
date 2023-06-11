@@ -36,7 +36,7 @@ class UserImportAction
             'email' => 'Email(*)',
             'gender' => 'Giới tính',
         ];
-
+dd($arrFile);
         $headingFile = $arrFile[0];
         unset($arrFile[0]);
 
