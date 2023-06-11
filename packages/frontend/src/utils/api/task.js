@@ -55,6 +55,17 @@ export default class TaskApi {
     return res.data.data;
   }
 
+  static async updateManyTask (token, tasks) {
+    if (tasks.length === 0) return;
+    const res = await axios.put('/task/update-multi', { tasks }, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
   static async updateTaskStatus (token, value) {
     const {
       _id, status,

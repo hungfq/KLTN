@@ -78,9 +78,22 @@ export default {
     updatePage (page) {
       this.$store.dispatch('url/updatePage', page);
     },
+    formatDate (rawDate) {
+      try {
+        if (!rawDate || rawDate === '') return '';
+        const date = new Date(rawDate);
+        const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          .toISOString();
+        const localDate = moment(dateString).local();
+        return localDate.format('YYYY-MM-DD HH:mm:ss');
+      } catch (e) {
+        return '';
+      }
+    },
     timeAgo (createdAt) {
+      const date = this.formatDate(createdAt);
       moment.updateLocale('vi');
-      return moment(createdAt).fromNow();
+      return moment(date).fromNow();
     },
     unreadCount (listNotifications) {
       return listNotifications.filter((x) => x.isRead === false).length;

@@ -218,9 +218,11 @@
 import { mapGetters } from 'vuex';
 import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
+import { debounce } from 'lodash';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
+import TaskApi from '../../utils/api/task';
 
 export default {
   name: 'TaskDraggable',
@@ -269,6 +271,8 @@ export default {
         DONE: [],
       },
       loading: false,
+      timeOut: null,
+      timer: 1500,
     };
   },
   computed: {
@@ -299,20 +303,6 @@ export default {
       handler () {
         this.calulateProgress();
       },
-    },
-    listTaskUpdate: {
-      async handler () {
-        await Promise.all([...this.listTaskUpdate.values()].map((task) => {
-          if (task) {
-            return this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: task })
-              .then(() => {
-                this.listTaskUpdate.delete(task._id);
-              });
-          }
-          return Promise.resolve();
-        }));
-      },
-      deep: true,
     },
     topicId: {
       async handler () {
@@ -373,18 +363,6 @@ export default {
         this.tasks = updatedArray;
       }
       this.editTask = null;
-      // this.statusEdit = false;
-    },
-    async editUpdatePositionTask (column) {
-      if (this.editTask) {
-        this.editTask.status = column.value;
-        await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: this.editTask });
-      }
-      this.editTask = null;
-    },
-    handleChange (task) {
-      this.editTask = task;
-      this.listIdTaskUpdate.push(...new Set([...this.listIdTaskUpdate, task._id]));
     },
     search () {
       if (this.searchVal !== '') {
@@ -417,7 +395,15 @@ export default {
         const index = this.values[status].findIndex((obj) => parseInt(obj._id, 10) === parseInt(id, 10));
         if (index !== -1) {
           this.values[status][index] = { ...this.values[status][index], status };
-          await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: { ...this.values[status][index], status } });
+          this.listTaskUpdate.set(parseInt(id, 10), this.values[status][index]);
+          clearTimeout(this.timeOut);
+
+          this.timeOut = setTimeout(async () => {
+            if (this.listTaskUpdate.size > 0) {
+              await TaskApi.updateManyTask(this.token, [...this.listTaskUpdate.values()]);
+              this.listTaskUpdate = new Map();
+            }
+          }, this.timer);
         }
       }
     },
