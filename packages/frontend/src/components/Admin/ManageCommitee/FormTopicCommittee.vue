@@ -188,7 +188,7 @@ export default {
       try {
         const committeeId = store.getters['url/id'];
         const valueTopics = listTopicsSelected.value.map((item) => item._id);
-        await CommitteeApi.updateCommittee(token, committeeId, { ...currentCommittee.value, topics: valueTopics });
+        await CommitteeApi.updateTopicsCommittee(token, committeeId, valueTopics);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
         rollBack();
       } catch (e) {

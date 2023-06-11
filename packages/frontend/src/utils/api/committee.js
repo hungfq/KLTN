@@ -56,6 +56,16 @@ export default class CommitteeApi {
     return res.data.data;
   }
 
+  static async updateTopicsCommittee (token, id, topics) {
+    const res = await axios.put(`/committee/${id}/topic`, { topics }, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
   static async deleteCommittee (token, id) {
     const res = await axios.delete(`/committee/${id}`, {
       headers: {

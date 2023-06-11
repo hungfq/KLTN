@@ -198,9 +198,11 @@ export default {
           if (this.isSave) {
             await CommitteeApi.addCommittee(this.token, value);
             this.$toast.success('Đã thêm thành công!');
+            this.rollBack();
           } else if (this.isUpdate) {
             await CommitteeApi.updateCommittee(this.token, this.id, value);
             this.$toast.success('Đã cập nhật thành công!');
+            this.rollBack();
           }
         }
       } catch (e) {
