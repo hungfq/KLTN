@@ -31,7 +31,7 @@ class TaskUpdateMultiAction
 
     protected function checkAndUpdateOneTask($data)
     {
-        $task = Task::find(data_get($data, 'id'));
+        $task = Task::find(data_get($data, '_id'));
         if (!$task) {
 //            throw new UserException('Task not found');
             throw new UserException('Nhiệm vụ không tồn tại trong hệ thống!', 400);

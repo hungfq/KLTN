@@ -11,7 +11,7 @@ class TaskUpdateMultiValidator extends AbstractValidator
     {
         return [
             'tasks' => 'array|required',
-            'tasks.*.id' => 'required',
+            'tasks.*._id' => 'required',
             'tasks.*.code' => 'nullable',
             'tasks.*.title' => 'required',
             'tasks.*.description' => 'nullable',
