@@ -10,7 +10,6 @@ module.exports = {
 
   plugins: [daisyui],
   daisyui: {
-    darkTheme: 'dark',
     themes: [
       {
         mytheme: {

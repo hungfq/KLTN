@@ -87,8 +87,8 @@ export default {
     const loading = ref(false);
     const headers = [
       { text: 'Tiêu chí', value: 'title', sortable: true },
-      { text: 'Giáo viên hướng dẫn ', value: 'lecturer_grade', width: 170 },
-      { text: 'Giáo viên phản phản biện', value: 'critical_grade', width: 170 },
+      { text: 'Giảng viên hướng dẫn ', value: 'lecturer_grade', width: 170 },
+      { text: 'Giảng viên phản biện', value: 'critical_grade', width: 170 },
       { text: 'Chủ tịch hội đồng', value: 'president_grade', width: 170 },
       { text: 'Thư ký hội đồng', value: 'secretary_grade', width: 170 },
     ];

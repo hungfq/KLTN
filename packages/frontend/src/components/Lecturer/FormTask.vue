@@ -68,7 +68,7 @@
         />
         <div class="w-3/4">
           <span class="font-bold text-sm">
-            Giáo viên hướng dẫn
+            Giảng viên hướng dẫn
           </span>
           <div class="mt-1">
             <Multiselect

@@ -52,7 +52,7 @@
         />
         <div class="w-3/5">
           <span class="font-bold text-sm">
-            Giáo viên hướng dẫn
+            Giảng viên hướng dẫn
           </span>
           <div class="mt-1">
             <Multiselect
@@ -69,7 +69,7 @@
         </div>
         <div class="w-3/5">
           <span class="font-bold text-sm">
-            Giáo viên phản biện
+            Giảng viên phản biện
           </span>
           <div class="mt-1">
             <Multiselect

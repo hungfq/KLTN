@@ -13,7 +13,7 @@
       <div class="flex justify-between items-start p-4 rounded-t border-b">
         <!-- TODO: Rename for form committee -->
         <h3 class="text-xl font-semibold text-gray-900">
-          Thông tin hoi dong
+          Thông tin hội đồng
         </h3>
       </div>
       <template v-if="!loading">
@@ -40,7 +40,7 @@
           />
           <div class="w-[400px]">
             <span class="font-bold text-sm">
-              Giáo viên phản biện
+              Giảng viên phản biện
             </span>
             <div class="mt-1">
               <Multiselect

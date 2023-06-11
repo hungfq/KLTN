@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <div>
-    <div class="p-2 w-full h-full mx-auto">
+    <div class="p-2 w-full h-full overflow-hidden">
       <!-- Modal content -->
       <div class="bg-white rounded-lg shadow">
         <!-- Modal header -->

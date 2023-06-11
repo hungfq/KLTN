@@ -40,8 +40,8 @@ const actions = {
   },
   async importStudent ({ dispatch }, payload) {
     try {
-      const { token, xlsx } = payload;
-      const data = await StudentApi.importStudent(token, xlsx);
+      const { token, xlsx, type } = payload;
+      const data = await StudentApi.importStudent(token, xlsx, type);
       await dispatch('fetchListStudent', token);
       return data;
     } catch (e) {

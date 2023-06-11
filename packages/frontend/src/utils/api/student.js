@@ -56,11 +56,10 @@ export default class StudentApi {
     return res.data;
   }
 
-  static async importStudent (token, xlsx) {
+  static async importStudent (token, xlsx, type) {
     const formData = new FormData();
-
     formData.append('file', xlsx);
-    formData.append('type', 'STUDENT');
+    formData.append('type', type);
     const res = await axios.post(
       '/user/import',
       formData,

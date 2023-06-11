@@ -49,7 +49,7 @@
                 class="w-[400px] !mx-8"
               >
                 <span class="font-bold text-sm">
-                  Giáo viên hướng dẫn
+                  Giảng viên hướng dẫn
                 </span>
                 <div class="mt-1">
                   <Multiselect

@@ -239,12 +239,15 @@ export default {
     ...mapGetters('auth', [
       'userId', 'userEmail', 'userRole', 'token',
     ]),
+    ...mapGetters('url', [
+      'page', 'module', 'section', 'id',
+    ]),
   },
   methods: {
     async upload (files) {
       if (files.length > 0) {
         try {
-          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })
+          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0], type: this.module.toUpperCase() })
             .then((data) => {
               if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
                 this.$toast.error('File không đúng chuẩn hoặc người dùng đã tồn tại');

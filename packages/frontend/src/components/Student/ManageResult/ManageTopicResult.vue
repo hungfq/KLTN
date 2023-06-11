@@ -26,7 +26,7 @@
                       :content="currentTopic.code"
                     />
                     <LineItem
-                      :title="'Giáo viên phản biện: '"
+                      :title="'Giảng viên phản biện: '"
                       :content="currentTopic.criticalLecturerId?.name || ''"
                     />
                   </div>
@@ -36,7 +36,7 @@
                       :content="`${currentTopic.scheduleId.code}: ${currentTopic.scheduleId.name}`"
                     />
                     <LineItem
-                      :title="'Giáo viên hướng dẫn: '"
+                      :title="'Giảng viên hướng dẫn: '"
                       :content="currentTopic.lecturerId?.name || ''"
                     />
                   </div>
@@ -96,11 +96,11 @@
               <div class="px-4 py-3 bg-white">
                 <div class="flex flex-col">
                   <LineItem
-                    :title="'Giáo viên hướng dẫn: '"
+                    :title="'Giảng viên hướng dẫn: '"
                     :content="currentTopic.advisorLecturerApprove ? 'Đồng ý' : 'Chưa đồng ý'"
                   />
                   <LineItem
-                    :title="'Giáo viên phản biện: '"
+                    :title="'Giảng viên phản biện: '"
                     :content="currentTopic.criticalLecturerApprove ? 'Đồng ý' : 'Chưa đồng ý'"
                   />
                 </div>
@@ -117,9 +117,9 @@
                   v-else
                   class="list-decimal pl-4"
                 >
-                  <li><span class="font-semibold">Giáo viên phản biện:</span> {{ currentTopic.committee.critical ? currentTopic.committee.critical.name : '' }}</li>
                   <li><span class="font-semibold">Chủ tịch  hội đồng:</span> {{ currentTopic.committee.president ? currentTopic.committee.president.name : '' }}</li>
                   <li><span class="font-semibold">Thư ký  hội đồng:</span> {{ currentTopic.committee.secretary ? currentTopic.committee.secretary.name : '' }}</li>
+                  <li><span class="font-semibold">Giảng viên phản biện:</span> {{ currentTopic.committee.critical ? currentTopic.committee.critical.name : '' }}</li>
                 </ol>
               </div>
             </BodyAndShadow>

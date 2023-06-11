@@ -65,12 +65,6 @@
       buttons-pagination
       :rows-items="rowItems"
     >
-      <template #header-import-export="header">
-        <a
-          class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-          :href="`${BASE_API_URL}/api/v2/template?type=User`"
-        >Tải mẫu nhập đề tài</a>
-      </template>
       <template #empty-message>
         <div class="text-center text-gray-500">
           Không có dữ liệu
@@ -171,7 +165,7 @@ export default {
     const headers = [
       { text: 'Mã hội đồng', value: 'code', sortable: true },
       { text: 'Tên hội đồng ', value: 'name', sortable: true },
-      { text: 'Giáo viên phản biện', value: 'criticalLecturerId.name' },
+      { text: 'Giảng viên phản biện', value: 'criticalLecturerId.name' },
       { text: 'Chủ tịch hội đồng', value: 'committeePresidentId.name' },
       { text: 'Thư kí hội đồng', value: 'committeeSecretaryId.name' },
       { text: 'import-export', value: 'import-export' },

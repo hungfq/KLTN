@@ -22,6 +22,7 @@
                 v-if="field.type === 'text' || field.type === 'email' || field.type === 'password'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                data-theme="light"
                 :name="field.name"
                 :type="field.type"
                 :placeholder="field.label"
@@ -44,6 +45,7 @@
                 v-else-if="field.type === 'select'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                data-theme="light"
                 :name="field.name"
                 :rules="field.rules"
                 class="input input-bordered pr-2"
@@ -84,6 +86,7 @@
                 v-if="field.type === 'text' || field.type === 'email' || field.type === 'password'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                data-theme="light"
                 :name="field.name"
                 :type="field.type"
                 :placeholder="field.label"
@@ -95,6 +98,7 @@
                 v-else-if="field.type === 'textarea'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                data-theme="light"
                 :rules="field.rules"
                 :name="field.name"
                 :placeholder="field.label"
@@ -106,6 +110,7 @@
                 v-else-if="field.type === 'select'"
                 :id="field.name"
                 v-model="formValues[field.name]"
+                data-theme="light"
                 :name="field.name"
                 :rules="field.rules"
                 class="input input-bordered pr-2"
@@ -131,14 +136,16 @@
         </div>
       </div>
     </form>
-    <button
-      v-if="!isView"
-      type="submit"
-      :disabled="!!errors.length"
-      class="py-2 px-4 mb-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 w-fit ml-4"
-    >
-      {{ isUpdate ? 'Cập nhật' : 'Lưu' }}
-    </button>
+    <div class="flex justify-end mr-16">
+      <button
+        v-if="!isView"
+        type="submit"
+        :disabled="!!errors.length"
+        class="btn btn-primary my-4"
+      >
+        {{ isUpdate ? 'Cập nhật' : 'Lưu' }}
+      </button>
+    </div>
   </VeeForm>
 </template>
 
