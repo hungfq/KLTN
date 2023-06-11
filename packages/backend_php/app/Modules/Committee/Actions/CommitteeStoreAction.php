@@ -69,7 +69,7 @@ class CommitteeStoreAction
             $topic = Topic::find($topicId);
             if (!$topic) {
 //                throw new UserException("Topic not found!");
-                throw new UserException("Đề tàu không ồn tại trong hệ thống!", 400);
+                throw new UserException("Đề tài không ồn tại trong hệ thống!", 400);
             }
 
             $topic->committee_id = $this->committee->id;
