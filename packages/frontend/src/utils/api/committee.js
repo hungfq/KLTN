@@ -76,12 +76,12 @@ export default class CommitteeApi {
     return res.data.data;
   }
 
-  static async importCommittee (token, xlsx) {
+  static async importTopicCommittee (token, id, xlsx) {
     const formData = new FormData();
 
-    formData.append('xlsx', xlsx);
+    formData.append('file', xlsx);
     const res = await axios.post(
-      '/committee-import',
+      `/committee/${id}/topic/import`,
       formData,
       {
         headers: {

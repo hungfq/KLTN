@@ -21,9 +21,12 @@
             Danh đề tài được GVHD và GVPB duyệt
           </span>
           <div class="mx-auto" />
-          {{ itemsSelected }}
+          <!-- {{ itemsSelected }} -->
         </div>
-        <div class="mt-1">
+        <div
+          v-if="!loading"
+          class="mt-1"
+        >
           <div class="max-h-96 overflow-y-auto">
             <EasyDataTable
               v-model:items-selected="listTopicsSelected"
@@ -33,8 +36,6 @@
               :headers="headers"
               :items="topics"
               :loading="loading"
-              buttons-pagination="false"
-              hide-footer
               :rows-items="rowItems"
             >
               <template #empty-message>
@@ -45,15 +46,23 @@
             </EasyDataTable>
           </div>
         </div>
+        <LoadingProcess v-else />
       </div>
     </div>
   </div>
   <!-- Modal footer -->
-  <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 my-4">
+  <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 my-4 justify-between">
+    <div class="flex mt-4">
+      <div>
+        <UploadButton @uploadFileExcel="upload" />
+      </div>
+      <div>
+        <ButtonDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=TopicCommittee`" />
+      </div>
+    </div>
     <button
       v-if="!isView"
-      type="button"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      class="btn btn-primary"
       @click="handleAddTopicAdmin"
     >
       {{ 'Cập nhật' }}
@@ -70,11 +79,17 @@ import { useToast } from 'vue-toast-notification';
 import ButtonImport from '../../common/ButtonImport.vue';
 import TopicApi from '../../../utils/api/topic';
 import CommitteeApi from '../../../utils/api/committee';
+import UploadButton from '../UploadButton.vue';
+import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
+import LoadingProcess from '../../common/Loading.vue';
 
 export default {
   name: 'FormTopic',
   components: {
     ButtonImport,
+    UploadButton,
+    ButtonDownloadTemplate,
+    LoadingProcess,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -109,15 +124,16 @@ export default {
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
     // Get id from store
-    const transformTopic = (listTopics) => listTopics.map((topic) => ({
-      _id: topic._id || topic.id,
-      title: topic.title,
-      code: topic.code,
-    }));
+    // const transformTopic = (listTopics) => listTopics.map((topic) => ({
+    //   _id: topic._id || topic.id,
+    //   title: topic.title,
+    //   code: topic.code,
+    // }));
     const loadToServer = async (options) => {
       loading.value = true;
       const response = await TopicApi.listAllTopicsByCritical(token, criticalId.value, options, selectSchedule.value);
-      topics.value = transformTopic(response.data);
+      // topics.value = transformTopic(response.data);
+      topics.value = response.data;
       store.state.topic.listTopics = topics.value;
       serverItemsLength.value = response.meta.pagination.total;
       loading.value = false;
@@ -140,9 +156,10 @@ export default {
       try {
         const committeeId = store.getters['url/id'];
         const committee = await CommitteeApi.getCommittee(token, committeeId);
+        const listTopic = await TopicApi.listAllTopicsByCommittee(token, committeeId);
+
         currentCommittee.value = committee;
-        const selected = transformTopic(committee.list_topics);
-        listTopicsSelected.value = [...selected];
+        listTopicsSelected.value = [...listTopic];
         criticalId.value = committee.critical_id;
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -201,6 +218,30 @@ export default {
       listTopicsSelected.value = item.list_students;
     };
 
+    const upload = async (files) => {
+      if (files.length > 0) {
+        try {
+          const committeeId = store.getters['url/id'];
+          loading.value = true;
+          const res = await CommitteeApi.importTopicCommittee(token, committeeId, files[0]);
+          if (res) {
+            if (res.status === 200 && res.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+              $toast.error('Đề tài và mã đã tồn tại hoặc dữ liệu không chính xác');
+            } else if (res.status === 200) {
+              $toast.success('Đã nhập thành công!');
+            }
+          }
+          loading.value = false;
+          rollBack();
+        } catch (e) {
+          loading.value = false;
+          $toast.error('File không đúng chuẩn!');
+        }
+      } else {
+        this.$toast.error('File không tồn tại');
+      }
+    };
+
     return {
       headers,
       items,
@@ -227,6 +268,7 @@ export default {
       rollBack,
       selectHandlerSchedule,
       handleAddTopicAdmin,
+      upload,
     };
   },
   computed: {

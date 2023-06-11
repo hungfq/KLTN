@@ -260,7 +260,7 @@ export default {
         } else {
           await TopicApi.topicCriticalApprove(token, approveId.value);
         }
-        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+        $toast.success('Đã phê duyệt thành công đề tài ra hội đồng');
         await loadToServer(serverOptions.value);
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');

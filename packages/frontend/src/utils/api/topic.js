@@ -19,6 +19,17 @@ export default class TopicApi {
     return res.data;
   }
 
+  static async listAllTopicsByCommittee (token, committeeId) {
+    const url = `/topic?committeeId=${committeeId}`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
   static async getTopic (token, id) {
     const res = await axios.get(`/topic/${id}`, {
       headers: {

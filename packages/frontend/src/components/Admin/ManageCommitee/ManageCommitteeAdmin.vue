@@ -71,14 +71,6 @@
           :href="`${BASE_API_URL}/api/v2/template?type=User`"
         >Tải mẫu nhập đề tài</a>
       </template>
-      <template #item-import-export="item">
-        <div class-="flex">
-          <a
-            class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-            @click="handleAddTopic(item._id)"
-          >Nhập đề tài</a>
-        </div>
-      </template>
       <template #empty-message>
         <div class="text-center text-gray-500">
           Không có dữ liệu
@@ -88,7 +80,7 @@
         <div class="flex">
           <div
             class="tooltip tooltip-bottom pr-3"
-            data-tip="Xem đề tài"
+            data-tip="Xem hội đồng"
           >
             <font-awesome-icon
               class="cursor-pointer"
@@ -97,6 +89,12 @@
               @click="showRow(item)"
             />
           </div>
+          <IconTooltip
+            :icon="'fa-solid fa-book'"
+            :title="'Nhập đề tài'"
+            @click-icon="handleAddTopic(item._id)"
+          />
+
           <div
             class="tooltip tooltip-bottom mr-2"
             data-tip="Chỉnh sửa hội đồng"
@@ -146,6 +144,7 @@ import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
+import IconTooltip from '../../common/IconTooltip.vue';
 
 export default {
   name: 'ManageStudentAdmin',
@@ -154,6 +153,7 @@ export default {
     Multiselect,
     ConfirmModal,
     ButtonAddItem,
+    IconTooltip,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');

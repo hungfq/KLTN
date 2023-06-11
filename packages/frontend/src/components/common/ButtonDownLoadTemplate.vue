@@ -7,7 +7,7 @@
     class="mr-2"
   />Tải mẫu tệp excel</a>
 </template>
-<script>
+<script lang="js">
 export default {
   props: {
     link: {
