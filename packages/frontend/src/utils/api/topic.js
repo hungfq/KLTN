@@ -79,8 +79,18 @@ export default class TopicApi {
   }
 
   static async listAllTopicsByCritical (token, criticalId, options) {
-    const url = urlWithPagination(`/topic?criticalId=${criticalId}`, options);
     console.log('🚀 ~ file: topic.js:63 ~ TopicApi ~ listAllTopicsByCritical ~ url:', url);
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async listAllTopicsByCriticalAndApproved (token, criticalId, options) {
+    const url = urlWithPagination(`/topic?criticalId=${criticalId}&as_least_lecturer_approve=1`, options);
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

@@ -131,7 +131,7 @@ export default {
     // }));
     const loadToServer = async (options) => {
       loading.value = true;
-      const response = await TopicApi.listAllTopicsByCritical(token, criticalId.value, options, selectSchedule.value);
+      const response = await TopicApi.listAllTopicsByCriticalAndApproved(token, criticalId.value, options, selectSchedule.value);
       // topics.value = transformTopic(response.data);
       topics.value = response.data;
       store.state.topic.listTopics = topics.value;
