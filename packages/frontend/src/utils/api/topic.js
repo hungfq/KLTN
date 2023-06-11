@@ -303,7 +303,7 @@ export default class TopicApi {
   }
 
   static async getResultRegisterInProcess (token) {
-    const res = await axios.get('/topic/student/result?is_in_progress', {
+    const res = await axios.get('/topic/student/result?is_in_progress=1', {
       headers: {
         authorization: `bearer ${token}`,
       },
