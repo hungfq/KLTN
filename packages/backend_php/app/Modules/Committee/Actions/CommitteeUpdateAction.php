@@ -23,8 +23,8 @@ class CommitteeUpdateAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->updateCommittee()
-            ->updateTopics();
+            ->updateCommittee();
+//            ->updateTopics();
     }
 
     protected function checkData()
