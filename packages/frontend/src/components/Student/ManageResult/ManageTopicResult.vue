@@ -132,6 +132,7 @@
               </button>
               <button
                 class="btn btn-error"
+                :disabled="!checkCanCancelTopic"
                 @click="removeRegister"
               >
                 Hủy đăng ký
@@ -199,6 +200,7 @@ export default {
       showConfirmModal: false,
       showGradeModal: false,
       loading: false,
+      listScheduleCodeRegister: [],
 
     };
   },
@@ -228,9 +230,16 @@ export default {
       }
       return null;
     },
+    checkCanCancelTopic () {
+      return this.listScheduleCodeRegister.includes(this.tab);
+    },
   },
   async mounted () {
     this.fetch();
+    // console.log('🚀 ~ file: ManageTopicResult.vue:240 ~ mounted ~ this.listScheduleRegisterStudent:', this.listScheduleRegisterStudent);
+    // const listCode = this.listScheduleRegisterStudent.map((schedule) => schedule.code);
+    // console.log('🚀 ~ file: ManageTopicResult.vue:241 ~ mounted ~ listCode.includes(this.tab);:', listCode.includes(this.tab));
+    // console.log('🚀 ~ file: ManageTopicResult.vue:243 ~ mounted ~ this.headerTabs:', this.headerTabs);
   },
   methods: {
     async fetch () {
@@ -242,6 +251,7 @@ export default {
         this.hashTopics.set(scheduleId.code, topic);
       });
       this.headerTabs = [...this.hashTopics.keys()];
+      this.listScheduleCodeRegister = this.listScheduleRegisterStudent.map((schedule) => schedule.code);
       if (this.headerTabs.length > 0) [this.tab] = this.headerTabs;
       this.topics = this.topicResult;
       this.loading = false;
