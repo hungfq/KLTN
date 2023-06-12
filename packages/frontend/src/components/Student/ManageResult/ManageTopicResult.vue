@@ -13,12 +13,12 @@
       >{{ option }}</a>
     </div>
     <div v-if="tab">
-      <div class="flex flex-col">
+      <div class="flex flex-col 2xl:min-h-[770px] lg:min-h-[590px]">
         <div class="flex">
           <div class="w-3/5">
             <BodyAndShadow>
               <TitleItem :title="`Đề tài: ${currentTopic.title}`" />
-              <div class="flex flex-col 2xl:min-h-[500px] lg:min-h-[250px]">
+              <div class="flex flex-col 2xl:min-h-[275px] lg:min-h-[250px]">
                 <div class="flex">
                   <div class="w-1/2">
                     <LineItem
