@@ -17,25 +17,6 @@
         />
       </div>
       <div class="inline-block p-2 rounded-md">
-        <select
-          v-model="selectVal"
-          class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          @change="selectHandler"
-        >
-          <option
-            :key="`key-null`"
-            :value="''"
-          >
-            Tất cả
-          </option>
-          <option
-            v-for="option in listStudents"
-            :key="`key-${option._id}`"
-            :value="option._id"
-          >
-            {{ option.name }}
-          </option>
-        </select>
         <div class="w-64 mx-2">
           <Multiselect
             v-model="selectVal"
@@ -219,6 +200,7 @@ import { mapGetters } from 'vuex';
 import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
 import { debounce } from 'lodash';
+import Multiselect from '@vueform/multiselect';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
@@ -232,6 +214,7 @@ export default {
     SearchInput,
     LoadingProcess,
     Draggable,
+    Multiselect,
   },
 
   data () {
