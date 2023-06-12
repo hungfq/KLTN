@@ -334,7 +334,7 @@ export default {
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.isUpdate) {
-            await TopicProposalApi.addTopicProposal(this.token, { ...value, _id: this.id });
+            await TopicProposalApi.updateTopicProposal(this.token, { ...value, _id: this.id });
             this.loading = false;
             this.$toast.success('Đã cập nhật thành công!');
             this.rollBack();

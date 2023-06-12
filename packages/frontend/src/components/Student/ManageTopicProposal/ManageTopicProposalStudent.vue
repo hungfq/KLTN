@@ -8,13 +8,13 @@
       </div>
       <button
         class="btn btn-primary absolute bottom-0 left-0 !py-0"
-        @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+        @click="updateModules('topic_result')"
       >
         Xem kết quả
       </button>
       <button
         class="btn btn-primary absolute bottom-0 right-0 !py-0"
-        @click="$store.dispatch('url/updateSection', 'topic_register-list')"
+        @click="updateModules('topic_register')"
       >
         Đăng ký đề tài
       </button>
@@ -302,6 +302,11 @@ export default {
       return arr;
     });
 
+    const updateModules = (module) => {
+      store.dispatch('url/updateModule', module);
+      store.dispatch('url/updateSection', `${module}-list`);
+    };
+
     return {
       headers,
       items,
@@ -328,6 +333,7 @@ export default {
       search,
       handleRemoveTopicProposal,
       showRow,
+      updateModules,
       imgNotFound,
     };
   },

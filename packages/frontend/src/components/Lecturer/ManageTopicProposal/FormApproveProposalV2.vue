@@ -209,7 +209,8 @@ export default {
       };
       try {
         if (this.check() && this.isUpdate) {
-          await this.$store.dispatch('topic_proposal/updateTopicProposal', { token: this.token, value: { ...value, _id: this.id } });
+          await TopicProposalApi.updateTopicProposal(this.token, { ...value, _id: this.id });
+          // await this.$store.dispatch('topic_proposal/updateTopicProposal', { token: this.token, value: { ...value, _id: this.id } });
           await TopicProposalApi.approveTopicProposalByLecturer(this.token, this.id);
         }
         this.$toast.success('Đã phê duyệt đề tài hướng dẫn thành công!');

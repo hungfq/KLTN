@@ -155,7 +155,7 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Sinh vien', value: 'students' },
+      { text: 'Sinh viên', value: 'students' },
       { text: 'Hành động', value: 'operation' },
     ];
 
