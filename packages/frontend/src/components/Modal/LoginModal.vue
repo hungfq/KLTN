@@ -36,19 +36,16 @@
           <div class="font-medium">
             Đăng nhập với vai trò là:
           </div>
-          <select
+          <Multiselect
             v-model="role"
-            class="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-            @change="onChangeTeacher"
-          >
-            <option
-              v-for="option in roles"
-              :key="`key-${option.name}`"
-              :value="option.value"
-            >
-              {{ option.name }}
-            </option>
-          </select>
+            :options="roles"
+            :can-deselect="false"
+            :searchable="true"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :can-clear="false"
+            @change="onChangeType"
+          />
         </div>
         <!-- Modal footer -->
         <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200  ">
@@ -66,27 +63,38 @@
   </vue-final-modal>
 </template>
 <script>
+import Multiselect from '@vueform/multiselect';
+
 export default {
   name: 'LoginModal',
+  components: {
+    Multiselect,
+  },
   inheritAttrs: false,
   data () {
     return {
       roles: [
         {
-          name: 'Sinh viên',
+          label: 'Sinh viên',
           value: 'STUDENT',
         },
         {
-          name: 'Giảng viên',
+          label: 'Giảng viên',
           value: 'LECTURER',
         },
         {
-          name: 'Người quản trị',
+          label: 'Người quản trị',
           value: 'ADMIN',
         },
       ],
       role: 'STUDENT',
     };
+  },
+  method: {
+    onChangeType (value) {
+      console.log('🚀 ~ file: LoginModal.vue:103 ~ onChangeType ~ value:', value);
+      this.role = value;
+    },
   },
 };
 </script>
