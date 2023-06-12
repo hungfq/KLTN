@@ -3,14 +3,16 @@
     <LoadingProcessor />
   </template>
   <template v-else>
-    <div class="tabs tabs-boxed bg-white ml-4">
-      <a
-        v-for="option in headerTabs"
-        :key="option"
-        class="tab rounded-md"
-        :class="{'tab-active' : option === tab}"
-        @click="tab= option"
-      >{{ option }}</a>
+    <div class="mt-2 bg-slate-100 py-2">
+      <div class="tabs ml-4">
+        <a
+          v-for="option in headerTabs"
+          :key="option"
+          class="tab tag-lg tab-lifted min-w-[100px] text-blue-900 font-semibold"
+          :class="{'tab-active' : option === tab}"
+          @click="tab= option"
+        >{{ option }}</a>
+      </div>
     </div>
     <div v-if="tab">
       <div class="flex flex-col 2xl:min-h-[770px] lg:min-h-[590px]">

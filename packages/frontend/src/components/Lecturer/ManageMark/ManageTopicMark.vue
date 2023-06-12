@@ -1,7 +1,5 @@
 <template>
-  <loading-process v-if="loading" />
   <div
-    v-else
     class="flex flex-col"
   >
     <template v-if=" !loading &&!isInProcessMark ">
@@ -25,14 +23,16 @@
       </div>
     </template>
     <template v-else>
-      <div class="tabs tabs-boxed bg-white">
-        <a
-          v-for="option in headerTabs"
-          :key="option.code"
-          class="tab rounded-md"
-          :class="{'tab-active' : option.code === tab}"
-          @click="tab= option.code"
-        >{{ option.text }}</a>
+      <div class="mt-2 bg-slate-100 py-2">
+        <div class="tabs ml-4">
+          <a
+            v-for="option in headerTabs"
+            :key="option.code"
+            class="tab tag-lg tab-lifted min-w-[100px] text-blue-900 font-semibold"
+            :class="{'tab-active' : option.code === tab}"
+            @click="tab= option.code"
+          >{{ option.text }}</a>
+        </div>
       </div>
       <div>
         <div class="flex">
@@ -50,7 +50,10 @@
             />
           </div>
         </div>
-        <div class="shadow-md sm:rounded-lg m-4">
+        <div
+          v-if="!loading"
+          class="shadow-md sm:rounded-lg m-4"
+        >
           <SearchInput
             v-model="searchVal"
             :search-icon="true"
@@ -104,6 +107,7 @@
             </template>
           </EasyDataTable>
         </div>
+        <loading-process v-else />
       </div>
     </template>
   </div>

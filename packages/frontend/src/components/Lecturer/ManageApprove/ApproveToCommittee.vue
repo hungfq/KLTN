@@ -1,13 +1,15 @@
 <template>
   <div class="flex flex-col">
-    <div class="tabs tabs-boxed bg-white">
-      <a
-        v-for="option in headerTabs"
-        :key="option.code"
-        class="tab rounded-md"
-        :class="{'tab-active' : option.code === tab}"
-        @click="tab= option.code"
-      >{{ option.text }}</a>
+    <div class="mt-2 bg-slate-100 py-2">
+      <div class="tabs ml-4">
+        <a
+          v-for="option in headerTabs"
+          :key="option.code"
+          class="tab tag-lg tab-lifted min-w-[100px] text-blue-900 font-semibold"
+          :class="{'tab-active' : option.code === tab}"
+          @click="tab= option.code"
+        >{{ option.text }}</a>
+      </div>
     </div>
     <div>
       <div class="flex">
