@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[60px] shadow-2xl rounded">
+  <div class="flex h-[60px] shadow-2xl rounded sticky top-0 border-b-4 bg-white header-navbar">
     <img
       class="h-[40px] my-auto ml-5 w-[50px]"
       :src="imageUrl"
@@ -89,6 +89,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
+.header-navbar {
+  z-index: 1100;
+}
 
 </style>
