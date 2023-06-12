@@ -12,15 +12,16 @@
     </tr>
     <tr></tr>
     <tr>
-        <td colspan="9" style="text-align: center; font-weight: bold;">DANH SÁCH SINH VIÊN ĐĂNG KÝ KHÓA LUẬN TỐT NGHIỆP
+        <td colspan="9" style="text-align: center; font-weight: bold;">DANH SÁCH SINH VIÊN ĐĂNG KÝ ĐỀ TÀI
+            {{ mb_strtoupper(data_get($schedule, 'name', '') . ' (' .data_get($schedule, 'code', '') . ')') }}
         </td>
     </tr>
-    <tr>
-        <td colspan="9" style="text-align: center; font-weight: bold;">HỌC KỲ: 2</td>
-    </tr>
-    <tr>
-        <td colspan="9" style="text-align: center; font-weight: bold;">NĂM HỌC: 2022-2023</td>
-    </tr>
+    {{--    <tr>--}}
+    {{--        <td colspan="9" style="text-align: center; font-weight: bold;">HỌC KỲ: 2</td>--}}
+    {{--    </tr>--}}
+    {{--    <tr>--}}
+    {{--        <td colspan="9" style="text-align: center; font-weight: bold;">NĂM HỌC: 2022-2023</td>--}}
+    {{--    </tr>--}}
     <tr></tr>
     <tr>
         <td colspan="2" height="30" style="text-align: center;">Mã học phần: <br/> GRPR471979</td>
