@@ -17,23 +17,19 @@
         />
       </div>
       <div class="inline-block p-2 rounded-md">
-        <select
-          v-model="selectVal"
-          class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          @change="selectHandler"
-        >
-          <option
-            :key="`key-null`"
-            :value="''"
-          >Tất cả</option>
-          <option
-            v-for="option in listStudents"
-            :key="`key-${option._id}`"
-            :value="option._id"
-          >
-            {{ option.name }}
-          </option>
-        </select>
+        <div class="w-64 mx-2">
+          <Multiselect
+            v-model="selectVal"
+            :options="listStudentSelect"
+            :can-deselect="false"
+            :searchable="true"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :placeholder="'Sinh viên'"
+            :can-clear="false"
+            @change="selectHandler"
+          />
+        </div>
       </div>
       <button
         v-if="!showStatistic"
@@ -45,11 +41,10 @@
     </div>
   </template>
   <div
-
-    class="flex mt-4 w-9/10 justify-center"
-    :class="{'min-h-[300px]' : tasks.length === 0}"
+    class="flex mt-4 w-9/10 justify-center 2xl:min-h-[730px] lg:min-h-[550px]"
   >
     <div
+      v-if="!loading"
       class="flex"
     >
       <template v-if="!showStatistic">
@@ -61,9 +56,10 @@
           <div class="body">
             <draggable
               v-model="values[column.value]"
-              item-key="_id"
+              item-key="code"
               class="flex flex-col "
               :class="column.value"
+              :sort="false"
               group="people"
               @change="log(column.value, $event)"
             >
@@ -171,15 +167,26 @@
             </tr>
           </table>
           <div class="flex justify-between mt-4">
-            <div class="font-semibold">Tổng số: {{ tasks.length }}</div>
-            <div class="font-semibold">Chưa giải quyết: {{ values.PENDING.length }}</div>
-            <div class="font-semibold">Sẽ làm: {{ values['TODO'].length }}</div>
-            <div class="font-semibold">Đang làm: {{ values['IN_PROCESS'].length }}</div>
-            <div class="font-semibold">Hoàn thành: {{ values['DONE'].length }}</div>
+            <div class="font-semibold">
+              Tổng số: {{ tasks.length }}
+            </div>
+            <div class="font-semibold">
+              Chưa giải quyết: {{ values.PENDING.length }}
+            </div>
+            <div class="font-semibold">
+              Sẽ làm: {{ values['TODO'].length }}
+            </div>
+            <div class="font-semibold">
+              Đang làm: {{ values['IN_PROCESS'].length }}
+            </div>
+            <div class="font-semibold">
+              Hoàn thành: {{ values['DONE'].length }}
+            </div>
           </div>
         </div>
       </template>
     </div>
+    <LoadingProcess v-else />
   </div>
   <TaskDetailModalVue
     v-model="showTaskDetail"
@@ -192,8 +199,12 @@
 import { mapGetters } from 'vuex';
 import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
+import { debounce } from 'lodash';
+import Multiselect from '@vueform/multiselect';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
+import LoadingProcess from '../common/Loading.vue';
+import TaskApi from '../../utils/api/task';
 
 export default {
   name: 'TaskDraggable',
@@ -201,7 +212,9 @@ export default {
     TaskCard,
     TaskDetailModalVue,
     SearchInput,
+    LoadingProcess,
     Draggable,
+    Multiselect,
   },
 
   data () {
@@ -240,6 +253,9 @@ export default {
         IN_PROCESS: [],
         DONE: [],
       },
+      loading: false,
+      timeOut: null,
+      timer: 1500,
     };
   },
   computed: {
@@ -252,6 +268,13 @@ export default {
     ...mapGetters('task', [
       'listTask', 'topicId', 'listStudents',
     ]),
+    listStudentSelect () {
+      const arr = [{ value: 0, label: 'Tất cả sinh viên' }];
+      this.listStudents.forEach((st) => {
+        arr.push({ value: st._id, label: st.name });
+      });
+      return arr;
+    },
   },
   watch: {
     listTask: {
@@ -264,27 +287,26 @@ export default {
         this.calulateProgress();
       },
     },
-    listTaskUpdate: {
+    topicId: {
       async handler () {
-        [...this.listTaskUpdate.values()].forEach(async (task) => {
-          if (task) {
-            await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: task });
-            this.listTaskUpdate.delete(task._id);
-          }
-        });
+        await this.fetch();
       },
-      deep: true,
     },
   },
   async mounted () {
-    if (this.topicId) {
-      await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
-      await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
-      this.tasks = this.listTask;
-      this.calulateProgress();
-    }
+    await this.fetch();
   },
   methods: {
+    async  fetch () {
+      this.loading = true;
+      if (this.topicId) {
+        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
+        this.tasks = this.listTask;
+        this.calulateProgress();
+      }
+      this.loading = false;
+    },
     calulateProgress () {
       const values = {
         PENDING: [],
@@ -324,18 +346,6 @@ export default {
         this.tasks = updatedArray;
       }
       this.editTask = null;
-      // this.statusEdit = false;
-    },
-    async editUpdatePositionTask (column) {
-      if (this.editTask) {
-        this.editTask.status = column.value;
-        await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: this.editTask });
-      }
-      this.editTask = null;
-    },
-    handleChange (task) {
-      this.editTask = task;
-      this.listIdTaskUpdate.push(...new Set([...this.listIdTaskUpdate, task._id]));
     },
     search () {
       if (this.searchVal !== '') {
@@ -350,8 +360,9 @@ export default {
         this.tasks = this.listTask;
       }
     },
-    selectHandler () {
-      if (this.selectVal !== '') {
+    selectHandler (value) {
+      this.selectVal = value;
+      if (this.selectVal) {
         const taskFilters = this.listTask.filter((st) => st.assignTo === this.selectVal);
         this.tasks = taskFilters;
       } else {
@@ -367,7 +378,15 @@ export default {
         const index = this.values[status].findIndex((obj) => parseInt(obj._id, 10) === parseInt(id, 10));
         if (index !== -1) {
           this.values[status][index] = { ...this.values[status][index], status };
-          await this.$store.dispatch('task/updateTaskStatus', { token: this.token, value: { ...this.values[status][index], status } });
+          this.listTaskUpdate.set(parseInt(id, 10), this.values[status][index]);
+          clearTimeout(this.timeOut);
+
+          this.timeOut = setTimeout(async () => {
+            if (this.listTaskUpdate.size > 0) {
+              await TaskApi.updateManyTask(this.token, [...this.listTaskUpdate.values()]);
+              this.listTaskUpdate = new Map();
+            }
+          }, this.timer);
         }
       }
     },

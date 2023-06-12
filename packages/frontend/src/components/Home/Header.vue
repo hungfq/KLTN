@@ -62,8 +62,8 @@ export default {
         if (typeLogin === 'ADMIN') {
           this.$router.push('/admin');
           this.$store.dispatch('url/updatePage', 'management');
-          this.$store.dispatch('url/updateModule', 'student');
-          this.$store.dispatch('url/updateSection', 'student-list');
+          this.$store.dispatch('url/updateModule', 'schedule');
+          this.$store.dispatch('url/updateSection', 'schedule-list');
         } else if (typeLogin === 'STUDENT') {
           this.$router.push('/student');
           this.$store.dispatch('url/updatePage', 'management');

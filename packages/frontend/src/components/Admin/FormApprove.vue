@@ -68,20 +68,25 @@
         />
         <div class="w-3/4">
           <span class="font-bold text-sm">
-            Giáo viên hướng dẫn
+            Giảng viên hướng dẫn
           </span>
           <div class="mt-1">
             <Multiselect
               v-model="lecturerId"
               :options="listLecturers"
               :close-on-select="false"
+              :searchable="true"
+              :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :disabled="isView"
             />
           </div>
         </div>
         <div class="w-3/4">
           <span class="font-bold text-sm">
-            Giáo viên phản biện
+            Giảng viên phản biện
           </span>
           <div class="mt-1">
             <Multiselect
@@ -278,6 +283,10 @@ export default {
     }
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -309,7 +318,8 @@ export default {
           await this.$store.dispatch('topic_proposal/approveTopicProposalByAdmin', { token: this.token, value });
           this.$toast.success('Đã duyệt thành công!');
         } catch (e) {
-          this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+          // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+          this.errorHandler(e);
         } finally {
           this.rollBack();
         }

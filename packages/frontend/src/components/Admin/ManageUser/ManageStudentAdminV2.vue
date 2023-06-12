@@ -1,76 +1,83 @@
 <template>
   <div class="flex flex-col">
-    <div class="flex mt-4">
-      <div class="inline-block p-2 rounded-md">
-        <ButtonImport :handle-import="handleImport" />
+    <div class="flex mt-2 justify-end">
+      <div class="mr-4">
+        <ButtonImport
+          :handle-import="handleImport"
+          :title="`Thêm ${nameRole}`"
+        />
       </div>
-      <div class="inline-block p-2 rounded-md">
-        <UploadButtonVue @uploadFileExcel="upload" />
-      </div>
-      <div class="inline-block p-2 rounded-md mt-4">
-        <a
-          class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-          :href="`${BASE_API_URL}/api/v2/template?type=User`"
-        >Tải mẫu tệp excel</a>
-      </div>
+      <UploadButtonVue @uploadFileExcel="upload" />
+      <ButtDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=User`" />
     </div>
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="usersShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #item-gender="item">
-          <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
-        </template>
-        <template #item-status="item">
-          <img
-            v-if="item.status"
-            src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
-            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-            @click="toggleActive(item)"
+    <div class="mx-4 mt-2">
+      <SearchInput
+        v-model="searchVal"
+        :search-icon="true"
+        @keydown.space.enter="search"
+      />
+    </div>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      table-class-name="mx-4"
+      show-index
+      :headers="headers"
+      :items="usersShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
+    >
+      <template #item-gender="item">
+        <span>{{ item.gender === 'male' ? 'Nam' : 'Nữ' }}</span>
+      </template>
+      <template #item-status="item">
+        <img
+          v-if="item.status"
+          src="https://cdn-icons-png.flaticon.com/512/5720/5720464.png"
+          class="operation-icon w-10 h-10 mx-2 cursor-pointer"
+          @click="toggleActive(item)"
+        >
+        <img
+          v-if="!item.status"
+          src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
+          class="operation-icon w-10 h-10 mx-2 cursor-pointer"
+          @click="toggleActive(item)"
+        >
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem tiêu chí"
           >
-          <img
-            v-if="!item.status"
-            src="https://cdn-icons-png.flaticon.com/512/5720/5720465.png"
-            class="operation-icon w-10 h-10 mx-2 cursor-pointer"
-            @click="toggleActive(item)"
-          >
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <div
-              class="tooltip tooltip-bottom pr-3"
-              data-tip="Xem tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                icon="fa-solid fa-eye"
-                size="xl"
-                @click="showRow(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom"
-              data-tip="Chỉnh sửa tiêu chí"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                :icon="['fas', 'pen-to-square']"
-                size="xl"
-                @click="editItem(item)"
-              />
-            </div>
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
           </div>
-        </template>
-      </EasyDataTable>
-    </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Chỉnh sửa tiêu chí"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
+          </div>
+        </div>
+      </template>
+      <template #empty-message>
+        <div class="text-center text-gray-500">
+          Không có dữ liệu
+        </div>
+      </template>
+    </EasyDataTable>
   </div>
 </template>
 
@@ -80,14 +87,19 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import SearchInput from 'vue-search-input';
+import { useRouter, useRoute } from 'vue-router';
 import UploadButtonVue from '../UploadButton.vue';
 import UserApi from '../../../utils/api/user';
 import ButtonImport from '../../common/ButtonImport.vue';
+import ButtDownloadTemplate from '../../common/ButtonDownLoadTemplate.vue';
 
 export default {
   name: 'ManageUser',
   components: {
+    ButtDownloadTemplate,
     UploadButtonVue,
+    SearchInput,
     ButtonImport,
   },
   setup () {
@@ -95,9 +107,11 @@ export default {
     const store = useStore();
     const loading = ref(false);
     const itemsSelected = ref([]);
+    const searchVal = ref('');
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const users = ref([]);
+    const router = useRouter();
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên', value: 'name', sortable: true },
@@ -130,6 +144,10 @@ export default {
       loading.value = false;
     };
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const isToggle = ref(false);
     onMounted(async () => {
@@ -157,11 +175,20 @@ export default {
         loading.value = false;
         isToggle.value = false;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
+        errorHandler (e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
-    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+    watch(modulePage, async () => {
+      serverOptions.value = {
+        page: 1,
+        rowsPerPage: 10,
+        sortBy: 'updated_at',
+        sortType: 'desc',
+      };
+      await loadToServer(serverOptions.value);
+    });
 
     const usersShow = computed(() => {
       if (!users.value) return [];
@@ -176,6 +203,43 @@ export default {
     });
     const handleImport = () => {
       store.dispatch('url/updateSection', `${modulePage.value}-import`);
+    };
+    const nameRole = computed(() => {
+      if (modulePage.value === 'student') {
+        return 'sinh viên';
+      } if (modulePage.value === 'lecturer') {
+        return 'giảng viên';
+      }
+      return 'quản trị viên';
+    });
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
+    const upload = async (files) => {
+      if (files.length > 0) {
+        try {
+          loading.value = true;
+          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0], type: this.module.toUpperCase() })
+            .then((data) => {
+              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                $toast.error('Người dùng đã tồn tại!');
+              } else if (data.status === 200) {
+                $toast.success('Đã nhập thành công!');
+              }
+            });
+          loading.value = false;
+        } catch (e) {
+          loading.value = false;
+          $toast.error('File không đúng chuẩn!');
+        }
+      } else {
+        $toast.error('File không tồn tại');
+      }
+      router.go(0);
+      // await loadToServer(serverOptions.value);
     };
     return {
       headers,
@@ -194,11 +258,10 @@ export default {
       modulePage,
       handleImport,
       BASE_API_URL,
-    };
-  },
-  data () {
-    return {
-      searchVal: '',
+      nameRole,
+      searchVal,
+      search,
+      upload,
     };
   },
   computed: {
@@ -208,28 +271,9 @@ export default {
     ...mapGetters('auth', [
       'userId', 'userEmail', 'userRole', 'token',
     ]),
-  },
-  methods: {
-    async upload (files) {
-      if (files.length > 0) {
-        try {
-          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0] })
-            .then((data) => {
-              console.log("🚀 ~ file: ManageStudentAdminV2.vue:218 ~ .then ~ data.headers.get('Content-Type'):", data.headers.get('Content-Type'));
-              if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                this.$toast.error('File không đúng chuẩn hoặc người dùng đã tồn tại');
-              } else if (data.status === 200) {
-                this.$toast.success('Đã nhập thành công!');
-              }
-              console.log('🚀 ~ file: ManageStudentAdminV2.vue:222 ~ .then ~ data:', data);
-            });
-        } catch (e) {
-          this.$toast.error('File không đúng chuẩn!');
-        }
-      } else {
-        this.$toast.error('File không tồn tại');
-      }
-    },
+    ...mapGetters('url', [
+      'page', 'module', 'section', 'id',
+    ]),
   },
 };
 </script>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import urlWithPagination from '../generate_url';
 
 const baseUrl = import.meta.env.BASE_API_URL || 'http://localhost:8001';
 const apiDest = `${baseUrl}/api/v2`;
@@ -6,25 +7,7 @@ axios.defaults.baseURL = apiDest;
 
 export default class UserApi {
   static async listUser (token, type, option) {
-    let url = `/user?type=${type}`;
-    if (option) {
-      const {
-        page,
-        rowsPerPage,
-        sortBy,
-        sortType,
-        searchVal,
-      } = option;
-      if (rowsPerPage) url += `&limit=${rowsPerPage}`;
-      else url += '&limit=10';
-      if (sortBy) {
-        if (!sortType) url += `&sort[${sortBy}]=ASC`;
-        else url += `&sort[${sortBy}]=${sortType}`;
-      }
-      if (page) url += `&page=${page}`;
-      if (searchVal) url += `&search=${searchVal}`;
-    }
-
+    const url = urlWithPagination(`/user?type=${type}`, option);
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

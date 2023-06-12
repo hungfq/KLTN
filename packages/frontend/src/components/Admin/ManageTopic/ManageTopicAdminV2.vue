@@ -6,6 +6,10 @@
         :options="listScheduleSelect"
         :searchable="true"
         :can-clear="false"
+        :can-deselect="false"
+        no-results-text="Không có kết quả"
+        no-options-text="Không có lựa lựa chọn"
+        :placeholder="'Đợt đăng ký'"
         @change="selectHandlerSchedule"
       />
     </div>
@@ -13,90 +17,98 @@
       <Multiselect
         v-model="selectLecturer"
         :options="listLecturerSelect"
+        :can-deselect="false"
         :searchable="true"
+        no-results-text="Không có kết quả"
+        no-options-text="Không có lựa lựa chọn"
         :can-clear="false"
+        :placeholder="'Giảng viên hướng dẫn'"
         @change="selectHandlerLecturer"
       />
     </div>
     <div class="mx-auto" />
-    <div class="inline-block p-2 rounded-md">
-      <div
-        class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        @click="$store.dispatch('url/updateSection', 'topic-import')"
-      >
-        Thêm đề tài
+    <div class="flex mt-4 mr-4">
+      <div class="mr-2">
+        <ButtonAddItem
+          :title="'Thêm đề tài'"
+          @handle-import="$store.dispatch('url/updateSection', 'topic-import')"
+        />
       </div>
-    </div>
-    <div class="inline-block p-2 rounded-md">
       <UploadButtonVue @uploadFileExcel="upload" />
-    </div>
-    <div class="inline-block p-2 rounded-md mt-4">
-      <a
-        class=" rounded ml-auto mr-4 bg-gray-800 mt-4 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-        :href="`${BASE_API_URL}/api/v2/template?type=Topic`"
-      >Tải mẫu tệp excel</a>
+      <ButtonDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=Topic`" />
     </div>
   </div>
-  <div class="shadow-md sm:rounded-lg m-4">
-    <EasyDataTable
-      v-model:server-options="serverOptions"
-      :server-items-length="serverItemsLength"
-      show-index
-      :headers="headers"
-      :items="topicShow"
-      :loading="loading"
-      buttons-pagination
-      :rows-items="rowItems"
-    >
-      <template #item-operation="item">
-        <div class="flex">
-          <div
-            class="tooltip tooltip-bottom px-3"
-            data-tip="Chọn sinh viên"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'people-group']"
-              size="xl"
-              @click="selectStudents(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom pr-3"
-            data-tip="Xem đề tài"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              icon="fa-solid fa-eye"
-              size="xl"
-              @click="showRow(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom"
-            data-tip="Chỉnh sửa đề tài"
-          >
-            <font-awesome-icon
-              class="cursor-pointer"
-              :icon="['fas', 'pen-to-square']"
-              size="xl"
-              @click="editItem(item)"
-            />
-          </div>
-          <div
-            class="tooltip tooltip-bottom ml-2"
-            data-tip="Xóa đề tài"
-          >
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="xl"
-              @click="handleRemoveTopic(item._id)"
-            />
-          </div>
+  <div class="mx-4 mt-2">
+    <SearchInput
+      v-model="searchVal"
+      :search-icon="true"
+      @keydown.space.enter="search"
+    />
+  </div>
+  <EasyDataTable
+    v-model:server-options="serverOptions"
+    :server-items-length="serverItemsLength"
+    show-index
+    table-class-name="mx-4"
+    :headers="headers"
+    :items="topicShow"
+    :loading="loading"
+    buttons-pagination
+    :rows-items="rowItems"
+  >
+    <template #empty-message>
+      <div class="text-center text-gray-500">
+        Không có dữ liệu
+      </div>
+    </template>
+    <template #item-operation="item">
+      <div class="flex">
+        <div
+          class="tooltip tooltip-bottom px-3"
+          data-tip="Chọn sinh viên"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'people-group']"
+            size="xl"
+            @click="selectStudents(item)"
+          />
         </div>
-      </template>
-    </EasyDataTable>
-  </div>
+        <div
+          class="tooltip tooltip-bottom pr-3"
+          data-tip="Xem đề tài"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            icon="fa-solid fa-eye"
+            size="xl"
+            @click="showRow(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom"
+          data-tip="Chỉnh sửa đề tài"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'pen-to-square']"
+            size="xl"
+            @click="editItem(item)"
+          />
+        </div>
+        <div
+          class="tooltip tooltip-bottom ml-2"
+          data-tip="Xóa đề tài"
+        >
+          <font-awesome-icon
+            icon="fa-solid fa-trash-can"
+            size="xl"
+            @click="handleRemoveTopic(item._id)"
+          />
+        </div>
+      </div>
+    </template>
+  </EasyDataTable>
 
   <ConfirmModal
     v-model="showConfirmModal"
@@ -128,10 +140,13 @@ import {
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import Multiselect from '@vueform/multiselect';
+import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import UploadButtonVue from '../UploadButton.vue';
 import TopicApi from '../../../utils/api/topic';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
 
 export default {
   name: 'ManageTopicAdmin',
@@ -140,6 +155,9 @@ export default {
     SelectStudent,
     UploadButtonVue,
     Multiselect,
+    ButtonDownloadTemplate,
+    ButtonAddItem,
+    SearchInput,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -149,12 +167,13 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const topics = ref([]);
-    const selectSchedule = ref(0);
-    const selectLecturer = ref(0);
+    const selectSchedule = ref(null);
+    const selectLecturer = ref(null);
     const showSelectStudent = ref(false);
     const selectStudentScheduleId = ref(null);
     const listStudentSelected = ref([]);
     const topicStudentId = ref(0);
+    const topicStudentLimit = ref(3);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
@@ -182,12 +201,17 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     onMounted(async () => {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -215,7 +239,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
       }
     };
 
@@ -237,7 +262,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
     const selectHandlerLecturer = async (value) => {
@@ -245,17 +271,22 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const changeStudents = async (students) => {
-      //  TODO: Add api update student for topic
       try {
+        if (students.length !== topicStudentLimit.value) {
+          $toast.error('Số lượng sinh viên phải bằng số lượng sinh viên quy định trên đề tài!');
+          return;
+        }
         showSelectStudent.value = false;
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const selectStudents = (item) => {
@@ -263,6 +294,14 @@ export default {
       topicStudentId.value = item._id;
       showSelectStudent.value = true;
       listStudentSelected.value = item.list_students;
+      topicStudentLimit.value = item.limit;
+    };
+
+    const searchVal = ref('');
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
     };
 
     return {
@@ -288,10 +327,12 @@ export default {
       BASE_API_URL,
       showSelectStudent,
       selectStudents,
-
+      search,
       selectHandlerSchedule,
       selectHandlerLecturer,
       changeStudents,
+      searchVal,
+      topicStudentLimit,
     };
   },
   computed: {
@@ -314,19 +355,22 @@ export default {
       'listLecturer',
     ]),
     listLecturerSelect () {
-      const arr = [{ value: 0, label: 'Chọn giảng viên' }];
+      const arr = [{ value: 0, label: 'Tất cả giảng viên' }];
       this.listLecturer.forEach((lecturer) => {
         arr.push({ value: lecturer._id, label: lecturer.name });
       });
       return arr;
     },
     listScheduleSelect () {
-      const arr = [{ value: 0, label: 'Chọn đợt' }];
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
       this.listSchedules.forEach((schedule) => {
         arr.push({ value: schedule._id, label: schedule.name });
       });
       return arr;
     },
+  },
+  async mounted () {
+    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
   },
   methods: {
     handleUpdateTopic (id) {
@@ -340,9 +384,6 @@ export default {
     async handleRemoveTopic (id) {
       this.removeId = id;
       this.showConfirmModal = true;
-    },
-    displayLecturer (lecturer) {
-      return lecturer ? lecturer.name : '';
     },
     async upload (files) {
       if (files.length > 0) {
@@ -361,20 +402,6 @@ export default {
       } else {
         this.$toast.error('File không tồn tại');
       }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const topicFilter = this.listTopicsByLecturerSchedule.filter((topic) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (topic.title.match(re)) return true;
-          if (topic.code.match(re)) return true;
-          if (!topic.lecturerId) return false;
-          if (topic.lecturerId.name.match(re)) return true;
-          return false;
-        });
-
-        this.topics = topicFilter;
-      } else this.topics = this.listTopicsByLecturerSchedule;
     },
     handleNewButtonClick () {
       this.$refs.submitBtn.click();

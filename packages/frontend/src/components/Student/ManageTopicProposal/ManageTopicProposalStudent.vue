@@ -8,13 +8,13 @@
       </div>
       <button
         class="btn btn-primary absolute bottom-0 left-0 !py-0"
-        @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+        @click="updateModules('topic_result')"
       >
         Xem kết quả
       </button>
       <button
         class="btn btn-primary absolute bottom-0 right-0 !py-0"
-        @click="$store.dispatch('url/updateSection', 'topic_register-list')"
+        @click="updateModules('topic_register')"
       >
         Đăng ký đề tài
       </button>
@@ -27,6 +27,9 @@
           <Multiselect
             v-if="scheduleSelectOption.length > 2"
             v-model="selectSchedule"
+            :can-deselect="false"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
             :options="scheduleSelectOption"
             :can-clear="false"
             @change="selectHandler"
@@ -40,7 +43,7 @@
         </div>
       </div>
       <div
-        class="shadow-md sm:rounded-lg m-4"
+        class="m-4 2xl:min-h-[710px] lg:min-h-[530px]"
       >
         <SearchInput
           v-model="searchVal"
@@ -106,6 +109,11 @@
                   @click="handleRemoveTopicProposal(item._id)"
                 />
               </div>
+            </div>
+          </template>
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
             </div>
           </template>
         </EasyDataTable>
@@ -210,6 +218,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const fetchListScheduleProposalByStudentId = async () => {
       const schedulesToday = store.getters['schedule/listScheduleProposalStudent'];
@@ -225,7 +237,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
       loading.value = false;
     });
@@ -260,7 +273,8 @@ export default {
         $toast.success('Đã xóa thành công, vui lòng xem kết quả!');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        errorHandler(e);
       }
     };
 
@@ -294,6 +308,11 @@ export default {
       return arr;
     });
 
+    const updateModules = (module) => {
+      store.dispatch('url/updateModule', module);
+      store.dispatch('url/updateSection', `${module}-list`);
+    };
+
     return {
       headers,
       items,
@@ -320,6 +339,7 @@ export default {
       search,
       handleRemoveTopicProposal,
       showRow,
+      updateModules,
       imgNotFound,
     };
   },

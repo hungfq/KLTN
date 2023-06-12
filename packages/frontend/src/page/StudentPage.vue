@@ -1,16 +1,13 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'STUDENT')">
-    <div class="flex antialiased text-gray-900 bg-white">
-      <div class="flex flex-shrink-0 transition-all">
-        <ManageBarStudentVue
-          v-if="page === 'management'"
-          :list-items="listItems"
-          :list-tasks="listTasks"
-        />
-        <TaskBarTopicVue v-if="page === 'task'" />
-      </div>
-      <div class="flex grow flex-col">
+    <div class="flex bg-white">
+      <ManageBarStudentVue
+        v-if="page === 'management'"
+        :list-items="listItems"
+        :list-tasks="listTasks"
+      />
+      <div class="flex flex-col">
         <HeaderBarVue
           :username="userName"
         />

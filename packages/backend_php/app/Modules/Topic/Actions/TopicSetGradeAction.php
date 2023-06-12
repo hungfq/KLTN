@@ -92,14 +92,15 @@ class TopicSetGradeAction
 
 
         $studentCount = $grades->unique('student_id')->count();
-        $criteriaCount = $this->schedule->scheduleCriteria->count();
-        $total = $studentCount * $criteriaCount;
+        $criteria = $this->schedule->scheduleCriteria;
         $sum = 0;
         foreach ($this->details as $detail) {
-            $sum += data_get($detail, 'score', 0);
+            $dtlCriteria = $criteria->where('criteria_id', data_get($detail, 'criteria_id'))->first();
+            $scoreRate = data_get($dtlCriteria, 'score_rate', 0);
+            $sum += data_get($detail, 'score', 0) * $scoreRate / 100;
         }
 
-        $average = $sum / $total;
+        $average = $sum / $studentCount;
 
         switch ($this->dto->type) {
             case Grade::TYPE_LECTURER:

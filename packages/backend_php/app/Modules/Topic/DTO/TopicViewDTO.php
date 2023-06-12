@@ -10,6 +10,7 @@ class TopicViewDTO extends FlexibleDataTransferObject
     public $lecturerId;
     public $criticalId;
     public $scheduleId;
+    public $committee_id;
     public $schedule_ids;
     public $is_lecturer;
     public $is_lecturer_approve;
@@ -33,6 +34,7 @@ class TopicViewDTO extends FlexibleDataTransferObject
             'lecturerId' => $request->input('lecturerId'),
             'criticalId' => $request->input('criticalId'),
             'scheduleId' => $request->input('scheduleId'),
+            'committee_id' => $request->input('committee_id'),
             'schedule_ids' => $request->input('schedule_ids'),
             'is_lecturer' => $request->input('is_lecturer'),
             'is_lecturer_approve' => $request->input('is_lecturer_approve'),

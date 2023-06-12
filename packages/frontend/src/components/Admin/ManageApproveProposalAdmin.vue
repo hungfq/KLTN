@@ -140,10 +140,14 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('topic_proposal/fetchListTopicProposalAdmin', this.token);
-    await this.$store.dispatch('student/fetchListStudent', this.token);
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
-    this.topicProposals = this.listTopicProposal;
+    try {
+      await this.$store.dispatch('topic_proposal/fetchListTopicProposalAdmin', this.token);
+      await this.$store.dispatch('student/fetchListStudent', this.token);
+      await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+      this.topicProposals = this.listTopicProposal;
+    } catch (e) {
+      this.errorHandler(e);
+    }
   },
   methods: {
     async confirmRemove () {
@@ -158,7 +162,8 @@ export default {
         this.$toast.success('Đã từ chối hướng dẫn đề tài thành công!');
         this.search();
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
       this.removeId = '';
     },
@@ -185,7 +190,8 @@ export default {
 
         this.$toast.success('Đã từ gửi đề tài lên khoa thành công!');
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     displayLecturer (lecturer) {

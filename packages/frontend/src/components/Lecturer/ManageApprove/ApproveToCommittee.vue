@@ -1,35 +1,30 @@
 <template>
   <div class="flex flex-col">
-    <div class="tabs tabs-boxed bg-white">
-      <a
-        v-for="option in headerTabs"
-        :key="option.code"
-        class="tab rounded-md"
-        :class="{'tab-active' : option.code === tab}"
-        @click="tab= option.code"
-      >{{ option.text }}</a>
+    <div class="mt-2 bg-slate-100 py-2">
+      <div class="tabs ml-4">
+        <a
+          v-for="option in headerTabs"
+          :key="option.code"
+          class="tab tag-lg tab-lifted min-w-[100px] text-blue-900 font-semibold"
+          :class="{'tab-active' : option.code === tab}"
+          @click="tab= option.code"
+        >{{ option.text }}</a>
+      </div>
     </div>
     <div>
       <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
+        <div class="w-64 m-4">
+          <Multiselect
             v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
-          >
-            <option
-              :value="'all'"
-            >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+            :options="listScheduleSelect"
+            :searchable="true"
+            :can-clear="false"
+            :can-deselect="false"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :placeholder="'Đợt đăng ký'"
+            @change="selectHandlerSchedule"
+          />
         </div>
       </div>
       <div class="shadow-md sm:rounded-lg m-4">
@@ -49,6 +44,11 @@
           buttons-pagination
           :rows-items="rowItems"
         >
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
+            </div>
+          </template>
           <template #item-import-export="students">
             <div class-="flex flex-col">
               <ul>
@@ -126,6 +126,7 @@ import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
+import Multiselect from '@vueform/multiselect';
 
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
@@ -135,6 +136,7 @@ export default {
   components: {
     SearchInput,
     ConfirmModal,
+    Multiselect,
   },
   setup () {
     const store = useStore();
@@ -148,7 +150,7 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Sinh vien', value: 'students' },
+      { text: 'Sinh viên', value: 'students' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -199,6 +201,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listAllSchedule(token);
@@ -206,7 +212,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });
 
@@ -215,7 +222,8 @@ export default {
         approveId.value = id;
         showConfirmApproveModal.value = true;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
@@ -244,7 +252,8 @@ export default {
         $toast.success('Đã từ chối thành công!');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
     const confirmApprove = async () => {
@@ -255,10 +264,11 @@ export default {
         } else {
           await TopicApi.topicCriticalApprove(token, approveId.value);
         }
-        $toast.info('Đã phê duyệt thành công đề tài ra hội đồng');
+        $toast.success('Đã phê duyệt thành công đề tài ra hội đồng');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
@@ -267,7 +277,8 @@ export default {
         declineId.value = id;
         showConfirmModal.value = true;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const search = async () => {
@@ -293,6 +304,24 @@ export default {
         advisorLecturerApprove: topic.advisorLecturerApprove || false,
       }));
     });
+
+    const listScheduleSelect = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: `${schedule.code}` });
+      });
+      return arr;
+    });
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
 
     return {
       headers,
@@ -320,6 +349,8 @@ export default {
       showConfirmApproveModal,
       confirmApprove,
       declineId,
+      listScheduleSelect,
+      selectHandlerSchedule,
       handleRemoveTopic,
     };
   },

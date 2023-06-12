@@ -28,6 +28,7 @@ class ScheduleExportTopicAction
         $topics = $schedule->topics;
 
         return Excel::download(new ScheduleTopicExport([
+            'schedule' => $schedule,
             'topics' => $topics,
             'locationTime' => $locationTime,
         ], 'ScheduleTopicReportExcel'), "ScheduleTopicReport.xlsx");

@@ -15,6 +15,11 @@ $api->group([
         'uses' => 'TaskController@store',
     ]);
 
+    $api->put('/update-multi', [
+        'as' => '',
+        'uses' => 'TaskController@updateMulti',
+    ]);
+
     $api->group(['prefix' => '{id:[0-9]+}'], function ($api) {
 
         $api->get('/', [

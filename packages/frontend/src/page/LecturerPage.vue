@@ -2,20 +2,17 @@
 <template>
   <!-- component -->
   <div v-if="(isAuthenticated && userRole === 'LECTURER')">
-    <div class="flex antialiased text-gray-900 bg-white">
-      <div class="flex flex-shrink-0 transition-all">
-        <ManageBarLecturerVue
-          v-if="page === 'management'"
-          :list-items="listItems"
-          :list-schedules="listScheduleTopicTask"
-        />
-        <TaskBarTopicVue v-if="page === 'task'" />
-      </div>
-      <div class="flex grow flex-col h-1/5 w-full">
+    <div class="flex h-full">
+      <ManageBarLecturerVue
+        v-if="page === 'management'"
+        :list-items="listItems"
+        :list-schedules="listScheduleTopicTask"
+      />
+      <div class="flex flex-col">
         <HeaderBarVue
           :username="userName"
         />
-        <div class="bg-white rounded h-4/5 w-full">
+        <div class="bg-white border rounded-2 overflow-y-auto">
           <template v-if="page === 'management'">
             <BodyTopicPage v-if="module === 'topic'" />
             <BodyTopicProposalPage v-if="module === 'topic_proposal_approve'" />

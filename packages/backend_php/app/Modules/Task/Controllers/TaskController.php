@@ -8,12 +8,14 @@ use App\Modules\Task\Actions\TaskCommentDeleteAction;
 use App\Modules\Task\Actions\TaskShowAction;
 use App\Modules\Task\Actions\TaskStoreAction;
 use App\Modules\Task\Actions\TaskUpdateAction;
+use App\Modules\Task\Actions\TaskUpdateMultiAction;
 use App\Modules\Task\Actions\TaskViewAction;
 use App\Modules\Task\DTO\TaskViewDTO;
 use App\Modules\Task\Transformers\TaskShowTransformer;
 use App\Modules\Task\Transformers\TaskViewTransformer;
 use App\Modules\Task\Validators\TaskCommentAddValidator;
 use App\Modules\Task\Validators\TaskStoreValidator;
+use App\Modules\Task\Validators\TaskUpdateMultiValidator;
 use App\Modules\Task\Validators\TaskUpdateValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -89,6 +91,19 @@ class TaskController extends ApiController
     {
         DB::transaction(function () use ($action, $commentId) {
             $action->handle($commentId);
+        });
+
+        return $this->responseSuccess();
+    }
+
+    public function updateMulti(TaskUpdateMultiValidator $validator, TaskUpdateMultiAction $action)
+    {
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
         });
 
         return $this->responseSuccess();

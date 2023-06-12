@@ -49,7 +49,7 @@
                 class="w-[400px] !mx-8"
               >
                 <span class="font-bold text-sm">
-                  Giáo viên hướng dẫn
+                  Giảng viên hướng dẫn
                 </span>
                 <div class="mt-1">
                   <Multiselect
@@ -70,6 +70,9 @@
                   <Multiselect
                     v-model="scheduleId"
                     :options="scheduleSelect"
+                    :can-deselect="false"
+                    no-results-text="Không có kết quả"
+                    no-options-text="Không có lựa lựa chọn"
                     :can-clear="false"
                     :searchable="true"
                     :disabled="isView || isUpdate"
@@ -260,10 +263,7 @@ export default {
     this.studentIds = [this.userInfo.code];
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
-      console.log('🚀 ~ file: FormTopicProposal.vue:263 ~ mounted ~ id:', id);
-      // const topics = this.$store.state.topic.listTopicProposalStudent;
       const topic = await TopicProposalApi.getTopicProposal(this.token, id);
-      console.log('🚀 ~ file: FormTopicProposal.vue:265 ~ mounted ~ topic:', topic);
       if (topic) {
         this.title = topic.title;
         this.code = topic.code;
@@ -302,6 +302,10 @@ export default {
         return l;
       });
     },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
 
     prepareSchedule () {
       const schedules = this.$store.state.schedule.listScheduleProposalStudent;
@@ -334,7 +338,7 @@ export default {
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.isUpdate) {
-            await TopicProposalApi.addTopicProposal(this.token, { ...value, _id: this.id });
+            await TopicProposalApi.updateTopicProposal(this.token, { ...value, _id: this.id });
             this.loading = false;
             this.$toast.success('Đã cập nhật thành công!');
             this.rollBack();
@@ -343,7 +347,8 @@ export default {
           this.$toast.error('Vui lòng chọn GVHD');
         }
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     check () {

@@ -1,7 +1,7 @@
 <!-- eslint-disable max-len -->
 <template>
   <div>
-    <div class="p-2 w-full h-full mx-auto">
+    <div class="p-2 w-full h-full overflow-hidden">
       <!-- Modal content -->
       <div class="bg-white rounded-lg shadow">
         <!-- Modal header -->
@@ -152,9 +152,12 @@ export default {
         this.rollBack();
       } catch (e) {
         this.loading = false;
-        if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
-        else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+        this.errorHandler(e);
       }
+    },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
   },
 };

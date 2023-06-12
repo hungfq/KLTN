@@ -3,10 +3,13 @@
     <loading-process v-if="loading" />
     <template v-else>
       <template v-if=" !loading &&!isInApproveTime ">
-        <div class="relative h-1/3">
-          <img
-            :src="imageUrl"
-          >
+        <div class="relative grow">
+          <div class="">
+            <img
+              :src="imageUrl"
+              class="min-h-full min-w-full block "
+            >
+          </div>
           <button
             class="btn btn-primary absolute bottom-0 left-0 !py-0"
             @click="$store.dispatch('url/updateSection', 'topic-list')"
@@ -26,26 +29,18 @@
           v-if="schedules.length > 1 "
           class="flex"
         >
-          <div class="inline-block p-2 rounded-md">
-            <select
+          <div class="w-64 m-4">
+            <Multiselect
               v-model="selectSchedule"
-              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-              @change="selectHandler"
-            >
-              <option
-                :key="`key-null`"
-                :value="'all'"
-              >
-                Tất cả
-              </option>
-              <option
-                v-for="option in schedules"
-                :key="`key-${option._id}`"
-                :value="option._id"
-              >
-                {{ option.code }} : {{ option.name }}
-              </option>
-            </select>
+              :options="listScheduleSelect"
+              :searchable="true"
+              :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
+              :placeholder="'Đợt đăng ký'"
+              @change="selectHandlerSchedule"
+            />
           </div>
         </div>
         <div class="shadow-md sm:rounded-lg m-4">
@@ -65,6 +60,11 @@
             buttons-pagination
             :rows-items="rowItems"
           >
+            <template #empty-message>
+              <div class="text-center text-gray-500">
+                Không có dữ liệu
+              </div>
+            </template>
             <template #item-operation="item">
               <div
                 class="flex flex-col"
@@ -127,12 +127,14 @@ import 'vue-search-input/dist/styles.css';
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
+import Multiselect from '@vueform/multiselect';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    Multiselect,
     LoadingProcess,
   },
   setup () {
@@ -147,7 +149,7 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Sinh vien', value: 'students' },
+      { text: 'Sinh viên', value: 'students' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -163,10 +165,13 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-    // const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
     const modulePage = computed(() => store.getters['url/module']);
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
     const loadToServer = async (options) => {
       try {
         loading.value = true;
@@ -189,17 +194,20 @@ export default {
       } catch (e) {
         loading.value = false;
         console.log(e.message);
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 
     onMounted(async () => {
-      const listAllSchedule = await ScheduleApi.listScheduleApproveLecturer(token);
-      schedules.value = listAllSchedule.data;
+      const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
+      console.log('🚀 ~ file: ManageProposalLecturerV2.vue:205 ~ onMounted ~ listSchedules:', listSchedules);
+      schedules.value = listSchedules;
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -236,7 +244,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã từ chối thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
+        errorHandler(e);
       }
     };
 
@@ -258,6 +267,24 @@ export default {
         scheduleId: topic.scheduleId?._id || null,
       }));
     });
+
+    const listScheduleSelect = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: `${schedule.code}` });
+      });
+      return arr;
+    });
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+      }
+    };
 
     return {
       headers,
@@ -283,6 +310,9 @@ export default {
       searchVal,
       search,
       isInApproveTime,
+      listScheduleSelect,
+      selectHandlerSchedule,
+
     };
   },
   computed: {

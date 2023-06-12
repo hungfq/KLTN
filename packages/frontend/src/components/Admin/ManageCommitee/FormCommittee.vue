@@ -13,7 +13,7 @@
       <div class="flex justify-between items-start p-4 rounded-t border-b">
         <!-- TODO: Rename for form committee -->
         <h3 class="text-xl font-semibold text-gray-900">
-          Thông tin hoi dong
+          Thông tin hội đồng
         </h3>
       </div>
       <template v-if="!loading">
@@ -40,13 +40,16 @@
           />
           <div class="w-[400px]">
             <span class="font-bold text-sm">
-              Giáo viên phản biện
+              Giảng viên phản biện
             </span>
             <div class="mt-1">
               <Multiselect
                 v-model="criticalLecturerId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :can-clear="false"
                 :disabled="isView"
               />
@@ -61,6 +64,9 @@
                 v-model="committeePresidentId"
                 :options="listLecturers"
                 :searchable="true"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :can-clear="false"
                 :disabled="isView"
               />
@@ -76,6 +82,9 @@
                 :options="listLecturers"
                 :searchable="true"
                 :can-clear="false"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
                 :disabled="isView"
               />
             </div>
@@ -189,14 +198,21 @@ export default {
           if (this.isSave) {
             await CommitteeApi.addCommittee(this.token, value);
             this.$toast.success('Đã thêm thành công!');
+            this.rollBack();
           } else if (this.isUpdate) {
             await CommitteeApi.updateCommittee(this.token, this.id, value);
             this.$toast.success('Đã cập nhật thành công!');
+            this.rollBack();
           }
         }
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
+    },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
     check () {
       if (!this.name) {

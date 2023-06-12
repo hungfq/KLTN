@@ -8,13 +8,13 @@
         >
         <button
           class="btn btn-primary absolute bottom-0 left-0 !py-0"
-          @click="$store.dispatch('url/updateSection', 'topic_result-list')"
+          @click="updateModules('topic_result')"
         >
           Xem kết quả
         </button>
         <button
           class="btn btn-primary absolute bottom-0 right-0 !py-0"
-          @click="$store.dispatch('url/updateSection', 'topic_proposal-list')"
+          @click="updateModules('topic_proposal')"
         >
           Đề xuất đề tài
         </button>
@@ -28,6 +28,9 @@
               v-if="scheduleSelectOption.length > 2"
               v-model="selectSchedule"
               :options="scheduleSelectOption"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :allow-empty="false"
               :clear-on-select="false"
               placeholder="Chọn đợt đăng ký"
@@ -37,7 +40,7 @@
             />
           </div>
         </div>
-        <div class="shadow-md sm:rounded-lg m-4">
+        <div class="2xl:min-h-[770px] lg:min-h-[590px] m-4">
           <SearchInput
             v-model="searchVal"
             :search-icon="true"
@@ -56,12 +59,12 @@
           >
             <template #expand="item">
               <div
-                class="flex items-center ml-64 my-4"
+                class="flex items-start my-4"
               >
                 <div class="font-bold">
                   Danh sách sinh viên
                 </div>
-                <div class="flex ml-16">
+                <div class="flex ml-12">
                   <div
                     v-for="student in item.list_students"
                     :key="`${student.code}`"
@@ -75,10 +78,24 @@
               </div>
             </template>
             <template #item-operation="item">
-              <div class="m-1 cursor-pointer rounded-xl">
+              <div
+                class="m-1 tooltip tooltip-bottom cursor-pointer rounded-xl"
+                data-tip="Đã đủ số lượng đăng ký"
+              >
                 <button
+                  v-if="item.current_register >= item.limit"
                   class="btn btn-primary"
-                  :disabled="item.current_register >= item.limit"
+                  :disabled="true"
+                >
+                  <span class="font-semibold px-1">Đăng ký</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+                <button
+                  v-else
+                  class="btn btn-primary"
                   @click="editItem(item)"
                 >
                   <span class="font-semibold px-1">Đăng ký</span>
@@ -92,6 +109,11 @@
             <template #item-limit="item">
               <div class="m-1 flex items-center  justify-center ml-2">
                 {{ `${item.current_register} / ${item.limit}` }}
+              </div>
+            </template>
+            <template #empty-message>
+              <div class="text-center text-gray-500">
+                Không có dữ liệu
               </div>
             </template>
           </EasyDataTable>
@@ -121,6 +143,7 @@ import SearchInput from 'vue-search-input';
 import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
+import IconTooltip from '../../common/IconTooltip.vue';
 
 import TopicApi from '../../../utils/api/topic';
 
@@ -130,6 +153,7 @@ export default {
     SearchInput,
     ConfirmModal,
     Multiselect,
+    IconTooltip,
   },
   props: {
     open: {
@@ -193,6 +217,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const fetchListScheduleRegisterByStudentId = async () => {
       const schedulesToday = store.getters['schedule/listScheduleRegisterStudent'];
@@ -204,7 +232,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -232,11 +261,12 @@ export default {
         await TopicApi.addRegisterTopicNew(token, registerId.value);
         $toast.success('Đã đăng ký thành công, vui lòng xem kết quả!');
       } catch (e) {
-        if (e.response.data.error.message === 'You are already register!') {
-          $toast.error('Không thể đăng ký. Bạn đã tồn tại đăng ký trong đợt này!');
-        } else {
-          $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
-        }
+        errorHandler(e);
+        // if (e.response.data.error.message === 'You are already register!') {
+        //   $toast.error('Không thể đăng ký. Bạn đã tồn tại đăng ký trong đợt này!');
+        // } else {
+        //   $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        // }
       }
     };
 
@@ -270,6 +300,11 @@ export default {
       return arr;
     });
 
+    const updateModules = (module) => {
+      store.dispatch('url/updateModule', module);
+      store.dispatch('url/updateSection', `${module}-list`);
+    };
+
     return {
       headers,
       items,
@@ -292,6 +327,7 @@ export default {
       searchVal,
       search,
       scheduleSelectOption,
+      updateModules,
     };
   },
   data () {

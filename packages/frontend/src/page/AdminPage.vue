@@ -2,13 +2,11 @@
 <template>
   <!-- component -->
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
-    <div class="flex text-gray-900 bg-gray-100">
-      <div class="flex">
-        <ManageBarVue :list-items="listItems" />
-      </div>
-      <div class="flex grow flex-col">
+    <div class="flex h-full">
+      <ManageBarVue :list-items="listItems" />
+      <div class="flex flex-col">
         <HeaderBarVue :username="userName" />
-        <div class="bg-white border rounded-2 overflow-auto h-full mb-1">
+        <div class="bg-white border rounded-2 overflow-y-auto">
           <BodyUserPage
             v-if="['student','lecturer', 'admin'].includes(module)"
             :type-user="module"
@@ -34,7 +32,6 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import ErrorModalVue from '../components/Modal/ErrorModal.vue';
-import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 import ManageBarVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import BodyUserPage from '../components/Admin/ManageUser/UserBodyPage.vue';
@@ -47,7 +44,6 @@ export default {
   name: 'AdminPage',
   components: {
     ErrorModalVue,
-    LeftMiniBarVue,
     ManageBarVue,
     HeaderBarVue,
     BodySchedulePage,
@@ -80,7 +76,7 @@ export default {
         },
         {
           id: 'admin',
-          value: 'Quản lý admin',
+          value: 'Quản lý quản trị viên',
           icon: 'fa-solid fa-shield-halved',
         },
         {

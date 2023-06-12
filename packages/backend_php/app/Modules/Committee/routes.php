@@ -25,14 +25,19 @@ $api->group([
         'uses' => 'CommitteeController@update',
     ]);
 
+    $api->put('/{id:[0-9]+}/topic', [
+        'as' => '',
+        'uses' => 'CommitteeController@updateTopic',
+    ]);
+
     $api->delete('/{id:[0-9]+}', [
         'as' => '',
         'uses' => 'CommitteeController@delete',
     ]);
 
-//    $api->post('/import', [
-//        'as' => '',
-//        'uses' => 'CommitteeController@import',
-//    ]);
+    $api->post('/{id:[0-9]+}/topic/import', [
+        'as' => '',
+        'uses' => 'CommitteeController@importTopic',
+    ]);
 
 });

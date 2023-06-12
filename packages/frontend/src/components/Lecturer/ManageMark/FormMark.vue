@@ -178,6 +178,10 @@ export default {
     this.loading = false;
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -192,7 +196,8 @@ export default {
         this.$toast.success('Đã cập nhật điểm thành công!');
         this.rollBack();
       } catch (error) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng thử thử lại!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng thử thử lại!');
       }
     },
     transformGrade () {

@@ -32,16 +32,16 @@ class CommitteeViewAction
             });
         }
 
-        if ($presidentId = $dto->presidentId) {
-            $query->where('president_id', $presidentId);
+        if ($president_id = $dto->president_id) {
+            $query->where('president_id', $president_id);
         }
 
-        if ($secretaryId = $dto->secretaryId) {
-            $query->where('secretary_id', $secretaryId);
+        if ($secretary_id = $dto->secretary_id) {
+            $query->where('secretary_id', $secretary_id);
         }
 
-        if ($criticalId = $dto->criticalId) {
-            $query->where('critical_id', $criticalId);
+        if ($critical_id = $dto->critical_id) {
+            $query->where('critical_id', $critical_id);
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

@@ -50,7 +50,7 @@
           :disabled="isView"
           :validation-messages="{ min: 'Phải có ít nhất 1 thành viên', max:'Có tối đa 3 thành viên' }"
         />
-        <div class="my-2-1 w-3/5">
+        <!-- <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Sinh viên đăng kí
           </span>
@@ -62,9 +62,31 @@
               :searchable="true"
               :create-option="true"
               :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :options="listStudents"
               :disabled="isView"
               class="w-[400px]"
+            />
+          </div>
+        </div> -->
+        <div
+          class="w-[400px]"
+        >
+          <span class="font-bold text-sm">
+            Đợt đăng ký
+          </span>
+          <div class="mt-1">
+            <Multiselect
+              v-model="scheduleId"
+              :options="scheduleSelect"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
+              :can-clear="false"
+              :searchable="true"
+              :disabled="isView || isUpdate"
             />
           </div>
         </div>
@@ -85,7 +107,8 @@
         <button
           v-if="!isView && !loading "
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="btn btn-primary"
+          :disabled="!isValid"
           @click="handleAddTopicAdmin"
         >
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
@@ -146,7 +169,7 @@ export default {
       'page', 'module', 'section', 'id',
     ]),
     ...mapGetters('auth', [
-      'token',
+      'token', 'userId',
     ]),
     isSave () {
       return this.section === 'topic-import';
@@ -157,20 +180,31 @@ export default {
     isView () {
       return this.section === 'topic-view';
     },
+    isValid () {
+      if (!this.title) {
+        return false;
+      }
+      if (!this.limit) {
+        return false;
+      }
+      if (!this.description) {
+        return false;
+      }
+      if (Number(this.limit) < 1 || Number(this.limit) > 3) {
+        return false;
+      }
+      return true;
+    },
+    scheduleSelect () {
+      return this.listSchedules.map((s) => ({
+        value: s._id,
+        label: s.name,
+      }));
+    },
   },
   async mounted () {
     this.loading = true;
-    const students = await UserApi.listUser(this.token, 'STUDENT', null);
-    this.listStudents = students.data.map((student) => {
-      let st = {
-        value: student.code,
-        label: `${student.code} - ${student.name}`,
-      };
-      if (this.isView) {
-        st = { ...st, disabled: true };
-      }
-      return st;
-    });
+    this.prepareSchedule();
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       if (!id) {
@@ -186,10 +220,20 @@ export default {
         this.limit = topic.limit;
         this.studentIds = topic.students;
       }
-      this.loading = false;
     }
+    this.loading = false;
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
+    prepareSchedule () {
+      const schedules = this.$store.state.schedule.listScheduleApproveLecturer;
+      if (!schedules || schedules.length === 0) return;
+      this.scheduleId = schedules[0]._id || schedules[0].id;
+      this.listSchedules = schedules;
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -197,29 +241,38 @@ export default {
       const {
         studentIds,
       } = this;
-      const value = {
-        title: this.title,
-        description: this.description,
-        code: this.code,
-        limit: this.limit,
-        students: studentIds,
-        thesisDefenseDate: this.topicOld.thesisDefenseDate,
-        scheduleId: this.topicOld.scheduleId._id || 1,
-        lecturerId: this.topicOld.lecturerId._id,
-        criticalLecturerId: this.topicOld.criticalLecturerId._id,
-        advisorLecturerGrade: this.topicOld.advisorLecturerGrade,
-        criticalLecturerGrade: this.topicOld.criticalLecturerGrade,
-        committeePresidentGrade: this.topicOld.committeePresidentGrade,
-        committeeSecretaryGrade: this.topicOld.committeeSecretaryGrade,
-      };
       try {
         this.loading = true;
         if (this.check()) {
           if (this.isSave) {
+            const value = {
+              title: this.title,
+              description: this.description,
+              code: this.code,
+              limit: this.limit,
+              students: studentIds,
+              scheduleId: this.scheduleId,
+              lecturerId: this.userId,
+            };
+            console.log('🚀 ~ file: FormTopicV2.vue:253 ~ handleAddTopicAdmin ~ value.lecturerId:', value.lecturerId);
             await TopicApi.createTopic(this.token, value);
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.isUpdate) {
+            const value = {
+              title: this.title,
+              description: this.description,
+              code: this.code,
+              limit: this.limit,
+              students: studentIds,
+              scheduleId: this.topicOld.scheduleId._id,
+              lecturerId: this.topicOld.lecturerId._id,
+              criticalLecturerId: this.topicOld.criticalLecturerId._id,
+              advisorLecturerGrade: this.topicOld.advisorLecturerGrade,
+              criticalLecturerGrade: this.topicOld.criticalLecturerGrade,
+              committeePresidentGrade: this.topicOld.committeePresidentGrade,
+              committeeSecretaryGrade: this.topicOld.committeeSecretaryGrade,
+            };
             await TopicApi.updateTopicById(this.token, { ...value, _id: this.id });
             this.rollBack();
             this.$toast.success('Đã cập nhật thành công!');
@@ -227,7 +280,8 @@ export default {
         }
         this.loading = false;
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     check () {
@@ -243,12 +297,9 @@ export default {
         this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
         return false;
       }
-      if (this.studentIds.length > this.limit) {
-        this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
-        return false;
-      }
       return true;
     },
+
   },
 };
 </script>

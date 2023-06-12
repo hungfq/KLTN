@@ -1,98 +1,129 @@
 <template>
-  <div class="flex">
-    <div
-      class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-      @click="$store.dispatch('url/updateSection', 'committee-import')"
+  <div class="flex flex-col">
+    <div class="flex justify-end mr-4 my-2">
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectCritical"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :placeholder="'Giảng viên phản biện'"
+          :can-clear="false"
+          @change="selectHandlerLecturer('CRITICAL', $event)"
+        />
+      </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectPresident"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          :placeholder="'Chủ tịch hội đồng'"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :can-clear="false"
+          @change="selectHandlerLecturer('PRESIDENT', $event)"
+        />
+      </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectSecretary"
+          :options="listLecturerSelect"
+          :can-deselect="false"
+          :searchable="true"
+          :placeholder="'Thư ký hội đồng'"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :can-clear="false"
+          @change="selectHandlerLecturer( 'SECRETARY', $event)"
+        />
+      </div>
+      <div class="mx-auto" />
+      <ButtonAddItem
+        :title="'Thêm hội đồng'"
+        @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
+      />
+    </div>
+    <div class="mx-4">
+      <SearchInput
+        v-model="searchVal"
+        :search-icon="true"
+        @keydown.space.enter="search"
+      />
+    </div>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      v-model:server-options="serverOptions"
+      :server-items-length="serverItemsLength"
+      table-class-name="mx-4"
+      show-index
+      :headers="headers"
+      :items="committeesShow"
+      :loading="loading"
+      buttons-pagination
+      :rows-items="rowItems"
     >
-      Thêm hội đồng
-    </div>
-    <!-- <UploadButtonVue @uploadFileExcel="upload" /> -->
-  </div>
-  <div class="shadow-md sm:rounded-lg m-4">
-    <SearchInput
-      v-model="searchVal"
-      :search-icon="true"
-      @keydown.space.enter="search"
-    />
-    <div class="shadow-md sm:rounded-lg m-4">
-      <EasyDataTable
-        v-model:items-selected="itemsSelected"
-        v-model:server-options="serverOptions"
-        :server-items-length="serverItemsLength"
-        show-index
-        :headers="headers"
-        :items="committeesShow"
-        :loading="loading"
-        buttons-pagination
-        :rows-items="rowItems"
-      >
-        <template #header-import-export="header">
-          <a
-            class="rounded bg-gray-800 text-white font-sans font-semibold cursor-pointer p-2"
-            :href="`${BASE_API_URL}/api/v2/template?type=User`"
-          >Tải mẫu nhập đề tài</a>
-        </template>
-        <template #item-import-export="item">
-          <div class-="flex">
-            <a
-              class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              @click="handleAddTopic(item._id)"
-            >Nhập đề tài</a>
-            <!-- <a
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-              :href="getLink(item._id)"
-            >Xuất báo cáo</a> -->
+      <template #empty-message>
+        <div class="text-center text-gray-500">
+          Không có dữ liệu
+        </div>
+      </template>
+      <template #item-operation="item">
+        <div class="flex">
+          <div
+            class="tooltip tooltip-bottom pr-3"
+            data-tip="Xem hội đồng"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              icon="fa-solid fa-eye"
+              size="xl"
+              @click="showRow(item)"
+            />
           </div>
-        </template>
-        <template #item-operation="item">
-          <div class="flex">
-            <div
-              class="tooltip tooltip-bottom pr-3"
-              data-tip="Xem đề tài"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                icon="fa-solid fa-eye"
-                size="xl"
-                @click="showRow(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom mr-2"
-              data-tip="Chỉnh sửa hội đồng"
-            >
-              <font-awesome-icon
-                class="cursor-pointer"
-                :icon="['fas', 'pen-to-square']"
-                size="xl"
-                @click="editItem(item)"
-              />
-            </div>
-            <div
-              class="tooltip tooltip-bottom"
-              data-tip="Xóa hội đồng"
-            >
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xl"
-                @click="handleRemoveSchedule(item._id)"
-              />
-            </div>
+          <IconTooltip
+            :icon="'fa-solid fa-book'"
+            :title="'Nhập đề tài'"
+            @click-icon="handleAddTopic(item._id)"
+          />
+
+          <div
+            class="tooltip tooltip-bottom mr-2"
+            data-tip="Chỉnh sửa hội đồng"
+          >
+            <font-awesome-icon
+              class="cursor-pointer"
+              :icon="['fas', 'pen-to-square']"
+              size="xl"
+              @click="editItem(item)"
+            />
           </div>
-        </template>
-      </EasyDataTable>
-    </div>
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="Xóa hội đồng"
+          >
+            <font-awesome-icon
+              icon="fa-solid fa-trash-can"
+              size="xl"
+              @click="handleRemoveSchedule(item._id)"
+            />
+          </div>
+        </div>
+      </template>
+    </EasyDataTable>
+    <ConfirmModal
+      v-model="showConfirmModal"
+      @confirm="confirmRemove"
+      @cancel="showConfirmModal=false"
+    >
+      <template #title>
+        Xác nhận
+      </template>
+      <div>Bạn có xác nhận xóa hội đồng này không?</div>
+    </ConfirmModal>
   </div>
-  <ConfirmModal
-    v-model="showConfirmModal"
-    @confirm="confirmRemove"
-    @cancel="showConfirmModal=false"
-  >
-    <template #title>
-      Xác nhận
-    </template>
-    <div>Bạn có xác nhận xóa hội đồng này không?</div>
-  </ConfirmModal>
 </template>
 
 <script>
@@ -103,14 +134,20 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
+import IconTooltip from '../../common/IconTooltip.vue';
 
 export default {
   name: 'ManageStudentAdmin',
   components: {
     SearchInput,
+    Multiselect,
     ConfirmModal,
+    ButtonAddItem,
+    IconTooltip,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -119,13 +156,16 @@ export default {
     const $toast = useToast();
     const loading = ref(false);
     const itemsSelected = ref([]);
+    const selectPresident = ref(null);
+    const selectCritical = ref(null);
+    const selectSecretary = ref(null);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const committees = ref([]);
     const headers = [
       { text: 'Mã hội đồng', value: 'code', sortable: true },
       { text: 'Tên hội đồng ', value: 'name', sortable: true },
-      { text: 'Giáo viên phản biện', value: 'criticalLecturerId.name' },
+      { text: 'Giảng viên phản biện', value: 'criticalLecturerId.name' },
       { text: 'Chủ tịch hội đồng', value: 'committeePresidentId.name' },
       { text: 'Thư kí hội đồng', value: 'committeeSecretaryId.name' },
       { text: 'import-export', value: 'import-export' },
@@ -140,10 +180,15 @@ export default {
     });
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
     const loadToServer = async (options) => {
       loading.value = true;
       try {
-        const response = await CommitteeApi.listAllCommittee(token, options);
+        const response = await CommitteeApi.listAllCommittee(token, options, selectCritical.value, selectPresident.value, selectSecretary.value);
         committees.value = response.data;
         store.state.committee.listCommittee = response.data;
         serverItemsLength.value = response.meta.pagination.total;
@@ -159,7 +204,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
       loading.value = false;
     });
@@ -189,7 +235,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
@@ -205,6 +252,19 @@ export default {
 
     const getLink = (id) => `${BASE_API_URL.value}/v1/schedule/${id}/export`;
 
+    const searchVal = ref('');
+    const search = async () => {
+      serverOptions.value.page = 1;
+      if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
+      else await loadToServer({ ...serverOptions.value, search: searchVal.value });
+    };
+
+    const selectHandlerLecturer = async (type, event) => {
+      if (type === 'CRITICAL') selectCritical.value = event;
+      else if (type === 'PRESIDENT') selectPresident.value = event;
+      else if (type === 'SECRETARY') selectSecretary.value = event;
+      await loadToServer(serverOptions.value);
+    };
     return {
       headers,
       items,
@@ -224,13 +284,12 @@ export default {
       handleRemoveSchedule,
       getLink,
       BASE_API_URL,
-    };
-  },
-  data () {
-    return {
-      // showConfirmModal: false,
-      removeId: '',
-      searchVal: '',
+      searchVal,
+      selectCritical,
+      selectSecretary,
+      selectPresident,
+      selectHandlerLecturer,
+      search,
     };
   },
   computed: {
@@ -246,6 +305,16 @@ export default {
     ...mapGetters('lecturer', [
       'listLecturer',
     ]),
+    listLecturerSelect () {
+      const arr = [{ value: 0, label: 'Tất cả giảng viên' }];
+      this.listLecturer.forEach((lecturer) => {
+        arr.push({ value: lecturer._id, label: lecturer.name });
+      });
+      return arr;
+    },
+  },
+  async mounted () {
+    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
   },
   methods: {
     handleAddTopic (id) {
@@ -276,20 +345,6 @@ export default {
       } else {
         this.$toast.error('File không tồn tại');
       }
-    },
-    search () {
-      if (this.searchVal !== '') {
-        const committeeFilters = this.listCommittee.filter((st) => {
-          const re = new RegExp(`\\b${this.searchVal}`, 'gi');
-          if (st.name.match(re)) return true;
-          if (st.code.match(re)) return true;
-          if (st.committeePresidentId && st.committeePresidentId.name.match(re)) return true;
-          if (st.committeeSecretaryId && st.committeeSecretaryId.name.match(re)) return true;
-          if (st.criticalLecturerId && st.criticalLecturerId.name.match(re)) return true;
-          return false;
-        });
-        this.committees = committeeFilters;
-      } else this.committees = this.listCommittee;
     },
   },
 };

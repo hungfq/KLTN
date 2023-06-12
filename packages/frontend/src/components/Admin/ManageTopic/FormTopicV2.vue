@@ -52,11 +52,14 @@
         />
         <div class="w-3/5">
           <span class="font-bold text-sm">
-            Giáo viên hướng dẫn
+            Giảng viên hướng dẫn
           </span>
           <div class="mt-1">
             <Multiselect
               v-model="lecturerId"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :options="listLecturers"
               :can-clear="false"
               :searchable="true"
@@ -66,35 +69,21 @@
         </div>
         <div class="w-3/5">
           <span class="font-bold text-sm">
-            Giáo viên phản biện
+            Giảng viên phản biện
           </span>
           <div class="mt-1">
             <Multiselect
               v-model="criticalLecturerId"
               :options="listLecturers"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :can-clear="false"
               :searchable="true"
               :disabled="isView"
             />
           </div>
         </div>
-        <!-- <div class="my-2-1 w-3/5">
-          <span class="font-bold text-sm py-4 my-4">
-            Sinh viên đăng kí
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="studentIds"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :create-option="true"
-              :options="listStudents"
-              :disabled="isView"
-              class="w-[400px] h-3"
-            />
-          </div>
-        </div> -->
         <div class="my-2-1 w-3/5">
           <span class="font-bold text-sm py-4 my-4">
             Đợt đăng ký
@@ -104,6 +93,9 @@
               v-model="scheduleId"
               :options="listSchedules"
               :searchable="true"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
               :can-clear="false"
               :disabled="isView"
               class="w-[400px]"
@@ -296,6 +288,10 @@ export default {
     this.loading = false;
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -333,7 +329,8 @@ export default {
         }
         this.loading = false;
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
       }
     },
     check () {
@@ -357,12 +354,16 @@ export default {
         this.$toast.error('Vui lòng chọn giảng viên hướng dẫn');
         return false;
       }
+      if (this.lecturerId === this.criticalLecturerId) {
+        this.$toast.error('Giảng viên hướng dẫn phải khác giảng viên phản biện');
+        return false;
+      }
       if (this.studentIds.length > this.limit) {
         this.$toast.error('Số lượng sinh viên được chọn không được quá số lượng giới hạn');
         return false;
       }
       if (!this.scheduleId) {
-        this.$toast.error('Vui long chon dot dang ky');
+        this.$toast.error('Vui lòng chọn đợt đăng ký');
         return false;
       }
       return true;
