@@ -219,6 +219,10 @@ export default {
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     async handleAddTopicAdmin () {
       const { studentIds, lecturerId } = this;
       const value = {
@@ -239,7 +243,8 @@ export default {
         }
         this.$toast.success('Đã cập nhật một thành công!');
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
       } finally {
         this.rollBack();
       }

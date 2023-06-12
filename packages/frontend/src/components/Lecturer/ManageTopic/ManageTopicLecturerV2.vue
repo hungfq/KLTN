@@ -221,8 +221,11 @@ export default {
       }
       loading.value = false;
     };
-
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listAllSchedule(token);
@@ -230,7 +233,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });
 
@@ -275,7 +279,8 @@ export default {
       try {
         $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
@@ -294,7 +299,8 @@ export default {
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
 
@@ -339,7 +345,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
 

@@ -168,6 +168,10 @@ export default {
     const modulePage = computed(() => store.getters['url/module']);
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
     const loadToServer = async (options) => {
       try {
         loading.value = true;
@@ -190,7 +194,8 @@ export default {
       } catch (e) {
         loading.value = false;
         console.log(e.message);
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 
@@ -201,7 +206,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -238,7 +244,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã từ chối thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng báo với quản trị viên!');
+        errorHandler(e);
       }
     };
 
@@ -274,7 +281,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 

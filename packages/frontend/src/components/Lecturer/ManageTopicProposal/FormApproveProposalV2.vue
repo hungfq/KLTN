@@ -309,10 +309,15 @@ export default {
         }
       }
     } catch (e) {
+      this.errorHandler(e);
       console.error(e);
     }
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     chooseStudent () {
       this.showSelectStudent = true;
     },
@@ -339,11 +344,12 @@ export default {
         this.$toast.success('Đã phê duyệt đề tài hướng dẫn thành công!');
         this.rollBack();
       } catch (e) {
-        if (e.response.data.error.message === 'Some student already has register in another topic') {
-          this.$toast.error('Không thể phê duyệt. Sinh viên đã tồn tại trong một đề tài hướng dẫn khác!');
-        } else {
-          this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
-        }
+        this.errorHandler(e);
+        // if (e.response.data.error.message === 'Some student already has register in another topic') {
+        //   this.$toast.error('Không thể phê duyệt. Sinh viên đã tồn tại trong một đề tài hướng dẫn khác!');
+        // } else {
+        //   this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        // }
       }
     },
     check () {

@@ -247,6 +247,10 @@ export default {
     });
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
     const loadToServer = async (options) => {
       loading.value = true;
       try {
@@ -257,7 +261,8 @@ export default {
         loading.value = false;
       } catch (e) {
         loading.value = false;
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
 
@@ -266,7 +271,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
       loading.value = false;
     });
@@ -296,7 +302,8 @@ export default {
         loadToServer(serverOptions.value);
       } catch (e) {
         console.log(e.message);
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
       }
     };
 
@@ -327,7 +334,8 @@ export default {
         await ScheduleApi.importListStudents(token, _id, students);
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
     const changeCriteria = async (criteria) => {
@@ -337,7 +345,8 @@ export default {
         await CriteriaApi.updateCriteriaBySchedule(token, _id, { details: criteria });
         $toast.success('Đã cập nhật  danh sách tiêu chí thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 
@@ -361,7 +370,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã cập nhật tỷ lệ điểm  thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 

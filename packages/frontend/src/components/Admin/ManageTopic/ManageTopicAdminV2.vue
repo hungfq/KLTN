@@ -201,12 +201,17 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     onMounted(async () => {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -234,7 +239,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
       }
     };
 
@@ -256,7 +262,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
     const selectHandlerLecturer = async (value) => {
@@ -264,7 +271,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const changeStudents = async (students) => {
@@ -277,7 +285,8 @@ export default {
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const selectStudents = (item) => {

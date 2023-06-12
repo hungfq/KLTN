@@ -267,8 +267,13 @@ export default {
         await TopicApi.removeRegisterTopicStudent(this.token, this.currentTopic._id);
         this.$toast.success('Đã xóa thành công, vui lòng xem kết quả!');
       } catch (e) {
-        if (e.response.data.error.message === 'Schedule is not in register time!') { this.$toast.error('Không trong thời gian đăng ký nên bạn không thể hủy!'); } else { this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên '); }
+        this.errorHandler(e);
+        // if (e.response.data.error.message === 'Schedule is not in register time!') { this.$toast.error('Không trong thời gian đăng ký nên bạn không thể hủy!'); } else { this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên '); }
       }
+    },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
   },
 };

@@ -201,6 +201,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listAllSchedule(token);
@@ -208,7 +212,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });
 
@@ -217,7 +222,8 @@ export default {
         approveId.value = id;
         showConfirmApproveModal.value = true;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
@@ -246,7 +252,8 @@ export default {
         $toast.success('Đã từ chối thành công!');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
     const confirmApprove = async () => {
@@ -260,7 +267,8 @@ export default {
         $toast.success('Đã phê duyệt thành công đề tài ra hội đồng');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 
@@ -269,7 +277,8 @@ export default {
         declineId.value = id;
         showConfirmModal.value = true;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const search = async () => {
@@ -309,7 +318,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
 

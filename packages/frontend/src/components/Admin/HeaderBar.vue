@@ -87,8 +87,13 @@ export default {
         const localDate = moment(dateString).local();
         return localDate.format('YYYY-MM-DD HH:mm:ss');
       } catch (e) {
+        this.errorHandler(e);
         return '';
       }
+    },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
     timeAgo (createdAt) {
       const date = this.formatDate(createdAt);
@@ -102,10 +107,18 @@ export default {
       this.notificationShow = !this.notificationShow;
     },
     async readNotification (_id) {
-      await this.$store.dispatch('notification/readNotification', { token: this.token, id: _id });
+      try {
+        await this.$store.dispatch('notification/readNotification', { token: this.token, id: _id });
+      } catch (e) {
+        this.errorHandler(e);
+      }
     },
     async deleteNotification (_id) {
-      await this.$store.dispatch('notification/deleteNotification', { token: this.token, id: _id });
+      try {
+        await this.$store.dispatch('notification/deleteNotification', { token: this.token, id: _id });
+      } catch (e) {
+        this.errorHandler(e);
+      }
     },
   },
 };

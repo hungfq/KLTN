@@ -180,6 +180,11 @@ export default {
     });
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
     const loadToServer = async (options) => {
       loading.value = true;
       try {
@@ -199,7 +204,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
       loading.value = false;
     });
@@ -229,7 +235,8 @@ export default {
         await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     };
 

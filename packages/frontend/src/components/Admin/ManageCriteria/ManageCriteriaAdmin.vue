@@ -168,6 +168,11 @@ export default {
       removeId.value = id;
       showConfirmModal.value = true;
     };
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
     const removeItem = async () => {
       try {
         showConfirmModal.value = false;
@@ -175,7 +180,8 @@ export default {
         $toast.success('Đã xóa tiêu chí thành công!');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ hệ quản trị viên!');
+        errorHandler(e);
       }
     };
 

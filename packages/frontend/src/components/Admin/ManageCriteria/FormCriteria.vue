@@ -104,13 +104,18 @@ export default {
           this.description = criterion.description;
         }
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
         this.rollBack();
       }
     }
     this.loading = false;
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -131,7 +136,8 @@ export default {
           this.rollBack();
         }
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
       }
     },
   },

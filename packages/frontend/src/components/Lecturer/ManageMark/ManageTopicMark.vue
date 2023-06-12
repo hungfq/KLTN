@@ -203,13 +203,19 @@ export default {
 
     const $toast = useToast();
 
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
     onMounted(async () => {
       // const listAllSchedule = await ScheduleApi.listAllSchedule(token);
       schedules.value = scheduleMark;
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });
 
@@ -219,6 +225,7 @@ export default {
         store.dispatch('url/updateSection', `${modulePage.value}-update`);
         store.dispatch('url/updateId', id);
       } catch (e) {
+        errorHandler (e);
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
@@ -280,7 +287,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler (e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
 

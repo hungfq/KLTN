@@ -218,6 +218,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const fetchListScheduleProposalByStudentId = async () => {
       const schedulesToday = store.getters['schedule/listScheduleProposalStudent'];
@@ -233,7 +237,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
       loading.value = false;
     });
@@ -268,7 +273,8 @@ export default {
         $toast.success('Đã xóa thành công, vui lòng xem kết quả!');
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        errorHandler(e);ss
       }
     };
 

@@ -302,6 +302,10 @@ export default {
         return l;
       });
     },
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
 
     prepareSchedule () {
       const schedules = this.$store.state.schedule.listScheduleProposalStudent;
@@ -343,7 +347,8 @@ export default {
           this.$toast.error('Vui lòng chọn GVHD');
         }
       } catch (e) {
-        this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+        this.errorHandler(e);
+        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     check () {

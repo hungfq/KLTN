@@ -199,6 +199,10 @@ export default {
     ]),
   },
   methods: {
+    errorHandler (e) {
+      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    },
     async handleShow (taskId) {
       try {
         this.loading = true;
@@ -209,8 +213,9 @@ export default {
         this.loading = false;
       } catch (e) {
         this.loading = false;
-        console.log(e);
-        this.$toast.error(e.message);
+        // console.log(e);
+        this.errorHandler(e);
+        // this.$toast.error(e.message);
       }
     },
     async changeDescription (data) {

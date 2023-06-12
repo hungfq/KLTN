@@ -217,6 +217,10 @@ export default {
     };
 
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const fetchListScheduleRegisterByStudentId = async () => {
       const schedulesToday = store.getters['schedule/listScheduleRegisterStudent'];
@@ -228,7 +232,8 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     });
 
@@ -256,11 +261,12 @@ export default {
         await TopicApi.addRegisterTopicNew(token, registerId.value);
         $toast.success('Đã đăng ký thành công, vui lòng xem kết quả!');
       } catch (e) {
-        if (e.response.data.error.message === 'You are already register!') {
-          $toast.error('Không thể đăng ký. Bạn đã tồn tại đăng ký trong đợt này!');
-        } else {
-          $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
-        }
+        errorHandler(e);
+        // if (e.response.data.error.message === 'You are already register!') {
+        //   $toast.error('Không thể đăng ký. Bạn đã tồn tại đăng ký trong đợt này!');
+        // } else {
+        //   $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
+        // }
       }
     };
 

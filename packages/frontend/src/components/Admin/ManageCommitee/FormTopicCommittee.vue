@@ -129,17 +129,26 @@ export default {
     //   title: topic.title,
     //   code: topic.code,
     // }));
+    const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
     const loadToServer = async (options) => {
-      loading.value = true;
-      const response = await TopicApi.listAllTopicsByCriticalAndApproved(token, criticalId.value, options, selectSchedule.value);
-      // topics.value = transformTopic(response.data);
-      topics.value = response.data;
-      store.state.topic.listTopics = topics.value;
-      serverItemsLength.value = response.meta.pagination.total;
+      try {
+        loading.value = true;
+        const response = await TopicApi.listAllTopicsByCriticalAndApproved(token, criticalId.value, options, selectSchedule.value);
+        // topics.value = transformTopic(response.data);
+        topics.value = response.data;
+        store.state.topic.listTopics = topics.value;
+        serverItemsLength.value = response.meta.pagination.total;
+      } catch (e) {
+        errorHandler(e);
+      }
       loading.value = false;
     };
 
-    const $toast = useToast();
     const topicShow = computed(() => {
       if (!topics.value) return [];
       return topics.value.map((topic) => ({
@@ -163,7 +172,8 @@ export default {
         criticalId.value = committee.critical_id;
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });
 
@@ -198,7 +208,7 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
       }
     };
     const handleAddTopicAdmin = async () => {
@@ -209,7 +219,8 @@ export default {
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
         rollBack();
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
     const selectStudents = (item) => {
@@ -235,7 +246,8 @@ export default {
           rollBack();
         } catch (e) {
           loading.value = false;
-          $toast.error('File không đúng chuẩn!');
+          // $toast.error('File không đúng chuẩn!');
+          errorHandler(e);
         }
       } else {
         this.$toast.error('File không tồn tại');

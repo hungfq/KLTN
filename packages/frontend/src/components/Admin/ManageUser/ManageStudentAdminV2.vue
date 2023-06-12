@@ -144,6 +144,10 @@ export default {
       loading.value = false;
     };
     const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
 
     const isToggle = ref(false);
     onMounted(async () => {
@@ -171,7 +175,8 @@ export default {
         loading.value = false;
         isToggle.value = false;
       } catch (e) {
-        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
+        errorHandler (e);
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
     watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
