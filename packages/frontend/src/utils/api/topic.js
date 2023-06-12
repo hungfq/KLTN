@@ -79,7 +79,7 @@ export default class TopicApi {
   }
 
   static async listAllTopicsByCritical (token, criticalId, options) {
-    console.log('🚀 ~ file: topic.js:63 ~ TopicApi ~ listAllTopicsByCritical ~ url:', url);
+    const url = urlWithPagination(`/topic?criticalId=${criticalId}`, options);
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

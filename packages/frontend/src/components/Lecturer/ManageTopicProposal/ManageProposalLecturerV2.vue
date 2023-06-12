@@ -29,26 +29,18 @@
           v-if="schedules.length > 1 "
           class="flex"
         >
-          <div class="inline-block p-2 rounded-md">
-            <select
+          <div class="w-64 m-4">
+            <Multiselect
               v-model="selectSchedule"
-              class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-              @change="selectHandler"
-            >
-              <option
-                :key="`key-null`"
-                :value="'all'"
-              >
-                Tất cả
-              </option>
-              <option
-                v-for="option in schedules"
-                :key="`key-${option._id}`"
-                :value="option._id"
-              >
-                {{ option.code }} : {{ option.name }}
-              </option>
-            </select>
+              :options="listScheduleSelect"
+              :searchable="true"
+              :can-clear="false"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
+              :placeholder="'Đợt đăng ký'"
+              @change="selectHandlerSchedule"
+            />
           </div>
         </div>
         <div class="shadow-md sm:rounded-lg m-4">
@@ -135,12 +127,14 @@ import 'vue-search-input/dist/styles.css';
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
+import Multiselect from '@vueform/multiselect';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    Multiselect,
     LoadingProcess,
   },
   setup () {
@@ -171,7 +165,6 @@ export default {
       sortType: 'desc',
     });
     const token = store.getters['auth/token'];
-    // const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
     const modulePage = computed(() => store.getters['url/module']);
 
     const $toast = useToast();
@@ -202,8 +195,9 @@ export default {
     };
 
     onMounted(async () => {
-      const listAllSchedule = await ScheduleApi.listScheduleApproveLecturer(token);
-      schedules.value = listAllSchedule.data;
+      const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
+      console.log('🚀 ~ file: ManageProposalLecturerV2.vue:205 ~ onMounted ~ listSchedules:', listSchedules);
+      schedules.value = listSchedules;
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -267,6 +261,23 @@ export default {
       }));
     });
 
+    const listScheduleSelect = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: `${schedule.code}` });
+      });
+      return arr;
+    });
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
     return {
       headers,
       items,
@@ -291,6 +302,9 @@ export default {
       searchVal,
       search,
       isInApproveTime,
+      listScheduleSelect,
+      selectHandlerSchedule,
+
     };
   },
   computed: {

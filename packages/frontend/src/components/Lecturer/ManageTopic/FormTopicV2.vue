@@ -71,6 +71,25 @@
             />
           </div>
         </div> -->
+        <div
+          class="w-[400px]"
+        >
+          <span class="font-bold text-sm">
+            Đợt đăng ký
+          </span>
+          <div class="mt-1">
+            <Multiselect
+              v-model="scheduleId"
+              :options="scheduleSelect"
+              :can-deselect="false"
+              no-results-text="Không có kết quả"
+              no-options-text="Không có lựa lựa chọn"
+              :can-clear="false"
+              :searchable="true"
+              :disabled="isView || isUpdate"
+            />
+          </div>
+        </div>
         <FormKit
           v-model="description"
           name="description"
@@ -150,7 +169,7 @@ export default {
       'page', 'module', 'section', 'id',
     ]),
     ...mapGetters('auth', [
-      'token',
+      'token', 'userId',
     ]),
     isSave () {
       return this.section === 'topic-import';
@@ -176,20 +195,16 @@ export default {
       }
       return true;
     },
+    scheduleSelect () {
+      return this.listSchedules.map((s) => ({
+        value: s._id,
+        label: s.name,
+      }));
+    },
   },
   async mounted () {
     this.loading = true;
-    const students = await UserApi.listUser(this.token, 'STUDENT', null);
-    this.listStudents = students.data.map((student) => {
-      let st = {
-        value: student.code,
-        label: `${student.code} - ${student.name}`,
-      };
-      if (this.isView) {
-        st = { ...st, disabled: true };
-      }
-      return st;
-    });
+    this.prepareSchedule();
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       if (!id) {
@@ -209,6 +224,12 @@ export default {
     this.loading = false;
   },
   methods: {
+    prepareSchedule () {
+      const schedules = this.$store.state.schedule.listScheduleApproveLecturer;
+      if (!schedules || schedules.length === 0) return;
+      this.scheduleId = schedules[0]._id || schedules[0].id;
+      this.listSchedules = schedules;
+    },
     rollBack () {
       this.$store.dispatch('url/updateSection', `${this.module}-list`);
     },
@@ -216,28 +237,38 @@ export default {
       const {
         studentIds,
       } = this;
-      const value = {
-        title: this.title,
-        description: this.description,
-        code: this.code,
-        limit: this.limit,
-        students: studentIds,
-        scheduleId: this.topicOld.scheduleId._id || 1,
-        lecturerId: this.topicOld.lecturerId._id,
-        criticalLecturerId: this.topicOld.criticalLecturerId._id,
-        advisorLecturerGrade: this.topicOld.advisorLecturerGrade,
-        criticalLecturerGrade: this.topicOld.criticalLecturerGrade,
-        committeePresidentGrade: this.topicOld.committeePresidentGrade,
-        committeeSecretaryGrade: this.topicOld.committeeSecretaryGrade,
-      };
       try {
         this.loading = true;
         if (this.check()) {
           if (this.isSave) {
+            const value = {
+              title: this.title,
+              description: this.description,
+              code: this.code,
+              limit: this.limit,
+              students: studentIds,
+              scheduleId: this.scheduleId,
+              lecturerId: this.userId,
+            };
+            console.log('🚀 ~ file: FormTopicV2.vue:253 ~ handleAddTopicAdmin ~ value.lecturerId:', value.lecturerId);
             await TopicApi.createTopic(this.token, value);
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           } else if (this.isUpdate) {
+            const value = {
+              title: this.title,
+              description: this.description,
+              code: this.code,
+              limit: this.limit,
+              students: studentIds,
+              scheduleId: this.topicOld.scheduleId._id,
+              lecturerId: this.topicOld.lecturerId._id,
+              criticalLecturerId: this.topicOld.criticalLecturerId._id,
+              advisorLecturerGrade: this.topicOld.advisorLecturerGrade,
+              criticalLecturerGrade: this.topicOld.criticalLecturerGrade,
+              committeePresidentGrade: this.topicOld.committeePresidentGrade,
+              committeeSecretaryGrade: this.topicOld.committeeSecretaryGrade,
+            };
             await TopicApi.updateTopicById(this.token, { ...value, _id: this.id });
             this.rollBack();
             this.$toast.success('Đã cập nhật thành công!');

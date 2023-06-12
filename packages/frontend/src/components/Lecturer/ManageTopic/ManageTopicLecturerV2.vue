@@ -10,34 +10,25 @@
       >{{ option.text }}</a>
     </div>
     <div>
-      <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
+      <div class="flex justify-between">
+        <div class="w-64 m-4">
+          <Multiselect
             v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
-          >
-            <option
-              :key="`key-null`"
-              :value="'all'"
-            >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+            :options="listScheduleSelect"
+            :searchable="true"
+            :can-clear="false"
+            :can-deselect="false"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :placeholder="'Đợt đăng ký'"
+            @change="selectHandlerSchedule"
+          />
         </div>
-        <!-- <div
-          class=" rounded ml-auto mr-4 my-2 bg-blue-800 text-white font-sans font-semibold py-2 px-4 cursor-pointer"
-          @click="$store.dispatch('url/updateSection', 'topic-import')"
-        >
-          Thêm đề tài
-        </div> -->
+        <ButtonAddItem
+          v-if="canShowImport"
+          title="Thêm đề tài"
+          @handle-import="$store.dispatch('url/updateSection', 'topic-import')"
+        />
       </div>
       <div class="shadow-md sm:rounded-lg m-4">
         <SearchInput
@@ -80,28 +71,31 @@
           </template>
           <template #item-operation="item">
             <div
-              v-if="checkCanEdit(item.scheduleId)"
               class="flex"
             >
-              <IconTooltip
-                title="Chọn sinh viên"
-                :icon="'fa-solid fa-people-group'"
-                @click-icon="selectStudents(item)"
-              />
-              <IconTooltip
-                title="Xem đề tài"
-                @click-icon="showRow(item)"
-              />
-              <IconTooltip
-                title="Sửa đề tài"
-                :icon="'fa-solid fa-pen-to-square'"
-                @click-icon="editItem(item)"
-              />
-              <IconTooltip
-                title="Xóa đề tài"
-                :icon="'fa-solid fa-trash-can'"
-                @click-icon="handleRemoveSchedule(item._id)"
-              />
+              <div>
+                <IconTooltip
+                  title="Xem đề tài"
+                  @click-icon="showRow(item)"
+                />
+              </div>
+              <div v-if="checkCanEdit(item.scheduleId) && tab !== 'critical'">
+                <IconTooltip
+                  title="Chọn sinh viên"
+                  :icon="'fa-solid fa-people-group'"
+                  @click-icon="selectStudents(item)"
+                />
+                <IconTooltip
+                  title="Sửa đề tài"
+                  :icon="'fa-solid fa-pen-to-square'"
+                  @click-icon="editItem(item)"
+                />
+                <IconTooltip
+                  title="Xóa đề tài"
+                  :icon="'fa-solid fa-trash-can'"
+                  @click-icon="handleRemoveSchedule(item._id)"
+                />
+              </div>
             </div>
           </template>
         </EasyDataTable>
@@ -135,6 +129,7 @@ import {
 import { mapState, mapGetters, useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
+import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 // Optionally import default styling
 import 'vue-search-input/dist/styles.css';
@@ -144,6 +139,7 @@ import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
 import IconTooltip from '../../common/IconTooltip.vue';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import ButtonAddItem from '../../common/ButtonAddItem.vue';
 
 export default {
   name: 'ManageTopicLecturer',
@@ -152,6 +148,8 @@ export default {
     ConfirmModal,
     IconTooltip,
     SelectStudent,
+    ButtonAddItem,
+    Multiselect,
   },
   setup () {
     const store = useStore();
@@ -253,20 +251,18 @@ export default {
     };
 
     const checkCanEdit = (scheduleId) => {
-      // TODO: Make only updated the topic when have permission
-      const a = 1;
-      return true;
-      // if (!scheduleId) return false;
-      // const schedule = schedules.value.filter((sc) => sc._id === scheduleId)[0];
-      // if (!schedule) return false;
-      // const now = Date.now();
-      // const start = new Date(schedule.startApproveDate);
-      // const end = new Date(schedule.endApproveDate);
-      // return (start < now && now < end);
+      if (!scheduleId) return false;
+      const listSchedules = store.state.schedule.listScheduleApproveLecturer;
+      const listScheduleIds = listSchedules.map((s) => parseInt(s._id, 10));
+      return listScheduleIds.includes(parseInt(scheduleId, 10));
     };
 
+    const canShowImport = computed(() => {
+      const listSchedules = store.state.schedule.listScheduleApproveLecturer;
+      return !!listSchedules.length;
+    });
+
     const showRow = (item) => {
-      // if (!checkCanEdit(item.scheduleId)) return;
       store.dispatch('url/updateId', item._id);
       store.dispatch('url/updateSection', `${modulePage.value}-view`);
     };
@@ -328,6 +324,22 @@ export default {
         limit: topic.limit,
       }));
     });
+    const listScheduleSelect = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: `${schedule.code}` });
+      });
+      return arr;
+    });
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
 
     return {
       headers,
@@ -360,7 +372,10 @@ export default {
       listStudentSelected,
       topicStudentId,
       changeStudents,
+      canShowImport,
       selectStudents,
+      listScheduleSelect,
+      selectHandlerSchedule,
     };
   },
   data () {

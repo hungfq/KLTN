@@ -11,25 +11,18 @@
     </div>
     <div>
       <div class="flex">
-        <div class="inline-block p-2 rounded-md">
-          <select
+        <div class="w-64 m-4">
+          <Multiselect
             v-model="selectSchedule"
-            class="mt-1 block w-full rounded-md bg-gray-100 border border-gray-300 py-2 px-3 shadow-sm sm:text-sm"
-            @change="selectHandler"
-          >
-            <option
-              :value="'all'"
-            >
-              Tất cả
-            </option>
-            <option
-              v-for="option in schedules"
-              :key="`key-${option._id}`"
-              :value="option._id"
-            >
-              {{ option.code }} : {{ option.name }}
-            </option>
-          </select>
+            :options="listScheduleSelect"
+            :searchable="true"
+            :can-clear="false"
+            :can-deselect="false"
+            no-results-text="Không có kết quả"
+            no-options-text="Không có lựa lựa chọn"
+            :placeholder="'Đợt đăng ký'"
+            @change="selectHandlerSchedule"
+          />
         </div>
       </div>
       <div class="shadow-md sm:rounded-lg m-4">
@@ -131,6 +124,7 @@ import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
+import Multiselect from '@vueform/multiselect';
 
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
@@ -140,6 +134,7 @@ export default {
   components: {
     SearchInput,
     ConfirmModal,
+    Multiselect,
   },
   setup () {
     const store = useStore();
@@ -299,6 +294,23 @@ export default {
       }));
     });
 
+    const listScheduleSelect = computed(() => {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      schedules.value.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: `${schedule.code}` });
+      });
+      return arr;
+    });
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
     return {
       headers,
       items,
@@ -325,6 +337,8 @@ export default {
       showConfirmApproveModal,
       confirmApprove,
       declineId,
+      listScheduleSelect,
+      selectHandlerSchedule,
       handleRemoveTopic,
     };
   },
