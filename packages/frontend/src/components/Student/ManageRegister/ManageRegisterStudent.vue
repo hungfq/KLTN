@@ -59,12 +59,12 @@
           >
             <template #expand="item">
               <div
-                class="flex items-center ml-64 my-4"
+                class="flex items-start my-4"
               >
                 <div class="font-bold">
                   Danh sách sinh viên
                 </div>
-                <div class="flex ml-16">
+                <div class="flex ml-12">
                   <div
                     v-for="student in item.list_students"
                     :key="`${student.code}`"
@@ -78,10 +78,24 @@
               </div>
             </template>
             <template #item-operation="item">
-              <div class="m-1 cursor-pointer rounded-xl">
+              <div
+                class="m-1 tooltip tooltip-bottom cursor-pointer rounded-xl"
+                data-tip="Đã đủ số lượng đăng ký"
+              >
                 <button
+                  v-if="item.current_register >= item.limit"
                   class="btn btn-primary"
-                  :disabled="item.current_register >= item.limit"
+                  :disabled="true"
+                >
+                  <span class="font-semibold px-1">Đăng ký</span>
+                  <font-awesome-icon
+                    size="xl"
+                    :icon="['fas', 'check']"
+                  />
+                </button>
+                <button
+                  v-else
+                  class="btn btn-primary"
                   @click="editItem(item)"
                 >
                   <span class="font-semibold px-1">Đăng ký</span>
@@ -129,6 +143,7 @@ import SearchInput from 'vue-search-input';
 import Multiselect from '@vueform/multiselect';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import 'vue-search-input/dist/styles.css';
+import IconTooltip from '../../common/IconTooltip.vue';
 
 import TopicApi from '../../../utils/api/topic';
 
@@ -138,6 +153,7 @@ export default {
     SearchInput,
     ConfirmModal,
     Multiselect,
+    IconTooltip,
   },
   props: {
     open: {
