@@ -88,6 +88,7 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
+import { useRouter, useRoute } from 'vue-router';
 import UploadButtonVue from '../UploadButton.vue';
 import UserApi from '../../../utils/api/user';
 import ButtonImport from '../../common/ButtonImport.vue';
@@ -110,6 +111,7 @@ export default {
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const users = ref([]);
+    const router = useRouter();
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên', value: 'name', sortable: true },
@@ -231,7 +233,8 @@ export default {
       } else {
         $toast.error('File không tồn tại');
       }
-      await loadToServer(serverOptions.value);
+      router.go(0);
+      // await loadToServer(serverOptions.value);
     };
     return {
       headers,
