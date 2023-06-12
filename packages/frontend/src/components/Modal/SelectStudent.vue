@@ -178,7 +178,7 @@ export default {
       if (!searchVal.value || searchVal.value === '') {
         await loadToServer(serverOptions.value);
       } else {
-        await loadToServer({ ...serverOptions.value, searchVal: searchVal.value });
+        await loadToServer({ ...serverOptions.value, search: searchVal.value });
       }
     };
 
