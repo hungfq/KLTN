@@ -274,7 +274,7 @@ export default {
         await loadToServer(serverOptions.value);
       } catch (e) {
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
-        errorHandler(e);ss
+        errorHandler(e);
       }
     };
 
