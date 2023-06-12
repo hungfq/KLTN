@@ -129,7 +129,7 @@
           </div>
           <div
             v-if="notificationShow"
-            class="dropdown-content card card-compact p-2 shadow bg-slate-50 text-base-content ml-2 mt-32"
+            class="dropdown-content card card-compact p-2 shadow text-base-content ml-2 mt-32 bg-blue-100"
           >
             <div class="card-body w-[480px] h-96 overflow-y-auto">
               <h3 class="card-title">
@@ -146,33 +146,38 @@
               <div
                 v-for="noti in listNotifications"
                 :key="`noti-${noti._id}`"
-                class="flex flex-col"
+                class="flex flex-col chat chat-start"
               >
                 <div
-                  :class="[noti.isRead ? 'bg-white' : 'bg-green-300']"
-                  class="mt-2 mx-2 px-6 py-4 bg-white rounded-lg shadow cursor-pointer"
+                  :class="[noti.isRead ? 'bg-blue-200' : 'bg-yellow-300']"
+                  class="chat-bubble mt-2 mx-2 px-6 py-4 bg-white rounded-lg shadow cursor-pointer"
                   @click="readNotification(noti._id)"
                 >
-                  <div class="flex items-center justify-between w-full">
-                    <div class="inline-flex items-center">
-                      <h3 class="font-bold text-base text-gray-800">
-                        {{ noti.title }}
-                      </h3>
+                  <div class="">
+                    <div class="flex items-center justify-between w-full">
+                      <div class="inline-flex items-center">
+                        <h3 class="font-bold text-base text-gray-800">
+                          {{ noti.title }}
+                        </h3>
+                      </div>
+                      <div class="inline-flex">
+                        <p class="text-xs text-gray-500">
+                          {{ timeAgo(noti.createdAt) }}
+                        </p>
+                      </div>
                     </div>
-                    <div class="inline-flex">
-                      <p class="text-xs text-gray-500">
-                        {{ timeAgo(noti.createdAt) }}
+                    <div class="inline-flex items-center justify-between w-full">
+                      <p class="mt-1 text-sm text-left text-gray-900">
+                        {{ noti.message }}
                       </p>
+                      <div class="ml-4">
+                        <IconTooltip
+                          :title="'Xóa thông báo'"
+                          :icon="'fa-solid fa-trash-can'"
+                          @clickIcon="deleteNotification(noti._id)"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="inline-flex items-center justify-between w-full">
-                    <p class="mt-1 text-sm text-left text-gray-900">
-                      {{ noti.message }}
-                    </p>
-                    <a
-                      class="text-blue-700"
-                      @click="deleteNotification(noti._id)"
-                    >Xóa</a>
                   </div>
                 </div>
               </div>
@@ -196,9 +201,13 @@
 import { mapState, mapGetters } from 'vuex';
 import moment from 'moment';
 import 'moment/dist/locale/vi';
+import IconTooltip from './IconTooltip.vue';
 
 export default {
   name: 'ManageBar',
+  components: {
+    IconTooltip,
+  },
   props: {
     listItems: [],
     listTasks: [],
