@@ -28,6 +28,29 @@ class ScheduleViewStudentAction
         $query = User::query()
             ->whereIn('id', $studentIds);
 
+        $ignoreIds = $dto->ignore_ids;
+
+        if ($dto->not_in_any_proposal) {
+            $proposalStudentIds = [];
+            foreach ($schedule->topicProposals as $topicProposal) {
+                foreach ($topicProposal->students as $student) {
+                    $proposalStudentIds[] = $student->id;
+                }
+            }
+
+            $query->whereNotIn('id', array_diff($proposalStudentIds, $ignoreIds));
+        }
+
+        if ($dto->not_in_any_topic) {
+            $topicStudentIds = [];
+            foreach ($schedule->topics as $topic) {
+                foreach ($topic->students as $student) {
+                    $topicStudentIds[] = $student->id;
+                }
+            }
+            $query->whereNotIn('id', array_diff($topicStudentIds, $ignoreIds));
+        }
+
         if ($dto->limit) {
             return $query->paginate($dto->limit);
         }

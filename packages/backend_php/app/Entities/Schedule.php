@@ -16,6 +16,11 @@ class Schedule extends BaseSoftModel
         return $this->hasMany(Topic::class, 'schedule_id');
     }
 
+    public function topicProposals()
+    {
+        return $this->hasMany(TopicProposal::class, 'schedule_id');
+    }
+
     public function students()
     {
         return $this->belongsToMany(User::class, 'schedule_students', 'schedule_id', 'student_id');
