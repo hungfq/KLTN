@@ -150,7 +150,7 @@ class UserImportAction
                     "name" => data_get($input, 'name'),
                     "code" => data_get($input, 'code'),
                     "email" => data_get($input, 'email'),
-                    "gender" => data_get($input, 'gender'),
+                    "gender" => strtoupper(data_get($input, 'gender')) == "NAM" ? "male" : "female",
                     "status" => User::STATUS_ACTIVE,
                 ];
 
