@@ -175,7 +175,7 @@ export default {
         loading.value = false;
         isToggle.value = false;
       } catch (e) {
-        errorHandler (e);
+        errorHandler(e);
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên để xử lý');
       }
     };
@@ -222,7 +222,7 @@ export default {
       if (files.length > 0) {
         try {
           loading.value = true;
-          await this.$store.dispatch('student/importStudent', { token: this.token, xlsx: files[0], type: this.module.toUpperCase() })
+          await store.dispatch('student/importStudent', { token, xlsx: files[0], type: modulePage.value.toUpperCase() })
             .then((data) => {
               if (data.status === 200 && data.headers.get('Content-Type') === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
                 $toast.error('Người dùng đã tồn tại!');
@@ -232,14 +232,15 @@ export default {
             });
           loading.value = false;
         } catch (e) {
+          console.log('🚀 ~ file: ManageStudentAdminV2.vue:235 ~ upload ~ e:', e);
           loading.value = false;
           $toast.error('File không đúng chuẩn!');
         }
       } else {
         $toast.error('File không tồn tại');
       }
-      router.go(0);
-      // await loadToServer(serverOptions.value);
+      // router.go(0);
+      await loadToServer(serverOptions.value);
     };
     return {
       headers,
