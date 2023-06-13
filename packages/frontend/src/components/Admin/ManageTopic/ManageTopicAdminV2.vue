@@ -255,6 +255,7 @@ export default {
         schedule: topic.scheduleId.name || '',
         scheduleId: topic.scheduleId || '',
         list_students: topic.list_students,
+        limit: topic.limit,
       }));
     });
     const selectHandlerSchedule = async (value) => {
