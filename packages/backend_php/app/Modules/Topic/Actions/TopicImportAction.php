@@ -174,7 +174,7 @@ class TopicImportAction
 
             $critical = null;
             if ($input['critical_code']) {
-                $critical = $lecturers->where('code', $input['lecturer_code'])->first();
+                $critical = $lecturers->where('code', $input['critical_code'])->first();
                 if (!$critical) {
                     $error[] = str_replace(['{0}'], [$heading['critical_code']], $msgNotExist);
                 }
