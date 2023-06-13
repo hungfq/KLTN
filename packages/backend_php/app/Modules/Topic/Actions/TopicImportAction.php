@@ -25,11 +25,11 @@ class TopicImportAction
         $arrFile = Excel::toArray(new Collection(), $file)[0];
 
         $heading = [
-            'code' => 'Mã đề tài(*)',
+//            'code' => 'Mã đề tài(*)',
             'title' => 'Tiêu đề(*)',
             'limit' => 'Số lượng SV(*)',
 //            'thesis_defense_date' => 'Thesis Defense Date',
-            'schedule_code' => 'Mã đợt',
+            'schedule_code' => 'Mã đợt(*)',
             'lecturer_code' => 'Mã GVHD',
             'critical_code' => 'Mã GVPB',
             'description' => 'Mô tả',
@@ -75,9 +75,10 @@ class TopicImportAction
         }
 
         $arrValidRequire = [
-            'code',
+//            'code',
             'title',
             'limit',
+            'schedule_code',
         ];
 
         $arrValidMaxLen = [];
@@ -100,7 +101,7 @@ class TopicImportAction
         $errorColumn = (ImportHelpers::ERROR_COLUMN);
 
         $lecturers = User::role(Role::ROLE_LECTURER)->get();
-        $topics = Topic::all();
+//        $topics = Topic::all();
         $schedules = Schedule::all();
 
         $arrFile = collect($arrFile);
@@ -145,15 +146,15 @@ class TopicImportAction
                 }
             }
 
-            if ($arrFile->where('code', $input['code'])
-                    ->count() > 1) {
-                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
-            }
-
-            if ($topics->where('code', $input['code'])
-                ->first()) {
-                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
-            }
+//            if ($arrFile->where('code', $input['code'])
+//                    ->count() > 1) {
+//                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
+//            }
+//
+//            if ($topics->where('code', $input['code'])
+//                ->first()) {
+//                $error[] = str_replace('{0}', $heading['code'], $msgDuplicate);
+//            }
 
             $schedule = null;
             if ($input['schedule_code']) {
@@ -192,7 +193,7 @@ class TopicImportAction
                 unset($arrFile[$index]);
 
                 $importTopic = [
-                    "code" => data_get($input, 'code'),
+                    "code" => Topic::generateTopicCode($schedule),
                     "title" => data_get($input, 'title'),
                     "description" => data_get($input, 'description'),
                     "limit" => data_get($input, 'limit'),
