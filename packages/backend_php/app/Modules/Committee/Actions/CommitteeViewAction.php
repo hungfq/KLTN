@@ -44,6 +44,10 @@ class CommitteeViewAction
             $query->where('critical_id', $critical_id);
         }
 
+        if ($schedule_id = $dto->schedule_id) {
+            $query->where('schedule_id', $schedule_id);
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',
