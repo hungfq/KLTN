@@ -11,7 +11,8 @@ class CommitteeUpdateValidator extends AbstractValidator
     {
         return [
             'id' => 'required',
-            'code' => 'nullable',
+            'schedule_id' => 'required',
+//            'code' => 'nullable',
             'name' => 'nullable',
             'committeePresidentId' => 'nullable',
             'committeeSecretaryId' => 'nullable',

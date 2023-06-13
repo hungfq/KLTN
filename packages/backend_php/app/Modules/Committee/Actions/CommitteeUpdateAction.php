@@ -4,6 +4,7 @@ namespace App\Modules\Committee\Actions;
 
 use App\Entities\Committee;
 use App\Entities\Role;
+use App\Entities\Schedule;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -13,6 +14,7 @@ class CommitteeUpdateAction
 {
     public CommitteeUpdateDTO $dto;
     public $committee;
+    public $schedule;
 
     /***
      * @param CommitteeUpdateDTO $dto
@@ -33,6 +35,12 @@ class CommitteeUpdateAction
         if (!$this->committee) {
 //            throw new UserException("Committee not found!");
             throw new UserException("Hội đồng không ồn tại!", 400);
+        }
+
+        $this->schedule = Schedule::find($this->dto->schedule_id);
+        if (!$this->schedule) {
+//                throw new UserException("Schedule not found!");
+            throw new UserException("Đợt đăng ký không ồn tại!", 400);
         }
 
         if ($this->dto->president_id) {
@@ -67,8 +75,8 @@ class CommitteeUpdateAction
 
     protected function updateCommittee()
     {
-        if ($this->dto->code) {
-            $this->committee->code = $this->dto->code;
+        if ($this->dto->schedule_id) {
+            $this->committee->schedule_id = $this->dto->schedule_id;
         }
         if ($this->dto->name) {
             $this->committee->name = $this->dto->name;

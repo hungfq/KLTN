@@ -6,6 +6,7 @@ use Spatie\DataTransferObject\FlexibleDataTransferObject;
 
 class CommitteeViewDTO extends FlexibleDataTransferObject
 {
+    public $schedule_id;
     public $search;
     public $president_id;
     public $secretary_id;
@@ -18,6 +19,7 @@ class CommitteeViewDTO extends FlexibleDataTransferObject
         $request = $request ?? app('request');
 
         return new self([
+            'schedule_id' => $request->input('schedule_id'),
             'search' => $request->input('search'),
             'president_id' => $request->input('president_id'),
             'secretary_id' => $request->input('secretary_id'),

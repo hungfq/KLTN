@@ -10,7 +10,8 @@ class CommitteeStoreValidator extends AbstractValidator
     public function rules($params = [])
     {
         return [
-            'code' => 'required',
+            'schedule_id' => 'required',
+//            'code' => 'required',
             'name' => 'required',
             'committeePresidentId' => 'nullable',
             'committeeSecretaryId' => 'nullable',

@@ -4,6 +4,7 @@ namespace App\Modules\Committee\Actions;
 
 use App\Entities\Committee;
 use App\Entities\Role;
+use App\Entities\Schedule;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -13,6 +14,7 @@ class CommitteeStoreAction
 {
     public CommitteeStoreDTO $dto;
     public $committee;
+    public $schedule;
 
     /***
      * @param CommitteeStoreDTO $dto
@@ -24,7 +26,7 @@ class CommitteeStoreAction
 
         $this->checkData()
             ->createCommittee()
-            ->updateTopics();
+            ->syncTopics();
     }
 
     protected function checkData()
@@ -53,17 +55,24 @@ class CommitteeStoreAction
             }
         }
 
+        $this->schedule = Schedule::find($this->dto->schedule_id);
+        if (!$this->schedule) {
+//                throw new UserException("Schedule not found!");
+            throw new UserException("Đợt đăng ký không ồn tại!", 400);
+        }
+
         return $this;
     }
 
     protected function createCommittee()
     {
+        $this->dto->code = Committee::generateCommitteeCode($this->schedule);
         $this->committee = Committee::create($this->dto->all());
 
         return $this;
     }
 
-    protected function updateTopics()
+    protected function syncTopics()
     {
         foreach (data_get($this->dto, 'topics', []) as $topicId) {
             $topic = Topic::find($topicId);

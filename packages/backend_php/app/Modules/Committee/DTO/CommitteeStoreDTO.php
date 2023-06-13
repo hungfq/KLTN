@@ -6,6 +6,7 @@ use Spatie\DataTransferObject\FlexibleDataTransferObject;
 
 class CommitteeStoreDTO extends FlexibleDataTransferObject
 {
+    public $schedule_id;
     public $code;
     public $name;
     public $president_id;
@@ -18,7 +19,8 @@ class CommitteeStoreDTO extends FlexibleDataTransferObject
         $request = $request ?? app('request');
 
         return new self([
-            'code' => $request->input('code'),
+            'schedule_id' => $request->input('schedule_id'),
+//            'code' => $request->input('code'),
             'name' => $request->input('name'),
             'president_id' => $request->input('committeePresidentId'),
             'secretary_id' => $request->input('committeeSecretaryId'),

@@ -14,7 +14,7 @@ class CommitteeViewAction
     public function handle($dto)
     {
         $query = Committee::query()
-            ->with(['president', 'secretary', 'critical', 'topics']);
+            ->with(['president', 'secretary', 'critical', 'topics', 'schedule']);
 
         $query->addSelect([
             $query->qualifyColumn('*'),

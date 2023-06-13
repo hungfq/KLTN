@@ -15,6 +15,9 @@ class CommitteeShowTransformer extends TransformerAbstract
 
         return [
             '_id' => $model->id,
+            'schedule_id' => $model->schedule_id,
+            'schedule_code' => data_get($model, 'schedule.code'),
+            'schedule_name' => data_get($model, 'schedule.name'),
             'code' => $model->code,
             'name' => $model->name,
             'president_id' => data_get($model, 'president.id'),
