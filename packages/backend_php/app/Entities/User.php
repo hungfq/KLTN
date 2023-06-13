@@ -72,4 +72,9 @@ class User extends BaseSoftModel implements AuthenticatableContract, Authorizabl
     {
         return $this->hasMany(Topic::class, 'critical_id');
     }
+
+    public function studentTopics()
+    {
+        return $this->belongsToMany(Topic::class, 'topic_students', 'student_id', 'topic_id');
+    }
 }
