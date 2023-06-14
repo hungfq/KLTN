@@ -348,7 +348,6 @@ export default {
       this.listSchedules.forEach((schedule) => {
         arr.push({ value: schedule._id, label: schedule.code });
       });
-      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:353 ~ listScheduleSelect ~ arr:', arr);
       return arr;
     },
   },

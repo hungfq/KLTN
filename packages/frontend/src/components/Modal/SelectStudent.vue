@@ -147,7 +147,7 @@ export default {
       let response = { data: [], meta: { pagination: { total: 0 } } };
       if (props.type === 'SCHEDULE') {
         response = await UserApi.listUser(token, 'STUDENT', option);
-      } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
+      } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL' || props.type === 'TOPIC-FORM-UPDATE') {
         if (props.scheduleId) {
           response = await ScheduleApi.fetchStudentsOfSchedule(token, props.scheduleId, option);
         }
@@ -190,6 +190,8 @@ export default {
           const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
           listStudentsRaw = result.data;
         } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
+          listStudentsRaw = props.selected;
+        } else {
           listStudentsRaw = props.selected;
         }
         itemsSelected.value = listStudentsRaw.map((user) => ({
