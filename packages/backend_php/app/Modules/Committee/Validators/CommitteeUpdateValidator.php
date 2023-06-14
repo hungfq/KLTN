@@ -17,7 +17,7 @@ class CommitteeUpdateValidator extends AbstractValidator
             'committeePresidentId' => 'nullable',
             'committeeSecretaryId' => 'nullable',
             'criticalLecturerId' => 'nullable',
-//            'topics' => 'nullable|array',
+            'topics' => 'nullable|array',
         ];
     }
 

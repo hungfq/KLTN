@@ -13,7 +13,7 @@ class CommitteeUpdateDTO extends FlexibleDataTransferObject
     public $president_id;
     public $secretary_id;
     public $critical_id;
-//    public $topics;
+    public $topics;
 
     public static function fromRequest($request = null)
     {
@@ -27,7 +27,7 @@ class CommitteeUpdateDTO extends FlexibleDataTransferObject
             'president_id' => $request->input('committeePresidentId'),
             'secretary_id' => $request->input('committeeSecretaryId'),
             'critical_id' => $request->input('criticalLecturerId'),
-//            'topics' => $request->input('topics'),
+            'topics' => $request->input('topics'),
         ]);
     }
 }
