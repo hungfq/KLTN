@@ -374,10 +374,11 @@ export default {
 
     changeStudents (students) {
       this.showSelectStudent = false;
-      if (students.length !== Number(this.limit)) {
-        this.$toast.error('Số lượng sinh viên được chọn phải bằng số lượng giới hạn!');
+      if (students.length > 3 || students.length < 1) {
+        this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
         return;
       }
+      this.limit = students.length;
       this.listStudentsSelected = students;
       this.studentIds = this.listStudentsSelected.map((st) => st.code);
     },
