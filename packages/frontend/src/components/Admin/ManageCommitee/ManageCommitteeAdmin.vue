@@ -168,7 +168,7 @@ export default {
       { text: 'Giảng viên phản biện', value: 'criticalLecturerId.name' },
       { text: 'Chủ tịch hội đồng', value: 'committeePresidentId.name' },
       { text: 'Thư kí hội đồng', value: 'committeeSecretaryId.name' },
-      { text: 'import-export', value: 'import-export' },
+      { text: 'Đợt đăng ký', value: 'schedule_code' },
       { text: 'Hành động', value: 'operation' },
     ];
     const items = [];

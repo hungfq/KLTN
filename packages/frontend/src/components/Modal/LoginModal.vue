@@ -92,7 +92,6 @@ export default {
   },
   method: {
     onChangeType (value) {
-      console.log('🚀 ~ file: LoginModal.vue:103 ~ onChangeType ~ value:', value);
       this.role = value;
     },
   },

@@ -30,6 +30,7 @@
             :disabled="isView"
           />
           <FormKit
+            v-if="isView"
             v-model="code"
             name="code"
             type="text"
@@ -38,6 +39,23 @@
             validation="required"
             :disabled="isView"
           />
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Đợt đăng ký
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="scheduleId"
+                :options="listSchedules"
+                :searchable="true"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
+                :can-clear="false"
+                :disabled="isView || isUpdate"
+              />
+            </div>
+          </div>
           <div class="w-[400px]">
             <span class="font-bold text-sm">
               Giảng viên phản biện
@@ -112,6 +130,7 @@ import Multiselect from '@vueform/multiselect';
 import { mapGetters } from 'vuex';
 import UserApi from '../../../utils/api/user';
 import CommitteeApi from '../../../utils/api/committee';
+import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 
 export default {
@@ -127,11 +146,9 @@ export default {
       committeePresidentId: '',
       committeeSecretaryId: '',
       criticalLecturerId: '',
-      listLecturers: [
-        'lecturer1',
-        'lecturer2',
-        'lecturer3',
-      ],
+      listLecturers: [],
+      scheduleId: '',
+      schedules: [],
       messages: '',
       loading: false,
     };
@@ -152,10 +169,19 @@ export default {
     isView () {
       return this.section === 'committee-view';
     },
+    listSchedules () {
+      const listSchedules = this.schedules.map((st) => ({
+        value: st._id,
+        label: st.code,
+      }));
+      return listSchedules;
+    },
   },
   async mounted () {
     this.loading = true;
     const lecturers = await UserApi.listUser(this.token, 'LECTURER');
+    const listSchedules = await ScheduleApi.listAllSchedule(this.token);
+    this.schedules = listSchedules.data;
     this.listLecturers = lecturers.data.map((lecturer) => {
       let l = {
         value: lecturer._id,
@@ -177,6 +203,7 @@ export default {
         this.committeePresidentId = committee.committeePresidentId._id;
         this.committeeSecretaryId = committee.committeeSecretaryId._id;
         this.criticalLecturerId = committee.criticalLecturerId._id;
+        this.scheduleId = committee.schedule_id;
       }
     }
     this.loading = false;
@@ -192,6 +219,7 @@ export default {
         committeePresidentId: this.committeePresidentId,
         committeeSecretaryId: this.committeeSecretaryId,
         criticalLecturerId: this.criticalLecturerId,
+        schedule_id: this.scheduleId,
       };
       try {
         if (this.check()) {
@@ -219,7 +247,7 @@ export default {
         this.$toast.error('Vui lòng nhập tên hội đồng');
         return false;
       }
-      if (!this.code) {
+      if (!this.scheduleId) {
         this.$toast.error('Vui lòng nhập mã hội đồng');
         return false;
       }
