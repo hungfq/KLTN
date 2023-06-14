@@ -176,7 +176,9 @@ export default {
     const topicStudentLimit = ref(3);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
-      { text: 'Tên đề tài ', value: 'title', sortable: true },
+      {
+        text: 'Tên đề tài ', value: 'title', sortable: true, width: 400,
+      },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Giảng viên phản biện', value: 'critical' },
       { text: 'Đợt đăng ký', value: 'schedule' },
@@ -252,7 +254,7 @@ export default {
         title: topic.title,
         lecturer: topic.lecturerId.name || '',
         critical: topic.criticalLecturerId.name || '',
-        schedule: topic.scheduleId.name || '',
+        schedule: topic.scheduleId.code || '',
         scheduleId: topic.scheduleId || '',
         list_students: topic.list_students,
         limit: topic.limit,
@@ -365,7 +367,7 @@ export default {
     listScheduleSelect () {
       const arr = [{ value: 0, label: 'Tất cả các đợt' }];
       this.listSchedules.forEach((schedule) => {
-        arr.push({ value: schedule._id, label: schedule.name });
+        arr.push({ value: schedule._id, label: schedule.code });
       });
       return arr;
     },

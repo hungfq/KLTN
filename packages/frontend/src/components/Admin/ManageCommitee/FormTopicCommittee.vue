@@ -40,13 +40,18 @@
             >
               <template #empty-message>
                 <div class="text-center text-gray-500">
-                  Không có dữ liệu
+                  Không có đề tài được giáo viên hướng dẫn và giáo viên phản biện duyệt vào đợt này!
                 </div>
               </template>
             </EasyDataTable>
           </div>
         </div>
-        <LoadingProcess v-else />
+        <div
+          v-else
+          class="py-4 mx-4"
+        >
+          <LoadingProcess />
+        </div>
       </div>
     </div>
   </div>
@@ -86,7 +91,6 @@ import LoadingProcess from '../../common/Loading.vue';
 export default {
   name: 'FormTopic',
   components: {
-    ButtonImport,
     UploadButton,
     ButtonDownloadTemplate,
     LoadingProcess,
@@ -110,9 +114,9 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
-      { text: 'Giảng viên phản biện', value: 'critical' },
-      { text: 'Đợt đăng ký', value: 'schedule' },
+      { text: 'Giảng viên hướng dẫn', value: 'lecturerId.name' },
+      { text: 'Giảng viên phản biện', value: 'criticalLecturerId.name' },
+      { text: 'Đợt đăng ký', value: 'scheduleId.code' },
     ];
     const items = [];
     const serverOptions = ref({
@@ -123,12 +127,6 @@ export default {
     });
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
-    // Get id from store
-    // const transformTopic = (listTopics) => listTopics.map((topic) => ({
-    //   _id: topic._id || topic.id,
-    //   title: topic.title,
-    //   code: topic.code,
-    // }));
     const $toast = useToast();
     const errorHandler = (e) => {
       if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
@@ -138,7 +136,7 @@ export default {
     const loadToServer = async (options) => {
       try {
         loading.value = true;
-        const response = await TopicApi.listAllTopicsByCriticalAndApproved(token, criticalId.value, options, selectSchedule.value);
+        const response = await TopicApi.listAllTopicsByCriticalAndApproved(token, options, criticalId.value, selectSchedule.value);
         // topics.value = transformTopic(response.data);
         topics.value = response.data;
         store.state.topic.listTopics = topics.value;
@@ -163,16 +161,19 @@ export default {
 
     onMounted(async () => {
       try {
+        loading.value = true;
         const committeeId = store.getters['url/id'];
         const committee = await CommitteeApi.getCommittee(token, committeeId);
         const listTopic = await TopicApi.listAllTopicsByCommittee(token, committeeId);
-
+        selectSchedule.value = committee.schedule_id;
         currentCommittee.value = committee;
         listTopicsSelected.value = [...listTopic];
         criticalId.value = committee.critical_id;
         await loadToServer(serverOptions.value);
+        loading.value = false;
       } catch (e) {
         errorHandler(e);
+        loading.value = false;
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     });

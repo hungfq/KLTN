@@ -20,7 +20,7 @@ export default class TopicApi {
   }
 
   static async listAllTopicsByCommittee (token, committeeId) {
-    const url = `/topic?committeeId=${committeeId}`;
+    const url = `/topic?committee_id=${committeeId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
@@ -89,8 +89,9 @@ export default class TopicApi {
     return res.data;
   }
 
-  static async listAllTopicsByCriticalAndApproved (token, criticalId, options) {
-    const url = urlWithPagination(`/topic?criticalId=${criticalId}&as_least_lecturer_approve=1`, options);
+  static async listAllTopicsByCriticalAndApproved (token, options, criticalId, scheduleId) {
+    let url = urlWithPagination(`/topic?criticalId=${criticalId}&as_least_lecturer_approve=1`, options);
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
     const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,

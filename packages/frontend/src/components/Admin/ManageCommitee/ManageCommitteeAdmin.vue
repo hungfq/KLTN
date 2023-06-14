@@ -40,6 +40,19 @@
           @change="selectHandlerLecturer( 'SECRETARY', $event)"
         />
       </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectSchedule"
+          :options="listScheduleSelect"
+          :searchable="true"
+          :can-deselect="false"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :can-clear="false"
+          :placeholder="'Đợt đăng ký'"
+          @change="selectHandlerSchedule"
+        />
+      </div>
       <div class="mx-auto" />
       <ButtonAddItem
         :title="'Thêm hội đồng'"
@@ -159,6 +172,7 @@ export default {
     const selectPresident = ref(null);
     const selectCritical = ref(null);
     const selectSecretary = ref(null);
+    const selectSchedule = ref(null);
     const serverItemsLength = ref(0);
     const rowItems = [10, 20, 50];
     const committees = ref([]);
@@ -188,7 +202,7 @@ export default {
     const loadToServer = async (options) => {
       loading.value = true;
       try {
-        const response = await CommitteeApi.listAllCommittee(token, options, selectCritical.value, selectPresident.value, selectSecretary.value);
+        const response = await CommitteeApi.listAllCommittee(token, options, selectCritical.value, selectPresident.value, selectSecretary.value, selectSchedule.value);
         committees.value = response.data;
         store.state.committee.listCommittee = response.data;
         serverItemsLength.value = response.meta.pagination.total;
@@ -265,6 +279,18 @@ export default {
       else if (type === 'SECRETARY') selectSecretary.value = event;
       await loadToServer(serverOptions.value);
     };
+
+    const selectHandlerSchedule = async (value) => {
+      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:284 ~ selectHandlerSchedule ~ value:', value);
+      selectSchedule.value = value;
+      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:285 ~ selectHandlerSchedule ~ selectSchedule.value:', selectSchedule.value);
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+        errorHandler(e);
+      }
+    };
     return {
       headers,
       items,
@@ -289,7 +315,9 @@ export default {
       selectSecretary,
       selectPresident,
       selectHandlerLecturer,
+      selectSchedule,
       search,
+      selectHandlerSchedule,
     };
   },
   computed: {
@@ -305,6 +333,9 @@ export default {
     ...mapGetters('lecturer', [
       'listLecturer',
     ]),
+    ...mapGetters('schedule', [
+      'listSchedules',
+    ]),
     listLecturerSelect () {
       const arr = [{ value: 0, label: 'Tất cả giảng viên' }];
       this.listLecturer.forEach((lecturer) => {
@@ -312,9 +343,18 @@ export default {
       });
       return arr;
     },
+    listScheduleSelect () {
+      const arr = [{ value: 0, label: 'Tất cả các đợt' }];
+      this.listSchedules.forEach((schedule) => {
+        arr.push({ value: schedule._id, label: schedule.code });
+      });
+      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:353 ~ listScheduleSelect ~ arr:', arr);
+      return arr;
+    },
   },
   async mounted () {
     await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
   },
   methods: {
     handleAddTopic (id) {
