@@ -14,6 +14,7 @@
     "api-ecosystem-for-laravel/dingo-api": "^3.0.0",
     "elephantio/elephant.io": "^4.2",
     "guzzlehttp/guzzle": "^7.5",
+    "illuminate/mail": "^8.83",
     "laravel/lumen-framework": "^8.3.1",
     "maatwebsite/excel": "^3.1",
     "nesbot/carbon": "^2.67",
