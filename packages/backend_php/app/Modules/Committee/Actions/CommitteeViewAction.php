@@ -14,7 +14,7 @@ class CommitteeViewAction
     public function handle($dto)
     {
         $query = Committee::query()
-            ->with(['president', 'secretary', 'critical', 'topics']);
+            ->with(['president', 'secretary', 'critical', 'topics', 'schedule']);
 
         $query->addSelect([
             $query->qualifyColumn('*'),
@@ -42,6 +42,10 @@ class CommitteeViewAction
 
         if ($critical_id = $dto->critical_id) {
             $query->where('critical_id', $critical_id);
+        }
+
+        if ($schedule_id = $dto->schedule_id) {
+            $query->where('schedule_id', $schedule_id);
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

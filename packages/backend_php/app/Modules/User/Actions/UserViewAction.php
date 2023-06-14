@@ -42,6 +42,17 @@ class UserViewAction
             $query->where('user_has_roles.role_id', data_get($role, 'id'));
         }
 
+        if ($dto->is_active) {
+            $query->where('users.status', User::STATUS_ACTIVE);
+        }
+
+        if ($dto->not_done_any_topic) {
+            $query->whereDoesntHave('studentTopics', function ($q) {
+                $q->where('lecturer_approved', '=', 1)
+                    ->where('critical_approved', '=', 1);
+            });
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',

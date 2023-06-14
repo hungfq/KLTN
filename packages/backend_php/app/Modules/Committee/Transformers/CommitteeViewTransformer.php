@@ -14,6 +14,9 @@ class CommitteeViewTransformer extends TransformerAbstract
         }
         return [
             '_id' => $model->id,
+            'schedule_id' => $model->schedule_id,
+            'schedule_code' => data_get($model, 'schedule.code'),
+            'schedule_name' => data_get($model, 'schedule.name'),
             'code' => $model->code,
             'name' => $model->name,
             'committeePresidentId' => [
@@ -31,6 +34,8 @@ class CommitteeViewTransformer extends TransformerAbstract
                 'code' => data_get($model, 'critical.code'),
                 'name' => data_get($model, 'critical.name'),
             ],
+            'defense_date' => data_get($model, 'defense_date'),
+            'address' => data_get($model, 'address'),
             'topics' => $topics,
             'created_at' => $model->created_at,
             'created_by_name' => data_get($model, 'created_by_name'),

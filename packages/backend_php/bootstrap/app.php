@@ -61,7 +61,7 @@ $app->singleton(
 */
 
 //$configFiles = ['app', 'auth', 'jwt', 'permission', 'constant', 'swagger-lume', 'queue'];
-$configFiles = ['app', 'auth', 'cors', 'permission'];
+$configFiles = ['app', 'auth', 'cors', 'permission', 'mail', 'services'];
 foreach ($configFiles as $file) {
     $app->configure($file);
 }
@@ -110,6 +110,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->alias('cache', \Illuminate\Cache\CacheManager::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
 
 $app['Dingo\Api\Exception\Handler']->setErrorFormat([
     'error' => [

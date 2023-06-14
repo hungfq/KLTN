@@ -20,6 +20,16 @@ $api->version('v2', function ($api) {
             'uses' => 'Http\Controllers\TestDataController@testSocket',
         ]);
 
+        $api->post('/test-api', [
+            'as' => '',
+            'uses' => 'Http\Controllers\TestDataController@testApi',
+        ]);
+
+        $api->post('/test-mail', [
+            'as' => '',
+            'uses' => 'Http\Controllers\TestDataController@testMail',
+        ]);
+
         $api->post('/auth/login', [
             'as' => '',
             'uses' => 'Modules\Auth\Controllers\AuthController@loginWithGoogleAccessToken',

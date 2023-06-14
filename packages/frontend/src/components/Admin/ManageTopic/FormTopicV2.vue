@@ -19,143 +19,253 @@
       </div>
       <div
         v-if="!loading"
-        class="ml-5 grid grid-cols-2"
+        class="flex flex-col mt-4 justify-center items-center"
       >
-        <FormKit
-          v-model="title"
-          type="text"
-          name="title"
-          label="Tiêu đề"
-          help="Vd: Xây dụng web thương mại điện tử e-shop"
-          validation="required"
-          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-          :disabled="isView"
-        />
-        <FormKit
-          v-if="isView"
-          v-model="code"
-          name="code"
-          type="text"
-          label="Mã đề tài"
-          validation="required"
-          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-          :disabled="isView"
-        />
-        <FormKit
-          v-model="limit"
-          name="limit"
-          type="number"
-          label="Số thành viên"
-          validation="min:1|max:3"
-          :disabled="isView"
-          :validation-messages="{ min: 'Phải có ít nhất 1 thành viên', max:'Có tối đa 3 thành viên' }"
-        />
-        <div class="w-3/5">
-          <span class="font-bold text-sm">
-            Giảng viên hướng dẫn
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="lecturerId"
-              :can-deselect="false"
-              no-results-text="Không có kết quả"
-              no-options-text="Không có lựa lựa chọn"
-              :options="listLecturers"
-              :can-clear="false"
-              :searchable="true"
-              :disabled="isView"
-            />
+        <div
+          v-if="page === 1 || isView"
+          class="flex flex-col"
+          :class="{'min-h-[200px]' : !isView}"
+        >
+          <div class="flex space-x-4">
+            <div class="w-[400px]">
+              <FormKit
+                v-model="title"
+                type="text"
+                name="title"
+                label="Tiêu đề"
+                help="Vd: Xây dụng web thương mại điện tử e-shop"
+                validation="required"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                :disabled="isView"
+              />
+            </div>
+            <div class="w-[400px]">
+              <span class="font-bold text-sm py-4 my-4">
+                Đợt đăng ký
+              </span>
+              <div class="mt-1">
+                <Multiselect
+                  v-model="scheduleId"
+                  :options="listSchedules"
+                  :searchable="true"
+                  :can-deselect="false"
+                  no-results-text="Không có kết quả"
+                  no-options-text="Không có lựa lựa chọn"
+                  :can-clear="false"
+                  :disabled="isView"
+                  class="w-[400px]"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-4">
+            <div class="w-[400px]">
+              <FormKit
+                v-if="isView"
+                v-model="code"
+                name="code"
+                type="text"
+                label="Mã đề tài"
+                validation="required"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                :disabled="isView"
+              />
+            </div>
+            <div class="w-[400px]">
+              <FormKit
+                v-model="description"
+                name="description"
+                type="textarea"
+                label="Mô tả"
+                help="Ghi các thông tin chi tiết tại đây"
+                validation="required"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                :disabled="isView"
+              />
+            </div>
+          </div>
+          <div class="flex space-x-4">
+            <!-- Grade -->
+            <div class="w-[400px]">
+              <FormKit
+                v-if="!isSave"
+                v-model="advisorLecturerGrade"
+                type="number"
+                label="Điểm của giảng viên hướng dẫn"
+                :disabled="isView"
+              />
+            </div>
+            <div class="w-[400px]">
+              <FormKit
+                v-if="!isSave"
+                v-model="criticalLecturerGrade"
+                type="number"
+                label="Điểm của giảng viên phản biện"
+                :disabled="isView"
+              />
+            </div>
+          </div>
+          <div class="flex space-x-4">
+            <div class="w-[400px]">
+              <FormKit
+                v-if="!isSave"
+                v-model="committeePresidentGrade"
+                type="number"
+                label="Điểm của chủ tịch hội đồng"
+                :disabled="isView"
+              />
+            </div>
+            <div class="w-[400px]">
+              <FormKit
+                v-if="!isSave"
+                v-model="committeeSecretaryGrade"
+                name="limit"
+                type="number"
+                label="Điểm của thư ký"
+                :disabled="isView"
+              />
+            </div>
           </div>
         </div>
-        <div class="w-3/5">
-          <span class="font-bold text-sm">
-            Giảng viên phản biện
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="criticalLecturerId"
-              :options="listLecturers"
-              :can-deselect="false"
-              no-results-text="Không có kết quả"
-              no-options-text="Không có lựa lựa chọn"
-              :can-clear="false"
-              :searchable="true"
-              :disabled="isView"
-            />
+        <!-- Select lecturer -->
+        <div
+          v-if="page === 2 || isView"
+          class="flex space-x-4"
+          :class="{'min-h-[200px]' : !isView}"
+        >
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Giảng viên hướng dẫn
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="lecturerId"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
+                :options="listLecturers"
+                :can-clear="false"
+                :searchable="true"
+                :disabled="isView"
+              />
+            </div>
+          </div>
+          <div class="w-[400px]">
+            <span class="font-bold text-sm">
+              Giảng viên phản biện
+            </span>
+            <div class="mt-1">
+              <Multiselect
+                v-model="criticalLecturerId"
+                :options="listLecturers"
+                :can-deselect="false"
+                no-results-text="Không có kết quả"
+                no-options-text="Không có lựa lựa chọn"
+                :can-clear="false"
+                :searchable="true"
+                :disabled="isView"
+              />
+            </div>
           </div>
         </div>
-        <div class="my-2-1 w-3/5">
-          <span class="font-bold text-sm py-4 my-4">
-            Đợt đăng ký
-          </span>
-          <div class="mt-1">
-            <Multiselect
-              v-model="scheduleId"
-              :options="listSchedules"
-              :searchable="true"
-              :can-deselect="false"
-              no-results-text="Không có kết quả"
-              no-options-text="Không có lựa lựa chọn"
-              :can-clear="false"
+        <!-- Danh sách sinh viên đã chọn -->
+        <div
+          v-if="page === 3 || isView"
+          class=""
+        >
+          <div class="flex flex-col">
+            <div class="font-bold my-4">
+              Danh sách sinh viên đã chọn
+            </div>
+            <div class="overflow-x-auto w-[600px]">
+              <EasyDataTable
+                show-index
+                :headers="headers"
+                :items="listStudentsSelected"
+                :loading="loading"
+                :buttons-pagination="false"
+                hide-footer
+              />
+            </div>
+          </div>
+          <div
+            v-if="!isView"
+            class="flex mt-4"
+          >
+            <FormKit
+              v-model.number="limit"
+              name="limit"
+              type="number"
+              label="Số thành viên"
+              outer-class="!mx-8 w-[300px]"
+              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này', min: 'Số lượng không nhỏ hơn 1', max: 'Số lượng không lớn hơn 3' }"
+              validation="required|min:1|max:3"
               :disabled="isView"
-              class="w-[400px]"
             />
+            <button
+              v-if="!isView"
+              class="btn btn-primary mt-5 !mx-8 w-[250px]"
+              @click="chooseStudent"
+            >
+              Chọn danh sách sinh viên
+            </button>
           </div>
         </div>
-        <FormKit
-          v-if="!isSave"
-          v-model="advisorLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên hướng dẫn"
-          :disabled="isView"
-        />
-        <FormKit
-          v-if="!isSave"
-          v-model="criticalLecturerGrade"
-          type="number"
-          label="Điểm của giảng viên phản biện"
-          :disabled="isView"
-        />
-        <FormKit
-          v-if="!isSave"
-          v-model="committeePresidentGrade"
-          type="number"
-          label="Điểm của chủ tịch hội đồng"
-          :disabled="isView"
-        />
-        <FormKit
-          v-if="!isSave"
-          v-model="committeeSecretaryGrade"
-          name="limit"
-          type="number"
-          label="Điểm của thư ký"
-          :disabled="isView"
-        />
-        <FormKit
-          v-model="description"
-          name="description"
-          type="textarea"
-          label="Mô tả"
-          help="Ghi các thông tin chi tiết tại đây"
-          validation="required"
-          :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-          :disabled="isView"
-        />
+        <div
+          v-if="!isView"
+          class="my-4 w-[300px] mx-auto mt-8"
+        >
+          <ul class="steps">
+            <li
+              v-for="(step, index) in steps"
+              :key="index"
+              class="step"
+              :class="{ 'step-primary': page >= step.page }"
+              @click="page=step.page"
+            >
+              {{ step.label }}
+            </li>
+          </ul>
+        </div>
       </div>
       <LoadingProcess v-else />
       <!-- Modal footer -->
-      <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+      <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 justify-end">
         <button
-          v-if="!isView && !loading "
+          v-if="!isView && page > 1&&!loading"
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4  focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="btn btn-secondary mx-2"
+          @click="page=1"
+        >
+          Quay lại
+        </button>
+        <button
+          v-if="!isView && page === 3 &&!loading"
+          type="button"
+          class="btn btn-primary mx-2"
           @click="handleAddTopicAdmin"
         >
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
         </button>
+        <button
+          v-if="!isView && page !== 3&&!loading"
+          type="button"
+          class="btn btn-primary mx-2"
+          @click="page=page+1"
+        >
+          Tiếp theo
+        </button>
       </div>
     </div>
   </div>
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="scheduleId"
+    :selected="listStudentsSelected"
+    :enabled-excel="true"
+    :type="'TOPIC-FORM-UPDATE'"
+    @change-students="changeStudents"
+  />
 </template>
 
 <script>
@@ -165,12 +275,14 @@ import TopicApi from '../../../utils/api/topic';
 import UserApi from '../../../utils/api/user';
 import ScheduleApi from '../../../utils/api/schedule';
 import LoadingProcess from '../../common/Loading.vue';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 
 export default {
   name: 'FormTopic',
   components: {
     Multiselect,
     LoadingProcess,
+    SelectStudent,
   },
   data () {
     return {
@@ -181,12 +293,12 @@ export default {
       lecturerId: '',
       criticalLecturerId: '',
       studentIds: [],
-      scheduleId: '',
+      scheduleId: null,
       thesisDefenseDate: '',
-      advisorLecturerGrade: '',
-      committeePresidentGrade: '',
-      committeeSecretaryGrade: '',
-      criticalLecturerGrade: '',
+      advisorLecturerGrade: 0,
+      committeePresidentGrade: 0,
+      committeeSecretaryGrade: 0,
+      criticalLecturerGrade: 0,
       listStudents: [
         'student1',
         'student2',
@@ -201,6 +313,20 @@ export default {
       listSchedules: [],
       messages: '',
       loading: true,
+      listStudentsSelected: [],
+      page: 1,
+      steps: [
+        { label: 'Thông tin cho đề tài', page: 1 },
+        { label: 'Chọn giáo viên', page: 2 },
+        { label: 'Chọn sinh viên', page: 3 },
+      ],
+      showSelectStudent: false,
+      selectStudentScheduleId: null,
+      headers: [
+        { text: 'Mã số', value: 'code', sortable: true },
+        { text: 'Tên ', value: 'name', sortable: true },
+        { text: 'Email', value: 'email' },
+      ],
     };
   },
   computed: {
@@ -235,6 +361,7 @@ export default {
       }
       return l;
     });
+
     this.listStudents = students.data.map((student) => {
       let st = {
         value: student.code,
@@ -255,6 +382,14 @@ export default {
       }
       return st;
     });
+    // auto select when create
+    if (this.listSchedules.length > 0) {
+      this.scheduleId = this.listSchedules[0].value;
+    }
+    if (this.listLecturers.length > 1) {
+      this.lecturerId = this.listLecturers[0].value;
+      this.criticalLecturerId = this.listLecturers[1].value;
+    }
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       if (!id) {
@@ -271,13 +406,14 @@ export default {
         if (topic.criticalLecturerId) this.criticalLecturerId = topic.criticalLecturerId._id;
         if (topic.scheduleId) this.scheduleId = topic.scheduleId._id;
         this.studentIds = topic.students;
-        if (topic.thesisDefenseDate) {
-          const date = new Date(topic.thesisDefenseDate);
-          const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-            .toISOString()
-            .split('T')[0];
-          this.thesisDefenseDate = dateString;
-        }
+        // if (topic.thesisDefenseDate) {
+        //   const date = new Date(topic.thesisDefenseDate);
+        //   const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        //     .toISOString()
+        //     .split('T')[0];
+        //   this.thesisDefenseDate = dateString;
+        // }
+        this.listStudentsSelected = topic.list_students;
         this.advisorLecturerGrade = topic.advisorLecturerGrade;
         this.committeePresidentGrade = topic.committeePresidentGrade;
         this.committeeSecretaryGrade = topic.committeeSecretaryGrade;
@@ -288,6 +424,9 @@ export default {
     this.loading = false;
   },
   methods: {
+    chooseStudent () {
+      this.showSelectStudent = true;
+    },
     errorHandler (e) {
       if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
@@ -329,9 +468,9 @@ export default {
         }
         this.loading = false;
       } catch (e) {
-        // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
         this.errorHandler(e);
       }
+      this.loading = false;
     },
     check () {
       if (!this.title) {
@@ -367,6 +506,17 @@ export default {
         return false;
       }
       return true;
+    },
+    changeStudents (students) {
+      // console.log('🚀 ~ file: FormTopicV2.vue:511 ~ changeStudents ~ students:', students);
+      this.showSelectStudent = false;
+      if (students.length > 3 || students.length < 1) {
+        this.$toast.error('Số lượng thành viên không quá 3 thành viên và không nhỏ hơn 1');
+        return;
+      }
+      this.limit = students.length;
+      this.listStudentsSelected = students;
+      this.studentIds = this.listStudentsSelected.map((st) => st.code);
     },
   },
 };

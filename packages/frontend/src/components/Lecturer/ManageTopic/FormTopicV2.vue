@@ -254,7 +254,6 @@ export default {
               scheduleId: this.scheduleId,
               lecturerId: this.userId,
             };
-            console.log('🚀 ~ file: FormTopicV2.vue:253 ~ handleAddTopicAdmin ~ value.lecturerId:', value.lecturerId);
             await TopicApi.createTopic(this.token, value);
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();

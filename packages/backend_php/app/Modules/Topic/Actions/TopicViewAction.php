@@ -43,7 +43,7 @@ class TopicViewAction
         }
 
         if ($scheduleId = $dto->scheduleId) {
-            $query->where('schedule_id', $scheduleId);
+            $query->where('topics.schedule_id', $scheduleId);
         }
 
         if ($committee_id = $dto->committee_id) {
@@ -73,12 +73,14 @@ class TopicViewAction
         }
 
         if ($dto->as_least_lecturer_approve) {
-            $query->where('lecturer_approved', true);
+            $query->where('lecturer_approved', true)
+            ->where('critical_approved', true);
         }
 
         if ($dto->is_lecturer_mark) {
             $query->where('topics.lecturer_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
+                ->where('critical_approved', '=', 1)
                 ->whereNotNull('committees.president_id')
                 ->whereHas('schedule', function ($q) use ($now) {
                     $q->where('mark_start', '<=', $now)
@@ -90,6 +92,7 @@ class TopicViewAction
         if ($dto->is_critical_mark) {
             $query->where('topics.critical_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
+                ->where('critical_approved', '=', 1)
                 ->whereNotNull('committees.president_id')
                 ->whereHas('schedule', function ($q) use ($now) {
                     $q->where('mark_start', '<=', $now)
@@ -100,6 +103,7 @@ class TopicViewAction
         if ($dto->is_president_mark) {
             $query->where('committees.president_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
+                ->where('critical_approved', '=', 1)
                 ->whereHas('schedule', function ($q) use ($now) {
                     $q->where('mark_start', '<=', $now)
                         ->where('mark_end', '>=', $now);
@@ -109,6 +113,7 @@ class TopicViewAction
         if ($dto->is_secretary_mark) {
             $query->where('committees.secretary_id', Auth::id())
                 ->where('lecturer_approved', '=', 1)
+                ->where('critical_approved', '=', 1)
                 ->whereHas('schedule', function ($q) use ($now) {
                     $q->where('mark_start', '<=', $now)
                         ->where('mark_end', '>=', $now);

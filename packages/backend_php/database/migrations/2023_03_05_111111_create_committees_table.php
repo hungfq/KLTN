@@ -15,7 +15,7 @@ class CreateCommitteesTable extends Migration
     {
         Schema::create('committees', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 15);
+            $table->string('code', 50);
             $table->string('name', 100);
             $table->unsignedBigInteger('president_id')->nullable();
             $table->unsignedBigInteger('secretary_id')->nullable();

@@ -11,7 +11,7 @@ CommitteeShowAction
     {
         $query = Committee::query()
             ->where('committees.id', $id)
-            ->with(['president', 'secretary', 'critical', 'topics']);
+            ->with(['president', 'secretary', 'critical', 'topics', 'schedule']);
 
         $query->addSelect([
             $query->qualifyColumn('*'),
