@@ -75,6 +75,11 @@ class AuthLoginWithGoogleAccessTokenAction
             throw new UserException('Email không tồn tại!', 400);
         }
 
+        if ($this->user->status == User::STATUS_INACTIVE) {
+//            throw new UserException('User is inactive');
+            throw new UserException('Tài khoản đã bị khóa!', 400);
+        }
+
         return $this;
     }
 
