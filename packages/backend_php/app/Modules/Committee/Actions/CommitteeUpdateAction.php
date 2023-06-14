@@ -75,13 +75,14 @@ class CommitteeUpdateAction
 
     protected function updateCommittee()
     {
-        if ($this->dto->schedule_id) {
-            $this->committee->schedule_id = $this->dto->schedule_id;
-        }
-        if ($this->dto->name) {
-            $this->committee->name = $this->dto->name;
-        }
-        $this->committee->save();
+        $this->committee->update($this->dto->all());
+//        if ($this->dto->schedule_id) {
+//            $this->committee->schedule_id = $this->dto->schedule_id;
+//        }
+//        if ($this->dto->name) {
+//            $this->committee->name = $this->dto->name;
+//        }
+//        $this->committee->save();
 
         return $this;
     }

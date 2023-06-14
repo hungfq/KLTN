@@ -34,6 +34,8 @@ class CommitteeViewTransformer extends TransformerAbstract
                 'code' => data_get($model, 'critical.code'),
                 'name' => data_get($model, 'critical.name'),
             ],
+            'defense_date' => data_get($model, 'defense_date'),
+            'address' => data_get($model, 'address'),
             'topics' => $topics,
             'created_at' => $model->created_at,
             'created_by_name' => data_get($model, 'created_by_name'),
