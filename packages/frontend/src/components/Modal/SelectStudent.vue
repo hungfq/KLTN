@@ -145,7 +145,7 @@ export default {
     const loadToServer = async (option) => {
       loading.value = true;
       let response = { data: [], meta: { pagination: { total: 0 } } };
-      if (props.type === 'SCHEDULE') {
+      if (props.type === 'SCHEDULE' || props.type === 'SCHEDULE-FORM') {
         response = await UserApi.listUser(token, 'STUDENT', option);
       } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL' || props.type === 'TOPIC-FORM-UPDATE') {
         if (props.scheduleId) {
@@ -183,26 +183,29 @@ export default {
     };
 
     const prepareData = async (scheduleId) => {
-      if (!scheduleId) itemsSelected.value = [];
-      else {
-        let listStudentsRaw = [];
-        if (props.type === 'SCHEDULE') {
-          const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
-          listStudentsRaw = result.data;
-        } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
+      let listStudentsRaw = [];
+      if (!scheduleId) {
+        if (!props.selected) {
           listStudentsRaw = props.selected;
         } else {
-          listStudentsRaw = props.selected;
+          listStudentsRaw = [];
         }
-        itemsSelected.value = listStudentsRaw.map((user) => ({
-          _id: user._id || user.id,
-          code: user.code,
-          name: user.name,
-          email: user.email,
-        }));
-        itemsPrevSelected.value = cloneDeep(itemsSelected.value);
-        await loadToServer(serverOptions.value);
+      } else if (props.type === 'SCHEDULE') {
+        const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
+        listStudentsRaw = result.data;
+      } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
+        listStudentsRaw = props.selected;
+      } else {
+        listStudentsRaw = props.selected;
       }
+      itemsSelected.value = listStudentsRaw.map((user) => ({
+        _id: user._id || user.id,
+        code: user.code,
+        name: user.name,
+        email: user.email,
+      }));
+      itemsPrevSelected.value = cloneDeep(itemsSelected.value);
+      await loadToServer(serverOptions.value);
     };
 
     const isEqualSelected = computed(() => {

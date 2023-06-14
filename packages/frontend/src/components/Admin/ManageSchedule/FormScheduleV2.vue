@@ -19,11 +19,11 @@
       <div v-if="!loading">
         <div
           class="ml-5 mt-5 flex flex-col items-center"
-          :class="{'h-72' : !isView}"
         >
           <div
             v-if="page === 1 || isView"
             class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
             <div class="flex flex-col mx-8">
               <FormKit
@@ -62,128 +62,161 @@
           </div>
           <div
             v-if="page===2 || isView"
-            class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
-            <FormKit
-              v-model="startProposalDate"
-              name="startProposalDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian bắt đầu đề xuất"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endProposalDate"
-              name="startProposalDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian kết thúc đề xuất"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
+            <div
+              class="flex"
+            >
+              <FormKit
+                v-model="startProposalDate"
+                name="startProposalDate"
+                type="datetime-local"
+                outer-class="!mx-8 w-[400px]"
+                label="Thời gian bắt đầu đề xuất"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+              <FormKit
+                v-model="endProposalDate"
+                name="startProposalDate"
+                outer-class="!mx-8 w-[400px]"
+                type="datetime-local"
+                label="Thời gian kết thúc đề xuất"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+            </div>
+
+            <div
+              class="flex"
+            >
+              <FormKit
+                v-model="startApproveDate"
+                name="startApproveDate"
+                outer-class="!mx-8 w-[400px]"
+                type="datetime-local"
+                label="Thời gian bắt đầu chấp thuận"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+              <FormKit
+                v-model="endApproveDate"
+                name="endApproveDate"
+                type="datetime-local"
+                outer-class="!mx-8 w-[400px]"
+                label="Thời gian kết thúc chấp thuận"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+            </div>
+            <div
+              class="flex"
+            >
+              <FormKit
+                v-model="startRegisterDate"
+                name="startRegisterDate"
+                type="datetime-local"
+                outer-class="!mx-8 w-[400px]"
+                label="Thời gian bắt đầu đăng ký"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+              <FormKit
+                v-model="endRegisterDate"
+                name="endRegisterDate"
+                type="datetime-local"
+                outer-class="!mx-8 w-[400px]"
+                label="Thời gian kết thúc đăng ký"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+            </div>
           </div>
           <div
             v-if="page===3 || isView"
-            class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
-            <FormKit
-              v-model="startApproveDate"
-              name="startApproveDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu chấp thuận"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endApproveDate"
-              name="endApproveDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc chấp thuận"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
+            <div
+              class="flex"
+            >
+              <FormKit
+                v-model="startDate"
+                name="startDate"
+                outer-class="!mx-8 w-[400px]"
+                type="datetime-local"
+                label="Thời gian bắt đầu làm đề tài"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+              <FormKit
+                v-model="deadline"
+                name="deadline"
+                outer-class="!mx-8 w-[400px]"
+                type="datetime-local"
+                label="Thời gian kết thúc làm đề tài"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+            </div>
+            <div
+              class="flex"
+            >
+              <FormKit
+                v-model="mark_start"
+                name="mark_start"
+                outer-class="!mx-8 w-[400px]"
+                type="datetime-local"
+                label="Thời gian bắt đầu chấm bài"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+              <FormKit
+                v-model="mark_end"
+                name="mark_end"
+                type="datetime-local"
+                outer-class="!mx-8 w-[400px]"
+                label="Thời gian kết thúc chấm bài"
+                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                validation="required"
+                :disabled="isView"
+              />
+            </div>
           </div>
           <div
             v-if="page===4 || isView"
-            class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
-            <FormKit
-              v-model="startRegisterDate"
-              name="startRegisterDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian bắt đầu đăng ký"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endRegisterDate"
-              name="endRegisterDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc đăng ký"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-          </div>
-          <div
-            v-if="page===5 || isView"
-            class="flex"
-          >
-            <FormKit
-              v-model="startDate"
-              name="startDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu làm đề tài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="deadline"
-              name="deadline"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian kết thúc làm đề tài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-          </div>
-          <div
-            v-if="page===6 || isView"
-            class="flex"
-          >
-            <FormKit
-              v-model="mark_start"
-              name="mark_start"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu chấm bài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="mark_end"
-              name="mark_end"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc chấm bài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
+            <div class="flex flex-col mb-4">
+              <div class="font-bold my-4">
+                Danh sách sinh viên đã chọn
+              </div>
+              <div class="w-[600px] mb-4">
+                <EasyDataTable
+                  show-index
+                  :headers="headers"
+                  :items="listStudentsSelected"
+                  :loading="loading"
+                  :rows-per-page="5"
+                  buttons-pagination
+                />
+              </div>
+              <button
+                v-if="!isView"
+                class="btn btn-primary mt-5 !mx-8 "
+                @click="chooseStudent"
+              >
+                Chọn danh sách sinh viên
+              </button>
+            </div>
           </div>
           <button
             v-if="isView"
@@ -192,29 +225,37 @@
           >
             Xem danh sách sinh viên
           </button>
-        </div>
-        <div
-          v-if="!isView"
-          class="my-4 w-[900px] mx-auto"
-        >
-          <ul class="steps">
-            <li
-              v-for="(step, index) in steps"
-              :key="index"
-              class="step"
-              :class="{ 'step-primary': page >= step.page }"
-              @click="page=step.page"
-            >
-              {{ step.label }}
-            </li>
-          </ul>
+          <div
+            v-if="!isView"
+            class="my-4 w-[700px] mx-auto"
+          >
+            <ul class="steps">
+              <li
+                v-for="(step, index) in steps"
+                :key="index"
+                class="step"
+                :class="{ 'step-primary': page >= step.page }"
+                @click="page=step.page"
+              >
+                {{ step.label }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <Loading v-if="loading" />
       <!-- Modal footer -->
-      <div class="flex items-end p-6 rounded-b border-t border-gray-200">
+      <div class="flex justify-end items-end p-6 rounded-b border-t border-gray-200">
         <button
-          v-if="!isView && !loading && page === 6"
+          v-if="!isView && page > 1&&!loading"
+          type="button"
+          class="btn btn-secondary mx-2"
+          @click="page=1"
+        >
+          Quay lại
+        </button>
+        <button
+          v-if="!isView && !loading && page === 5"
           type="button"
           class="btn btn-primary"
           @click="handleAddScheduleAdmin"
@@ -222,7 +263,7 @@
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
         </button>
         <button
-          v-if="page != 6 && !isView"
+          v-if="page != 5 && !isView"
           type="button"
           class="btn btn-primary"
           @click="page+=1"
@@ -236,6 +277,14 @@
     v-model="showInfo"
     :schedule-id="id"
   />
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="scheduleId"
+    :selected="listStudentsSelected"
+    :enabled-excel="true"
+    :type="'SCHEDULE-FORM'"
+    @change-students="changeStudents"
+  />
 </template>
 
 <script>
@@ -245,15 +294,22 @@ import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 
 export default {
   name: 'FormSchedule',
   components: {
     InfoStudentVue,
     Loading,
+    SelectStudent,
   },
   data () {
     return {
+      headers: [
+        { text: 'Mã số', value: 'code', sortable: true },
+        { text: 'Tên ', value: 'name', sortable: true },
+        { text: 'Email', value: 'email' },
+      ],
       showInfo: false,
       name: '',
       code: '',
@@ -277,12 +333,15 @@ export default {
       page: 1,
       steps: [
         { label: 'Thông tin cơ bản cho lịch đăng ký', page: 1 },
-        { label: 'Thời gian sinh viên đề xuất', page: 2 },
-        { label: 'Thời gian giảng viên duyệt đề xuất', page: 3 },
-        { label: 'Thời gian sinh viên đăng ký đề tài', page: 4 },
-        { label: 'Thời gian sinh viên làm đề tài', page: 5 },
-        { label: 'Thời gian giảng viên chấm bài', page: 6 },
+        { label: 'Thời gian trước đăng ký', page: 2 },
+        { label: 'Thời gian sau khi đăng ký', page: 3 },
+        { label: 'Chọn sinh viên', page: 4 },
+        { label: 'Xem lại', page: 5 },
       ],
+      showSelectStudent: false,
+      selectStudentScheduleId: null,
+      scheduleId: null,
+      listStudentsSelected: [],
     };
   },
   computed: {
@@ -308,6 +367,7 @@ export default {
       const { id } = this.$store.state.url;
       // const { listSchedules } = this.$store.state.schedule;
       try {
+        this.scheduleId = id;
         const scheduleRaw = await ScheduleApi.fetchSchedule(this.token, id);
         const schedule = scheduleRaw.data;
         if (schedule) {
@@ -325,6 +385,7 @@ export default {
           this.mark_end = this.formatDate(schedule.mark_end);
           this.mark_start = this.formatDate(schedule.mark_start);
           this.students = schedule.students;
+          this.listStudentsSelected = schedule.list_students;
         }
       } catch (e) {
         this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -443,6 +504,14 @@ export default {
         return false;
       }
       return true;
+    },
+    changeStudents (students) {
+      this.showSelectStudent = false;
+      this.listStudentsSelected = students;
+      this.students = this.listStudentsSelected.map((st) => st.code);
+    },
+    chooseStudent () {
+      this.showSelectStudent = true;
     },
   },
 };
