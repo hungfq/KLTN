@@ -43,7 +43,7 @@ class TopicViewAction
         }
 
         if ($scheduleId = $dto->scheduleId) {
-            $query->where('schedule_id', $scheduleId);
+            $query->where('topics.schedule_id', $scheduleId);
         }
 
         if ($committee_id = $dto->committee_id) {

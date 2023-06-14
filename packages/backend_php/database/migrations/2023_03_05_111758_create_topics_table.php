@@ -15,7 +15,7 @@ class CreateTopicsTable extends Migration
     {
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 15);
+            $table->string('code', 50);
             $table->string('title', 200);
             $table->text('description')->nullable();
             $table->tinyInteger('limit');
