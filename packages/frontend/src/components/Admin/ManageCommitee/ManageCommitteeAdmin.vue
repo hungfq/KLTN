@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="flex justify-end mr-4 my-2">
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectCritical"
           :options="listLecturerSelect"
@@ -14,7 +14,7 @@
           @change="selectHandlerLecturer('CRITICAL', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectPresident"
           :options="listLecturerSelect"
@@ -27,7 +27,7 @@
           @change="selectHandlerLecturer('PRESIDENT', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectSecretary"
           :options="listLecturerSelect"
@@ -40,7 +40,7 @@
           @change="selectHandlerLecturer( 'SECRETARY', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectSchedule"
           :options="listScheduleSelect"
@@ -54,6 +54,13 @@
         />
       </div>
       <div class="mx-auto" />
+      <div
+        class="btn btn-secondary mx-1"
+        @click="showInviteModal= true"
+      >
+        <font-awesome-icon :icon="['fas', 'paper-plane']" />
+        <span class="ml-1">Gửi thư mời</span>
+      </div>
       <ButtonAddItem
         :title="'Thêm hội đồng'"
         @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
@@ -136,6 +143,10 @@
       </template>
       <div>Bạn có xác nhận xóa hội đồng này không?</div>
     </ConfirmModal>
+    <SendInvite
+      v-model="showInviteModal"
+      @send-invite="handleSendInvite"
+    />
   </div>
 </template>
 
@@ -152,6 +163,7 @@ import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
 import IconTooltip from '../../common/IconTooltip.vue';
+import SendInvite from '../../Modal/SendInvite.vue';
 
 export default {
   name: 'ManageStudentAdmin',
@@ -161,6 +173,7 @@ export default {
     ConfirmModal,
     ButtonAddItem,
     IconTooltip,
+    SendInvite,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -241,6 +254,7 @@ export default {
     };
 
     const showConfirmModal = ref(false);
+    const showInviteModal = ref(false);
     const confirmRemove = async (id) => {
       try {
         await CommitteeApi.deleteCommittee(token, removeId.value);
@@ -281,15 +295,18 @@ export default {
     };
 
     const selectHandlerSchedule = async (value) => {
-      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:284 ~ selectHandlerSchedule ~ value:', value);
       selectSchedule.value = value;
-      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:285 ~ selectHandlerSchedule ~ selectSchedule.value:', selectSchedule.value);
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
         errorHandler(e);
       }
+    };
+    const handleSendInvite = (scheduleId) => {
+      // console.log('🚀 ~ file: ManageCommitteeAdmin.vue:304 ~ handleSendInvite ~ scheduleId:', scheduleId);
+      // TODO: send invite for committee
+      showInviteModal.value = false;
     };
     return {
       headers,
@@ -318,6 +335,8 @@ export default {
       selectSchedule,
       search,
       selectHandlerSchedule,
+      showInviteModal,
+      handleSendInvite,
     };
   },
   computed: {

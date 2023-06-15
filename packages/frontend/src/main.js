@@ -29,7 +29,7 @@ import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
-  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload,
+  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane,
 } from '@fortawesome/free-solid-svg-icons'; // Import Vietnamese locale
 
 dayjs.locale('vi');
@@ -64,6 +64,7 @@ library.add(
   faDiagramPredecessor,
   faFileImport,
   faDownload,
+  faPaperPlane,
 );
 
 const app = createApp(App);
