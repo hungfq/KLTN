@@ -218,6 +218,117 @@
               </button>
             </div>
           </div>
+          <template v-if="page===5">
+            <div class="flex flex-col">
+              <div class="flex mx-auto">
+                <div class="flex flex-col mx-8">
+                  <FormKit
+                    v-model="name"
+                    type="text"
+                    name="name"
+                    label="Tên đợt đăng ký"
+                    help="TLCN K19 HK1"
+                    :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                    validation="required"
+                    outer-class="w-[400px]"
+                    :disabled="isView"
+                  />
+                  <FormKit
+                    v-model="code"
+                    name="code"
+                    type="text"
+                    outer-class="w-[400px]"
+                    label="Mã đợt"
+                    :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                    validation="required"
+                    :disabled="isView"
+                  />
+                </div>
+                <FormKit
+                  v-model="description"
+                  name="description"
+                  type="textarea"
+                  label="Mô tả"
+                  outer-class="!mx-8 w-[400px]"
+                  help="Ghi các thông tin chi tiết tại đây"
+                  :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                  validation="required"
+                  :disabled="isView"
+                />
+              </div>
+              <div class="flex flex-col mb-4 mx-auto">
+                <div class="font-bold my-4">
+                  Danh sách sinh viên đã chọn
+                </div>
+                <div class="w-[600px] mb-4">
+                  <EasyDataTable
+                    show-index
+                    :headers="headers"
+                    :items="listStudentsSelected"
+                    :loading="loading"
+                    :rows-per-page="5"
+                    buttons-pagination
+                  />
+                </div>
+              </div>
+              <div class="w-[1200px]">
+                <g-gantt-chart
+                  :chart-start="formatToMinute(startProposalDate)"
+                  :chart-end="formatToMinute(mark_end)"
+                  :precision="calculateType"
+                  color-scheme="vue"
+                  bar-start="myBeginDate"
+                  bar-end="myEndDate"
+                  row-height="100"
+                >
+                  <g-gantt-row
+                    :bars="[barProposal, barApprove, barRegister,barWork, barMark]"
+                  />
+                </g-gantt-chart>
+              </div>
+              <div class="flex mt-4">
+                <div class="mr-5">
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #e09b69;"
+                    />
+                    <div>Thời gian đề xuất</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #FF6666;"
+                    />
+                    <div>Thời gian phê duyệt</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #339933;"
+                    />
+                    <div>Thời gian đăng ký</div>
+                  </div>
+                </div>
+                <div class="ml-5">
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #8724b9;"
+                    />
+                    <div>Thời gian làm khóa luận</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #CCCC00;"
+                    />
+                    <div>Thời gian chấm điểm</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
           <button
             v-if="isView"
             class="rounded bg-slate-500 h-[60px] !mx-8 w-[400px]  text-white font-semibold cursor-pointer "
@@ -235,7 +346,7 @@
                 :key="index"
                 class="step"
                 :class="{ 'step-primary': page >= step.page }"
-                @click="page=step.page"
+                @click="nextPage(step.page)"
               >
                 {{ step.label }}
               </li>
@@ -250,7 +361,7 @@
           v-if="!isView && page > 1&&!loading"
           type="button"
           class="btn btn-secondary mx-2"
-          @click="page=1"
+          @click="nextPage(page-1)"
         >
           Quay lại
         </button>
@@ -266,7 +377,7 @@
           v-if="page != 5 && !isView"
           type="button"
           class="btn btn-primary"
-          @click="page+=1"
+          @click="nextPage(page+1)"
         >
           Tiếp theo
         </button>
@@ -289,12 +400,16 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs';
 import moment from 'moment';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import 'dayjs/locale/vi';
+
+dayjs().locale('vi');
 
 export default {
   name: 'FormSchedule',
@@ -360,6 +475,111 @@ export default {
     isView () {
       return this.section === 'schedule-view';
     },
+    barProposal () {
+      const a = {
+        myBeginDate: this.formatToMinute(this.startProposalDate),
+        myEndDate: this.formatToMinute(this.endProposalDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'proposal-time', // ... and a unique "id" property
+          label: 'Đề xuất',
+          style: { // arbitrary CSS styling for your bar
+            background: '#e09b69',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+          // hasHandles: true,
+          // immobile: true,
+        },
+      };
+      return a;
+    },
+    barRegister () {
+      const a = {
+        myBeginDate: this.formatToMinute(this.startRegisterDate),
+        myEndDate: this.formatToMinute(this.endRegisterDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'approve-time', // ... and a unique "id" property
+          label: 'Đăng ký',
+          style: { // arbitrary CSS styling for your bar
+            background: '#339933',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      return a;
+    },
+    barApprove () {
+      const a = {
+        myBeginDate: this.formatToMinute(this.startApproveDate),
+        myEndDate: this.formatToMinute(this.endApproveDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'approve-time', // ... and a unique "id" property
+          label: 'Chấp thuận',
+          style: { // arbitrary CSS styling for your bar
+            background: '#FF6666',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      return a;
+    },
+    barWork () {
+      const a = {
+        myBeginDate: this.formatToMinute(this.startDate),
+        myEndDate: this.formatToMinute(this.deadline),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'work-time', // ... and a unique "id" property
+          label: 'Làm luận văn',
+          style: { // arbitrary CSS styling for your bar
+            background: '#8724b9',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      return a;
+    },
+    barMark () {
+      const a = {
+        myBeginDate: this.formatToMinute(this.mark_start),
+        myEndDate: this.formatToMinute(this.mark_end),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'mark-time', // ... and a unique "id" property
+          label: 'Chấm điểm',
+          style: { // arbitrary CSS styling for your bar
+            background: '#CCCC00',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      return a;
+    },
+    calculateType () {
+      const a = new Date(this.startProposalDate);
+      const b = new Date(this.mark_end);
+      const c = (b.getTime() - a.getTime()) / (24 * 3600000);
+      if (c <= 1) return 'hour';
+      if (c <= 30) return 'day';
+      return 'month';
+    },
   },
   async mounted () {
     this.loading = true;
@@ -394,6 +614,93 @@ export default {
     this.loading = false;
   },
   methods: {
+    nextPage (pageNumber) {
+      if (pageNumber === 2) {
+        if (!this.name) {
+          this.$toast.error('Tên đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (!this.code) {
+          this.$toast.error('Mã đợt đăng ký là bắt buộc');
+          return;
+        }
+      } else if (pageNumber <= 3) {
+        if (!this.name) {
+          this.$toast.error('Tên đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (!this.code) {
+          this.$toast.error('Mã đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (this.startProposalDate >= this.endProposalDate) {
+          this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
+          return;
+        }
+        if (this.endProposalDate >= this.startApproveDate) {
+          this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
+          return;
+        }
+        if (this.startApproveDate >= this.endApproveDate) {
+          this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
+          return;
+        }
+        if (this.endApproveDate >= this.startRegisterDate) {
+          this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
+          return;
+        }
+        if (this.startApproveDate >= this.endApproveDate) {
+          this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
+          return;
+        }
+      } else if (pageNumber === 4) {
+        if (!this.name) {
+          this.$toast.error('Tên đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (!this.code) {
+          this.$toast.error('Mã đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (this.startProposalDate >= this.endProposalDate) {
+          this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
+          return;
+        }
+        if (this.endProposalDate >= this.startApproveDate) {
+          this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
+          return;
+        }
+        if (this.startApproveDate >= this.endApproveDate) {
+          this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
+          return;
+        }
+        if (this.endApproveDate >= this.startRegisterDate) {
+          this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
+          return;
+        }
+        if (this.startApproveDate >= this.endApproveDate) {
+          this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
+          return;
+        }
+        if (this.endApproveDate >= this.startDate) {
+          this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
+          return;
+        }
+        if (this.startDate >= this.deadline) {
+          this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
+          return;
+        }
+        if (this.deadline >= this.mark_start) {
+          this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
+          return;
+        }
+        if (this.mark_start >= this.mark_end) {
+          this.$toast.error('Ngày bắt đầu chấm diểm đề tài phải nhỏ hơn ngày kết thúcc chấm điểm đề tài ');
+          return;
+        }
+      }
+      this.page = pageNumber;
+    },
     errorHandler (e) {
       if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
@@ -457,6 +764,11 @@ export default {
         return '';
       }
     },
+    formatToMinute (rawDate) {
+      const localDate = moment(rawDate);
+      const formatTime = localDate.format('YYYY-MM-DD HH:mm');
+      return formatTime;
+    },
     convertToUTC (dateStr) {
       const date = moment(dateStr); // parse the date string
       const utc = date.utc(); // convert to UTC
@@ -491,6 +803,10 @@ export default {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
+      if (this.endApproveDate >= this.startDate) {
+        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
+        return false;
+      }
       if (this.startDate >= this.deadline) {
         this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
         return false;
@@ -519,4 +835,10 @@ export default {
 
 <style src="@vueform/multiselect/themes/default.css">
 
+</style>
+<style>
+.g-gantt-row-label {
+  height: 0px !important;
+  display: none !important;
+}
 </style>

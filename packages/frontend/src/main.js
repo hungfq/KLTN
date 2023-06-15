@@ -15,6 +15,9 @@ import '@formkit/themes/genesis';
 import 'vue3-easy-data-table/dist/style.css';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
+import dayjs from 'dayjs';
+import 'dayjs/locale/vi'; // Set Vietnamese locale globally
+import ganttastic from '@infectoone/vue-ganttastic';
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -27,8 +30,9 @@ import {
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
   faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload,
-} from '@fortawesome/free-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons'; // Import Vietnamese locale
 
+dayjs.locale('vi');
 /* add icons to the library */
 library.add(
   faUserSecret,
@@ -76,6 +80,7 @@ app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');
 app.use(VeeValidate);
 app.use(ToastPlugin);
+app.use(ganttastic);
 app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 app.use(vfmPlugin({
