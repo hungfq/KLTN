@@ -2,7 +2,7 @@
   <template
     v-if="topicId"
   >
-    <div class="mx-1">
+    <div class="mx-1 flex my-2 justify-between">
       <button
         class=" mx-2"
         :class="[ showStatistic ? 'btn btn-active' : 'btn btn-secondary' ]"
@@ -10,30 +10,39 @@
       >
         Thống kê nhiệm vụ
       </button>
-      <div class="inline-block w-fit border-2 rounded-md">
+      <div class="">
         <SearchInput
           v-model="searchVal"
           @keydown.space.enter="search"
         />
       </div>
-      <div class="inline-block p-2 rounded-md">
-        <div class="w-64 mx-2">
-          <Multiselect
-            v-model="selectVal"
-            :options="listStudentSelect"
-            :can-deselect="false"
-            :searchable="true"
-            no-results-text="Không có kết quả"
-            no-options-text="Không có lựa lựa chọn"
-            :placeholder="'Sinh viên'"
-            :can-clear="false"
-            @change="selectHandler"
-          />
-        </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectVal"
+          :options="listStudentSelect"
+          :can-deselect="false"
+          :searchable="true"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :placeholder="'Sinh viên'"
+          :can-clear="false"
+          @change="selectHandler"
+        />
+      </div>
+      <div class="w-96">
+        <litepie-datepicker
+          v-model="dateValue"
+          placeholder="Khoảng thời gian"
+          separator=" đến "
+          :formatter="formatter"
+          i18n="vi"
+          :auto-apply="false"
+          :options="options"
+        />
       </div>
       <button
         v-if="!showStatistic"
-        class=" m-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded float-right"
+        class="btn btn-primary mx-2"
         @click="addTaskHandler"
       >
         Thêm nhiệm vụ
@@ -93,8 +102,11 @@
       </template>
       <template v-if="showStatistic">
         <div class="flex flex-col">
-          <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-slate-100">
+          <table
+            data-theme="light"
+            class="table"
+          >
+            <thead>
               <tr>
                 <th
                   scope="col"
@@ -125,16 +137,15 @@
             <tr
               v-for="task in tasks"
               :key="task._id"
-              class="bg-slate-300 hover:bg-gray-50"
             >
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <!-- {{ task }} -->
                 {{ task.code }}
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 {{ task.title }}
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <select
                   v-model="task.status"
                   disabled
@@ -149,7 +160,7 @@
                   </option>
                 </select>
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <select
                   v-model="task.assignTo"
                   disabled
@@ -201,6 +212,7 @@ import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
 import { debounce } from 'lodash';
 import Multiselect from '@vueform/multiselect';
+import LitepieDatepicker from 'litepie-datepicker';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
@@ -215,6 +227,7 @@ export default {
     LoadingProcess,
     Draggable,
     Multiselect,
+    LitepieDatepicker,
   },
 
   data () {
@@ -256,6 +269,27 @@ export default {
       loading: false,
       timeOut: null,
       timer: 1500,
+      dateValue: {
+        startDate: '',
+        endDate: '',
+      },
+      options: {
+        shortcuts: {
+          today: 'Hôm nay',
+          yesterday: 'Hôm trước',
+          past: (period) => `${period} ngày trước`,
+          currentMonth: 'Tháng nay',
+          pastMonth: 'Tháng trước',
+        },
+        footer: {
+          apply: 'Áp dụng',
+          cancel: 'Huỷ',
+        },
+      },
+      formatter: {
+        date: 'L LT',
+        month: 'MMMM',
+      },
     };
   },
   computed: {

@@ -23,6 +23,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { vi } from '@formkit/i18n';
 
 /* import specific icons */
 import {
@@ -75,7 +76,11 @@ app.use(vue3GoogleLogin, {
 app.use(router);
 app.use(store);
 app.use(Toaster);
-app.use(plugin, defaultConfig);
+app.use(plugin, defaultConfig({
+  locales: { vi },
+  // Define the active locale
+  locale: 'vi',
+}));
 app.use(CKEditor);
 app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');

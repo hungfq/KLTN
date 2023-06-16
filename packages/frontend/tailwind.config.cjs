@@ -1,13 +1,35 @@
 /** @type {import('tailwindcss').Config} */
 const daisyui = require('daisyui');
+const path = require('path');
+const colors = require('tailwindcss/colors');
 
 module.exports = {
   content: [
     './index.html',
     './src/App.vue',
     './src/**/*.{js,ts,vue,tsx}',
+    './node_modules/litepie-datepicker/**/*.js',
   ],
-
+  // purge: [
+  //   path.resolve(__dirname, './node_modules/litepie-datepicker/**/*.js'),
+  // ],
+  darkMode: 'classDarkMode',
+  theme: {
+    extend: {
+      colors: {
+        // Change with you want it
+        'litepie-primary': colors.sky, // color system for light mode
+        'litepie-secondary': colors.coolGray, // color system for dark mode
+      },
+    },
+  },
+  variants: {
+    extend: {
+      cursor: ['disabled'],
+      textOpacity: ['disabled'],
+      textColor: ['disabled'],
+    },
+  },
   plugins: [daisyui],
   daisyui: {
     themes: [

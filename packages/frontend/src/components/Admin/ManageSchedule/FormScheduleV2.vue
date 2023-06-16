@@ -64,135 +64,95 @@
             v-if="page===2 || isView"
             :class="{'min-h-[400px]' : !isView}"
           >
-            <div
-              class="flex"
-            >
-              <FormKit
-                v-model="startProposalDate"
-                name="startProposalDate"
-                type="datetime-local"
-                outer-class="!mx-8 w-[400px]"
-                label="Thời gian bắt đầu đề xuất"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-              <FormKit
-                v-model="endProposalDate"
-                name="startProposalDate"
-                outer-class="!mx-8 w-[400px]"
-                type="datetime-local"
-                label="Thời gian kết thúc đề xuất"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian đề xuất đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="proposalTime"
+                  placeholder="Khoảng thời gian đề xuất đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian phê duyệt đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="approveTime"
+                  placeholder="Khoảng thời gian phê duyệt đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
             </div>
-
-            <div
-              class="flex"
-            >
-              <FormKit
-                v-model="startApproveDate"
-                name="startApproveDate"
-                outer-class="!mx-8 w-[400px]"
-                type="datetime-local"
-                label="Thời gian bắt đầu chấp thuận"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-              <FormKit
-                v-model="endApproveDate"
-                name="endApproveDate"
-                type="datetime-local"
-                outer-class="!mx-8 w-[400px]"
-                label="Thời gian kết thúc chấp thuận"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian đăng ký đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="registerTime"
+                  placeholder="Khoảng thời gian đăng ký đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian làm đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="workTime"
+                  placeholder="Khoảng thời gian làm đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
             </div>
-            <div
-              class="flex"
-            >
-              <FormKit
-                v-model="startRegisterDate"
-                name="startRegisterDate"
-                type="datetime-local"
-                outer-class="!mx-8 w-[400px]"
-                label="Thời gian bắt đầu đăng ký"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-              <FormKit
-                v-model="endRegisterDate"
-                name="endRegisterDate"
-                type="datetime-local"
-                outer-class="!mx-8 w-[400px]"
-                label="Thời gian kết thúc đăng ký"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian chấm điểm đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="markTime"
+                  placeholder="Khoảng thời gian chấm điểm đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
             </div>
           </div>
           <div
             v-if="page===3 || isView"
-            :class="{'min-h-[400px]' : !isView}"
-          >
-            <div
-              class="flex"
-            >
-              <FormKit
-                v-model="startDate"
-                name="startDate"
-                outer-class="!mx-8 w-[400px]"
-                type="datetime-local"
-                label="Thời gian bắt đầu làm đề tài"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-              <FormKit
-                v-model="deadline"
-                name="deadline"
-                outer-class="!mx-8 w-[400px]"
-                type="datetime-local"
-                label="Thời gian kết thúc làm đề tài"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-            </div>
-            <div
-              class="flex"
-            >
-              <FormKit
-                v-model="mark_start"
-                name="mark_start"
-                outer-class="!mx-8 w-[400px]"
-                type="datetime-local"
-                label="Thời gian bắt đầu chấm bài"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-              <FormKit
-                v-model="mark_end"
-                name="mark_end"
-                type="datetime-local"
-                outer-class="!mx-8 w-[400px]"
-                label="Thời gian kết thúc chấm bài"
-                :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                validation="required"
-                :disabled="isView"
-              />
-            </div>
-          </div>
-          <div
-            v-if="page===4 || isView"
             :class="{'min-h-[400px]' : !isView}"
           >
             <div class="flex flex-col mb-4">
@@ -218,7 +178,7 @@
               </button>
             </div>
           </div>
-          <template v-if="page===5">
+          <template v-if="page===4">
             <div class="flex flex-col">
               <div class="flex mx-auto">
                 <div class="flex flex-col mx-8">
@@ -230,14 +190,14 @@
                     help="TLCN K19 HK1"
                     :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
                     validation="required"
-                    outer-class="w-[400px]"
+                    outer-class="w-[350px]"
                     :disabled="isView"
                   />
                   <FormKit
                     v-model="code"
                     name="code"
                     type="text"
-                    outer-class="w-[400px]"
+                    outer-class="w-[350px]"
                     label="Mã đợt"
                     :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
                     validation="required"
@@ -282,7 +242,7 @@
                   row-height="100"
                 >
                   <g-gantt-row
-                    :bars="[barProposal, barApprove, barRegister,barWork, barMark]"
+                    :bars="barGantChar"
                   />
                 </g-gantt-chart>
               </div>
@@ -366,7 +326,7 @@
           Quay lại
         </button>
         <button
-          v-if="!isView && !loading && page === 5"
+          v-if="!isView && !loading && page === 4"
           type="button"
           class="btn btn-primary"
           @click="handleAddScheduleAdmin"
@@ -374,7 +334,7 @@
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
         </button>
         <button
-          v-if="page != 5 && !isView"
+          v-if="page != 4 && !isView"
           type="button"
           class="btn btn-primary"
           @click="nextPage(page+1)"
@@ -408,8 +368,9 @@ import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
 import SelectStudent from '../../Modal/SelectStudent.vue';
 import 'dayjs/locale/vi';
+import LitepieDatepicker from 'litepie-datepicker';
 
-dayjs().locale('vi');
+// dayjs().locale('vi');
 
 export default {
   name: 'FormSchedule',
@@ -417,6 +378,8 @@ export default {
     InfoStudentVue,
     Loading,
     SelectStudent,
+    LitepieDatepicker,
+
   },
   data () {
     return {
@@ -428,17 +391,17 @@ export default {
       showInfo: false,
       name: '',
       code: '',
-      startDate: '',
-      deadline: '',
+      startDate: null,
+      deadline: null,
       description: '',
-      startProposalDate: '',
-      endProposalDate: '',
-      startRegisterDate: '',
-      endRegisterDate: '',
-      startApproveDate: '',
-      endApproveDate: '',
-      mark_end: '',
-      mark_start: '',
+      startProposalDate: null,
+      endProposalDate: null,
+      startRegisterDate: null,
+      endRegisterDate: null,
+      startApproveDate: null,
+      endApproveDate: null,
+      mark_end: null,
+      mark_start: null,
       topics: [],
       students: [],
       listTopics: [],
@@ -448,15 +411,32 @@ export default {
       page: 1,
       steps: [
         { label: 'Thông tin cơ bản cho lịch đăng ký', page: 1 },
-        { label: 'Thời gian trước đăng ký', page: 2 },
-        { label: 'Thời gian sau khi đăng ký', page: 3 },
-        { label: 'Chọn sinh viên', page: 4 },
-        { label: 'Xem lại', page: 5 },
+        { label: 'Thời gian', page: 2 },
+        { label: 'Chọn sinh viên', page: 3 },
+        { label: 'Xem lại', page: 4 },
       ],
       showSelectStudent: false,
       selectStudentScheduleId: null,
       scheduleId: null,
       listStudentsSelected: [],
+      dateValue: [],
+      formatter: {
+        date: 'L LTS',
+        month: 'MMMM',
+      },
+      options: {
+        shortcuts: {
+          today: 'Hôm nay',
+          yesterday: 'Hôm trước',
+          past: (period) => `${period} ngày trước`,
+          currentMonth: 'Tháng nay',
+          pastMonth: 'Tháng trước',
+        },
+        footer: {
+          apply: 'Áp dụng',
+          cancel: 'Huỷ',
+        },
+      },
     };
   },
   computed: {
@@ -475,8 +455,68 @@ export default {
     isView () {
       return this.section === 'schedule-view';
     },
-    barProposal () {
-      const a = {
+    calculateType () {
+      const a = new Date(this.startProposalDate);
+      const b = new Date(this.mark_end);
+      const c = (b.getTime() - a.getTime()) / (24 * 3600000);
+      if (c <= 1) return 'hour';
+      if (c <= 30) return 'day';
+      return 'month';
+    },
+    proposalTime: {
+      get () {
+        if (!this.startProposalDate || !this.endProposalDate) return [];
+        return [this.startProposalDate, this.endProposalDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startProposalDate, this.endProposalDate] = newValue;
+      },
+    },
+    approveTime: {
+      get () {
+        if (!this.startApproveDate || !this.endApproveDate) return [];
+        return [this.startApproveDate, this.endApproveDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startApproveDate, this.endApproveDate] = newValue;
+      },
+    },
+    registerTime: {
+      get () {
+        if (!this.startRegisterDate || !this.endRegisterDate) return [];
+        return [this.startRegisterDate, this.endRegisterDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startRegisterDate, this.endRegisterDate] = newValue;
+      },
+    },
+    workTime: {
+      get () {
+        if (!this.startDate || !this.deadline) return [];
+        return [this.startDate, this.deadline];
+      },
+      // setter
+      set (newValue) {
+        // Note: we are using destructuring assignment syntax here.
+        [this.startDate, this.deadline] = newValue;
+      },
+    },
+    markTime: {
+      get () {
+        if (!this.mark_start || !this.mark_end) return [];
+        return [this.mark_start, this.mark_end];
+      },
+      // setter
+      set (newValue) {
+        // Note: we are using destructuring assignment syntax here.
+        [this.mark_start, this.mark_end] = newValue;
+      },
+    },
+    barGantChar () {
+      const barProposal = {
         myBeginDate: this.formatToMinute(this.startProposalDate),
         myEndDate: this.formatToMinute(this.endProposalDate),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
@@ -490,14 +530,10 @@ export default {
             'overflow-wrap': 'normal',
             'word-break': 'normal',
           },
-          // hasHandles: true,
-          // immobile: true,
         },
       };
-      return a;
-    },
-    barRegister () {
-      const a = {
+
+      const barRegister = {
         myBeginDate: this.formatToMinute(this.startRegisterDate),
         myEndDate: this.formatToMinute(this.endRegisterDate),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
@@ -513,10 +549,7 @@ export default {
           },
         },
       };
-      return a;
-    },
-    barApprove () {
-      const a = {
+      const barApprove = {
         myBeginDate: this.formatToMinute(this.startApproveDate),
         myEndDate: this.formatToMinute(this.endApproveDate),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
@@ -532,10 +565,7 @@ export default {
           },
         },
       };
-      return a;
-    },
-    barWork () {
-      const a = {
+      const barWork = {
         myBeginDate: this.formatToMinute(this.startDate),
         myEndDate: this.formatToMinute(this.deadline),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
@@ -551,10 +581,7 @@ export default {
           },
         },
       };
-      return a;
-    },
-    barMark () {
-      const a = {
+      const barMark = {
         myBeginDate: this.formatToMinute(this.mark_start),
         myEndDate: this.formatToMinute(this.mark_end),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
@@ -570,15 +597,10 @@ export default {
           },
         },
       };
-      return a;
+      return [barProposal, barRegister, barApprove, barWork, barMark];
     },
-    calculateType () {
-      const a = new Date(this.startProposalDate);
-      const b = new Date(this.mark_end);
-      const c = (b.getTime() - a.getTime()) / (24 * 3600000);
-      if (c <= 1) return 'hour';
-      if (c <= 30) return 'day';
-      return 'month';
+    date () {
+      return new Date(this.startDate);
     },
   },
   async mounted () {
@@ -614,6 +636,7 @@ export default {
     this.loading = false;
   },
   methods: {
+
     nextPage (pageNumber) {
       if (pageNumber === 2) {
         if (!this.name) {
@@ -624,7 +647,7 @@ export default {
           this.$toast.error('Mã đợt đăng ký là bắt buộc');
           return;
         }
-      } else if (pageNumber <= 3) {
+      } else if (pageNumber === 3) {
         if (!this.name) {
           this.$toast.error('Tên đợt đăng ký là bắt buộc');
           return;
@@ -633,68 +656,39 @@ export default {
           this.$toast.error('Mã đợt đăng ký là bắt buộc');
           return;
         }
-        if (this.startProposalDate >= this.endProposalDate) {
+        if (this.compareDate(this.startProposalDate, this.endProposalDate)) {
           this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
           return;
         }
-        if (this.endProposalDate >= this.startApproveDate) {
+        if (this.compareDate(this.endProposalDate, this.startApproveDate)) {
           this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
           return;
         }
-        if (this.startApproveDate >= this.endApproveDate) {
+        if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
           this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
           return;
         }
-        if (this.endApproveDate >= this.startRegisterDate) {
+        if (this.compareDate(this.endApproveDate, this.startRegisterDate)) {
           this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
           return;
         }
-        if (this.startApproveDate >= this.endApproveDate) {
+        if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
           this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
           return;
         }
-      } else if (pageNumber === 4) {
-        if (!this.name) {
-          this.$toast.error('Tên đợt đăng ký là bắt buộc');
-          return;
-        }
-        if (!this.code) {
-          this.$toast.error('Mã đợt đăng ký là bắt buộc');
-          return;
-        }
-        if (this.startProposalDate >= this.endProposalDate) {
-          this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
-          return;
-        }
-        if (this.endProposalDate >= this.startApproveDate) {
-          this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
-          return;
-        }
-        if (this.startApproveDate >= this.endApproveDate) {
-          this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
-          return;
-        }
-        if (this.endApproveDate >= this.startRegisterDate) {
-          this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
-          return;
-        }
-        if (this.startApproveDate >= this.endApproveDate) {
-          this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
-          return;
-        }
-        if (this.endApproveDate >= this.startDate) {
+        if (this.compareDate(this.endApproveDate, this.startDate)) {
           this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
           return;
         }
-        if (this.startDate >= this.deadline) {
+        if (this.compareDate(this.startDate, this.deadline)) {
           this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
           return;
         }
-        if (this.deadline >= this.mark_start) {
+        if (this.compareDate(this.deadline, this.mark_start)) {
           this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
           return;
         }
-        if (this.mark_start >= this.mark_end) {
+        if (this.compareDate(this.mark_start, this.mark_end)) {
           this.$toast.error('Ngày bắt đầu chấm diểm đề tài phải nhỏ hơn ngày kết thúcc chấm điểm đề tài ');
           return;
         }
@@ -736,41 +730,44 @@ export default {
       try {
         if (this.isSave) {
           if (this.checkDate()) {
-            await this.$store.dispatch('schedule/addSchedule', { token: this.token, value });
+            // await this.$store.dispatch('schedule/addSchedule', { token: this.token, value });
+            await ScheduleApi.addSchedule(this.token, value);
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           }
         } else if (this.isUpdate) {
           if (this.checkDate()) {
-            await this.$store.dispatch('schedule/updateSchedule', { token: this.token, value: { ...value, _id: this.id } });
+            await ScheduleApi.updateSchedule(this.token, { ...value, _id: this.id });
+            // await this.$store.dispatch('schedule/updateSchedule', { token: this.token, value: { ...value, _id: this.id } });
             this.$toast.success('Đã cập nhật thành công!');
             this.rollBack();
           }
         }
       } catch (e) {
+        console.log('🚀 ~ file: FormScheduleV2.vue:745 ~ handleAddScheduleAdmin ~ e:', e);
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     formatDate (rawDate) {
       try {
-        if (!rawDate || rawDate === '') return '';
+        if (!rawDate || rawDate === '') return null;
         const date = new Date(rawDate);
         const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
           .toISOString();
         const localDate = moment(dateString).local();
-        return localDate.format('YYYY-MM-DD HH:mm:ss');
+        return localDate.format('L LTS');
       } catch (e) {
         return '';
       }
     },
     formatToMinute (rawDate) {
-      const localDate = moment(rawDate);
+      const localDate = moment(rawDate, 'L LTS');
       const formatTime = localDate.format('YYYY-MM-DD HH:mm');
       return formatTime;
     },
     convertToUTC (dateStr) {
-      const date = moment(dateStr); // parse the date string
+      const date = moment(dateStr, 'L LTS'); // parse the date string
       const utc = date.utc(); // convert to UTC
       return utc;
     },
@@ -783,39 +780,39 @@ export default {
         this.$toast.error('Mã đợt đăng ký là bắt buộc');
         return false;
       }
-      if (this.startProposalDate >= this.endProposalDate) {
+      if (this.compareDate(this.startProposalDate, this.endProposalDate)) {
         this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
         return false;
       }
-      if (this.endProposalDate >= this.startApproveDate) {
+      if (this.compareDate(this.endProposalDate, this.startApproveDate)) {
         this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
         return false;
       }
-      if (this.startApproveDate >= this.endApproveDate) {
+      if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
         this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
         return false;
       }
-      if (this.endApproveDate >= this.startRegisterDate) {
+      if (this.compareDate(this.endApproveDate, this.startRegisterDate)) {
         this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
         return false;
       }
-      if (this.startApproveDate >= this.endApproveDate) {
+      if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
-      if (this.endApproveDate >= this.startDate) {
+      if (this.compareDate(this.endApproveDate, this.startDate)) {
         this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
         return false;
       }
-      if (this.startDate >= this.deadline) {
+      if (this.compareDate(this.startDate, this.deadline)) {
         this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
         return false;
       }
-      if (this.deadline >= this.mark_start) {
+      if (this.compareDate(this.deadline, this.mark_start)) {
         this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
         return false;
       }
-      if (this.mark_start >= this.mark_end) {
+      if (this.compareDate(this.mark_start, this.mark_end)) {
         this.$toast.error('Ngày bắt đầu chấm diểm đề tài phải nhỏ hơn ngày kết thúcc chấm điểm đề tài ');
         return false;
       }
@@ -828,6 +825,17 @@ export default {
     },
     chooseStudent () {
       this.showSelectStudent = true;
+    },
+    compareDate (startDate, endDate) {
+      const date1 = moment(startDate, 'L LTS').valueOf();
+      console.log('🚀 ~ file: FormScheduleV2.vue:828 ~ compareDate ~ date1:', date1);
+      const date2 = moment(endDate, 'L LTS').valueOf();
+      console.log('🚀 ~ file: FormScheduleV2.vue:830 ~ compareDate ~ date2:', date2);
+
+      if (date1 > date2) {
+        return true;
+      }
+      return false;
     },
   },
 };
