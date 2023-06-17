@@ -6,8 +6,10 @@ use App\Entities\Role;
 use App\Entities\Schedule;
 use App\Entities\TopicProposal;
 use App\Entities\User;
+use App\Events\SendEmailEvent;
 use App\Exceptions\UserException;
 use App\Libraries\Socket;
+use App\Mail\EmailForQueuing;
 use App\Modules\TopicProposal\DTO\TopicProposalStoreDTO;
 
 class TopicProposalStoreAction
@@ -79,6 +81,14 @@ class TopicProposalStoreAction
             ];
             $this->lecturer->notifications()->create($data);
             Socket::sendUpdateNotificationRequest([data_get($this->lecturer, 'id')], $data);
+
+            $dataEmail = [
+                'topic' => $this->topic,
+            ];
+            event(new SendEmailEvent([
+                'email' => data_get($this->lecturer, 'email'),
+                'email_body' => new EmailForQueuing('YÊU CẦU HƯỚNG DẪN', $dataEmail, 'MailLecturerProposal'),
+            ]));
         }
     }
 }
