@@ -7,6 +7,7 @@ const urlWithPagination = (urlOld, options, addon = '') => {
       sortBy,
       sortType,
       search,
+      addOn,
     } = options;
     if (rowsPerPage) url += `?limit=${rowsPerPage}`;
     else url += '&limit=10';
@@ -16,6 +17,7 @@ const urlWithPagination = (urlOld, options, addon = '') => {
     }
     if (page) url += `&page=${page}`;
     if (search) url += `&search=${search}`;
+    if (addOn) url += `${addOn}`;
   }
   if (addon) url += `&${addon}`;
   // replace all ? to &

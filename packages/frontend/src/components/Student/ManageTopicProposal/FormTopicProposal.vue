@@ -376,10 +376,11 @@ export default {
     },
     changeStudents (students) {
       this.showSelectStudent = false;
-      if (students.length !== Number(this.limit)) {
+      if (students.length > 3 || students.length < 1) {
         this.$toast.error('Số lượng sinh viên được chọn phải bằng số lượng giới hạn!');
         return;
       }
+      this.limit = students.length;
       const isExist = students.some((st) => st._id === this.userId || st.id === this.userId);
       if (!isExist) {
         this.$toast.error('Danh sách đăng ký phải bao gồm bạn!');
