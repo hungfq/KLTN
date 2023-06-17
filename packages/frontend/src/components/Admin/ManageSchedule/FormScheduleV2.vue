@@ -648,50 +648,7 @@ export default {
           return;
         }
       } else if (pageNumber === 3) {
-        if (!this.name) {
-          this.$toast.error('Tên đợt đăng ký là bắt buộc');
-          return;
-        }
-        if (!this.code) {
-          this.$toast.error('Mã đợt đăng ký là bắt buộc');
-          return;
-        }
-        if (this.compareDate(this.startProposalDate, this.endProposalDate)) {
-          this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
-          return;
-        }
-        if (this.compareDate(this.endProposalDate, this.startApproveDate)) {
-          this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
-          return;
-        }
-        if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
-          this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
-          return;
-        }
-        if (this.compareDate(this.endApproveDate, this.startRegisterDate)) {
-          this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
-          return;
-        }
-        if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
-          this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
-          return;
-        }
-        if (this.compareDate(this.endApproveDate, this.startDate)) {
-          this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
-          return;
-        }
-        if (this.compareDate(this.startDate, this.deadline)) {
-          this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
-          return;
-        }
-        if (this.compareDate(this.deadline, this.mark_start)) {
-          this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
-          return;
-        }
-        if (this.compareDate(this.mark_start, this.mark_end)) {
-          this.$toast.error('Ngày bắt đầu chấm diểm đề tài phải nhỏ hơn ngày kết thúcc chấm điểm đề tài ');
-          return;
-        }
+        if (!this.checkDate()) return;
       }
       this.page = pageNumber;
     },
@@ -796,11 +753,11 @@ export default {
         this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
         return false;
       }
-      if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
+      if (this.compareDate(this.startRegisterDate, this.endRegisterDate)) {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
-      if (this.compareDate(this.endApproveDate, this.startDate)) {
+      if (this.compareDate(this.endRegisterDate, this.startDate)) {
         this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
         return false;
       }
@@ -828,9 +785,7 @@ export default {
     },
     compareDate (startDate, endDate) {
       const date1 = moment(startDate, 'L LTS').valueOf();
-      console.log('🚀 ~ file: FormScheduleV2.vue:828 ~ compareDate ~ date1:', date1);
       const date2 = moment(endDate, 'L LTS').valueOf();
-      console.log('🚀 ~ file: FormScheduleV2.vue:830 ~ compareDate ~ date2:', date2);
 
       if (date1 > date2) {
         return true;
