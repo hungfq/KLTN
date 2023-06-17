@@ -22,8 +22,8 @@ class TaskViewDTO extends FlexibleDataTransferObject
             'topic_id' => $request->input('topicId'),
             'assignee_id' => $request->input('studentId'),
             'status' => $request->input('statusTask'),
-            'from_time' => $request->input('from_time'),
-            'to_time' => $request->input('to_time'),
+            'from_time' => $request->input('from_time') ? date('Y-m-d H:i:s', strtotime($request->input('from_time'))) : null,
+            'to_time' => $request->input('to_time') ? date('Y-m-d H:i:s', strtotime($request->input('to_time'))) : null,
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);
