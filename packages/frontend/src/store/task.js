@@ -53,8 +53,10 @@ const actions = {
   },
   async fetchAllTask ({ commit }, payload) {
     try {
-      const { token, topicId } = payload;
-      const listTask = await TaskApi.listAllTask(token, topicId);
+      const {
+        token, topicId, startDate, endDate,
+      } = payload;
+      const listTask = await TaskApi.listAllTask(token, topicId, startDate, endDate);
       commit('setListTask', listTask);
       commit('setTopicId', topicId);
     } catch (e) {
@@ -110,6 +112,7 @@ const actions = {
       const { token, value, topicId } = payload;
       await TaskApi.insertTask(token, value, topicId);
     } catch (e) {
+      console.log('🚀 ~ file: task.js:115 ~ insertTask ~ e:', e);
       throw new Error(e.message);
     }
   },

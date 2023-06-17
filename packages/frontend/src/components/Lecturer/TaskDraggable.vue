@@ -91,7 +91,7 @@
               <template #footer>
                 <button
                   class="btn btn-primary mt-2"
-                  @click="addPeople"
+                  @click="addTaskHandler"
                 >
                   Thêm nhiệm vụ
                 </button>
@@ -110,25 +110,25 @@
               <tr>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Mã
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Tiêu đề
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Trạng thái
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Được phân công
                 </th>
@@ -178,19 +178,19 @@
             </tr>
           </table>
           <div class="flex justify-between mt-4">
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Tổng số: {{ tasks.length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Chưa giải quyết: {{ values.PENDING.length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Sẽ làm: {{ values['TODO'].length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Đang làm: {{ values['IN_PROCESS'].length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Hoàn thành: {{ values['DONE'].length }}
             </div>
           </div>
@@ -213,6 +213,7 @@ import Draggable from 'vuedraggable';
 import { debounce } from 'lodash';
 import Multiselect from '@vueform/multiselect';
 import LitepieDatepicker from 'litepie-datepicker';
+import moment from 'moment';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
@@ -287,7 +288,7 @@ export default {
         },
       },
       formatter: {
-        date: 'L LT',
+        date: 'L LTS',
         month: 'MMMM',
       },
     };
@@ -326,6 +327,12 @@ export default {
         await this.fetch();
       },
     },
+    dateValue: {
+      async handler () {
+        await this.fetch();
+      },
+      deep: true,
+    },
   },
   async mounted () {
     await this.fetch();
@@ -334,7 +341,16 @@ export default {
     async  fetch () {
       this.loading = true;
       if (this.topicId) {
-        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        if (this.dateValue.startDate && this.dateValue.endDate) {
+          await this.$store.dispatch('task/fetchAllTask', {
+            token: this.token,
+            topicId: this.topicId,
+            startDate: this.convertToUTC(this.dateValue.startDate).format(),
+            endDate: this.convertToUTC(this.dateValue.endDate).format(),
+          });
+        } else {
+          await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        }
         await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
         this.tasks = this.listTask;
         this.calulateProgress();
@@ -380,6 +396,14 @@ export default {
         this.tasks = updatedArray;
       }
       this.editTask = null;
+    },
+    parseDate (date) {
+      return date.replaceAll('/', '-');
+    },
+    convertToUTC (dateStr) {
+      const date = moment(dateStr, 'L LTS'); // parse the date string
+      const utc = date.utc(); // convert to UTC
+      return utc;
     },
     search () {
       if (this.searchVal !== '') {
