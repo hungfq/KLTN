@@ -228,6 +228,12 @@ export default {
 
     onMounted(async () => {
       loading.value = true;
+      await store.dispatch('lecturer/fetchListLecturer', token);
+      await store.dispatch('schedule/fetchListSchedules', token);
+      const schedulesStore = store.getters['schedule/listSchedules'];
+      if (schedulesStore.length > 0) {
+        selectSchedule.value = schedulesStore[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -308,6 +314,7 @@ export default {
       // TODO: send invite for committee
       showInviteModal.value = false;
     };
+
     return {
       headers,
       items,
@@ -371,8 +378,12 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
-    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+    // await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+    // await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+    // if (this.listScheduleSelect.length > 2) {
+    //   // eslint-disable-next-line prefer-destructuring
+    //   this.selectSchedule = this.listScheduleSelect[1].value;
+    // }
   },
   methods: {
     handleAddTopic (id) {

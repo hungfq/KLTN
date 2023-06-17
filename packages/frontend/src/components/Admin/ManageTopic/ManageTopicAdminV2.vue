@@ -209,12 +209,20 @@ export default {
     };
 
     onMounted(async () => {
+      loading.value = true;
+      await store.dispatch('lecturer/fetchListLecturer', token);
+      await store.dispatch('schedule/fetchListSchedules', token);
+      const schedulesStore = store.getters['schedule/listSchedules'];
+      if (schedulesStore.length > 0) {
+        selectSchedule.value = schedulesStore[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
         errorHandler(e);
       }
+      loading.value = false;
     });
 
     const showRow = (item) => {
@@ -306,6 +314,10 @@ export default {
       if (!searchVal.value || searchVal.value === '') await loadToServer(serverOptions.value);
       else await loadToServer({ ...serverOptions.value, search: searchVal.value });
     };
+    // if (this.listScheduleSelect.length > 2) {
+    //   // eslint-disable-next-line prefer-destructuring
+    //   this.selectSchedule = this.listScheduleSelect[1].value;
+    // }
 
     return {
       headers,
@@ -373,7 +385,11 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+    // this.loading = true;
+    // await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+    // await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+
+    // this.loading = false;
   },
   methods: {
     handleUpdateTopic (id) {

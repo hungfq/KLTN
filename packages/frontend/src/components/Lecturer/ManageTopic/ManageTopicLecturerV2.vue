@@ -230,6 +230,10 @@ export default {
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listAllSchedule(token);
       schedules.value = listAllSchedule.data;
+      const schedulesStore = store.getters['schedule/listSchedules'];
+      if (schedulesStore.length > 0) {
+        selectSchedule.value = schedulesStore[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
