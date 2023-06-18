@@ -456,11 +456,11 @@ export default {
       return this.section === 'schedule-view';
     },
     calculateType () {
-      const a = new Date(this.startProposalDate);
-      const b = new Date(this.mark_end);
-      const c = (b.getTime() - a.getTime()) / (24 * 3600000);
-      if (c <= 1) return 'hour';
-      if (c <= 30) return 'day';
+      const first = moment(this.startProposalDate, 'L LTS');
+      const second = moment(this.mark_end, 'L LTS');
+      const days = Math.abs(second.diff(first, 'days'));
+      if (days <= 1) return 'hour';
+      if (days <= 30) return 'day';
       return 'month';
     },
     proposalTime: {
