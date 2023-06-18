@@ -35,9 +35,6 @@ import {
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
   faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane,
 } from '@fortawesome/free-solid-svg-icons';
-import VueFileAgent from 'vue-file-agent';
-import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
-import * as tus from 'tus-js-client'; // Import Vietnamese locale
 
 dayjs.locale('vi');
 /* add icons to the library */
@@ -102,13 +99,6 @@ app.use(vfmPlugin({
 }));
 
 app.use(VueFileAgentNext);
-
-// VueFileAgent.plugins.tus = tus;
-// window.uploadUrl = localStorage.getItem('uploadUrl') || 'https://www.mocky.io/v2/5d4fb20b3000005c111099e3';
-
-// if (window.VueFileAgent && window.tus) {
-//   window.VueFileAgent.plugins.tus = window.tus;
-// }
 
 // Define rules
 defineRule('required', (value) => {

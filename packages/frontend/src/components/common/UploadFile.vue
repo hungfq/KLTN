@@ -13,52 +13,62 @@
       Hello world
     </template>
     <template v-if="tab===1">
-      <div class="col-md-5 col-sm-6 mb-3">
-        <div
-          class="mx-auto"
-          :style="compact ? { width: '200px' } : {}"
+      <VueFileAgent
+        ref="vueFileAgent"
+        v-model="fileRecords"
+        :theme="'list'"
+        :multiple="true"
+        :deletable="true"
+        :meta="true"
+        :accept="'image/*,.zip'"
+        :max-size="'10MB'"
+        :max-files="14"
+        :help-text="'Choose images or zip files'"
+        :error-text="{
+          type: 'Invalid file type. Only images or zip Allowed',
+          size: 'Files should not exceed 10MB in size',
+        }"
+        @select="filesSelected($event)"
+        @delete="fileDeleted($event)"
+        @beforedelete="onBeforeDelete($event)"
+      />
+      <hr>
+      <div class="my-2 space-x-2">
+        <button
+          class="btn btn-outline-secondary mb-2"
+          :disabled="!fileRecordsForUpload.length"
+          @click="uploadFiles()"
         >
-          <VueFileAgent
-            ref="vueFileAgent"
-            v-model="fileRecords"
-            :auto="auto"
-            :average-color="averageColor"
-            :upload-url="uploadUrl"
-            :upload-headers="uploadHeaders"
-            :multiple="multiple"
-            :meta="meta"
-            :deletable="deletable"
-            :editable="editable"
-            :linkable="linkable"
-            :readonly="readonly"
-            :resumable="resumable"
-            :disabled="disabled"
-            :compact="compact"
-            :accept="valAccept"
-            :capture="valCapture"
-            :max-size="valMaxSize"
-            :max-files="valMaxFiles"
-            :theme="theme"
-            @select="filesSelected($event)"
-            @delete="fileDeleted($event)"
-            @beforedelete="onBeforeDelete($event)"
-            @sort="onSort($event)"
-            @upload="uploadEvent('upload', $event)"
-            @upload:error="uploadEvent('upload:error', $event)"
-            @upload:delete="uploadEvent('upload:delete', $event)"
-            @upload:delete:error="uploadEvent('upload:delete:error', $event)"
-            @upload:update="uploadEvent('upload:update', $event)"
-            @upload:update:error="uploadEvent('upload:update:error', $event)"
-          />
-        </div>
+          Upload Queue ({{ fileRecordsForUpload.length }})
+        </button>
+
+        <button
+          class="btn btn-danger mb-2"
+          :disabled="!fileRecordsInvalid.length"
+          @click="removeInvalid()"
+        >
+          Remove Invalid ({{ fileRecordsInvalid.length }})
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-danger mb-2"
+          :disabled="!rawFileRecords.length"
+          @click="removeAll()"
+        >
+          Remove All ({{ rawFileRecords.length }})
+        </button>
       </div>
     </template>
   </div>
 </template>
 <script>
+import { mapState, mapGetters } from 'vuex';
 import {
-  addTusClient, getFileRecordsInitial, uploadUrl,
+  addTusClient, uploadUrl,
 } from './base';
+import DocumentApi from '../../utils/api/document';
+import TopicApi from '../../utils/api/topic';
 
 export default {
   components: {
@@ -66,7 +76,7 @@ export default {
 
   data () {
     return {
-      rawFileRecords: getFileRecordsInitial(),
+      rawFileRecords: [],
       fileRecords: [],
       fileRecordsForUpload: [],
       auto: false,
@@ -104,12 +114,21 @@ export default {
         },
       ],
       tab: 0,
+      BASE_API_URL: import.meta.env.BASE_API_URL || 'http://localhost:8001',
+      topic: null,
+
     };
   },
   computed: {
+    ...mapGetters('task', [
+      'listTask', 'topicId', 'listStudents',
+    ]),
+    ...mapGetters('auth', [
+      'userId', 'userEmail', 'userRole', 'token', 'userInfo', 'userName',
+    ]),
     fileRecordsInvalid () {
       const fileRecordsInvalid = [];
-      for (let i = 0; i < this.fileRecords.length; i++) {
+      for (let i = 0; i < this.fileRecords.length; i += 1) {
         if (this.fileRecords[i].error) {
           fileRecordsInvalid.push(this.rawFileRecords[i]);
         }
@@ -118,9 +137,10 @@ export default {
     },
     uploadEndpoint () {
       if (this.resumable && this.uploadUrl.indexOf('mocky.io') !== -1) {
-        return 'https://master.tus.io/files/';
+        // return 'https://master.tus.io/files/';
+        return `${this.BASE_API_URL}/api/v2/documents`;
       }
-      return this.uploadUrl;
+      return `${this.BASE_API_URL}/api/v2/documents`;
     },
   },
   watch: {
@@ -128,11 +148,19 @@ export default {
       console.log('fileRecords changed');
     },
   },
-  mounted () {
+  async mounted () {
     const plugins = {
       tus: null,
     };
     addTusClient(plugins);
+    this.uploadHeaders = {
+      authorization: `bearer ${this.token}`,
+      'Content-Type': 'multipart/form-data',
+    };
+    this.uploadUrl = `${this.BASE_API_URL}/api/v2/documents`;
+    if (this.topicId) {
+      this.topic = await TopicApi.getTopic(this.token, this.topicId);
+    }
   },
   methods: {
     uploadEvent (eventName, data) {
@@ -151,24 +179,24 @@ export default {
       this.rawFileRecords = [];
       this.fileRecordsForUpload = [];
     },
-    setProgress () {
+    setProgress (prg) {
       const fileRecord = this.getSelectedFileRecord();
       if (!fileRecord) {
         return;
       }
-      const prg = (this.$refs.prgInput).value;
+      // const prg = (this.$refs.prgInput).value;
       fileRecord.progress(parseInt(prg, 10));
     },
     removeInvalid () {
       let fileRecordsNew = this.rawFileRecords.concat([]);
-      for (let i = 0; i < this.fileRecordsInvalid.length; i++) {
+      for (let i = 0; i < this.fileRecordsInvalid.length; i += 1) {
         const idx = fileRecordsNew.indexOf(this.fileRecordsInvalid[i]);
         if (idx !== -1) {
           fileRecordsNew.splice(idx, 1);
         }
       }
       fileRecordsNew = [];
-      for (let i = 0; i < this.fileRecords.length; i++) {
+      for (let i = 0; i < this.fileRecords.length; i += 1) {
         if (!this.fileRecords[i].error) {
           fileRecordsNew.push(this.rawFileRecords[i]);
         }
@@ -224,43 +252,18 @@ export default {
           console.log('after upload all: ', this.fileRecords);
         });
     },
-    moveIndex (dir) {
-      console.log('moveIndex', dir);
-      const from = this.selectedIdx - 1;
-      let to = from + dir;
-      if (to < 0) {
-        to = this.rawFileRecords.length - 1;
+    async uploadFiles () {
+      for (let i = 0; i < this.fileRecordsForUpload.length; i += 1) {
+        const index = this.fileRecords.indexOf(this.fileRecordsForUpload[i]);
+        this.selectedIdx = index;
+        await DocumentApi.uploadDocuments(this.token, this.topic.code, this.fileRecordsForUpload[i].file, this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name);
+        this.setProgress();
       }
-      if (to >= this.rawFileRecords.length) {
-        to = 0;
-      }
-      if (!this.rawFileRecords[from]) {
-        return;
-      }
-      (this.$refs.vueFileAgent).sort(from, to);
-    },
-    sortBy (prop) {
-      // var asc = this['_is_sorted_desc_' + prop] = !this['_is_sorted_desc_' + prop];
-      const direction = this.sortDirection[prop];
-      this.sortDirection[prop] = direction === 'DESC' ? 'ASC' : 'DESC';
-      // console.log('sortBy', prop, this.fileRecords);
-      const ret = direction === 'DESC' ? -1 : 1;
-      this.fileRecords = this.fileRecords.sort((fd1, fd2) => {
-        const f1 = fd1.file || fd1;
-        const f2 = fd2.file || fd2;
-        return f1[prop] > f2[prop] ? 1 * ret : -1 * ret;
-      });
-      // console.log('sortBy after', prop, this.fileRecords);
-    },
-
-    uploadFiles () {
-      // Using the default uploader. You may use another uploader instead.
-      (this.$refs.vueFileAgent).upload(
-        this.uploadEndpoint,
-        this.uploadHeaders,
-        this.fileRecordsForUpload,
-      );
       this.fileRecordsForUpload = [];
+      // uploadHeaders;
+      // console.log('🚀 ~ file: UploadFile.vue:279 ~ uploadFiles ~ this.uploadHeaders:', this.uploadHeaders);
+      // // this.fileRecordsForUpload = [];
+      // console.log('🚀 ~ file: UploadFile.vue:280 ~ uploadFiles ~ this.fileRecordsForUpload:', this.fileRecordsForUpload);
     },
     deleteUploadedFile (fileRecord) {
       // Using the default uploader. You may use another uploader instead.
@@ -273,7 +276,7 @@ export default {
     filesSelected (fileRecords) {
       console.log('filesSelected', fileRecords);
       const validFileRecords = [];
-      for (let i = 0; i < fileRecords.length; i++) {
+      for (let i = 0; i < fileRecords.length; i += 1) {
         if (!fileRecords[i].error) {
           validFileRecords.push(fileRecords[i]);
         }
@@ -298,14 +301,12 @@ export default {
         this.deleteUploadedFile(fileRecord);
       }
     },
-    onSort (event, sortedData) {
-      console.log(
-        'sorted',
-        event.oldIndex,
-        event.newIndex,
-        sortedData.map((fd) => fd.name),
-      );
-    },
   },
 };
 </script>
+<style>
+.file-name {
+  display: flex;
+  align-items: center;
+}
+</style>
