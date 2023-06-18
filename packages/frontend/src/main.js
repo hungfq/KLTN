@@ -17,6 +17,7 @@ import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi'; // Set Vietnamese locale globally
+import VueFileAgentNext from '@boindil/vue-file-agent-next';
 import ganttastic from '@infectoone/vue-ganttastic';
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -25,13 +26,18 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { vi } from '@formkit/i18n';
 
+import '@boindil/vue-file-agent-next/dist/vue-file-agent-next.css';
+
 /* import specific icons */
 import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
   faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane,
-} from '@fortawesome/free-solid-svg-icons'; // Import Vietnamese locale
+} from '@fortawesome/free-solid-svg-icons';
+import VueFileAgent from 'vue-file-agent';
+import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
+import * as tus from 'tus-js-client'; // Import Vietnamese locale
 
 dayjs.locale('vi');
 /* add icons to the library */
@@ -94,6 +100,15 @@ app.use(vfmPlugin({
   componentName: 'VueFinalModal',
   dynamicContainerName: 'ModalsContainer',
 }));
+
+app.use(VueFileAgentNext);
+
+// VueFileAgent.plugins.tus = tus;
+// window.uploadUrl = localStorage.getItem('uploadUrl') || 'https://www.mocky.io/v2/5d4fb20b3000005c111099e3';
+
+// if (window.VueFileAgent && window.tus) {
+//   window.VueFileAgent.plugins.tus = window.tus;
+// }
 
 // Define rules
 defineRule('required', (value) => {

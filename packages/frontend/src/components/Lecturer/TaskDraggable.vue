@@ -40,13 +40,23 @@
           :options="options"
         />
       </div>
-      <button
+      <!-- <button
         v-if="!showStatistic"
         class="btn btn-primary mx-2"
         @click="addTaskHandler"
       >
-        Thêm nhiệm vụ
-      </button>
+        Tải lên tệp báo cáo
+      </button> -->
+      <div class="dropdown dropdown-bottom dropdown-end  mx-2 dropdown-open">
+        <label
+          class="btn btn-primary"
+        >Tải lên tệp báo cáo</label>
+        <div
+          class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[500px]"
+        >
+          <UploadFile />
+        </div>
+      </div>
     </div>
   </template>
   <div
@@ -218,6 +228,7 @@ import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
 import TaskApi from '../../utils/api/task';
+import UploadFile from '../common/UploadFile.vue';
 
 export default {
   name: 'TaskDraggable',
@@ -229,6 +240,7 @@ export default {
     Draggable,
     Multiselect,
     LitepieDatepicker,
+    UploadFile,
   },
 
   data () {
@@ -452,16 +464,19 @@ export default {
 };
 </script>
 
-<style scoped>
-.column-width {
+<style>
+/* .column-width {
   min-width: 276px;
   width: 276px;
-}
+} */
 /* Unfortunately @apply cannot be setup in code sandbox,
 but you'd use "@apply border opacity-50 border-blue-500 bg-gray-200" here */
 /* .ghost-card {
   opacity: 0.5;
   background: #F7FAFC;
   border: 1px solid #4299e1;
+} */
+/* .file-preview-wrapper {
+  height: 100%;
 } */
 </style>
