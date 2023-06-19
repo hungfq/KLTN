@@ -4,6 +4,7 @@ namespace App\Modules\Schedule\Controllers;
 
 use App\Http\Controllers\ApiController;
 use App\Modules\Schedule\Actions\ScheduleDeleteAction;
+use App\Modules\Schedule\Actions\ScheduleExportGradeAction;
 use App\Modules\Schedule\Actions\ScheduleExportTopicAction;
 use App\Modules\Schedule\Actions\ScheduleImportStudentAction;
 use App\Modules\Schedule\Actions\ScheduleShowAction;
@@ -17,6 +18,7 @@ use App\Modules\Schedule\Actions\ScheduleViewAction;
 use App\Modules\Schedule\Actions\ScheduleViewCriteriaAction;
 use App\Modules\Schedule\Actions\ScheduleViewStudentAction;
 use App\Modules\Schedule\Actions\ScheduleViewWithTopicAction;
+use App\Modules\Schedule\DTO\ScheduleExportGradeDTO;
 use App\Modules\Schedule\DTO\ScheduleViewDTO;
 use App\Modules\Schedule\DTO\ScheduleViewStudentDTO;
 use App\Modules\Schedule\DTO\ScheduleViewWithTopicDTO;
@@ -205,5 +207,14 @@ class ScheduleController extends ApiController
     public function exportTopic($id, ScheduleExportTopicAction $action)
     {
         return $action->handle($id);
+    }
+
+    public function exportGrade($id, ScheduleExportGradeAction $action)
+    {
+        $this->request->merge([
+            'id' => $id
+        ]);
+
+        return $action->handle(ScheduleExportGradeDTO::fromRequest());
     }
 }
