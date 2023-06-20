@@ -16,6 +16,8 @@ class DocumentTransformer extends TransformerAbstract
             'title' => $document->title,
             'file_name' => $document->file_name,
             'file_extension' => $document->file_extension,
+            'type' => $document->type,
+            'size' => $document->size,
             'created_by' => $document->created_by,
 //            'created_by_name' => data_get($document, 'createdBy.name'),
             'updated_by' => $document->updated_by,

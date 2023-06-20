@@ -19,6 +19,8 @@ class CreateDocumentsTable extends Migration
             $table->string('title', 255)->nullable();
             $table->string('file_name', 255);
             $table->char('file_extension', 10);
+            $table->string('type', 255);
+            $table->bigInteger('size');
             $table->text('path');
             $table->text('des')->nullable();
 

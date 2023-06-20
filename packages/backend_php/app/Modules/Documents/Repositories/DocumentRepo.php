@@ -58,6 +58,8 @@ class DocumentRepo
     {
         $params['file_name'] = $params['file']->getClientOriginalName();
         $params['file_extension'] = $params['file']->getClientOriginalExtension();
+        $params['type'] = $params['file']->getMimeType();
+        $params['size'] = $params['file']->getSize();
         $params['owner'] = Arr::get($params, 'owner');
         $pathFile = $this->uploadFile($params);
         $params['path'] = $pathFile;
