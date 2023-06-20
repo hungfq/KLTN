@@ -228,6 +228,7 @@ import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
 import TaskApi from '../../utils/api/task';
+import DocumentApi from '../../utils/api/document';
 import UploadFile from '../common/UploadFile.vue';
 
 export default {

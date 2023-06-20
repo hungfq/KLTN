@@ -24,4 +24,15 @@ export default class DocumentApi {
     );
     return res;
   }
+
+  static async listAllDocsByOwner (token, owner) {
+    const url = `/documents?owner=${owner}`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
 }

@@ -10,7 +10,20 @@
       >{{ t.label }}</a>
     </div>
     <template v-if="tab ===0">
-      Hello world
+      <VueFileAgent
+        v-model:rawModelValue="listFilesRaw"
+        v-model="listFiles"
+        :deletable="true"
+        :editable="false"
+        :linkable="true"
+        :multiple="true"
+        :theme="theme"
+        :upload-url="uploadUrl"
+        :sortable="sortable"
+        :resumable="resumable"
+        @select="filesSelected($event)"
+        @delete="fileDeleted($event)"
+      />
     </template>
     <template v-if="tab===1">
       <VueFileAgent
@@ -75,6 +88,42 @@ export default {
 
   data () {
     return {
+      listFiles: [],
+      listFilesRaw: [{
+        name: 'sample.pdf',
+        size: 3028,
+        type: 'application/pdf',
+        ext: 'pdf',
+      },
+      {
+        name: 'House Sparrow.jpg',
+        sizeText: '14 KB',
+        size: 14403,
+        type: 'image/jpeg',
+        ext: 'jpg',
+      },
+      {
+        name: 'Important sheet.ods',
+        sizeText: '31 KB',
+        size: 31276,
+        type: '',
+        ext: 'ods',
+      },
+      {
+        name: 'Test Files.zip',
+        sizeText: '198 KB',
+        size: 202680,
+        type: 'application/x-zip-compressed',
+        ext: 'zip',
+      },
+      {
+        name: 'Document 3.docx',
+        lastModified: 1564392646097,
+        sizeText: '109 KB',
+        size: 111303,
+        type: '',
+        ext: 'docx',
+      }],
       rawFileRecords: [],
       fileRecords: [],
       fileRecordsForUpload: [],
@@ -135,11 +184,6 @@ export default {
       return fileRecordsInvalid;
     },
   },
-  watch: {
-    fileRecords () {
-      console.log('fileRecords changed');
-    },
-  },
   async mounted () {
     const plugins = {
       tus: null,
@@ -153,8 +197,33 @@ export default {
     if (this.topicId) {
       this.topic = await TopicApi.getTopic(this.token, this.topicId);
     }
+    this.fetch();
   },
   methods: {
+    async fetch () {
+      const files = await DocumentApi.listAllDocsByOwner(this.token, this.topic.code);
+      // this.listFiles = files.map((file) => ({
+      //   ext: file.file_extension,
+      //   name: file.file_name,
+      //   type: 'application/zip',
+      //   size: 1000,
+      // }));
+
+      this.listFiles = [{
+        name: 'Some Large File.zip',
+        size: 100, // 24 MB
+        type: 'application/zip',
+        ext: 'zip',
+      },
+      {
+        name: 'Some Large File.zip',
+        size: 100, // 24 MB
+        type: 'application/zip',
+        ext: 'zip',
+      },
+      ];
+      console.log('🚀 ~ file: UploadFile.vue:160 ~ fetch ~ listFile:', this.listFiles);
+    },
     uploadEvent (eventName, data) {
       console.log('UPLOAD EVENT ', eventName, data);
     },
