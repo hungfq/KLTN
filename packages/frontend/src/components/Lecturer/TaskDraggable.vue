@@ -52,7 +52,7 @@
           class="btn btn-primary"
         >Tải lên tệp báo cáo</label>
         <div
-          class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[500px]"
+          class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[600px]"
         >
           <UploadFile />
         </div>

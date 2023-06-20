@@ -20,17 +20,16 @@
         :multiple="true"
         :deletable="true"
         :meta="true"
-        :accept="'image/*,.zip'"
+        :accept="'image/*,.zip,.rar,.doc,.docx,.ods,.pdf'"
         :max-size="'10MB'"
         :max-files="14"
         :help-text="'Choose images or zip files'"
         :error-text="{
-          type: 'Invalid file type. Only images or zip Allowed',
-          size: 'Files should not exceed 10MB in size',
+          type: 'Tệp không hợp lệ, chỉ chấp nhận file ảnh, tệp nén, tài liệu và pdf',
+          size: 'Tệp không quá 10MB',
         }"
         @select="filesSelected($event)"
         @delete="fileDeleted($event)"
-        @beforedelete="onBeforeDelete($event)"
       />
       <hr>
       <div class="my-2 space-x-2">
@@ -39,7 +38,7 @@
           :disabled="!fileRecordsForUpload.length"
           @click="uploadFiles()"
         >
-          Upload Queue ({{ fileRecordsForUpload.length }})
+          Tải lên hàng đợi ({{ fileRecordsForUpload.length }})
         </button>
 
         <button
@@ -47,7 +46,7 @@
           :disabled="!fileRecordsInvalid.length"
           @click="removeInvalid()"
         >
-          Remove Invalid ({{ fileRecordsInvalid.length }})
+          Xóa tệp không hợp lệ ({{ fileRecordsInvalid.length }})
         </button>
 
         <button
@@ -56,7 +55,7 @@
           :disabled="!rawFileRecords.length"
           @click="removeAll()"
         >
-          Remove All ({{ rawFileRecords.length }})
+          Xóa tất cả ({{ rawFileRecords.length }})
         </button>
       </div>
     </template>
@@ -135,13 +134,6 @@ export default {
       }
       return fileRecordsInvalid;
     },
-    uploadEndpoint () {
-      if (this.resumable && this.uploadUrl.indexOf('mocky.io') !== -1) {
-        // return 'https://master.tus.io/files/';
-        return `${this.BASE_API_URL}/api/v2/documents`;
-      }
-      return `${this.BASE_API_URL}/api/v2/documents`;
-    },
   },
   watch: {
     fileRecords () {
@@ -191,6 +183,7 @@ export default {
       let fileRecordsNew = this.rawFileRecords.concat([]);
       for (let i = 0; i < this.fileRecordsInvalid.length; i += 1) {
         const idx = fileRecordsNew.indexOf(this.fileRecordsInvalid[i]);
+
         if (idx !== -1) {
           fileRecordsNew.splice(idx, 1);
         }
@@ -254,24 +247,18 @@ export default {
     },
     async uploadFiles () {
       for (let i = 0; i < this.fileRecordsForUpload.length; i += 1) {
-        const index = this.fileRecords.indexOf(this.fileRecordsForUpload[i]);
-        this.selectedIdx = index;
-        await DocumentApi.uploadDocuments(this.token, this.topic.code, this.fileRecordsForUpload[i].file, this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name);
-        this.setProgress();
+        try {
+          const index = this.fileRecords.indexOf(this.fileRecordsForUpload[i]);
+          await DocumentApi.uploadDocuments(this.token, this.topic.code, this.fileRecordsForUpload[i].file, this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name);
+          this.$toast.success(`Upload thành công tệp ${this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name}`);
+          // this.$refs.vueFileAgent.removeFileRecord(this.fileRecordsForUpload[i]);
+          this.fileRecordsForUpload.splice(i, 1);
+        } catch (error) {
+          this.$toast.error(` Đã có lỗi xảy ra trong tải lên ${this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name}`);
+        }
       }
       this.fileRecordsForUpload = [];
-      // uploadHeaders;
-      // console.log('🚀 ~ file: UploadFile.vue:279 ~ uploadFiles ~ this.uploadHeaders:', this.uploadHeaders);
-      // // this.fileRecordsForUpload = [];
-      // console.log('🚀 ~ file: UploadFile.vue:280 ~ uploadFiles ~ this.fileRecordsForUpload:', this.fileRecordsForUpload);
-    },
-    deleteUploadedFile (fileRecord) {
-      // Using the default uploader. You may use another uploader instead.
-      (this.$refs.vueFileAgent).deleteUpload(
-        this.uploadEndpoint,
-        this.uploadHeaders,
-        fileRecord,
-      );
+      this.fileRecords = [];
     },
     filesSelected (fileRecords) {
       console.log('filesSelected', fileRecords);
@@ -289,7 +276,7 @@ export default {
       if (i !== -1) {
         // queued file, not yet uploaded. Just remove from the arrays
         this.fileRecordsForUpload.splice(i, 1);
-      } else if (confirm('Are you sure you want to delete?')) {
+      } else if (confirm('Bạn có muốn xóa tệp này không')) {
         (this.$refs.vueFileAgent).deleteFileRecord(fileRecord); // will trigger 'delete' event
       }
     },
