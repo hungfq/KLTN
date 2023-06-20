@@ -15,7 +15,7 @@ class CreateDocumentValidator extends AbstractValidator
             'file' => [
                 'required',
                 'file',
-                'max:10000'
+                'max:100000'
             ],
         ];
     }
