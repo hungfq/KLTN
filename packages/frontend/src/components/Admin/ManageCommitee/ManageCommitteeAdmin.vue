@@ -61,6 +61,13 @@
         <font-awesome-icon :icon="['fas', 'paper-plane']" />
         <span class="ml-1">Gửi thư mời</span>
       </div>
+      <div
+        class="btn btn-info mx-1"
+        @click="showExportModal= true"
+      >
+        <font-awesome-icon :icon="['fas', 'list-check']" />
+        <span class="ml-1">Xuất điểm</span>
+      </div>
       <ButtonAddItem
         :title="'Thêm hội đồng'"
         @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
@@ -147,6 +154,10 @@
       v-model="showInviteModal"
       @send-invite="handleSendInvite"
     />
+    <ExportGrade
+      v-model="showExportModal"
+      @export="handleExportGrade"
+    />
   </div>
 </template>
 
@@ -159,11 +170,14 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import Multiselect from '@vueform/multiselect';
+import { saveAs } from 'file-saver';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
+import ScheduleApi from '../../../utils/api/schedule';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
 import IconTooltip from '../../common/IconTooltip.vue';
 import SendInvite from '../../Modal/SendInvite.vue';
+import ExportGrade from '../../Modal/ExportGrade.vue';
 
 export default {
   name: 'ManageStudentAdmin',
@@ -174,6 +188,7 @@ export default {
     ButtonAddItem,
     IconTooltip,
     SendInvite,
+    ExportGrade,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -261,6 +276,7 @@ export default {
 
     const showConfirmModal = ref(false);
     const showInviteModal = ref(false);
+    const showExportModal = ref(false);
     const confirmRemove = async (id) => {
       try {
         await CommitteeApi.deleteCommittee(token, removeId.value);
@@ -309,10 +325,31 @@ export default {
         errorHandler(e);
       }
     };
-    const handleSendInvite = (scheduleId) => {
-      // console.log('🚀 ~ file: ManageCommitteeAdmin.vue:304 ~ handleSendInvite ~ scheduleId:', scheduleId);
-      // TODO: send invite for committee
-      showInviteModal.value = false;
+    const handleSendInvite = async (scheduleId) => {
+      try {
+        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
+        showInviteModal.value = false;
+        $toast.success('Đã gửi mail!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const handleExportGrade = async (scheduleId) => {
+      try {
+        const response = await ScheduleApi.exportGradeExcel(token, scheduleId);
+        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:340 ~ handleExportGrade ~ response:', response);
+        const schedulesStore = store.getters['schedule/listSchedules'];
+        const sc = schedulesStore.find((s) => s._id === scheduleId);
+        if (sc) {
+          saveAs(response.data, `${sc.code}.xlsx`);
+        } else {
+          saveAs(response.data, `grade-${scheduleId}.xlsx`);
+        }
+        showExportModal.value = false;
+      } catch (e) {
+        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:350 ~ handleExportGrade ~ e:', e);
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
     };
 
     return {
@@ -343,7 +380,9 @@ export default {
       search,
       selectHandlerSchedule,
       showInviteModal,
+      showExportModal,
       handleSendInvite,
+      handleExportGrade,
     };
   },
   computed: {

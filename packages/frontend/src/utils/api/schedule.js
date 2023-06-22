@@ -199,4 +199,30 @@ export default class ScheduleApi {
     });
     return res;
   }
+
+  static async exportGradeExcel (token, id) {
+    const res = await axios.get(
+      `/schedule/${id}/grade/export?export_type=`,
+      {
+        headers: {
+          authorization: `bearer ${token}`,
+        },
+        responseType: 'blob',
+        baseURL: apiDest,
+      },
+    );
+    return res;
+  }
+
+  static async sendMailToCommitteeBySchedule (token, id) {
+    const res = await axios.get(
+      `/schedule/${id}/lecturer/mail`,
+      {
+        headers: {
+          authorization: `bearer ${token}`,
+        },
+      },
+    );
+    return res.data;
+  }
 }
