@@ -201,8 +201,10 @@ export default {
 
     onMounted(async () => {
       const listSchedules = store.getters['schedule/listScheduleApproveLecturer'];
-      console.log('🚀 ~ file: ManageProposalLecturerV2.vue:205 ~ onMounted ~ listSchedules:', listSchedules);
       schedules.value = listSchedules;
+      if (schedules.value.length > 0) {
+        selectSchedule.value = schedules.value[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {

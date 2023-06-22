@@ -47,9 +47,13 @@
       >
         Tải lên tệp báo cáo
       </button> -->
-      <div class="dropdown dropdown-bottom dropdown-end  mx-2 dropdown-open">
+      <div
+        class="dropdown dropdown-bottom dropdown-end  mx-2"
+        :class="openSelectFile ? 'dropdown-open' : ''"
+      >
         <label
           class="btn btn-primary"
+          @click="openSelectFile = !openSelectFile"
         >Tải lên tệp báo cáo</label>
         <div
           class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[600px]"
@@ -304,6 +308,7 @@ export default {
         date: 'L LTS',
         month: 'MMMM',
       },
+      openSelectFile: false,
     };
   },
   computed: {

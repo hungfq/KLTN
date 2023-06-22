@@ -35,4 +35,28 @@ export default class DocumentApi {
     });
     return res.data.data;
   }
+
+  static async deleteDocument (token, id) {
+    const url = '/documents';
+    const res = await axios.delete(url, {
+      data: [id],
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
+  static async getFile (token, id) {
+    const url = `documents/${id}/download`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      responseType: 'blob',
+      baseURL: apiDest,
+    });
+    return res;
+  }
 }

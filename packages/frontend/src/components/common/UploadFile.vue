@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col bg-gray-100 mt-3">
     <div class="tabs">
       <a
         v-for="t in tabs"
@@ -10,20 +10,46 @@
       >{{ t.label }}</a>
     </div>
     <template v-if="tab ===0">
-      <VueFileAgent
-        v-model:rawModelValue="listFilesRaw"
-        v-model="listFiles"
-        :deletable="true"
-        :editable="false"
-        :linkable="true"
-        :multiple="true"
-        :theme="theme"
-        :upload-url="uploadUrl"
-        :sortable="sortable"
-        :resumable="resumable"
-        @select="filesSelected($event)"
-        @delete="fileDeleted($event)"
-      />
+      <div id="app">
+        <easy-data-table
+          :headers="headers"
+          :items="items"
+          :loading="loading"
+          hide-footer
+        >
+          <template #empty-message>
+            <div class="text-center text-gray-500">
+              Không có dữ liệu
+            </div>
+          </template>
+          <template #item-operation="item">
+            <div class="flex">
+              <div
+                class="tooltip tooltip-bottom pr-3"
+                data-tip="Tải tệp tin"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  icon="fa-solid fa-file-arrow-down"
+                  size="2xl"
+                  @click="downloadFile(item)"
+                />
+              </div>
+              <div
+                class="tooltip tooltip-bottom pr-3"
+                data-tip="Xóa tệp tin"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  icon="fa-solid fa-trash-can"
+                  size="2xl"
+                  @click="deleteFile(item)"
+                />
+              </div>
+            </div>
+          </template>
+        </easy-data-table>
+      </div>
     </template>
     <template v-if="tab===1">
       <VueFileAgent
@@ -32,50 +58,26 @@
         :theme="'list'"
         :multiple="true"
         :deletable="true"
+        :upload-url="uploadUrl"
+        :upload-headers="uploadHeaders"
         :meta="true"
         :accept="'image/*,.zip,.rar,.doc,.docx,.ods,.pdf'"
-        :max-size="'10MB'"
+        :max-size="'30MB'"
         :max-files="14"
-        :help-text="'Choose images or zip files'"
+        :help-text="'Tải lên tệp tin'"
         :error-text="{
           type: 'Tệp không hợp lệ, chỉ chấp nhận file ảnh, tệp nén, tài liệu và pdf',
-          size: 'Tệp không quá 10MB',
+          size: 'Tệp không quá 30MB',
         }"
-        @select="filesSelected($event)"
-        @delete="fileDeleted($event)"
+        @upload="afterUploadFiles"
+        @upload:error="errorHandler"
       />
-      <hr>
-      <div class="my-2 space-x-2">
-        <button
-          class="btn btn-outline-secondary mb-2"
-          :disabled="!fileRecordsForUpload.length"
-          @click="uploadFiles()"
-        >
-          Tải lên hàng đợi ({{ fileRecordsForUpload.length }})
-        </button>
-
-        <button
-          class="btn btn-danger mb-2"
-          :disabled="!fileRecordsInvalid.length"
-          @click="removeInvalid()"
-        >
-          Xóa tệp không hợp lệ ({{ fileRecordsInvalid.length }})
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-outline-danger mb-2"
-          :disabled="!rawFileRecords.length"
-          @click="removeAll()"
-        >
-          Xóa tất cả ({{ rawFileRecords.length }})
-        </button>
-      </div>
     </template>
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+import { saveAs } from 'file-saver';
 import {
   addTusClient, uploadUrl,
 } from './base';
@@ -88,83 +90,30 @@ export default {
 
   data () {
     return {
-      listFiles: [],
-      listFilesRaw: [{
-        name: 'sample.pdf',
-        size: 3028,
-        type: 'application/pdf',
-        ext: 'pdf',
-      },
-      {
-        name: 'House Sparrow.jpg',
-        sizeText: '14 KB',
-        size: 14403,
-        type: 'image/jpeg',
-        ext: 'jpg',
-      },
-      {
-        name: 'Important sheet.ods',
-        sizeText: '31 KB',
-        size: 31276,
-        type: '',
-        ext: 'ods',
-      },
-      {
-        name: 'Test Files.zip',
-        sizeText: '198 KB',
-        size: 202680,
-        type: 'application/x-zip-compressed',
-        ext: 'zip',
-      },
-      {
-        name: 'Document 3.docx',
-        lastModified: 1564392646097,
-        sizeText: '109 KB',
-        size: 111303,
-        type: '',
-        ext: 'docx',
-      }],
-      rawFileRecords: [],
       fileRecords: [],
-      fileRecordsForUpload: [],
-      auto: false,
-      averageColor: true,
       uploadUrl,
       uploadHeaders: {},
-      meta: true,
-      multiple: true,
-      deletable: true,
-      editable: true,
-      linkable: true,
-      sortable: false,
-      readonly: false,
-      resumable: false,
-      disabled: false,
-      compact: false,
-      theme: 'list',
-      sortDirection: {
-        lastModified: 'ASC',
-        name: 'ASC',
-      },
-      selectedIdx: 1,
       valAccept: 'image/*,video/*,.pdf,.doc,.docx,.ods',
-      valCapture: undefined,
-      valMaxSize: '10MB',
-      valMaxFiles: 14,
       tabs: [
         {
           label: 'Xem tệp tin',
           value: 0,
         },
         {
-          label: 'Thay đổi tệp tin',
+          label: 'Tải tệp tin',
           value: 1,
         },
       ],
       tab: 0,
       BASE_API_URL: import.meta.env.BASE_API_URL || 'http://localhost:8001',
       topic: null,
-
+      headers: [
+        { text: 'Tên tệp', value: 'file_name' },
+        { text: 'Kích thước', value: 'sizeFormatted' },
+        { text: 'Hoạt động', value: 'operation' },
+      ],
+      items: [],
+      loading: false,
     };
   },
   computed: {
@@ -193,152 +142,36 @@ export default {
       authorization: `bearer ${this.token}`,
       'Content-Type': 'multipart/form-data',
     };
-    this.uploadUrl = `${this.BASE_API_URL}/api/v2/documents`;
     if (this.topicId) {
       this.topic = await TopicApi.getTopic(this.token, this.topicId);
     }
+    this.uploadUrl = `${this.BASE_API_URL}/api/v2/documents?owner=${this.topic.code}`;
+    this.uploadHeaders = {
+      authorization: `bearer ${this.token}`,
+    };
     this.fetch();
   },
   methods: {
+    formatSizeUnits (bytes) {
+      if (bytes >= 1073741824) { bytes = `${(bytes / 1073741824).toFixed(2)} GB`; } else if (bytes >= 1048576) { bytes = `${(bytes / 1048576).toFixed(2)} MB`; } else if (bytes >= 1024) { bytes = `${(bytes / 1024).toFixed(2)} KB`; } else if (bytes > 1) { bytes += ' bytes'; } else if (bytes == 1) { bytes += ' byte'; } else { bytes = '0 bytes'; }
+      return bytes;
+    },
     async fetch () {
-      const files = await DocumentApi.listAllDocsByOwner(this.token, this.topic.code);
-      // this.listFiles = files.map((file) => ({
-      //   ext: file.file_extension,
-      //   name: file.file_name,
-      //   type: 'application/zip',
-      //   size: 1000,
-      // }));
-
-      this.listFiles = [{
-        name: 'Some Large File.zip',
-        size: 100, // 24 MB
-        type: 'application/zip',
-        ext: 'zip',
-      },
-      {
-        name: 'Some Large File.zip',
-        size: 100, // 24 MB
-        type: 'application/zip',
-        ext: 'zip',
-      },
-      ];
-      console.log('🚀 ~ file: UploadFile.vue:160 ~ fetch ~ listFile:', this.listFiles);
+      this.loading = true;
+      try {
+        const files = await DocumentApi.listAllDocsByOwner(this.token, this.topic.code);
+        this.items = files.map((f) => ({ ...f, sizeFormatted: this.formatSizeUnits(f.size) }));
+      } catch (e) {
+        console.log('🚀 ~ file: UploadFile.vue:205 ~ fetch ~ e:', e);
+      }
+      this.loading = false;
     },
-    uploadEvent (eventName, data) {
-      console.log('UPLOAD EVENT ', eventName, data);
+    afterUploadFiles () {
+      this.fetch();
     },
-    getSelectedFileRecord () {
-      let i = this.selectedIdx;
-      i -= 1;
-      if (!this.fileRecords[i]) {
-        return;
-      }
-      return this.fileRecords[i];
-    },
-    removeAll () {
-      console.log(this.rawFileRecords);
-      this.rawFileRecords = [];
-      this.fileRecordsForUpload = [];
-    },
-    setProgress (prg) {
-      const fileRecord = this.getSelectedFileRecord();
-      if (!fileRecord) {
-        return;
-      }
-      // const prg = (this.$refs.prgInput).value;
-      fileRecord.progress(parseInt(prg, 10));
-    },
-    removeInvalid () {
-      let fileRecordsNew = this.rawFileRecords.concat([]);
-      for (let i = 0; i < this.fileRecordsInvalid.length; i += 1) {
-        const idx = fileRecordsNew.indexOf(this.fileRecordsInvalid[i]);
-
-        if (idx !== -1) {
-          fileRecordsNew.splice(idx, 1);
-        }
-      }
-      fileRecordsNew = [];
-      for (let i = 0; i < this.fileRecords.length; i += 1) {
-        if (!this.fileRecords[i].error) {
-          fileRecordsNew.push(this.rawFileRecords[i]);
-        }
-      }
-      this.rawFileRecords = fileRecordsNew; // mutate at once, do not splice each
-    },
-    remove () {
-      console.log('removing...');
-
-      let i = this.selectedIdx;
-      i -= 1;
-      if (!this.fileRecords[i]) {
-        return;
-      }
-
-      (this.$refs.vueFileAgent).removeFileRecord(this.fileRecords[i]);
-    },
-    update () {
-      const fileRecord = this.getSelectedFileRecord();
-      if (!fileRecord) {
-        return;
-      }
-      if (!fileRecord.file) {
-        alert('This is not a user selected file');
-        return;
-      }
-      (this.$refs.vueFileAgent).updateUpload(
-        this.uploadUrl,
-        this.uploadHeaders,
-        fileRecord,
-      );
-    },
-    upload () {
-      console.log('let au debug');
-      const fileRecord = this.getSelectedFileRecord();
-      if (!fileRecord) {
-        return;
-      }
-      if (!fileRecord.file) {
-        alert('This is not a user selected file');
-        return;
-      }
-      const i = this.fileRecordsForUpload.indexOf(fileRecord);
-      if (i !== -1) {
-        this.fileRecordsForUpload.splice(i, 1);
-      }
-
-      (this.$refs.vueFileAgent)
-        .upload(this.uploadEndpoint, this.uploadHeaders, [fileRecord])
-        .then((result) => {
-          console.log('uploaded: ', result);
-          console.log('after upload: ', fileRecord);
-          console.log('after upload all: ', this.fileRecords);
-        });
-    },
-    async uploadFiles () {
-      for (let i = 0; i < this.fileRecordsForUpload.length; i += 1) {
-        try {
-          const index = this.fileRecords.indexOf(this.fileRecordsForUpload[i]);
-          await DocumentApi.uploadDocuments(this.token, this.topic.code, this.fileRecordsForUpload[i].file, this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name);
-          this.$toast.success(`Upload thành công tệp ${this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name}`);
-          // this.$refs.vueFileAgent.removeFileRecord(this.fileRecordsForUpload[i]);
-          this.fileRecordsForUpload.splice(i, 1);
-        } catch (error) {
-          this.$toast.error(` Đã có lỗi xảy ra trong tải lên ${this.fileRecordsForUpload[i].customName || this.fileRecordsForUpload[i].file.name}`);
-        }
-      }
-      this.fileRecordsForUpload = [];
-      this.fileRecords = [];
-    },
-    filesSelected (fileRecords) {
-      console.log('filesSelected', fileRecords);
-      const validFileRecords = [];
-      for (let i = 0; i < fileRecords.length; i += 1) {
-        if (!fileRecords[i].error) {
-          validFileRecords.push(fileRecords[i]);
-        }
-      }
-      console.log('filesSelected', fileRecords, validFileRecords);
-      this.fileRecordsForUpload = this.fileRecordsForUpload.concat(validFileRecords);
+    errorHandler (e) {
+      this.$toast.error('Tải tập tin thất bại');
+      console.log(e.file_name);
     },
     onBeforeDelete (fileRecord) {
       const i = this.fileRecordsForUpload.indexOf(fileRecord);
@@ -356,6 +189,21 @@ export default {
       } else {
         this.deleteUploadedFile(fileRecord);
       }
+    },
+    async downloadFile (item) {
+      const response = await DocumentApi.getFile(this.token, item.id);
+      saveAs(response.data, item.file_name);
+    },
+    async deleteFile (item) {
+      this.loading = true;
+      try {
+        await DocumentApi.deleteDocument(this.token, item.id);
+        this.$toast.success(`Xóa tệp tin ${item.file_name} thành công`);
+        this.fetch();
+      } catch (e) {
+        this.$toast.error(`Xóa tệp tin ${item.file_name} thất bại`);
+      }
+      this.loading = false;
     },
   },
 };

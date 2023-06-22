@@ -46,6 +46,7 @@
     "dayjs": "^1.11.8",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-vue": "^9.4.0",
+    "file-saver": "^2.0.5",
     "litepie-datepicker": "^1.0.14",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

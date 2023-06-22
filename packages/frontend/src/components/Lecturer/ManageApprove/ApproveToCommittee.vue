@@ -34,7 +34,6 @@
           @keydown.space.enter="search"
         />
         <EasyDataTable
-          v-model:items-selected="itemsSelected"
           v-model:server-options="serverOptions"
           :server-items-length="serverItemsLength"
           show-index
@@ -49,23 +48,57 @@
               Không có dữ liệu
             </div>
           </template>
-          <template #item-import-export="students">
+          <template #item-students="item">
             <div class-="flex flex-col">
               <ul>
                 <li
-                  v-for="student in students"
+                  v-for="student in item.list_students"
                   :key="`${student}`"
+                  class="list-decimal"
                 >
-                  {{ student }}
+                  {{ student.code }} : {{ student.name }}
                 </li>
               </ul>
             </div>
           </template>
           <template #item-operation="item">
             <div
-              class="flex flex-col"
+              class="flex space-x-4"
             >
-              <div class="m-1 cursor-pointer rounded">
+              <div
+                class="tooltip tooltip-bottom"
+                data-tip="Tải báo cáo"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  :icon="['fas', 'cloud-download']"
+                  size="2xl"
+                  @click="handleShowDownloadModal(item._id)"
+                />
+              </div>
+              <div
+                class="tooltip tooltip-bottom"
+                data-tip="Phê duyệt"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer text-green-500"
+                  size="2xl"
+                  :icon="['fas', 'check']"
+                  @click="editItem(item._id)"
+                />
+              </div>
+              <div
+                class="tooltip tooltip-bottom"
+                data-tip="Từ chối"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer text-red-500"
+                  size="2xl"
+                  :icon="['fas', 'ban']"
+                  @click="handleRemoveTopic(item._id)"
+                />
+              </div>
+              <!-- <div class="m-1 cursor-pointer rounded">
                 <button
                   class=" btn btn-primary w-36 py-1"
                   @click="editItem(item._id)"
@@ -88,7 +121,7 @@
                     :icon="['fas', 'ban']"
                   />
                 </button>
-              </div>
+              </div> -->
             </div>
           </template>
         </EasyDataTable>
@@ -115,6 +148,10 @@
     </template>
     <div>Bạn có xác nhận phê duyệt đề tài ra hội đồng không?</div>
   </ConfirmModal>
+  <ViewFile
+    v-model="showDownloadModal"
+    :topic-id="topicDownloadId"
+  />
 </template>
 
 <script>
@@ -130,12 +167,14 @@ import Multiselect from '@vueform/multiselect';
 
 import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
+import ViewFile from '../../Modal/ViewFile.vue';
 
 export default {
   name: 'ManageTopicLecturer',
   components: {
     SearchInput,
     ConfirmModal,
+    ViewFile,
     Multiselect,
   },
   setup () {
@@ -172,6 +211,8 @@ export default {
       sortBy: 'updated_at',
       sortType: 'desc',
     });
+    const showDownloadModal = ref(false);
+    const topicDownloadId = ref(false);
     const token = store.getters['auth/token'];
     const modulePage = computed(() => store.getters['url/module']);
     const loadToServer = async (options) => {
@@ -209,6 +250,9 @@ export default {
     onMounted(async () => {
       const listAllSchedule = await ScheduleApi.listAllSchedule(token);
       schedules.value = listAllSchedule.data;
+      if (schedules.value.length > 0) {
+        selectSchedule.value = schedules.value[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -302,6 +346,7 @@ export default {
         criticalLecturerGrade: topic.criticalLecturerGrade || 0,
         criticalLecturerApprove: topic.criticalLecturerApprove || false,
         advisorLecturerApprove: topic.advisorLecturerApprove || false,
+        list_students: topic.list_students || [],
       }));
     });
 
@@ -323,10 +368,16 @@ export default {
       }
     };
 
+    const handleShowDownloadModal = (id) => {
+      showDownloadModal.value = true;
+      topicDownloadId.value = id;
+    };
     return {
       headers,
       items,
+      showDownloadModal,
       itemsSelected,
+      topicDownloadId,
       loading,
       serverOptions,
       topics,
@@ -352,6 +403,7 @@ export default {
       listScheduleSelect,
       selectHandlerSchedule,
       handleRemoveTopic,
+      handleShowDownloadModal,
     };
   },
 };

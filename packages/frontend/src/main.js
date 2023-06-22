@@ -33,7 +33,8 @@ import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
-  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane,
+  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane, faFileArrowDown,
+  faCloudDownload,
 } from '@fortawesome/free-solid-svg-icons';
 
 dayjs.locale('vi');
@@ -69,6 +70,8 @@ library.add(
   faFileImport,
   faDownload,
   faPaperPlane,
+  faFileArrowDown,
+  faCloudDownload,
 );
 
 const app = createApp(App);

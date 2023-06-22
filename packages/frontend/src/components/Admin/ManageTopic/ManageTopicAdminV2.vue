@@ -64,6 +64,17 @@
     <template #item-operation="item">
       <div class="flex">
         <div
+          class="tooltip tooltip-bottom"
+          data-tip="Tải tệp tin"
+        >
+          <font-awesome-icon
+            class="cursor-pointer"
+            :icon="['fas', 'cloud-download']"
+            size="xl"
+            @click="handleShowDownloadModal(item._id)"
+          />
+        </div>
+        <div
           class="tooltip tooltip-bottom px-3"
           data-tip="Chọn sinh viên"
         >
@@ -128,6 +139,10 @@
     :enabled-excel="true"
     @change-students="changeStudents"
   />
+  <ViewFile
+    v-model="showDownloadModal"
+    :topic-id="topicDownloadId"
+  />
 </template>
 
 <script>
@@ -147,6 +162,7 @@ import TopicApi from '../../../utils/api/topic';
 import SelectStudent from '../../Modal/SelectStudent.vue';
 import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
+import ViewFile from '../../Modal/ViewFile.vue';
 
 export default {
   name: 'ManageTopicAdmin',
@@ -158,6 +174,7 @@ export default {
     ButtonDownloadTemplate,
     ButtonAddItem,
     SearchInput,
+    ViewFile,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -174,6 +191,8 @@ export default {
     const listStudentSelected = ref([]);
     const topicStudentId = ref(0);
     const topicStudentLimit = ref(3);
+    const showDownloadModal = ref(false);
+    const topicDownloadId = ref(false);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       {
@@ -318,6 +337,10 @@ export default {
     //   // eslint-disable-next-line prefer-destructuring
     //   this.selectSchedule = this.listScheduleSelect[1].value;
     // }
+    const handleShowDownloadModal = (id) => {
+      showDownloadModal.value = true;
+      topicDownloadId.value = id;
+    };
 
     return {
       headers,
@@ -328,9 +351,11 @@ export default {
       serverOptions,
       topics,
       serverItemsLength,
+      handleShowDownloadModal,
       selectStudentScheduleId,
       rowItems,
       editItem,
+      showDownloadModal,
       modulePage,
       handleImport,
       showConfirmModal,
@@ -348,6 +373,7 @@ export default {
       changeStudents,
       searchVal,
       topicStudentLimit,
+      topicDownloadId,
     };
   },
   computed: {
