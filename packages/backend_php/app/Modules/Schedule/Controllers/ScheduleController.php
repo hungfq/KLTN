@@ -7,6 +7,7 @@ use App\Modules\Schedule\Actions\ScheduleDeleteAction;
 use App\Modules\Schedule\Actions\ScheduleExportGradeAction;
 use App\Modules\Schedule\Actions\ScheduleExportTopicAction;
 use App\Modules\Schedule\Actions\ScheduleImportStudentAction;
+use App\Modules\Schedule\Actions\ScheduleNotifyLecturerAction;
 use App\Modules\Schedule\Actions\ScheduleShowAction;
 use App\Modules\Schedule\Actions\ScheduleStoreAction;
 use App\Modules\Schedule\Actions\ScheduleStudentViewTodayAction;
@@ -216,5 +217,12 @@ class ScheduleController extends ApiController
         ]);
 
         return $action->handle(ScheduleExportGradeDTO::fromRequest());
+    }
+
+    public function notifyLecturer($id, ScheduleNotifyLecturerAction $action)
+    {
+        $action->handle($id);
+
+        return $this->responseSuccess();
     }
 }

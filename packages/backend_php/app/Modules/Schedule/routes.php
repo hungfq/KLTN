@@ -86,6 +86,11 @@ $api->group([
             'as' => '',
             'uses' => 'ScheduleController@exportGrade',
         ]);
+
+        $api->get('/lecturer/mail', [
+            'as' => '',
+            'uses' => 'ScheduleController@notifyLecturer',
+        ]);
     });
 
 });
