@@ -43,4 +43,22 @@ class Socket
         }
 
     }
+
+    public static function sendUpdateTaskInfoRequest($ids, $taskId)
+    {
+        try {
+            $client = new Client(Client::engine(Client::CLIENT_3X, env('SOCKET_URL', '')));
+            $client->initialize();
+            $client->of('/');
+            foreach ($ids as $id) {
+                $client->emit('update-task-info', [
+                    'id' => $id,
+                    'taskId' => $taskId,
+                ]);
+            }
+            $client->close();
+        } catch (\Exception $e) {
+            Log::info($e);
+        }
+    }
 }
