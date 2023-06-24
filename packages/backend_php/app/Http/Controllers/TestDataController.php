@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendEmailEvent;
+use App\Mail\EmailForQueuing;
 use Dingo\Api\Http\Request;
 use Dingo\Api\Routing\Helpers;
 use ElephantIO\Client;
-use Illuminate\Support\Facades\Mail;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class TestDataController extends BaseController
@@ -47,12 +48,23 @@ class TestDataController extends BaseController
 
     public function testMail()
     {
-        $mail = $this->request->input('mail');
-        if ($mail) {
-            $data = array('name' => $mail);
-            Mail::send('mail', $data, function ($message) use ($mail) {
-                $message->to($mail, $mail)->subject('Test Mail from hungpq.click');
-            });
-        }
+//        $mail = $this->request->input('mail');
+//        if ($mail) {
+//            $data = array('name' => $mail);
+//            Mail::send('mail', $data, function ($message) use ($mail) {
+//                $message->to($mail, $mail)->subject('Test Mail from hungpq.click');
+//            });
+//        }
+
+
+        event(new SendEmailEvent([
+            'email' => 't.hungpham2314@gmail.com',
+            'email_body' => new EmailForQueuing(
+                'YÊU CẦU HƯỚNG DẪN',
+                [
+                    'name' => 'hungpq'
+                ],
+                'MailLecturerProposal'),
+        ]));
     }
 }

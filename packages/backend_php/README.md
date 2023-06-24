@@ -33,6 +33,8 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
     php -t public -S 127.0.0.1:8001
 ###### or
     php -t public -S 0.0.0.0:8001
+### To run queue
+    php artisan queue:work --tries=5 --timeout=60
 ### To get dependencies
     composer install
 ##### or

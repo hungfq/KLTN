@@ -37,6 +37,14 @@ class TaskViewAction
             $query->where('assignee_id', $assigneeId);
         }
 
+        if ($fromTime = $dto->from_time) {
+            $query->where('tasks.created_at', '>=', $fromTime);
+        }
+
+        if ($toTime = $dto->to_time) {
+            $query->where('tasks.created_at', '<=', $toTime);
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',

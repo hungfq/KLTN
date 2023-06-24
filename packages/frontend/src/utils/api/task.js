@@ -5,8 +5,15 @@ const apiDest = `${baseUrl}/api/v2`;
 axios.defaults.baseURL = apiDest;
 
 export default class TaskApi {
-  static async listAllTask (token, topicId) {
-    const res = await axios.get(`/task?topicId=${topicId}`, {
+  static async listAllTask (token, topicId, startDate, endDate) {
+    let url = `/task?topicId=${topicId}`;
+    if (startDate) {
+      url += `&from_time=${startDate}`;
+    }
+    if (endDate) {
+      url += `&to_time=${endDate}`;
+    }
+    const res = await axios.get(url, {
       headers: {
         authorization: `bearer ${token}`,
       },

@@ -40,7 +40,7 @@
             v-model="role"
             :options="roles"
             :can-deselect="false"
-            :searchable="true"
+            :searchable="false"
             no-results-text="Không có kết quả"
             no-options-text="Không có lựa lựa chọn"
             :can-clear="false"

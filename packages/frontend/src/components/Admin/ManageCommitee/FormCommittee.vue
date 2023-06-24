@@ -49,6 +49,28 @@
                 />
               </div>
               <div class="w-[400px]">
+                <FormKit
+                  v-model="address"
+                  name="address"
+                  type="text"
+                  label="Địa điểm"
+                  :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                  validation="required"
+                  :disabled="isView"
+                />
+              </div>
+              <div class="w-[400px]">
+                <FormKit
+                  v-model="defense_date"
+                  name="defense_date"
+                  type="datetime-local"
+                  label="Thời gian"
+                  :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                  validation="required"
+                  :disabled="isView"
+                />
+              </div>
+              <div class="w-[400px]">
                 <span class="font-bold text-sm">
                   Đợt đăng ký
                 </span>
@@ -235,11 +257,13 @@ import {
   ref, watch, onMounted, computed,
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import moment from 'moment';
 import UserApi from '../../../utils/api/user';
 import CommitteeApi from '../../../utils/api/committee';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import TopicApi from '../../../utils/api/topic';
+import 'moment/dist/locale/vi';
 import ShowTopicCommittee from '../../Modal/ShowTopicCommitee.vue';
 
 export default {
@@ -285,6 +309,8 @@ export default {
     // Committee form new
     const code = ref('');
     const name = ref('');
+    const defense_date = ref('');
+    const address = ref('');
     const committeePresidentId = ref('');
     const committeeSecretaryId = ref('');
     const criticalLecturerId = ref('');
@@ -338,6 +364,25 @@ export default {
       store.dispatch('url/updateSection', `${modulePage.value}-list`);
     };
 
+    const formatDate = (rawDate) => {
+      try {
+        if (!rawDate || rawDate === '') return '';
+        const date = new Date(rawDate);
+        const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          .toISOString();
+        const localDate = moment(dateString).local();
+        return localDate.format('YYYY-MM-DD HH:mm:ss');
+      } catch (e) {
+        return '';
+      }
+    };
+
+    const convertToUTC = (dateStr) => {
+      const date = moment(dateStr); // parse the date string
+      const utc = date.utc(); // convert to UTC
+      return utc;
+    };
+
     onMounted(async () => {
       loading.value = true;
 
@@ -370,6 +415,8 @@ export default {
             committeePresidentId.value = committee.president_id;
             committeeSecretaryId.value = committee.secretary_id;
             criticalLecturerId.value = committee.critical_id;
+            defense_date.value = formatDate(committee.defense_date);
+            address.value = committee.address;
             scheduleId.value = committee.schedule_id;
             listTopicsView.value = committee.list_topics || [];
           }
@@ -474,7 +521,10 @@ export default {
         criticalLecturerId: criticalLecturerId.value,
         schedule_id: scheduleId.value,
         topics: valueTopics,
+        defense_date: convertToUTC(defense_date.value).format(),
+        address: address.value,
       };
+      console.log('🚀 ~ file: FormCommittee.vue:527 ~ handleAddCommitteeAdmin ~ value:', value);
       try {
         if (check()) {
           if (isSave.value) {
@@ -572,6 +622,8 @@ export default {
       showListTopics,
       currentCommittee,
       listTopicsView,
+      defense_date,
+      address,
     };
   },
 };

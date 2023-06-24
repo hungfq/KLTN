@@ -15,20 +15,29 @@ import '@formkit/themes/genesis';
 import 'vue3-easy-data-table/dist/style.css';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
+import dayjs from 'dayjs';
+import 'dayjs/locale/vi'; // Set Vietnamese locale globally
+import VueFileAgentNext from '@boindil/vue-file-agent-next';
+import ganttastic from '@infectoone/vue-ganttastic';
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { vi } from '@formkit/i18n';
+
+import '@boindil/vue-file-agent-next/dist/vue-file-agent-next.css';
 
 /* import specific icons */
 import {
   faUserSecret, faTrashCan, faDownLeftAndUpRightToCenter, faArrowRightFromBracket,
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
-  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload,
+  faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane, faFileArrowDown,
+  faCloudDownload,
 } from '@fortawesome/free-solid-svg-icons';
 
+dayjs.locale('vi');
 /* add icons to the library */
 library.add(
   faUserSecret,
@@ -60,6 +69,9 @@ library.add(
   faDiagramPredecessor,
   faFileImport,
   faDownload,
+  faPaperPlane,
+  faFileArrowDown,
+  faCloudDownload,
 );
 
 const app = createApp(App);
@@ -70,12 +82,17 @@ app.use(vue3GoogleLogin, {
 app.use(router);
 app.use(store);
 app.use(Toaster);
-app.use(plugin, defaultConfig);
+app.use(plugin, defaultConfig({
+  locales: { vi },
+  // Define the active locale
+  locale: 'vi',
+}));
 app.use(CKEditor);
 app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');
 app.use(VeeValidate);
 app.use(ToastPlugin);
+app.use(ganttastic);
 app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 app.use(vfmPlugin({
@@ -83,6 +100,8 @@ app.use(vfmPlugin({
   componentName: 'VueFinalModal',
   dynamicContainerName: 'ModalsContainer',
 }));
+
+app.use(VueFileAgentNext);
 
 // Define rules
 defineRule('required', (value) => {

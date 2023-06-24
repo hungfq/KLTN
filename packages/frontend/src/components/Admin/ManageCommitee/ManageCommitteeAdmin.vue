@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="flex justify-end mr-4 my-2">
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectCritical"
           :options="listLecturerSelect"
@@ -14,7 +14,7 @@
           @change="selectHandlerLecturer('CRITICAL', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectPresident"
           :options="listLecturerSelect"
@@ -27,7 +27,7 @@
           @change="selectHandlerLecturer('PRESIDENT', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectSecretary"
           :options="listLecturerSelect"
@@ -40,7 +40,7 @@
           @change="selectHandlerLecturer( 'SECRETARY', $event)"
         />
       </div>
-      <div class="w-64 mx-2">
+      <div class="w-64 mx-1">
         <Multiselect
           v-model="selectSchedule"
           :options="listScheduleSelect"
@@ -54,6 +54,20 @@
         />
       </div>
       <div class="mx-auto" />
+      <div
+        class="btn btn-secondary mx-1"
+        @click="showInviteModal= true"
+      >
+        <font-awesome-icon :icon="['fas', 'paper-plane']" />
+        <span class="ml-1">Gửi thư mời</span>
+      </div>
+      <div
+        class="btn btn-info mx-1"
+        @click="showExportModal= true"
+      >
+        <font-awesome-icon :icon="['fas', 'list-check']" />
+        <span class="ml-1">Xuất điểm</span>
+      </div>
       <ButtonAddItem
         :title="'Thêm hội đồng'"
         @handle-import="$store.dispatch('url/updateSection', 'committee-import')"
@@ -136,6 +150,14 @@
       </template>
       <div>Bạn có xác nhận xóa hội đồng này không?</div>
     </ConfirmModal>
+    <SendInvite
+      v-model="showInviteModal"
+      @send-invite="handleSendInvite"
+    />
+    <ExportGrade
+      v-model="showExportModal"
+      @export="handleExportGrade"
+    />
   </div>
 </template>
 
@@ -148,10 +170,14 @@ import {
 } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import Multiselect from '@vueform/multiselect';
+import { saveAs } from 'file-saver';
 import ConfirmModal from '../../Modal/ConfirmModal.vue';
 import CommitteeApi from '../../../utils/api/committee';
+import ScheduleApi from '../../../utils/api/schedule';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
 import IconTooltip from '../../common/IconTooltip.vue';
+import SendInvite from '../../Modal/SendInvite.vue';
+import ExportGrade from '../../Modal/ExportGrade.vue';
 
 export default {
   name: 'ManageStudentAdmin',
@@ -161,6 +187,8 @@ export default {
     ConfirmModal,
     ButtonAddItem,
     IconTooltip,
+    SendInvite,
+    ExportGrade,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -215,6 +243,12 @@ export default {
 
     onMounted(async () => {
       loading.value = true;
+      await store.dispatch('lecturer/fetchListLecturer', token);
+      await store.dispatch('schedule/fetchListSchedules', token);
+      const schedulesStore = store.getters['schedule/listSchedules'];
+      if (schedulesStore.length > 0) {
+        selectSchedule.value = schedulesStore[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -241,6 +275,8 @@ export default {
     };
 
     const showConfirmModal = ref(false);
+    const showInviteModal = ref(false);
+    const showExportModal = ref(false);
     const confirmRemove = async (id) => {
       try {
         await CommitteeApi.deleteCommittee(token, removeId.value);
@@ -281,9 +317,7 @@ export default {
     };
 
     const selectHandlerSchedule = async (value) => {
-      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:284 ~ selectHandlerSchedule ~ value:', value);
       selectSchedule.value = value;
-      console.log('🚀 ~ file: ManageCommitteeAdmin.vue:285 ~ selectHandlerSchedule ~ selectSchedule.value:', selectSchedule.value);
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -291,6 +325,33 @@ export default {
         errorHandler(e);
       }
     };
+    const handleSendInvite = async (scheduleId) => {
+      try {
+        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
+        showInviteModal.value = false;
+        $toast.success('Đã gửi mail!');
+      } catch (e) {
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+    const handleExportGrade = async (scheduleId) => {
+      try {
+        const response = await ScheduleApi.exportGradeExcel(token, scheduleId);
+        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:340 ~ handleExportGrade ~ response:', response);
+        const schedulesStore = store.getters['schedule/listSchedules'];
+        const sc = schedulesStore.find((s) => s._id === scheduleId);
+        if (sc) {
+          saveAs(response.data, `${sc.code}.xlsx`);
+        } else {
+          saveAs(response.data, `grade-${scheduleId}.xlsx`);
+        }
+        showExportModal.value = false;
+      } catch (e) {
+        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:350 ~ handleExportGrade ~ e:', e);
+        $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
+      }
+    };
+
     return {
       headers,
       items,
@@ -318,6 +379,10 @@ export default {
       selectSchedule,
       search,
       selectHandlerSchedule,
+      showInviteModal,
+      showExportModal,
+      handleSendInvite,
+      handleExportGrade,
     };
   },
   computed: {
@@ -352,8 +417,12 @@ export default {
     },
   },
   async mounted () {
-    await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
-    await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+    // await this.$store.dispatch('lecturer/fetchListLecturer', this.token);
+    // await this.$store.dispatch('schedule/fetchListSchedules', this.token);
+    // if (this.listScheduleSelect.length > 2) {
+    //   // eslint-disable-next-line prefer-destructuring
+    //   this.selectSchedule = this.listScheduleSelect[1].value;
+    // }
   },
   methods: {
     handleAddTopic (id) {

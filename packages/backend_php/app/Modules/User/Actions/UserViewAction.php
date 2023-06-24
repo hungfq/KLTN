@@ -47,9 +47,13 @@ class UserViewAction
         }
 
         if ($dto->not_done_any_topic) {
-            $query->whereDoesntHave('studentTopics', function ($q) {
+            $query->whereDoesntHave('studentTopics', function ($q) use ($dto) {
                 $q->where('lecturer_approved', '=', 1)
                     ->where('critical_approved', '=', 1);
+
+                if ($dto->ignore_schedule_id) {
+                    $q->where('schedule_id', '!=', $dto->ignore_schedule_id);
+                }
             });
         }
 

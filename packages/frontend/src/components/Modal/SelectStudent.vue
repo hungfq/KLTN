@@ -141,11 +141,12 @@ export default {
       sortBy: 'updated_at',
       sortType: 'desc',
     });
+    const addOn = ref('');
     const token = store.getters['auth/token'];
     const loadToServer = async (option) => {
       loading.value = true;
       let response = { data: [], meta: { pagination: { total: 0 } } };
-      if (props.type === 'SCHEDULE') {
+      if (props.type === 'SCHEDULE' || props.type === 'SCHEDULE-FORM') {
         response = await UserApi.listUser(token, 'STUDENT', option);
       } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL' || props.type === 'TOPIC-FORM-UPDATE') {
         if (props.scheduleId) {
@@ -162,7 +163,7 @@ export default {
     //   await loadToServer(serverOptions.value);
     // });
 
-    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(serverOptions, async (value) => { await loadToServer({ ...value, addOn: addOn.value }); }, { deep: true });
 
     const usersShow = computed(() => {
       if (!users.value) return [];
@@ -176,33 +177,61 @@ export default {
 
     const search = async () => {
       if (!searchVal.value || searchVal.value === '') {
-        await loadToServer(serverOptions.value);
+        await loadToServer({ ...serverOptions, addOn: addOn.value });
       } else {
-        await loadToServer({ ...serverOptions.value, search: searchVal.value });
+        await loadToServer({ ...serverOptions.value, search: searchVal.value, addOn: addOn.value });
       }
     };
 
     const prepareData = async (scheduleId) => {
-      if (!scheduleId) itemsSelected.value = [];
-      else {
-        let listStudentsRaw = [];
-        if (props.type === 'SCHEDULE') {
-          const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
-          listStudentsRaw = result.data;
-        } else if (props.type === 'TOPIC' || props.type === 'TOPIC_PROPOSAL') {
+      addOn.value = '';
+      itemsPrevSelected.value = [];
+      let listStudentsRaw = [];
+      if (!scheduleId) {
+        if (!props.selected) {
           listStudentsRaw = props.selected;
         } else {
-          listStudentsRaw = props.selected;
+          listStudentsRaw = [];
         }
-        itemsSelected.value = listStudentsRaw.map((user) => ({
-          _id: user._id || user.id,
-          code: user.code,
-          name: user.name,
-          email: user.email,
-        }));
-        itemsPrevSelected.value = cloneDeep(itemsSelected.value);
-        await loadToServer(serverOptions.value);
+      } else if (props.type === 'SCHEDULE') {
+        const result = await ScheduleApi.fetchStudentsOfSchedule(token, scheduleId);
+        const regex = /ignore_schedule_id=[^&]*&?/g;
+        addOn.value = addOn.value.replace(regex, '');
+        // updatedUrl += `ignore_schedule_id=${scheduleId}`;
+
+        addOn.value += `&ignore_schedule_id=${scheduleId}`;
+        listStudentsRaw = result.data;
+      } else if (props.type === 'TOPIC') {
+        addOn.value += '&not_in_any_topic=1';
+        listStudentsRaw = props.selected;
+      } else if (props.type === 'TOPIC-FORM-UPDATE') {
+        addOn.value += '&not_in_any_topic=1';
+        listStudentsRaw = props.selected;
+      } else if (props.type === 'TOPIC_PROPOSAL') {
+        addOn.value += '&not_in_any_proposal=1';
+        listStudentsRaw = props.selected;
+      } else if (props.type === 'SCHEDULE-FORM') {
+        const regex = /ignore_schedule_id=[^&]*&?/g;
+        addOn.value = addOn.value.replace(regex, '');
+        addOn.value += `&ignore_schedule_id=${scheduleId}`;
+        listStudentsRaw = props.selected;
+      } else {
+        listStudentsRaw = props.selected;
       }
+      itemsSelected.value = listStudentsRaw.map((user) => ({
+        _id: user._id || user.id,
+        code: user.code,
+        name: user.name,
+        email: user.email,
+      }));
+      addOn.value += '&is_active=1&not_done_any_topic=1';
+      listStudentsRaw.forEach((element) => {
+        addOn.value += `&ignore_ids[]=${element._id || element.id}`;
+      });
+
+      // serverOptions.value.addOn = addOn;
+      itemsPrevSelected.value = cloneDeep(itemsSelected.value);
+      await loadToServer({ ...serverOptions.value, addOn: addOn.value });
     };
 
     const isEqualSelected = computed(() => {

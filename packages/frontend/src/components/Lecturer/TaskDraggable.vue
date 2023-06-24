@@ -2,7 +2,7 @@
   <template
     v-if="topicId"
   >
-    <div class="mx-1">
+    <div class="mx-1 flex my-2 justify-between">
       <button
         class=" mx-2"
         :class="[ showStatistic ? 'btn btn-active' : 'btn btn-secondary' ]"
@@ -10,34 +10,57 @@
       >
         Thống kê nhiệm vụ
       </button>
-      <div class="inline-block w-fit border-2 rounded-md">
+      <div class="">
         <SearchInput
           v-model="searchVal"
           @keydown.space.enter="search"
         />
       </div>
-      <div class="inline-block p-2 rounded-md">
-        <div class="w-64 mx-2">
-          <Multiselect
-            v-model="selectVal"
-            :options="listStudentSelect"
-            :can-deselect="false"
-            :searchable="true"
-            no-results-text="Không có kết quả"
-            no-options-text="Không có lựa lựa chọn"
-            :placeholder="'Sinh viên'"
-            :can-clear="false"
-            @change="selectHandler"
-          />
-        </div>
+      <div class="w-64 mx-2">
+        <Multiselect
+          v-model="selectVal"
+          :options="listStudentSelect"
+          :can-deselect="false"
+          :searchable="true"
+          no-results-text="Không có kết quả"
+          no-options-text="Không có lựa lựa chọn"
+          :placeholder="'Sinh viên'"
+          :can-clear="false"
+          @change="selectHandler"
+        />
       </div>
-      <button
+      <div class="w-96">
+        <litepie-datepicker
+          v-model="dateValue"
+          placeholder="Khoảng thời gian"
+          separator=" đến "
+          :formatter="formatter"
+          i18n="vi"
+          :auto-apply="false"
+          :options="options"
+        />
+      </div>
+      <!-- <button
         v-if="!showStatistic"
-        class=" m-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded float-right"
+        class="btn btn-primary mx-2"
         @click="addTaskHandler"
       >
-        Thêm nhiệm vụ
-      </button>
+        Tải lên tệp báo cáo
+      </button> -->
+      <div
+        class="dropdown dropdown-bottom dropdown-end  mx-2"
+        :class="openSelectFile ? 'dropdown-open' : ''"
+      >
+        <label
+          class="btn btn-primary"
+          @click="openSelectFile = !openSelectFile"
+        >Tải lên tệp báo cáo</label>
+        <div
+          class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[600px]"
+        >
+          <UploadFile />
+        </div>
+      </div>
     </div>
   </template>
   <div
@@ -82,7 +105,7 @@
               <template #footer>
                 <button
                   class="btn btn-primary mt-2"
-                  @click="addPeople"
+                  @click="addTaskHandler"
                 >
                   Thêm nhiệm vụ
                 </button>
@@ -93,30 +116,33 @@
       </template>
       <template v-if="showStatistic">
         <div class="flex flex-col">
-          <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-slate-100">
+          <table
+            data-theme="light"
+            class="table"
+          >
+            <thead>
               <tr>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Mã
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Tiêu đề
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Trạng thái
                 </th>
                 <th
                   scope="col"
-                  class="py-3 px-6"
+                  class="py-3 min-h-[300px]"
                 >
                   Được phân công
                 </th>
@@ -125,16 +151,15 @@
             <tr
               v-for="task in tasks"
               :key="task._id"
-              class="bg-slate-300 hover:bg-gray-50"
             >
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <!-- {{ task }} -->
                 {{ task.code }}
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 {{ task.title }}
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <select
                   v-model="task.status"
                   disabled
@@ -149,7 +174,7 @@
                   </option>
                 </select>
               </td>
-              <td class="py-2 px-6 font-medium text-gray-900 whitespace-nowrap">
+              <td>
                 <select
                   v-model="task.assignTo"
                   disabled
@@ -167,19 +192,19 @@
             </tr>
           </table>
           <div class="flex justify-between mt-4">
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Tổng số: {{ tasks.length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Chưa giải quyết: {{ values.PENDING.length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Sẽ làm: {{ values['TODO'].length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Đang làm: {{ values['IN_PROCESS'].length }}
             </div>
-            <div class="font-semibold">
+            <div class="font-semibold mx-2">
               Hoàn thành: {{ values['DONE'].length }}
             </div>
           </div>
@@ -201,10 +226,14 @@ import SearchInput from 'vue-search-input';
 import Draggable from 'vuedraggable';
 import { debounce } from 'lodash';
 import Multiselect from '@vueform/multiselect';
+import LitepieDatepicker from 'litepie-datepicker';
+import moment from 'moment';
 import TaskDetailModalVue from '../Modal/TaskDetailModal.vue';
 import TaskCard from './TaskCard.vue';
 import LoadingProcess from '../common/Loading.vue';
 import TaskApi from '../../utils/api/task';
+import DocumentApi from '../../utils/api/document';
+import UploadFile from '../common/UploadFile.vue';
 
 export default {
   name: 'TaskDraggable',
@@ -215,6 +244,8 @@ export default {
     LoadingProcess,
     Draggable,
     Multiselect,
+    LitepieDatepicker,
+    UploadFile,
   },
 
   data () {
@@ -256,6 +287,28 @@ export default {
       loading: false,
       timeOut: null,
       timer: 1500,
+      dateValue: {
+        startDate: '',
+        endDate: '',
+      },
+      options: {
+        shortcuts: {
+          today: 'Hôm nay',
+          yesterday: 'Hôm trước',
+          past: (period) => `${period} ngày trước`,
+          currentMonth: 'Tháng nay',
+          pastMonth: 'Tháng trước',
+        },
+        footer: {
+          apply: 'Áp dụng',
+          cancel: 'Huỷ',
+        },
+      },
+      formatter: {
+        date: 'L LTS',
+        month: 'MMMM',
+      },
+      openSelectFile: false,
     };
   },
   computed: {
@@ -292,6 +345,12 @@ export default {
         await this.fetch();
       },
     },
+    dateValue: {
+      async handler () {
+        await this.fetch();
+      },
+      deep: true,
+    },
   },
   async mounted () {
     await this.fetch();
@@ -300,7 +359,16 @@ export default {
     async  fetch () {
       this.loading = true;
       if (this.topicId) {
-        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        if (this.dateValue.startDate && this.dateValue.endDate) {
+          await this.$store.dispatch('task/fetchAllTask', {
+            token: this.token,
+            topicId: this.topicId,
+            startDate: this.convertToUTC(this.dateValue.startDate).format(),
+            endDate: this.convertToUTC(this.dateValue.endDate).format(),
+          });
+        } else {
+          await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        }
         await this.$store.dispatch('task/fetchListStudents', { token: this.token, topicId: this.topicId });
         this.tasks = this.listTask;
         this.calulateProgress();
@@ -346,6 +414,14 @@ export default {
         this.tasks = updatedArray;
       }
       this.editTask = null;
+    },
+    parseDate (date) {
+      return date.replaceAll('/', '-');
+    },
+    convertToUTC (dateStr) {
+      const date = moment(dateStr, 'L LTS'); // parse the date string
+      const utc = date.utc(); // convert to UTC
+      return utc;
     },
     search () {
       if (this.searchVal !== '') {
@@ -394,16 +470,19 @@ export default {
 };
 </script>
 
-<style scoped>
-.column-width {
+<style>
+/* .column-width {
   min-width: 276px;
   width: 276px;
-}
+} */
 /* Unfortunately @apply cannot be setup in code sandbox,
 but you'd use "@apply border opacity-50 border-blue-500 bg-gray-200" here */
 /* .ghost-card {
   opacity: 0.5;
   background: #F7FAFC;
   border: 1px solid #4299e1;
+} */
+/* .file-preview-wrapper {
+  height: 100%;
 } */
 </style>

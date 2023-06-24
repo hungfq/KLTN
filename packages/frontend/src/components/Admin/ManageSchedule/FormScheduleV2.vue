@@ -19,11 +19,11 @@
       <div v-if="!loading">
         <div
           class="ml-5 mt-5 flex flex-col items-center"
-          :class="{'h-72' : !isView}"
         >
           <div
             v-if="page === 1 || isView"
             class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
             <div class="flex flex-col mx-8">
               <FormKit
@@ -62,129 +62,233 @@
           </div>
           <div
             v-if="page===2 || isView"
-            class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
-            <FormKit
-              v-model="startProposalDate"
-              name="startProposalDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian bắt đầu đề xuất"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endProposalDate"
-              name="startProposalDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian kết thúc đề xuất"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian đề xuất đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="proposalTime"
+                  placeholder="Khoảng thời gian đề xuất đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian phê duyệt đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="approveTime"
+                  placeholder="Khoảng thời gian phê duyệt đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+            </div>
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian đăng ký đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="registerTime"
+                  placeholder="Khoảng thời gian đăng ký đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian làm đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="workTime"
+                  placeholder="Khoảng thời gian làm đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+            </div>
+            <div class="flex space-x-4">
+              <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
+                  Thời gian chấm điểm đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="markTime"
+                  placeholder="Khoảng thời gian chấm điểm đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+            </div>
           </div>
           <div
             v-if="page===3 || isView"
-            class="flex"
+            :class="{'min-h-[400px]' : !isView}"
           >
-            <FormKit
-              v-model="startApproveDate"
-              name="startApproveDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu chấp thuận"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endApproveDate"
-              name="endApproveDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc chấp thuận"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
+            <div class="flex flex-col mb-4">
+              <div class="font-bold my-4">
+                Danh sách sinh viên đã chọn
+              </div>
+              <div class="w-[600px] mb-4">
+                <EasyDataTable
+                  show-index
+                  :headers="headers"
+                  :items="listStudentsSelected"
+                  :loading="loading"
+                  :rows-per-page="5"
+                  buttons-pagination
+                />
+              </div>
+              <button
+                v-if="!isView"
+                class="btn btn-primary mt-5 !mx-8 "
+                @click="chooseStudent"
+              >
+                Chọn danh sách sinh viên
+              </button>
+            </div>
           </div>
-          <div
-            v-if="page===4 || isView"
-            class="flex"
-          >
-            <FormKit
-              v-model="startRegisterDate"
-              name="startRegisterDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian bắt đầu đăng ký"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="endRegisterDate"
-              name="endRegisterDate"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc đăng ký"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-          </div>
-          <div
-            v-if="page===5 || isView"
-            class="flex"
-          >
-            <FormKit
-              v-model="startDate"
-              name="startDate"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu làm đề tài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="deadline"
-              name="deadline"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian kết thúc làm đề tài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-          </div>
-          <div
-            v-if="page===6 || isView"
-            class="flex"
-          >
-            <FormKit
-              v-model="mark_start"
-              name="mark_start"
-              outer-class="!mx-8 w-[400px]"
-              type="datetime-local"
-              label="Thời gian bắt đầu chấm bài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-            <FormKit
-              v-model="mark_end"
-              name="mark_end"
-              type="datetime-local"
-              outer-class="!mx-8 w-[400px]"
-              label="Thời gian kết thúc chấm bài"
-              :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-              validation="required"
-              :disabled="isView"
-            />
-          </div>
+          <template v-if="page===4">
+            <div class="flex flex-col">
+              <div class="flex mx-auto">
+                <div class="flex flex-col mx-8">
+                  <FormKit
+                    v-model="name"
+                    type="text"
+                    name="name"
+                    label="Tên đợt đăng ký"
+                    help="TLCN K19 HK1"
+                    :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                    validation="required"
+                    outer-class="w-[350px]"
+                    :disabled="isView"
+                  />
+                  <FormKit
+                    v-model="code"
+                    name="code"
+                    type="text"
+                    outer-class="w-[350px]"
+                    label="Mã đợt"
+                    :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                    validation="required"
+                    :disabled="isView"
+                  />
+                </div>
+                <FormKit
+                  v-model="description"
+                  name="description"
+                  type="textarea"
+                  label="Mô tả"
+                  outer-class="!mx-8 w-[400px]"
+                  help="Ghi các thông tin chi tiết tại đây"
+                  :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                  validation="required"
+                  :disabled="isView"
+                />
+              </div>
+              <div class="flex flex-col mb-4 mx-auto">
+                <div class="font-bold my-4">
+                  Danh sách sinh viên đã chọn
+                </div>
+                <div class="w-[600px] mb-4">
+                  <EasyDataTable
+                    show-index
+                    :headers="headers"
+                    :items="listStudentsSelected"
+                    :loading="loading"
+                    :rows-per-page="5"
+                    buttons-pagination
+                  />
+                </div>
+              </div>
+              <div class="w-[1200px]">
+                <g-gantt-chart
+                  :chart-start="formatToMinute(startProposalDate)"
+                  :chart-end="formatToMinute(mark_end)"
+                  :precision="calculateType"
+                  color-scheme="vue"
+                  bar-start="myBeginDate"
+                  bar-end="myEndDate"
+                  row-height="100"
+                >
+                  <g-gantt-row
+                    :bars="barGantChar"
+                  />
+                </g-gantt-chart>
+              </div>
+              <div class="flex mt-4">
+                <div class="mr-5">
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #e09b69;"
+                    />
+                    <div>Thời gian đề xuất</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #FF6666;"
+                    />
+                    <div>Thời gian phê duyệt</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #339933;"
+                    />
+                    <div>Thời gian đăng ký</div>
+                  </div>
+                </div>
+                <div class="ml-5">
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #8724b9;"
+                    />
+                    <div>Thời gian làm khóa luận</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #CCCC00;"
+                    />
+                    <div>Thời gian chấm điểm</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
           <button
             v-if="isView"
             class="rounded bg-slate-500 h-[60px] !mx-8 w-[400px]  text-white font-semibold cursor-pointer "
@@ -192,29 +296,37 @@
           >
             Xem danh sách sinh viên
           </button>
-        </div>
-        <div
-          v-if="!isView"
-          class="my-4 w-[900px] mx-auto"
-        >
-          <ul class="steps">
-            <li
-              v-for="(step, index) in steps"
-              :key="index"
-              class="step"
-              :class="{ 'step-primary': page >= step.page }"
-              @click="page=step.page"
-            >
-              {{ step.label }}
-            </li>
-          </ul>
+          <div
+            v-if="!isView"
+            class="my-4 w-[700px] mx-auto"
+          >
+            <ul class="steps">
+              <li
+                v-for="(step, index) in steps"
+                :key="index"
+                class="step"
+                :class="{ 'step-primary': page >= step.page }"
+                @click="nextPage(step.page)"
+              >
+                {{ step.label }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <Loading v-if="loading" />
       <!-- Modal footer -->
-      <div class="flex items-end p-6 rounded-b border-t border-gray-200">
+      <div class="flex justify-end items-end p-6 rounded-b border-t border-gray-200">
         <button
-          v-if="!isView && !loading && page === 6"
+          v-if="!isView && page > 1&&!loading"
+          type="button"
+          class="btn btn-secondary mx-2"
+          @click="nextPage(page-1)"
+        >
+          Quay lại
+        </button>
+        <button
+          v-if="!isView && !loading && page === 4"
           type="button"
           class="btn btn-primary"
           @click="handleAddScheduleAdmin"
@@ -222,10 +334,10 @@
           {{ isSave ? 'Lưu' : 'Cập nhật' }}
         </button>
         <button
-          v-if="page != 6 && !isView"
+          v-if="page != 4 && !isView"
           type="button"
           class="btn btn-primary"
-          @click="page+=1"
+          @click="nextPage(page+1)"
         >
           Tiếp theo
         </button>
@@ -236,38 +348,60 @@
     v-model="showInfo"
     :schedule-id="id"
   />
+  <SelectStudent
+    v-model="showSelectStudent"
+    :schedule-id="scheduleId"
+    :selected="listStudentsSelected"
+    :enabled-excel="true"
+    :type="'SCHEDULE-FORM'"
+    @change-students="changeStudents"
+  />
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs';
 import moment from 'moment';
 import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
+import SelectStudent from '../../Modal/SelectStudent.vue';
+import 'dayjs/locale/vi';
+import LitepieDatepicker from 'litepie-datepicker';
+
+// dayjs().locale('vi');
 
 export default {
   name: 'FormSchedule',
   components: {
     InfoStudentVue,
     Loading,
+    SelectStudent,
+    LitepieDatepicker,
+
   },
   data () {
     return {
+      headers: [
+        { text: 'Mã số', value: 'code', sortable: true },
+        { text: 'Tên ', value: 'name', sortable: true },
+        { text: 'Email', value: 'email' },
+      ],
       showInfo: false,
       name: '',
       code: '',
-      startDate: '',
-      deadline: '',
+      startDate: null,
+      deadline: null,
       description: '',
-      startProposalDate: '',
-      endProposalDate: '',
-      startRegisterDate: '',
-      endRegisterDate: '',
-      startApproveDate: '',
-      endApproveDate: '',
-      mark_end: '',
-      mark_start: '',
+      startProposalDate: null,
+      endProposalDate: null,
+      startRegisterDate: null,
+      endRegisterDate: null,
+      startApproveDate: null,
+      endApproveDate: null,
+      mark_end: null,
+      mark_start: null,
       topics: [],
       students: [],
       listTopics: [],
@@ -277,12 +411,32 @@ export default {
       page: 1,
       steps: [
         { label: 'Thông tin cơ bản cho lịch đăng ký', page: 1 },
-        { label: 'Thời gian sinh viên đề xuất', page: 2 },
-        { label: 'Thời gian giảng viên duyệt đề xuất', page: 3 },
-        { label: 'Thời gian sinh viên đăng ký đề tài', page: 4 },
-        { label: 'Thời gian sinh viên làm đề tài', page: 5 },
-        { label: 'Thời gian giảng viên chấm bài', page: 6 },
+        { label: 'Thời gian', page: 2 },
+        { label: 'Chọn sinh viên', page: 3 },
+        { label: 'Xem lại', page: 4 },
       ],
+      showSelectStudent: false,
+      selectStudentScheduleId: null,
+      scheduleId: null,
+      listStudentsSelected: [],
+      dateValue: [],
+      formatter: {
+        date: 'L LTS',
+        month: 'MMMM',
+      },
+      options: {
+        shortcuts: {
+          today: 'Hôm nay',
+          yesterday: 'Hôm trước',
+          past: (period) => `${period} ngày trước`,
+          currentMonth: 'Tháng nay',
+          pastMonth: 'Tháng trước',
+        },
+        footer: {
+          apply: 'Áp dụng',
+          cancel: 'Huỷ',
+        },
+      },
     };
   },
   computed: {
@@ -301,6 +455,153 @@ export default {
     isView () {
       return this.section === 'schedule-view';
     },
+    calculateType () {
+      const first = moment(this.startProposalDate, 'L LTS');
+      const second = moment(this.mark_end, 'L LTS');
+      const days = Math.abs(second.diff(first, 'days'));
+      if (days <= 1) return 'hour';
+      if (days <= 30) return 'day';
+      return 'month';
+    },
+    proposalTime: {
+      get () {
+        if (!this.startProposalDate || !this.endProposalDate) return [];
+        return [this.startProposalDate, this.endProposalDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startProposalDate, this.endProposalDate] = newValue;
+      },
+    },
+    approveTime: {
+      get () {
+        if (!this.startApproveDate || !this.endApproveDate) return [];
+        return [this.startApproveDate, this.endApproveDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startApproveDate, this.endApproveDate] = newValue;
+      },
+    },
+    registerTime: {
+      get () {
+        if (!this.startRegisterDate || !this.endRegisterDate) return [];
+        return [this.startRegisterDate, this.endRegisterDate];
+      },
+      // setter
+      set (newValue) {
+        [this.startRegisterDate, this.endRegisterDate] = newValue;
+      },
+    },
+    workTime: {
+      get () {
+        if (!this.startDate || !this.deadline) return [];
+        return [this.startDate, this.deadline];
+      },
+      // setter
+      set (newValue) {
+        // Note: we are using destructuring assignment syntax here.
+        [this.startDate, this.deadline] = newValue;
+      },
+    },
+    markTime: {
+      get () {
+        if (!this.mark_start || !this.mark_end) return [];
+        return [this.mark_start, this.mark_end];
+      },
+      // setter
+      set (newValue) {
+        // Note: we are using destructuring assignment syntax here.
+        [this.mark_start, this.mark_end] = newValue;
+      },
+    },
+    barGantChar () {
+      const barProposal = {
+        myBeginDate: this.formatToMinute(this.startProposalDate),
+        myEndDate: this.formatToMinute(this.endProposalDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'proposal-time', // ... and a unique "id" property
+          label: 'Đề xuất',
+          style: { // arbitrary CSS styling for your bar
+            background: '#e09b69',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+
+      const barRegister = {
+        myBeginDate: this.formatToMinute(this.startRegisterDate),
+        myEndDate: this.formatToMinute(this.endRegisterDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'approve-time', // ... and a unique "id" property
+          label: 'Đăng ký',
+          style: { // arbitrary CSS styling for your bar
+            background: '#339933',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      const barApprove = {
+        myBeginDate: this.formatToMinute(this.startApproveDate),
+        myEndDate: this.formatToMinute(this.endApproveDate),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'approve-time', // ... and a unique "id" property
+          label: 'Chấp thuận',
+          style: { // arbitrary CSS styling for your bar
+            background: '#FF6666',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      const barWork = {
+        myBeginDate: this.formatToMinute(this.startDate),
+        myEndDate: this.formatToMinute(this.deadline),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'work-time', // ... and a unique "id" property
+          label: 'Làm luận văn',
+          style: { // arbitrary CSS styling for your bar
+            background: '#8724b9',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      const barMark = {
+        myBeginDate: this.formatToMinute(this.mark_start),
+        myEndDate: this.formatToMinute(this.mark_end),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'mark-time', // ... and a unique "id" property
+          label: 'Chấm điểm',
+          style: { // arbitrary CSS styling for your bar
+            background: '#CCCC00',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+      return [barProposal, barRegister, barApprove, barWork, barMark];
+    },
+    date () {
+      return new Date(this.startDate);
+    },
   },
   async mounted () {
     this.loading = true;
@@ -308,6 +609,7 @@ export default {
       const { id } = this.$store.state.url;
       // const { listSchedules } = this.$store.state.schedule;
       try {
+        this.scheduleId = id;
         const scheduleRaw = await ScheduleApi.fetchSchedule(this.token, id);
         const schedule = scheduleRaw.data;
         if (schedule) {
@@ -325,6 +627,7 @@ export default {
           this.mark_end = this.formatDate(schedule.mark_end);
           this.mark_start = this.formatDate(schedule.mark_start);
           this.students = schedule.students;
+          this.listStudentsSelected = schedule.list_students;
         }
       } catch (e) {
         this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -333,6 +636,22 @@ export default {
     this.loading = false;
   },
   methods: {
+
+    nextPage (pageNumber) {
+      if (pageNumber === 2) {
+        if (!this.name) {
+          this.$toast.error('Tên đợt đăng ký là bắt buộc');
+          return;
+        }
+        if (!this.code) {
+          this.$toast.error('Mã đợt đăng ký là bắt buộc');
+          return;
+        }
+      } else if (pageNumber === 3) {
+        if (!this.checkDate()) return;
+      }
+      this.page = pageNumber;
+    },
     errorHandler (e) {
       if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
@@ -368,36 +687,44 @@ export default {
       try {
         if (this.isSave) {
           if (this.checkDate()) {
-            await this.$store.dispatch('schedule/addSchedule', { token: this.token, value });
+            // await this.$store.dispatch('schedule/addSchedule', { token: this.token, value });
+            await ScheduleApi.addSchedule(this.token, value);
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           }
         } else if (this.isUpdate) {
           if (this.checkDate()) {
-            await this.$store.dispatch('schedule/updateSchedule', { token: this.token, value: { ...value, _id: this.id } });
+            await ScheduleApi.updateSchedule(this.token, { ...value, _id: this.id });
+            // await this.$store.dispatch('schedule/updateSchedule', { token: this.token, value: { ...value, _id: this.id } });
             this.$toast.success('Đã cập nhật thành công!');
             this.rollBack();
           }
         }
       } catch (e) {
+        console.log('🚀 ~ file: FormScheduleV2.vue:745 ~ handleAddScheduleAdmin ~ e:', e);
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
     },
     formatDate (rawDate) {
       try {
-        if (!rawDate || rawDate === '') return '';
+        if (!rawDate || rawDate === '') return null;
         const date = new Date(rawDate);
         const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
           .toISOString();
         const localDate = moment(dateString).local();
-        return localDate.format('YYYY-MM-DD HH:mm:ss');
+        return localDate.format('L LTS');
       } catch (e) {
         return '';
       }
     },
+    formatToMinute (rawDate) {
+      const localDate = moment(rawDate, 'L LTS');
+      const formatTime = localDate.format('YYYY-MM-DD HH:mm');
+      return formatTime;
+    },
     convertToUTC (dateStr) {
-      const date = moment(dateStr); // parse the date string
+      const date = moment(dateStr, 'L LTS'); // parse the date string
       const utc = date.utc(); // convert to UTC
       return utc;
     },
@@ -410,39 +737,60 @@ export default {
         this.$toast.error('Mã đợt đăng ký là bắt buộc');
         return false;
       }
-      if (this.startProposalDate >= this.endProposalDate) {
+      if (this.compareDate(this.startProposalDate, this.endProposalDate)) {
         this.$toast.error('Ngày bắt đầu đề xuất phải nhỏ hơn ngày kết thúc đề xuất ');
         return false;
       }
-      if (this.endProposalDate >= this.startApproveDate) {
+      if (this.compareDate(this.endProposalDate, this.startApproveDate)) {
         this.$toast.error('Ngày kết thúc đề xuất phải nhỏ hơn ngày bắt đầu duyệt đề tài ');
         return false;
       }
-      if (this.startApproveDate >= this.endApproveDate) {
+      if (this.compareDate(this.startApproveDate, this.endApproveDate)) {
         this.$toast.error('Ngày bắt đầu duyệt đề tài phải nhỏ hơn ngày kết thúc duyệt đề tài ');
         return false;
       }
-      if (this.endApproveDate >= this.startRegisterDate) {
+      if (this.compareDate(this.endApproveDate, this.startRegisterDate)) {
         this.$toast.error('Ngày kết thúc duyệt đề tài phải nhỏ hơn ngày bắt đầu đăng ký đề tài ');
         return false;
       }
-      if (this.startApproveDate >= this.endApproveDate) {
+      if (this.compareDate(this.startRegisterDate, this.endRegisterDate)) {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
-      if (this.startDate >= this.deadline) {
+      if (this.compareDate(this.endRegisterDate, this.startDate)) {
+        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
+        return false;
+      }
+      if (this.compareDate(this.startDate, this.deadline)) {
         this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
         return false;
       }
-      if (this.deadline >= this.mark_start) {
+      if (this.compareDate(this.deadline, this.mark_start)) {
         this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
         return false;
       }
-      if (this.mark_start >= this.mark_end) {
+      if (this.compareDate(this.mark_start, this.mark_end)) {
         this.$toast.error('Ngày bắt đầu chấm diểm đề tài phải nhỏ hơn ngày kết thúcc chấm điểm đề tài ');
         return false;
       }
       return true;
+    },
+    changeStudents (students) {
+      this.showSelectStudent = false;
+      this.listStudentsSelected = students;
+      this.students = this.listStudentsSelected.map((st) => st.code);
+    },
+    chooseStudent () {
+      this.showSelectStudent = true;
+    },
+    compareDate (startDate, endDate) {
+      const date1 = moment(startDate, 'L LTS').valueOf();
+      const date2 = moment(endDate, 'L LTS').valueOf();
+
+      if (date1 > date2) {
+        return true;
+      }
+      return false;
     },
   },
 };
@@ -450,4 +798,10 @@ export default {
 
 <style src="@vueform/multiselect/themes/default.css">
 
+</style>
+<style>
+.g-gantt-row-label {
+  height: 0px !important;
+  display: none !important;
+}
 </style>
