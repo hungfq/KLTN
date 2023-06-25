@@ -4,8 +4,11 @@ namespace App\Modules\TopicProposal\Actions;
 
 use App\Entities\Topic;
 use App\Entities\TopicProposal;
+use App\Entities\User;
+use App\Events\SendEmailEvent;
 use App\Exceptions\UserException;
 use App\Libraries\Socket;
+use App\Mail\EmailForQueuing;
 
 class TopicProposalApproveAction
 {
@@ -79,6 +82,39 @@ class TopicProposalApproveAction
     protected function deleteProposal()
     {
         $this->topicProposal->delete();
+
+        foreach ($this->studentIds as $studentId) {
+            $proposals = TopicProposal::query()
+                ->where('schedule_id', $this->topicProposal->schedule_id)
+                ->whereHas('students', function ($q) use ($studentId) {
+                    $q->where('id', $studentId);
+                })->get();
+            foreach ($proposals as $proposal) {
+                $student = User::find($studentId);
+
+                if ($proposal->students()->count() == 1) {
+                    $dataEmail = [
+                        'topic' => $proposal,
+                    ];
+                    event(new SendEmailEvent([
+                        'email' => data_get($student, 'email'),
+                        'email_body' => new EmailForQueuing('HỦY ĐỀ TÀI', $dataEmail, 'MailProposalDeletedToStudent'),
+                    ]));
+
+                    $proposal->delete();
+                } else {
+                    $dataEmail = [
+                        'topic' => $proposal,
+                    ];
+                    event(new SendEmailEvent([
+                        'email' => data_get($student, 'email'),
+                        'email_body' => new EmailForQueuing('HỦY ĐĂNG KÝ KHỎI ĐỀ TÀI', $dataEmail, 'MailProposalDeletedToStudent'),
+                    ]));
+
+                    $proposal->students()->where('id', $studentId)->delete();
+                }
+            }
+        }
 
         return $this;
     }
