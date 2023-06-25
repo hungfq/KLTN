@@ -36,6 +36,7 @@ import {
   faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane, faFileArrowDown,
   faCloudDownload,
 } from '@fortawesome/free-solid-svg-icons';
+import Vue3Sanitize from 'vue-3-sanitize';
 
 dayjs.locale('vi');
 /* add icons to the library */
@@ -94,7 +95,7 @@ app.use(VeeValidate);
 app.use(ToastPlugin);
 app.use(ganttastic);
 app.component('FontAwesomeIcon', FontAwesomeIcon);
-
+app.use(Vue3Sanitize);
 app.use(vfmPlugin({
   key: '$vfm',
   componentName: 'VueFinalModal',

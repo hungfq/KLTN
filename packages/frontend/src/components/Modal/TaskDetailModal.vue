@@ -15,11 +15,10 @@
           <!-- Modal header -->
           <div class="flex justify-between items-start p-4 rounded-t border-b ">
             <h2 class="text-xl font-semibold text-gray-900 ">
-              <!-- {{ taskDetail.code }} -->
               <input
-                v-model="taskDetail.code"
+                v-model="taskDetail.title"
                 class="w-full p-2"
-                placeholder="Mã nhiệm vụ..."
+                placeholder="Tên nhiệm vụ"
               >
             </h2>
             <button
@@ -46,43 +45,73 @@
           <div class="px-6 grid grid-cols-12 gap-4">
             <!-- Left body -->
             <div class="col-span-9">
-              <div class="font-medium my-4">
-                <input
-                  v-model="taskDetail.title"
-                  class="w-full p-2"
-                  placeholder="Tên nhiệm vụ"
-                >
+              <div class="tabs">
+                <a
+                  v-for="t in tabs"
+                  :key="t.value"
+                  class="tab tab-lifted"
+                  :class="{ 'tab-active': tab === t.value }"
+                  @click="tab = t.value"
+                >{{ t.name }}</a>
               </div>
-              <!-- <div class="font-medium my-4">
-              {{ taskDetail }}
-            </div> -->
-              <div class="h-80 overflow-x-scroll">
+              <div
+                class="h-80 overflow-y-auto mb-4 overflow-x-hidden"
+                :class="{'!h-[400px]': tab ===0}"
+              >
                 <ckeditor
+                  v-if="tab ===0 "
                   v-model="editorData"
                   :editor="editor"
                   @input="changeDescription"
                 />
-                <template
-                  v-for="item in taskDetail.comments"
-                  :key="item._id"
-                >
-                  <TaskDetailComment
-                    :comment="item"
-                    :task-id="taskDetail._id"
-                  />
+                <template v-if="tab === 1">
+                  <div
+                    v-for="item in taskDetail.comments"
+                    :key="item._id"
+                  >
+                    <TaskDetailComment
+                      :comment="item"
+                      :task-id="taskDetail._id"
+                    />
+                  </div>
                 </template>
               </div>
-              <div class="font-normal my-4 flex space-x-1">
-                <input
+              <div
+                v-if="taskDetail._id && tab ===1"
+                class="my-4 flex"
+              >
+                <textarea
+                  v-show="!loadingComment"
                   v-model="comment"
-                  class=" p-2 border-2 rounded-sm flex-1"
+                  class=" p-2 border-2 grow mr-1"
                   placeholder="Thêm nhận xét..."
+                  type="text"
                   @keyup.enter="addComment"
+                />
+                <div
+                  v-if="loadingComment"
+                  class="grow flex justify-center"
                 >
+                  <loading
+                    v-model:active="loadingComment"
+                    class="mx-auto"
+                    :can-cancel="true"
+                    :is-full-page="false"
+                  />
+                </div>
                 <button
-                  class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                  class="
+                btn
+                btn-primary
+                text-white
+                py-2
+                px-4"
                   @click="addComment"
                 >
+                  <font-awesome-icon
+                    :icon="['fas', 'paper-plane']"
+                    class="mr-2"
+                  />
                   Gửi
                 </button>
               </div>
@@ -138,7 +167,7 @@
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
                 @click="saveHandle(close)"
               >
-                Lưu
+                {{ taskDetail._id ? 'Cập nhật' : 'Lưu' }}
               </button>
             </div>
           </div>
@@ -158,6 +187,7 @@ import { mapGetters } from 'vuex';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import moment from 'moment';
 import 'moment/dist/locale/vi';
+import Loading from 'vue-loading-overlay';
 import TaskDetailComment from '../Lecturer/TaskDetailComment.vue';
 import LoadingProcess from '../common/Loading.vue';
 
@@ -166,6 +196,7 @@ export default {
   components: {
     TaskDetailComment,
     LoadingProcess,
+    Loading,
   },
   inheritAttrs: false,
   props: {
@@ -185,6 +216,18 @@ export default {
       ],
       comment: '',
       loading: false,
+      loadingComment: false,
+      tabs: [
+        {
+          name: 'Mô tả',
+          value: 0,
+        },
+        {
+          name: 'Bình luận',
+          value: 1,
+        },
+      ],
+      tab: 0,
     };
   },
   computed: {
@@ -217,6 +260,10 @@ export default {
         this.errorHandler(e);
         // this.$toast.error(e.message);
       }
+      if (!this.taskDetail._id) {
+        this.taskDetail.status = 'PENDING';
+        this.taskDetail.assignTo = this.listStudents[0]._id;
+      }
     },
     async changeDescription (data) {
       if (this.taskDetail) {
@@ -224,21 +271,29 @@ export default {
       }
     },
     async saveHandle (close) {
-      if (this.taskDetail._id) {
-        await this.$store.dispatch('task/updateTask', { token: this.token, value: this.taskDetail });
-      } else {
-        await this.$store.dispatch('task/insertTask', { token: this.token, value: this.taskDetail, topicId: this.topicId });
+      this.loading = true;
+      try {
+        if (this.taskDetail._id) {
+          await this.$store.dispatch('task/updateTask', { token: this.token, value: this.taskDetail });
+        } else {
+          await this.$store.dispatch('task/insertTask', { token: this.token, value: this.taskDetail, topicId: this.topicId });
+        }
+        if (this.topicId) {
+          await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
+        }
+      } catch (e) {
+        console.error(e);
       }
-      if (this.topicId) {
-        await this.$store.dispatch('task/fetchAllTask', { token: this.token, topicId: this.topicId });
-      }
+      this.loading = false;
       this.$emit('closeDetailModal', close);
     },
     async addComment () {
+      this.loadingComment = true;
       if (this.comment !== '') {
         await this.$store.dispatch('task/insertComment', { token: this.token, message: this.comment, taskId: this.taskDetail._id });
         this.comment = '';
       }
+      this.loadingComment = false;
     },
     timeAgo (createdAt) {
       const date = this.formatDate(createdAt);

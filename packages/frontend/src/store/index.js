@@ -89,6 +89,12 @@ const createWebSocketPlugin = (socket) => (store) => {
       await store.dispatch('task/fetchAllTask', { token, topicId });
     }
   });
+
+  socket.on('task-info', async (data) => {
+    const taskId = data;
+    const { token } = store.state.auth.userInfo;
+    await store.dispatch('task/fetchTaskDetail', { token, taskId });
+  });
 };
 
 const socket = io(import.meta.env.BASE_SOCKET_URL || 'http://localhost:8002');
