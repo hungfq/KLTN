@@ -29,6 +29,9 @@ class ScheduleViewStudentAction
             ->whereIn('id', $studentIds);
 
         $ignoreIds = $dto->ignore_ids;
+        if ($ignoreIds) {
+            $query->orderByRaw("FIELD(id, " . implode(',', $ignoreIds) . ") desc");
+        }
 
         if ($dto->not_in_any_proposal) {
             $proposalStudentIds = [];
