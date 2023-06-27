@@ -327,8 +327,8 @@ export default {
     };
     const handleSendInvite = async (scheduleId) => {
       try {
-        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
         showInviteModal.value = false;
+        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
         $toast.success('Đã gửi mail!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
