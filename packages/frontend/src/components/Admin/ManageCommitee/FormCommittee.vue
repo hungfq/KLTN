@@ -294,7 +294,6 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
-      { text: 'Giảng viên phản biện', value: 'critical' },
       { text: 'Đợt đăng ký', value: 'schedule' },
     ];
     const items = [];
