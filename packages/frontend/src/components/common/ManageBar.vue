@@ -67,7 +67,7 @@
           <span v-if="open"> {{ item.value }} </span>
         </a>
       </div>
-      <tenplate v-if="userRole != 'ADMIN'">
+      <template v-if="userRole != 'ADMIN'">
         <div class="flex justify-center font-bold text-stone-400 border-2 py-1 bg-slate-100 mt-2">
           {{ open ? 'Quá trình thực hiện' : '' }}
         </div>
@@ -99,7 +99,7 @@
             <span v-if="open"> {{ item.value }} </span>
           </a>
         </div>
-      </tenplate>
+      </template>
       <div class="mt-auto" />
       <!-- Notifications -->
       <div class="flex flex-col px-2 my-2">
