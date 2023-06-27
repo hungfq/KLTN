@@ -81,7 +81,6 @@
       />
     </div>
     <EasyDataTable
-      v-model:items-selected="itemsSelected"
       v-model:server-options="serverOptions"
       :server-items-length="serverItemsLength"
       table-class-name="mx-4"
@@ -327,8 +326,8 @@ export default {
     };
     const handleSendInvite = async (scheduleId) => {
       try {
-        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
         showInviteModal.value = false;
+        await ScheduleApi.sendMailToCommitteeBySchedule(token, scheduleId);
         $toast.success('Đã gửi mail!');
       } catch (e) {
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
@@ -337,7 +336,6 @@ export default {
     const handleExportGrade = async (scheduleId) => {
       try {
         const response = await ScheduleApi.exportGradeExcel(token, scheduleId);
-        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:340 ~ handleExportGrade ~ response:', response);
         const schedulesStore = store.getters['schedule/listSchedules'];
         const sc = schedulesStore.find((s) => s._id === scheduleId);
         if (sc) {
@@ -347,7 +345,6 @@ export default {
         }
         showExportModal.value = false;
       } catch (e) {
-        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:350 ~ handleExportGrade ~ e:', e);
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };

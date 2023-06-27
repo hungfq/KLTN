@@ -56,15 +56,15 @@
     </div>
   </div>
   <!-- Modal footer -->
-  <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 my-4 justify-between">
-    <div class="flex mt-4">
+  <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 my-4 justify-end">
+    <!-- <div class="flex mt-4">
       <div>
         <UploadButton @uploadFileExcel="upload" />
       </div>
       <div>
         <ButtonDownloadTemplate :link="`${BASE_API_URL}/api/v2/template?type=TopicCommittee`" />
       </div>
-    </div>
+    </div> -->
     <button
       v-if="!isView"
       class="btn btn-primary"
@@ -115,7 +115,6 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Giảng viên hướng dẫn', value: 'lecturerId.name' },
-      { text: 'Giảng viên phản biện', value: 'criticalLecturerId.name' },
       { text: 'Đợt đăng ký', value: 'scheduleId.code' },
     ];
     const items = [];

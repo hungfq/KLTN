@@ -18,7 +18,6 @@
       />
     </div>
     <EasyDataTable
-      v-model:items-selected="itemsSelected"
       v-model:server-options="serverOptions"
       :server-items-length="serverItemsLength"
       table-class-name="mx-4"
