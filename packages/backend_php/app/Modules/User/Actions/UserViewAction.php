@@ -36,6 +36,11 @@ class UserViewAction
             });
         }
 
+        $ignoreIds = $dto->ignore_ids;
+        if ($ignoreIds) {
+            $query->orderByRaw("FIELD(users.id, " . implode(',', $ignoreIds) . ") desc");
+        }
+
 
         if ($type = $dto->type) {
             $role = Role::where('name', $type)->first();

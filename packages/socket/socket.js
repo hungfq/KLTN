@@ -63,4 +63,12 @@ socket.on('connection', async (io) => {
       await socket.to(socketId).emit('notify', data.notification);
     }
   });
+
+  io.on('update-task-info', async (data) => {
+    if (data.id) {
+      const socketId = await getSocketIdByUserId(data.id);
+
+      await socket.to(socketId).emit('task-info', data.taskId);
+    }
+  });
 });
