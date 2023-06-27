@@ -3,8 +3,10 @@
 namespace App\Modules\TopicProposal\Actions;
 
 use App\Entities\TopicProposal;
+use App\Events\SendEmailEvent;
 use App\Exceptions\UserException;
 use App\Libraries\Socket;
+use App\Mail\EmailForQueuing;
 
 class TopicProposalDeclineAction
 {
@@ -43,6 +45,15 @@ class TopicProposalDeclineAction
             ];
             $student->notifications()->create($data);
             Socket::sendUpdateNotificationRequest([data_get($student, 'id')], $data);
+
+            $dataEmail = [
+                'topic' => $this->topicProposal,
+                'student' => $student,
+            ];
+            event(new SendEmailEvent([
+                'email' => data_get($student, 'email'),
+                'email_body' => new EmailForQueuing('PHẢN HỒI ĐỀ TÀI HƯỚNG DẪN', $dataEmail, 'MailProposalDeclineToStudent'),
+            ]));
         });
 
         return $this;
