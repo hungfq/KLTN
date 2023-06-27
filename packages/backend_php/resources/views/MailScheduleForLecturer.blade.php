@@ -46,7 +46,7 @@
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'title') }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
-                        rowspan="{{$count}}">{{ data_get($topic, 'committee.defense_date') }}</td>
+                        rowspan="{{$count}}">{{ data_get($topic, 'committee.defense_date') ? \Carbon\Carbon::parse(data_get($topic, 'committee.defense_date'), 'Asia/Ho_Chi_Minh')->format("d/m/Y H:i") : '' }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'committee.address') }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"

@@ -2,6 +2,26 @@
   <template v-if="loading">
     <LoadingProcessor />
   </template>
+  <template v-else-if="headerTabs.length===0">
+    <div class="relative">
+      <img
+        class="w-fit h-fit"
+        :src="imageUrl"
+      >
+      <button
+        class="btn btn-primary absolute bottom-0 left-0 !py-0"
+        @click="updateModules('topic_result')"
+      >
+        Xem kết quả
+      </button>
+      <button
+        class="btn btn-primary absolute bottom-0 right-0 !py-0"
+        @click="updateModules('topic_proposal')"
+      >
+        Đề xuất đề tài
+      </button>
+    </div>
+  </template>
   <template v-else>
     <div class="mt-2 bg-slate-100 py-2">
       <div class="tabs ml-4">
@@ -235,13 +255,13 @@ export default {
     checkCanCancelTopic () {
       return this.listScheduleCodeRegister.includes(this.tab);
     },
+    imageUrl () {
+      const imageUrl = new URL('/src/assets/images/not_result.png', import.meta.url).href;
+      return imageUrl;
+    },
   },
   async mounted () {
     this.fetch();
-    // console.log('🚀 ~ file: ManageTopicResult.vue:240 ~ mounted ~ this.listScheduleRegisterStudent:', this.listScheduleRegisterStudent);
-    // const listCode = this.listScheduleRegisterStudent.map((schedule) => schedule.code);
-    // console.log('🚀 ~ file: ManageTopicResult.vue:241 ~ mounted ~ listCode.includes(this.tab);:', listCode.includes(this.tab));
-    // console.log('🚀 ~ file: ManageTopicResult.vue:243 ~ mounted ~ this.headerTabs:', this.headerTabs);
   },
   methods: {
     async fetch () {

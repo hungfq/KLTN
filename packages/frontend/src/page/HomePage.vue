@@ -2,12 +2,11 @@
 <template>
   <!-- grid have 3 col and mx=8 my=4 -->
   <div
-    v-show="!loading"
+    v-if="!loading"
     class="flex flex-col relative"
   >
     <HeaderPage
-      @begin-login="loading=true"
-      @end-login="loading=false"
+      @login="showLoginModal= true"
     />
     <div class=" flex mx-10">
       <div class="relative flex">
@@ -33,9 +32,16 @@
     </div>
     <BannerInfo class="my-10" />
     <BannerFrame class="my-10" />
-    <div class="flex flex-col items-center content-center">
-      <Loading v-show="loading" />
-    </div>
+  </div>
+  <div
+    v-else
+    class="flex flex-col justify-center items-center content-center h-screen"
+  >
+    <loading
+      v-model:active="loading"
+      :can-cancel="false"
+      :is-full-page="true"
+    />
   </div>
   <LoginModalVue
     v-model="showLoginModal"
@@ -45,11 +51,12 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import { decodeCredential, googleLogout, googleTokenLogin } from 'vue3-google-login';
+import { googleTokenLogin } from 'vue3-google-login';
+import Loading from 'vue-loading-overlay';
 import HeaderPage from '../components/Home/Header.vue';
 import BannerFrame from '../components/Home/BannerFrame.vue';
 import BannerInfo from '../components/Home/BannerInfo.vue';
-import Loading from '../components/common/Loading.vue';
+// import Loading from '../components/common/Loading.vue';
 import LoginModalVue from '../components/Modal/LoginModal.vue';
 
 export default {
