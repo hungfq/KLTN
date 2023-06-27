@@ -1,16 +1,20 @@
+
+<p>Kính gửi {{ data_get($data, 'lecturer.name') }},</p>
+<p>Chúng tôi gửi mail này từ Khoa Công nghệ Thông tin để mời bạn tham dự hội đồng để xét duyệt đề tài cho sinh viên.</p>
+<p>Xin vui lòng kiểm tra lịch trình bên dưới để biết thêm thông tin chi tiết về chương trình và nội dung của buổi họp. </p>
 <h2>Lịch hội đồng</h2>
 <h3>GV: {{ data_get($data, 'lecturer.code') }} - {{ data_get($data, 'lecturer.name') }}</h3>
 <table style="border-collapse: collapse;">
     <thead>
     <tr>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">STT</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">MSSV</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Tên SV</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Mã nhóm</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Tên đề tài</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Thời gian</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Địa điểm</th>
-        <th style="font-weight: bold; text-align: center; border: 1px solid black;">Vai trò</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">STT</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">MSSV</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Tên SV</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Mã nhóm</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Tên đề tài</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Thời gian</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Địa điểm</th>
+        <th style="font-weight: bold; text-align: center; border: 1px solid black;  padding: 2px;">Vai trò</th>
     </tr>
     </thead>
     <tbody>
@@ -35,27 +39,27 @@
         @foreach($students as $studentIndex => $student)
             @if($studentIndex == 0)
                 <tr>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px;"
                         rowspan="{{$count}}">{{ $index + 1 }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;">
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px">
                         {{ data_get($student, 'code') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;">
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px">
                         {{ data_get($student, 'name') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px"
                         rowspan="{{$count}}">{{ data_get($topic, 'code') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px"
                         rowspan="{{$count}}">{{ data_get($topic, 'title') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px"
                         rowspan="{{$count}}">{{ data_get($topic, 'committee.defense_date') ? \Carbon\Carbon::parse(data_get($topic, 'committee.defense_date'))->timezone('Asia/Ho_Chi_Minh')->format("d/m/Y H:i") : '' }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px"
                         rowspan="{{$count}}">{{ data_get($topic, 'committee.address') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;"
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px"
                         rowspan="{{$count}}">{{ $role }}</td>
                 </tr>
             @else
                 <tr>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;">{{ data_get($student, 'code') }}</td>
-                    <td style="vertical-align: center; text-align: center; border: 1px solid black;">{{ data_get($student, 'name') }}</td>
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px">{{ data_get($student, 'code') }}</td>
+                    <td style="vertical-align: center; text-align: center; border: 1px solid black; padding: 2px">{{ data_get($student, 'name') }}</td>
                 </tr>
             @endif
         @endforeach
@@ -64,3 +68,6 @@
     </tbody>
 </table>
 <p>Quý thầy cô vui lòng truy cập http://hungpq.click để xem thông tin chi tiết</p>
+<p>Chúng tôi rất trân trọng sự đóng góp của bạn và mong bạn sẽ tham gia vào buổi họp của hội đồng để xét duyệt đề tài này và đảm bảo sự phát triển nghiên cứu của sinh viên.</p>
+<p>Trân trọng, </p>
+<p>Khoa Công nghệ thông tin </p>
