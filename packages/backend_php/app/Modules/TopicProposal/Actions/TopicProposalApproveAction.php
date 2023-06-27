@@ -95,6 +95,7 @@ class TopicProposalApproveAction
                 if ($proposal->students()->count() == 1) {
                     $dataEmail = [
                         'topic' => $proposal,
+                        'student' => $student,
                     ];
                     event(new SendEmailEvent([
                         'email' => data_get($student, 'email'),
@@ -105,6 +106,7 @@ class TopicProposalApproveAction
                 } else {
                     $dataEmail = [
                         'topic' => $proposal,
+                        'student' => $student,
                     ];
                     event(new SendEmailEvent([
                         'email' => data_get($student, 'email'),
