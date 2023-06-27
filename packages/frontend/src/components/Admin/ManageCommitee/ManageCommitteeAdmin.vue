@@ -337,7 +337,6 @@ export default {
     const handleExportGrade = async (scheduleId) => {
       try {
         const response = await ScheduleApi.exportGradeExcel(token, scheduleId);
-        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:340 ~ handleExportGrade ~ response:', response);
         const schedulesStore = store.getters['schedule/listSchedules'];
         const sc = schedulesStore.find((s) => s._id === scheduleId);
         if (sc) {
@@ -347,7 +346,6 @@ export default {
         }
         showExportModal.value = false;
       } catch (e) {
-        console.log('🚀 ~ file: ManageCommitteeAdmin.vue:350 ~ handleExportGrade ~ e:', e);
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
