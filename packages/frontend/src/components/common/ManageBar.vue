@@ -98,6 +98,16 @@
             <font-awesome-icon :icon="item.icon" />
             <span v-if="open"> {{ item.value }} </span>
           </a>
+          <a
+            v-if="isLoading"
+            class="cursor-pointer flex justify-center p-2 items-center w-full space-x-2  rounded-lg font-semibold"
+          >
+            <loading
+              :active="true"
+              height="30"
+              width="30"
+            />
+          </a>
         </div>
       </template>
       <div class="mt-auto" />
@@ -201,12 +211,14 @@
 import { mapState, mapGetters } from 'vuex';
 import moment from 'moment';
 import 'moment/dist/locale/vi';
+import Loading from 'vue-loading-overlay';
 import IconTooltip from './IconTooltip.vue';
 
 export default {
   name: 'ManageBar',
   components: {
     IconTooltip,
+    Loading,
   },
   props: {
     listItems: [],
@@ -219,6 +231,7 @@ export default {
       miniAvatarShow: false,
       notificationShow: false,
       imageUrl: '',
+      isLoading: true,
     };
   },
   computed: {
@@ -252,6 +265,7 @@ export default {
   },
   async mounted () {
     await this.$store.dispatch('notification/fetchListNotifications', this.token);
+    setTimeout(() => { this.isLoading = false; }, 3000);
   },
   methods: {
     updateModuleTask (code) {
