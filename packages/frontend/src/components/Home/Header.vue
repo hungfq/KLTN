@@ -15,7 +15,7 @@
       <HeaderButton :name-button="'Tư vấn'" />
       <HeaderButton :name-button="'TT-Tin học'" />
       <HeaderButton :name-button="'Giới thiệu'" />
-      <LoginButton @click="showLoginModal= true" />
+      <LoginButton @click="$emit('login')" />
     </div>
   </div>
   <LoginModalVue
@@ -38,7 +38,7 @@ export default {
     LoginButton,
     LoginModalVue,
   },
-  emits: ['begin-login', 'end-login'],
+  emits: ['login'],
   data () {
     return {
       showLoginModal: false,
