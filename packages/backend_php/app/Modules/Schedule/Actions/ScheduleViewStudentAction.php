@@ -54,6 +54,14 @@ class ScheduleViewStudentAction
             $query->whereNotIn('id', array_diff($topicStudentIds, $ignoreIds));
         }
 
+        if ($search = $dto->search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('users.code', 'LIKE', "%$search%")
+                    ->orWhere('users.name', 'LIKE', "%$search%")
+                    ->orWhere('users.email', 'LIKE', "%$search%");
+            });
+        }
+
         if ($dto->limit) {
             return $query->paginate($dto->limit);
         }

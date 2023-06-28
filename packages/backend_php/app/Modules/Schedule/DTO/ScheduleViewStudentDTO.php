@@ -10,6 +10,7 @@ class ScheduleViewStudentDTO extends FlexibleDataTransferObject
     public $ignore_ids;
     public $not_in_any_proposal;
     public $not_in_any_topic;
+    public $search;
     public $limit;
     public $sort;
 
@@ -22,6 +23,7 @@ class ScheduleViewStudentDTO extends FlexibleDataTransferObject
             'ignore_ids' => $request->input('ignore_ids') ?? [],
             'not_in_any_proposal' => $request->input('not_in_any_proposal'),
             'not_in_any_topic' => $request->input('not_in_any_topic'),
+            'search' => $request->input('search'),
             'limit' => $request->input('limit'),
             'sort' => $request->input('sort'),
         ]);
