@@ -113,7 +113,7 @@ class TopicProposalApproveAction
                         'email_body' => new EmailForQueuing('HỦY ĐĂNG KÝ KHỎI ĐỀ TÀI', $dataEmail, 'MailProposalDeletedToStudent'),
                     ]));
 
-                    $proposal->students()->where('id', $studentId)->delete();
+                    $proposal->students()->detach([$studentId]);
                 }
             }
         }
