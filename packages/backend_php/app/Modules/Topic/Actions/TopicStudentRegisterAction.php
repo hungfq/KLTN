@@ -55,7 +55,7 @@ class TopicStudentRegisterAction
         foreach ($this->topics as $topic) {
             if ($topic->students->contains(Auth::id())) {
 //                throw new UserException("You are already register!");
-                throw new UserException('Bạn đã đăng ký đề tài này!', 400);
+                throw new UserException('Bạn đã tồn tại đăng ký trong đề tài khác!', 400);
             }
         }
 
