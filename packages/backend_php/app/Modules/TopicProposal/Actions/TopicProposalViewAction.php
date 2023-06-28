@@ -35,8 +35,8 @@ class TopicProposalViewAction
 
         if ($search = $dto->search) {
             $query->where(function ($q) use ($search) {
-                $q->where('code', 'LIKE', "%$search%")
-                    ->orWhere('name', 'LIKE', "%$search%");
+                $q->where('topic_proposals.code', 'LIKE', "%$search%")
+                    ->orWhere('topic_proposals.name', 'LIKE', "%$search%");
             });
         }
 
