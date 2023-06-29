@@ -12,6 +12,7 @@
     "php": ">=7.4",
     "ext-json": "*",
     "api-ecosystem-for-laravel/dingo-api": "^3.0.0",
+    "doctrine/dbal": "^3.6",
     "elephantio/elephant.io": "^4.2",
     "guzzlehttp/guzzle": "^7.5",
     "illuminate/mail": "^8.83",

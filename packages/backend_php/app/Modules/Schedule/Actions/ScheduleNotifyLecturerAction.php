@@ -74,7 +74,7 @@ class ScheduleNotifyLecturerAction
         ];
         event(new SendEmailEvent([
             'email' => data_get($lecturer, 'email'),
-            'email_body' => new EmailForQueuing('LỊCH NGỒI HỘI ĐỒNG', $dataEmail, 'MailScheduleForLecturer'),
+            'email_body' => new EmailForQueuing('LỊCH HỘI ĐỒNG KLTN', $dataEmail, 'MailScheduleForLecturer'),
         ]));
 
     }
