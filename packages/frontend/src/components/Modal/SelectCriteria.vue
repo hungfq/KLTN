@@ -105,7 +105,9 @@
               <thead class="!bg-slate-300">
                 <tr class="!bg-slate-300">
                   <th />
-                  <th>Tiêu chí</th>
+                  <th class="w-[400px]">
+                    Tiêu chí
+                  </th>
                   <th>Tỷ lệ điểm</th>
                 </tr>
               </thead>
@@ -115,7 +117,9 @@
                   :key="criterion.id"
                 >
                   <th>{{ index + 1 }}</th>
-                  <td>{{ criterion.title }}</td>
+                  <td class="w-[200px] break-words">
+                    {{ criterion.title }}
+                  </td>
                   <td>
                     <div class="flex items-start">
                       <FormKit
@@ -128,14 +132,16 @@
                         :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này',
                                                 min: 'Tỷ lệ điểm phải lớn hơn 1 %',
                                                 max: 'Tỷ lệ điểm phải nhỏ hơn 100 %' }"
-                      />
-                      <span class="ml-2 mt-2">%</span>
+                      >
+                        <template #suffix>
+                          <span class="mt-1 mr-2">%</span>
+                        </template>
+                      </FormKit>
                     </div>
                   </td>
                 </tr>
                 <tr>
                   <th />
-                  <td />
                   <td>
                     <div class="flex">
                       <span
@@ -144,6 +150,7 @@
                       >Tổng tỷ lệ điểm điểm phải bằng 100%</span>
                     </div>
                   </td>
+                  <td />
                 </tr>
               </tbody>
             </table>
@@ -218,7 +225,9 @@ export default {
     const rowItems = [10, 20, 50];
     const criteria = ref([]);
     const headers = [
-      { text: 'Tiêu đề', value: 'title', sortable: true },
+      {
+        text: 'Tiêu đề', value: 'title', sortable: true, width: 400,
+      },
       { text: 'Mô tả', value: 'description', sortable: true },
     ];
     const searchVal = ref('');
@@ -299,7 +308,11 @@ export default {
     };
 
     const continuePage = () => {
-      const mergedArray = unionBy(itemsPrevSelected.value, itemsSelected.value, 'id');
+      const mergedArray = itemsSelected.value.map((item) => {
+        const prevItem = itemsPrevSelected.value.find((prev) => prev.id === item.id);
+        return prevItem || item;
+      });
+
       itemsSelectedScore.value = cloneDeep(mergedArray);
       currentPage.value = 1;
     };
