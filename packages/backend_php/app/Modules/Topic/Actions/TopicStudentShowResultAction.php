@@ -36,8 +36,8 @@ class TopicStudentShowResultAction
         if ($dto->is_in_progress) {
             $query->whereHas('schedule', function ($q) {
                 $now = Carbon::now('UTC')->format('Y-m-d H:i:s');
-                $q->where('start_date', '<=', $now)
-                    ->where('end_date', '>=', $now);
+                $q->where('proposal_start', '<=', $now)
+                    ->where('mark_start', '>=', $now);
             });
         }
 

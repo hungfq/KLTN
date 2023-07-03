@@ -28,8 +28,8 @@ class ScheduleViewWithTopicAction
                     $q1->where('lecturer_id', Auth::id());
                 });
             })
-            ->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now);
+            ->where('proposal_start', '<=', $now)
+            ->where('mark_start', '>=', $now);
 
         $query->addSelect([
             $query->qualifyColumn('*'),
