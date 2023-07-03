@@ -5,7 +5,7 @@
     <div class="mx-1 flex my-2 justify-between">
       <button
         class=" mx-2"
-        :class="[ showStatistic ? 'btn btn-active' : 'btn btn-secondary' ]"
+        :class="[ showStatistic ? 'btn btn-active' : 'btn btn-info' ]"
         @click="statisticHandler"
       >
         Thống kê nhiệm vụ
@@ -64,7 +64,7 @@
     </div>
   </template>
   <div
-    class="flex mt-4 w-9/10 justify-center 2xl:min-h-[730px] lg:min-h-[550px]"
+    class="flex mt-4 justify-center 2xl:min-h-[730px] lg:min-h-[550px]"
   >
     <div
       v-if="!loading"
@@ -74,7 +74,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="bg-gray-100 px-3 py-3 rounded mr-4"
+          class="bg-gray-300 px-3 py-3 rounded mr-4"
         >
           <div class="body">
             <draggable
@@ -118,25 +118,25 @@
         <div class="flex flex-col">
           <table
             data-theme="light"
-            class="table"
+            class="table bg-gray-300"
           >
             <thead>
               <tr>
                 <th
                   scope="col"
-                  class="py-3 min-h-[300px]"
+                  class="py-3 min-h-[300px] w-[300px]"
                 >
                   Mã
                 </th>
                 <th
                   scope="col"
-                  class="py-3 min-h-[300px]"
+                  class="py-3 min-h-[300px] w-[300px]"
                 >
                   Tiêu đề
                 </th>
                 <th
                   scope="col"
-                  class="py-3 min-h-[300px]"
+                  class="py-3 min-h-[300px] w-[300px]"
                 >
                   Trạng thái
                 </th>

@@ -18,7 +18,7 @@
               <input
                 v-model="taskDetail.title"
                 class="w-full p-2"
-                placeholder="Tên nhiệm vụ"
+                placeholder="Thêm tên nhiệm vụ..."
               >
             </h2>
             <button
@@ -164,7 +164,8 @@
                 </div>
               </template>
               <button
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+                class="btn btn-primary w-full"
+                :disabled="!isValid"
                 @click="saveHandle(close)"
               >
                 {{ taskDetail._id ? 'Cập nhật' : 'Lưu' }}
@@ -240,6 +241,9 @@ export default {
     ...mapGetters('task', [
       'listScheduleTopic', 'listTopic', 'topicId', 'listStudents', 'taskDetail',
     ]),
+    isValid () {
+      return !!this.taskDetail.title;
+    },
   },
   methods: {
     errorHandler (e) {
@@ -274,7 +278,13 @@ export default {
       this.loading = true;
       try {
         if (this.taskDetail._id) {
-          await this.$store.dispatch('task/updateTask', { token: this.token, value: this.taskDetail });
+          if (!this.isValid) {
+            this.$toast.error('Bạn vui lòng đặt tên nhiệm vụ');
+          } else {
+            await this.$store.dispatch('task/updateTask', { token: this.token, value: this.taskDetail });
+          }
+        } else if (!this.isValid) {
+          this.$toast.error('Bạn vui lòng đặt tên nhiệm vụ');
         } else {
           await this.$store.dispatch('task/insertTask', { token: this.token, value: this.taskDetail, topicId: this.topicId });
         }
