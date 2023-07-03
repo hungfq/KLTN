@@ -67,7 +67,7 @@ export default {
           name: 'email',
           label: 'Email:',
           type: 'email',
-          rules: 'required',
+          rules: 'email',
           isDisabled: true,
         },
         {
