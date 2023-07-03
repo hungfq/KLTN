@@ -376,8 +376,8 @@ import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
-import SelectStudent from '../../Modal/SelectStudent.vue';
 import 'dayjs/locale/vi';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 import LitepieDatepicker from 'litepie-datepicker';
 
 // dayjs().locale('vi');

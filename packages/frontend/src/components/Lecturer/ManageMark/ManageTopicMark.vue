@@ -122,7 +122,9 @@ import { useToast } from 'vue-toast-notification';
 import SearchInput from 'vue-search-input';
 import 'vue-search-input/dist/styles.css';
 import Multiselect from '@vueform/multiselect';
+import moment from 'moment';
 import LoadingProcess from '../../common/Loading.vue';
+import 'moment/dist/locale/vi';
 
 // import ScheduleApi from '../../../utils/api/schedule';
 import TopicApi from '../../../utils/api/topic';
@@ -147,6 +149,8 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh viên', value: 'students' },
+      { text: 'Địa chỉ', value: 'address' },
+      { text: 'Thời gian', value: 'defense_date' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -208,9 +212,25 @@ export default {
       else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     };
 
+    const formatDate = (rawDate) => {
+      try {
+        if (!rawDate || rawDate === '') return null;
+        const date = new Date(rawDate);
+        const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          .toISOString();
+        const localDate = moment(dateString).local();
+        return localDate.format('LTS L');
+      } catch (e) {
+        return '';
+      }
+    };
+
     onMounted(async () => {
       // const listAllSchedule = await ScheduleApi.listAllSchedule(token);
       schedules.value = scheduleMark;
+      if (schedules.value.length > 0) {
+        selectSchedule.value = schedules.value[0]._id;
+      }
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
@@ -225,7 +245,7 @@ export default {
         store.dispatch('url/updateSection', `${modulePage.value}-update`);
         store.dispatch('url/updateId', id);
       } catch (e) {
-        errorHandler (e);
+        errorHandler(e);
         $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
@@ -261,6 +281,8 @@ export default {
         critical: topic.criticalLecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
+        address: topic.committee.address,
+        defense_date: formatDate(topic.committee.defense_date),
       }));
     });
 
@@ -287,7 +309,7 @@ export default {
       try {
         await loadToServer(serverOptions.value);
       } catch (e) {
-        errorHandler (e);
+        errorHandler(e);
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');
       }
     };
