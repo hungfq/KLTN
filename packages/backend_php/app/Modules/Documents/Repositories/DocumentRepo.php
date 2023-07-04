@@ -120,7 +120,6 @@ class DocumentRepo
         if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
             // Get all files and directories from the specified S3 directory
 //            $directory .= '%0A';
-            $directory = 'hungpq-click' . DIRECTORY_SEPARATOR . $directory;
             $files = Storage::files($directory);
             $directories = Storage::directories($directory);
             // Add files to the zip archive
