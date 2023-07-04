@@ -24,4 +24,8 @@ $api->group([
     $api->delete('/', [
         'uses' => 'DocumentController@delete',
     ]);
+
+    $api->get('/zip', [
+        'uses' => 'DocumentController@downloadZip',
+    ]);
 });

@@ -91,4 +91,15 @@ class DocumentController extends ApiController
 
     }
 
+    public function downloadZip(DocumentRepo $documentRepo)
+    {
+        try {
+            $params = $this->request->all();
+
+            return $documentRepo->downloadFromOwner($params);
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
+    }
+
 }
