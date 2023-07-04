@@ -157,9 +157,11 @@ export default {
     },
 
     async downloadAllFile (close) {
-      const response = await DocumentApi.getAllFile(this.token, this.topicId);
-      saveAs(response.data, this.topic.code || 'Unknown');
+      this.loading = true;
+      const response = await DocumentApi.getAllFile(this.token, this.topic.code);
+      saveAs(response.data, `${this.topic.code}.zip` || 'Unknown.zip');
       close();
+      this.loading = false;
     },
   },
 };
