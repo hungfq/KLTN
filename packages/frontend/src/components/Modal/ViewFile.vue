@@ -67,11 +67,18 @@
           </div>
         </div>
         <!-- Modal footer -->
-        <div class="flex items-center pl-6 p-2 space-x-2 rounded-b border-t border-gray-200  ">
+        <div class="flex items-center pl-6 p-2 space-x-2 rounded-b border-t border-gray-200 justify-between">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="downloadAllFile(close)"
+          >
+            Tải tất cả các các tệp
+          </button>
           <button
             data-modal-toggle="defaultModal"
             type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            class="btn btn-primary"
             @click="close"
           >
             OK
@@ -147,6 +154,12 @@ export default {
     async downloadFile (item) {
       const response = await DocumentApi.getFile(this.token, item.id);
       saveAs(response.data, item.file_name);
+    },
+
+    async downloadAllFile (close) {
+      const response = await DocumentApi.getAllFile(this.token, this.topicId);
+      saveAs(response.data, this.topic.code || 'Unknown');
+      close();
     },
   },
 };

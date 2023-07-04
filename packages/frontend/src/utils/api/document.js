@@ -59,4 +59,16 @@ export default class DocumentApi {
     });
     return res;
   }
+
+  static async getAllFile (token, ownerId) {
+    const url = `/documents/zip?owner=${ownerId}`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      responseType: 'blob',
+      baseURL: apiDest,
+    });
+    return res;
+  }
 }
