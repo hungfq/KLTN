@@ -6,6 +6,7 @@ use App\Entities\Document;
 use App\Modules\Documents\Validators\CreateDocumentValidator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class DocumentRepo
 {
@@ -103,5 +104,53 @@ class DocumentRepo
         }
 
         return Document::whereIn('id', $params)->delete();
+    }
+
+    public function downloadFromOwner($params)
+    {
+        $zipFileName = $params['owner'] . '.zip';
+        $directory = $this->getPathFile($params);
+        $zip = new ZipArchive();
+
+//        $path = env('DOC_PREFIX_ENV', 'local') . DIRECTORY_SEPARATOR . self::SOURCE_UPLOAD . DIRECTORY_SEPARATOR . $zipFileName;
+        $zipFilePath = public_path($zipFileName);
+//        $zipFilePath = env('DOC_PREFIX_ENV', 'local') . DIRECTORY_SEPARATOR . self::SOURCE_UPLOAD . DIRECTORY_SEPARATOR . $zipFileName;
+
+        // Open the zip file for writing
+        if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            // Get all files and directories from the specified S3 directory
+//            $directory .= '%0A';
+            $directory = 'hungpq-click' . DIRECTORY_SEPARATOR . $directory;
+            $files = Storage::files($directory);
+            $directories = Storage::directories($directory);
+            // Add files to the zip archive
+            foreach ($files as $file) {
+                $relativePath = basename($file);
+                $fileContents = Storage::get($file);
+                $zip->addFromString($relativePath, $fileContents);
+            }
+
+            // Add directories to the zip archive
+            foreach ($directories as $dir) {
+                $relativePath = str_replace($directory . '/', '', $dir);
+                $zip->addEmptyDir($relativePath);
+            }
+
+            // Close the zip file
+            $zip->close();
+
+            // Set the appropriate headers for downloading the zip file
+            $headers = [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $zipFileName . '"',
+            ];
+
+            // Generate the download response
+            return response()->download($zipFilePath, $zipFileName, $headers);
+        } else {
+            // Failed to create the zip file
+            return response()->json(['error' => 'Failed to create the zip file.']);
+        }
+
     }
 }
