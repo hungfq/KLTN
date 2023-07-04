@@ -1,3 +1,4 @@
+<!-- eslint-disable no-undef -->
 <!-- eslint-disable max-len -->
 <template>
   <div
@@ -119,6 +120,22 @@
                 class="flex flex-col w-[350px]"
               >
                 <div class="font-semibold my-2">
+                  Thời gian chấm điểm đề tài
+                </div>
+                <litepie-datepicker
+                  v-model="markTime"
+                  placeholder="Khoảng thời gian chấm điểm đề tài"
+                  separator=" đến "
+                  :formatter="formatter"
+                  i18n="vi"
+                  :auto-apply="true"
+                  :options="options"
+                />
+              </div>
+              <!-- <div
+                class="flex flex-col w-[350px]"
+              >
+                <div class="font-semibold my-2">
                   Thời gian làm đề tài
                 </div>
                 <litepie-datepicker
@@ -130,9 +147,9 @@
                   :auto-apply="true"
                   :options="options"
                 />
-              </div>
+              </div> -->
             </div>
-            <div class="flex space-x-4">
+            <!-- <div class="flex space-x-4">
               <div
                 class="flex flex-col w-[350px]"
               >
@@ -149,7 +166,7 @@
                   :options="options"
                 />
               </div>
-            </div>
+            </div> -->
           </div>
           <div
             v-if="page===3 || isView"
@@ -159,7 +176,7 @@
               <div class="font-bold my-4">
                 Danh sách sinh viên đã chọn
               </div>
-              <div class="w-[600px] mb-4">
+              <div class="mb-4">
                 <EasyDataTable
                   show-index
                   :headers="headers"
@@ -180,8 +197,8 @@
           </div>
           <template v-if="page===4">
             <div class="flex flex-col">
-              <div class="flex mx-auto">
-                <div class="flex flex-col mx-8">
+              <div class="flex justify-between">
+                <div class="flex flex-col pt-8">
                   <FormKit
                     v-model="name"
                     type="text"
@@ -203,32 +220,32 @@
                     validation="required"
                     :disabled="isView"
                   />
-                </div>
-                <FormKit
-                  v-model="description"
-                  name="description"
-                  type="textarea"
-                  label="Mô tả"
-                  outer-class="!mx-8 w-[400px]"
-                  help="Ghi các thông tin chi tiết tại đây"
-                  :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
-                  validation="required"
-                  :disabled="isView"
-                />
-              </div>
-              <div class="flex flex-col mb-4 mx-auto">
-                <div class="font-bold my-4">
-                  Danh sách sinh viên đã chọn
-                </div>
-                <div class="w-[600px] mb-4">
-                  <EasyDataTable
-                    show-index
-                    :headers="headers"
-                    :items="listStudentsSelected"
-                    :loading="loading"
-                    :rows-per-page="5"
-                    buttons-pagination
+                  <FormKit
+                    v-model="description"
+                    name="description"
+                    type="textarea"
+                    label="Mô tả"
+                    outer-class="w-[350px]"
+                    help="Ghi các thông tin chi tiết tại đây"
+                    :validation-messages="{ required: 'Vui lòng điền thông tin vào ô này' }"
+                    validation="required"
+                    :disabled="isView"
                   />
+                </div>
+                <div class="flex flex-col mb-4">
+                  <div class="font-bold my-4">
+                    Danh sách sinh viên đã chọn
+                  </div>
+                  <div class="mb-4">
+                    <EasyDataTable
+                      show-index
+                      :headers="headers"
+                      :items="listStudentsSelected"
+                      :loading="loading"
+                      :rows-per-page="5"
+                      buttons-pagination
+                    />
+                  </div>
                 </div>
               </div>
               <div class="w-[1200px]">
@@ -262,21 +279,14 @@
                     />
                     <div>Thời gian phê duyệt</div>
                   </div>
+                </div>
+                <div class="ml-5">
                   <div class="flex item-center">
                     <div
                       class="w-4 h-4 mt-1 mr-2"
                       style="background-color: #339933;"
                     />
                     <div>Thời gian đăng ký</div>
-                  </div>
-                </div>
-                <div class="ml-5">
-                  <div class="flex item-center">
-                    <div
-                      class="w-4 h-4 mt-1 mr-2"
-                      style="background-color: #8724b9;"
-                    />
-                    <div>Thời gian làm khóa luận</div>
                   </div>
                   <div class="flex item-center">
                     <div
@@ -366,8 +376,8 @@ import InfoStudentVue from '../../Modal/InfoStudent.vue';
 import ScheduleApi from '../../../utils/api/schedule';
 import Loading from '../../common/Loading.vue';
 import 'moment/dist/locale/vi';
-import SelectStudent from '../../Modal/SelectStudent.vue';
 import 'dayjs/locale/vi';
+import SelectStudent from '../../Modal/SelectStudent.vue';
 import LitepieDatepicker from 'litepie-datepicker';
 
 // dayjs().locale('vi');
@@ -384,9 +394,13 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Mã số', value: 'code', sortable: true },
-        { text: 'Tên ', value: 'name', sortable: true },
-        { text: 'Email', value: 'email' },
+        {
+          text: 'Mã số', value: 'code', sortable: true, width: 200,
+        },
+        {
+          text: 'Tên ', value: 'name', sortable: true, width: 300,
+        },
+        { text: 'Email', value: 'email', width: 300 },
       ],
       showInfo: false,
       name: '',
@@ -565,22 +579,6 @@ export default {
           },
         },
       };
-      const barWork = {
-        myBeginDate: this.formatToMinute(this.startDate),
-        myEndDate: this.formatToMinute(this.deadline),
-        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
-          id: 'work-time', // ... and a unique "id" property
-          label: 'Làm luận văn',
-          style: { // arbitrary CSS styling for your bar
-            background: '#8724b9',
-            borderRadius: '5px',
-            color: 'black',
-            height: '100px',
-            'overflow-wrap': 'normal',
-            'word-break': 'normal',
-          },
-        },
-      };
       const barMark = {
         myBeginDate: this.formatToMinute(this.mark_start),
         myEndDate: this.formatToMinute(this.mark_end),
@@ -597,7 +595,7 @@ export default {
           },
         },
       };
-      return [barProposal, barRegister, barApprove, barWork, barMark];
+      return [barProposal, barRegister, barApprove, barMark];
     },
     date () {
       return new Date(this.startDate);
@@ -616,8 +614,8 @@ export default {
           this.name = schedule.name;
           this.description = schedule.description;
           this.code = schedule.code;
-          this.startDate = this.formatDate(schedule.startDate);
-          this.deadline = this.formatDate(schedule.deadline);
+          // this.startDate = this.formatDate(schedule.startDate);
+          // this.deadline = this.formatDate(schedule.deadline);
           this.startProposalDate = this.formatDate(schedule.startProposalDate);
           this.endProposalDate = this.formatDate(schedule.endProposalDate);
           this.startApproveDate = this.formatDate(schedule.startApproveDate);
@@ -664,37 +662,43 @@ export default {
     },
     async handleAddScheduleAdmin () {
       const {
-        name, description, startDate, deadline, startProposalDate,
+        name, description, startProposalDate,
         endProposalDate, startRegisterDate, endRegisterDate, startApproveDate,
+        // eslint-disable-next-line camelcase
         endApproveDate, students, code, mark_start, mark_end,
       } = this;
       const value = {
         name,
         description,
-        startDate: this.convertToUTC(startDate).format(),
-        deadline: this.convertToUTC(deadline).format(),
+        // startDate: this.convertToUTC(startDate).format(),
+        // deadline: this.convertToUTC(deadline).format(),
         startProposalDate: this.convertToUTC(startProposalDate).format(),
         endProposalDate: this.convertToUTC(endProposalDate).format(),
         startRegisterDate: this.convertToUTC(startRegisterDate).format(),
         endRegisterDate: this.convertToUTC(endRegisterDate).format(),
         startApproveDate: this.convertToUTC(startApproveDate).format(),
         endApproveDate: this.convertToUTC(endApproveDate).format(),
+        // eslint-disable-next-line no-undef
         mark_start: this.convertToUTC(mark_start).format(),
+        // eslint-disable-next-line no-undef
         mark_end: this.convertToUTC(mark_end).format(),
         students,
         code,
       };
       try {
         if (this.isSave) {
+          this.loading = true;
           if (this.checkDate()) {
             // await this.$store.dispatch('schedule/addSchedule', { token: this.token, value });
             await ScheduleApi.addSchedule(this.token, value);
+            this.loading = false;
             this.$toast.success('Đã thêm thành công!');
             this.rollBack();
           }
         } else if (this.isUpdate) {
           if (this.checkDate()) {
             await ScheduleApi.updateSchedule(this.token, { ...value, _id: this.id });
+            this.loading = false;
             // await this.$store.dispatch('schedule/updateSchedule', { token: this.token, value: { ...value, _id: this.id } });
             this.$toast.success('Đã cập nhật thành công!');
             this.rollBack();
@@ -702,6 +706,7 @@ export default {
         }
       } catch (e) {
         console.log('🚀 ~ file: FormScheduleV2.vue:745 ~ handleAddScheduleAdmin ~ e:', e);
+        this.loading = false;
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
       }
@@ -757,16 +762,8 @@ export default {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
-      if (this.compareDate(this.endRegisterDate, this.startDate)) {
-        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu làm đề tài');
-        return false;
-      }
-      if (this.compareDate(this.startDate, this.deadline)) {
-        this.$toast.error('Ngày bắt đầu làm đề tài phải nhỏ hơn ngày kết thúc làm đề tài ');
-        return false;
-      }
-      if (this.compareDate(this.deadline, this.mark_start)) {
-        this.$toast.error('Ngày kết thúc làm đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
+      if (this.compareDate(this.endRegisterDate, this.mark_start)) {
+        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
         return false;
       }
       if (this.compareDate(this.mark_start, this.mark_end)) {

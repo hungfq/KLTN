@@ -95,7 +95,7 @@
                 <IconTooltip
                   title="Xóa đề tài"
                   :icon="'fa-solid fa-trash-can'"
-                  @click-icon="handleRemoveSchedule(item._id)"
+                  @click-icon="handleRemoveTopic(item._id)"
                 />
               </div>
             </div>
@@ -106,7 +106,7 @@
   </div>
   <ConfirmModal
     v-model="showConfirmModal"
-    @confirm="confirmRemove"
+    @confirm="confirmRemove(removeId)"
     @cancel="showConfirmModal=false"
   >
     <template #title>
@@ -164,6 +164,7 @@ export default {
     const listStudentSelected = ref([]);
     const topicStudentId = ref(0);
     const topicStudentLimit = ref(0);
+    const removeId = ref(0);
     // Init value
     const topics = ref([]);
     const schedules = ref([]);
@@ -284,6 +285,9 @@ export default {
     const confirmRemove = async (id) => {
       showConfirmModal.value = false;
       try {
+        await TopicApi.deleteTopicById(token, id);
+        showConfirmModal.value = false;
+        await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
       } catch (e) {
         errorHandler(e);
@@ -392,6 +396,7 @@ export default {
       selectStudents,
       listScheduleSelect,
       selectHandlerSchedule,
+      removeId,
     };
   },
   data () {

@@ -216,7 +216,7 @@ export default {
         const committeeId = store.getters['url/id'];
         const valueTopics = listTopicsSelected.value.map((item) => item._id);
         await CommitteeApi.updateTopicsCommittee(token, committeeId, valueTopics);
-        $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+        $toast.success('Đã cập nhật danh sách đề tài thành công!');
         rollBack();
       } catch (e) {
         errorHandler(e);

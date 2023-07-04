@@ -72,6 +72,7 @@
           </div>
         </div> -->
         <div
+          v-if="!isView && !isUpdate"
           class="w-[400px]"
         >
           <span class="font-bold text-sm">
@@ -219,6 +220,7 @@ export default {
         this.description = topic.description;
         this.limit = topic.limit;
         this.studentIds = topic.students;
+        // this.scheduleId = topic.scheduleId._id;
       }
     }
     this.loading = false;

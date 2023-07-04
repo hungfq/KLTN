@@ -146,12 +146,12 @@
               </div>
             </BodyAndShadow>
             <div class="flex justify-between my-4 mx-4">
-              <button
+              <!-- <button
                 class="btn btn-secondary"
                 @click="showGradeModal=true"
               >
                 Xem chi tiết điểm
-              </button>
+              </button> -->
               <button
                 class="btn btn-error"
                 :disabled="!checkCanCancelTopic"
