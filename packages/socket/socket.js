@@ -2,7 +2,7 @@ const server = require('http').Server();
 const { Server } = require('socket.io');
 const { getRedis } = require('./redis');
 
-const PORT = 8002;
+const PORT = 2082;
 server.listen(PORT);
 
 const socket = new Server(server, {
@@ -11,6 +11,7 @@ const socket = new Server(server, {
       'http://localhost:8080',
       'http://127.0.0.1:8080',
       'http://hungpq.click',
+      'https://hungpq.click',
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
   },
