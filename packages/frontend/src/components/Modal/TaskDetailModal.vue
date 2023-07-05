@@ -63,6 +63,7 @@
                   v-model="editorData"
                   :editor="editor"
                   @input="changeDescription"
+                  @ready="ckEditorReady"
                 />
                 <template v-if="tab === 1">
                   <div
@@ -246,6 +247,10 @@ export default {
     },
   },
   methods: {
+    ckEditorReady (editor) {
+      editor.ui.view.editable.element.style.minHeight = '300px';
+    },
+
     errorHandler (e) {
       if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
@@ -325,3 +330,20 @@ export default {
   },
 };
 </script>
+<style>
+ .ck .ck-reset .ck-editor .ck-rounded-corners {
+    min-height: 300px !important;
+ }
+ .ck-editor__editable {
+    min-height: 300px !important;
+ }
+
+.ck-editor__editable_inline {
+   min-height: 300px !important;
+}
+
+:host ::ng-deep .ck-editor__editable_inline {
+   min-height: 300px !important;
+}
+
+</style>

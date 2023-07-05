@@ -82,6 +82,19 @@
                 </ul>
               </div>
             </template>
+            <template #item-students="item">
+              <div class-="flex flex-col">
+                <ul>
+                  <li
+                    v-for="student in item.list_students"
+                    :key="`${student}`"
+                    class="list-decimal"
+                  >
+                    {{ student.code }} : {{ student.name }}
+                  </li>
+                </ul>
+              </div>
+            </template>
             <template #item-operation="item">
               <div
                 class="flex flex-col"
@@ -283,6 +296,7 @@ export default {
         scheduleId: topic.scheduleId?._id || null,
         address: topic.committee.address,
         defense_date: formatDate(topic.committee.defense_date),
+        list_students: topic.list_students,
       }));
     });
 
