@@ -286,9 +286,9 @@ export default {
       try {
         await TopicApi.removeRegisterTopicStudent(this.token, this.currentTopic._id);
         this.$toast.success('Đã xóa thành công, vui lòng xem kết quả!');
+        await this.fetch();
       } catch (e) {
         this.errorHandler(e);
-        // if (e.response.data.error.message === 'Schedule is not in register time!') { this.$toast.error('Không trong thời gian đăng ký nên bạn không thể hủy!'); } else { this.$toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên '); }
       }
     },
     errorHandler (e) {

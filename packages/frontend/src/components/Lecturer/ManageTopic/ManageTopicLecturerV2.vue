@@ -71,6 +71,19 @@
               </div>
             </div>
           </template>
+          <template #item-list_students="item">
+            <div class-="flex flex-col">
+              <ul>
+                <li
+                  v-for="student in item.list_students"
+                  :key="`${student._id}`"
+                  class="list-decimal"
+                >
+                  {{ student.code }} : {{ student.name }}
+                </li>
+              </ul>
+            </div>
+          </template>
           <template #item-operation="item">
             <div
               class="flex"
@@ -175,6 +188,7 @@ export default {
       },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Sinh viên', value: 'list_students' },
       { text: 'Số lượng', value: 'limit' },
       { text: 'Hành động', value: 'operation' },
     ];
@@ -287,8 +301,8 @@ export default {
       try {
         await TopicApi.deleteTopicById(token, id);
         showConfirmModal.value = false;
-        await loadToServer(serverOptions.value);
         $toast.success('Đã xóa thành công!');
+        await loadToServer(serverOptions.value);
       } catch (e) {
         errorHandler(e);
         // $toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
@@ -309,6 +323,7 @@ export default {
         showSelectStudent.value = false;
         await TopicApi.importStudentToTopic(token, topicStudentId.value, { students });
         $toast.success('Đã cập nhật  danh sách sinh viên thành công!');
+        await loadToServer(serverOptions.value);
       } catch (e) {
         errorHandler(e);
         // $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên!');

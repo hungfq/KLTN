@@ -603,6 +603,16 @@ export default {
   },
   async mounted () {
     this.loading = true;
+    this.startDate = this.defaultTimer();
+    this.deadline = this.defaultTimer();
+    this.startProposalDate = this.defaultTimer();
+    this.endProposalDate = this.defaultTimer();
+    this.startApproveDate = this.defaultTimer();
+    this.endApproveDate = this.defaultTimer();
+    this.startRegisterDate = this.defaultTimer();
+    this.endRegisterDate = this.defaultTimer();
+    this.mark_end = this.defaultTimer();
+    this.mark_start = this.defaultTimer();
     if (this.isUpdate || this.isView) {
       const { id } = this.$store.state.url;
       // const { listSchedules } = this.$store.state.schedule;
@@ -634,7 +644,11 @@ export default {
     this.loading = false;
   },
   methods: {
-
+    defaultTimer () {
+      const start = new Date();
+      start.setHours(9, 0, 0, 0);
+      return moment(start).format('L LTS');
+    },
     nextPage (pageNumber) {
       if (pageNumber === 2) {
         if (!this.name) {
@@ -784,7 +798,7 @@ export default {
       const date1 = moment(startDate, 'L LTS').valueOf();
       const date2 = moment(endDate, 'L LTS').valueOf();
 
-      if (date1 > date2) {
+      if (date1 >= date2) {
         return true;
       }
       return false;

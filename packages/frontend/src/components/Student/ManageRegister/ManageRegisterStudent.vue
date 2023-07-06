@@ -77,6 +77,19 @@
                 </div>
               </div>
             </template>
+            <template #item-list_students="item">
+              <div class-="flex flex-col">
+                <ul>
+                  <li
+                    v-for="student in item.list_students"
+                    :key="`${student}`"
+                    class="list-decimal"
+                  >
+                    {{ student.code }} : {{ student.name }}
+                  </li>
+                </ul>
+              </div>
+            </template>
             <template #item-operation="item">
               <div
                 class="m-1 tooltip tooltip-bottom cursor-pointer rounded-xl"
@@ -175,6 +188,7 @@ export default {
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
       { text: 'Giảng viên phản biện', value: 'critical' },
+      { text: 'Sinh viên', value: 'list_students' },
       { text: 'Số lượng đăng ký', value: 'limit' },
       { text: 'Hành động', value: 'operation' },
     ];
@@ -260,13 +274,9 @@ export default {
       try {
         await TopicApi.addRegisterTopicNew(token, registerId.value);
         $toast.success('Đã đăng ký thành công, vui lòng xem kết quả!');
+        await loadToServer(serverOptions.value);
       } catch (e) {
         errorHandler(e);
-        // if (e.response.data.error.message === 'You are already register!') {
-        //   $toast.error('Không thể đăng ký. Bạn đã tồn tại đăng ký trong đợt này!');
-        // } else {
-        //   $toast.error('Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên ');
-        // }
       }
     };
 
