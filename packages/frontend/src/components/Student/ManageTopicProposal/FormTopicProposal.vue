@@ -56,6 +56,7 @@
                     v-model="lecturerId"
                     :can-clear="false"
                     :options="listLecturers"
+                    :searchable="true"
                     :disabled="isView"
                   />
                 </div>
