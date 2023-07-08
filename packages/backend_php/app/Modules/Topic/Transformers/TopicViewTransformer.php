@@ -12,6 +12,17 @@ class TopicViewTransformer extends TransformerAbstract
         foreach (data_get($model, 'students', []) as $student) {
             $students[] = data_get($student, 'code');
         }
+        $averageGrade = null;
+        if (isset($model->lecturer_grade)
+            && isset($model->critical_grade)
+            && isset($model->committee_president_grade)
+            && isset($model->committee_secretary_grade)) {
+            $averageGrade = ((int)$model->lecturer_grade
+                    + (int)$model->critical_grade
+                    + (int)$model->committee_president_grade
+                    + (int)$model->committee_secretary_grade) / 4;;
+        }
+
         return [
             '_id' => $model->id,
             'code' => $model->code,
@@ -42,6 +53,7 @@ class TopicViewTransformer extends TransformerAbstract
             'criticalLecturerGrade' => $model->critical_grade,
             'committeePresidentGrade' => $model->committee_president_grade,
             'committeeSecretaryGrade' => $model->committee_secretary_grade,
+            'average_grade' => $averageGrade,
             'thesisDefenseDate' => $model->thesis_defense_date,
             'students' => $students,
             'list_students' => data_get($model, 'students'),

@@ -8,6 +8,20 @@
       Quay về
     </div>
     <template v-if="!loading">
+      <div
+        v-if="typeLecturer==='SE'"
+        class="mt-2 bg-slate-100 py-2"
+      >
+        <div class="tabs ml-4">
+          <a
+            v-for="option in headerTabs"
+            :key="option.code"
+            class="tab tag-lg tab-lifted min-w-[100px] text-blue-900 font-semibold"
+            :class="{'tab-active' : option.code === type}"
+            @click="type= option.code"
+          >{{ option.text }}</a>
+        </div>
+      </div>
       <div class="flex justify-between list-decimal my-4">
         <label
           class="labe font-semibold text-xl"
@@ -95,6 +109,21 @@ export default {
       formValues: [],
       prevFormValues: {},
       loading: false,
+      type: 'SE',
+      headerTabs: [
+        { code: 'LT', text: 'Hướng dẫn' },
+        { code: 'CR', text: 'Phản biện' },
+        { code: 'SE', text: 'Thư ký' },
+        { code: 'PD', text: 'Chủ tịch' },
+      ],
+
+      mapValue: {
+        advisor: 'LT',
+        critical: 'CR',
+        secretary: 'SE',
+        president: 'PD',
+      },
+      typeLecturer: 'LT',
     };
   },
   computed: {
@@ -120,64 +149,55 @@ export default {
       return _.isEqual(this.formValues, this.prevFormValues);
     },
   },
+  watch: {
+    async type (newQuestion, oldQuestion) {
+      this.loading = true;
+      try {
+        await this.fetchTopicScore();
+      } catch (e) {
+        this.$toast.error('Vui lòng thử thử lại!');
+      }
+      this.loading = false;
+    },
+  },
 
   async mounted () {
-    this.loading = true;
-    try {
-      const { id } = this.$store.state.url;
-      this.topicId = id;
-      const { type } = this.$store.state.url;
-      const topic = await TopicApi.listTopicById(this.token, id);
-      const scoreList = await TopicApi.getGradeForTopicByLecturer(this.token, id, type);
-      this.scheduleId = topic.scheduleId._id;
-      this.students = topic.students;
-      this.list_students = topic.list_students;
-      const listCriteria = await CriteriaApi.listBySchedule(this.token, this.scheduleId);
-      this.criteria = listCriteria;
-      const object = {};
-      if (scoreList.data) {
-        const transformed = scoreList.data.reduce((acc, curr) => {
-          const {
-          // eslint-disable-next-line camelcase
-            criteria_id, title, student_id, score,
-          } = curr;
-          // eslint-disable-next-line camelcase
-          const key = `${criteria_id}`;
-          if (!acc[key]) {
-            acc[key] = {
-            // eslint-disable-next-line camelcase
-              id: criteria_id,
-              title,
-              values: {},
-            };
-          }
-          // eslint-disable-next-line camelcase
-          acc[key].values[student_id] = score || 0;
-          return acc;
-        }, {});
-        const result = Object.values(transformed).map(({ id, title, values }) => ({
-          id,
-          title,
-          values,
-        }));
-        this.formValues = result;
-      } else {
-        this.list_students.forEach((student) => {
-          object[student.id] = 0;
-        });
-        this.formValues = this.criteria.map((criterion) => ({
-          id: criterion.criteria_id,
-          title: criterion.title,
-          values: cloneDeep(object),
-        }));
-      }
-      this.prevFormValues = cloneDeep(this.formValues);
-    } catch (e) {
-      this.$toast.error('Vui lòng thử thử lại!');
-    }
-    this.loading = false;
+    const { id } = this.$store.state.url;
+    this.topicId = id;
+    const { type } = this.$store.state.url;
+    this.type = type;
+    this.typeLecturer = type;
+    await this.fetchData();
   },
   methods: {
+    async fetchData () {
+      this.loading = true;
+      try {
+        const topic = await TopicApi.listTopicById(this.token, this.topicId);
+        this.scheduleId = topic.scheduleId._id;
+        this.students = topic.students;
+        this.list_students = topic.list_students;
+        await this.fetchCriteria();
+        await this.fetchTopicScore();
+      } catch (e) {
+        this.$toast.error('Vui lòng thử thử lại!');
+      }
+      this.loading = false;
+    },
+    async fetchCriteria () {
+      const listCriteria = await CriteriaApi.listBySchedule(this.token, this.scheduleId);
+      this.criteria = listCriteria;
+    },
+    async fetchTopicScore () {
+      const scoreList = await TopicApi.getGradeForTopicByLecturer(this.token, this.topicId, this.type);
+      if (scoreList.data) {
+        this.normalizeData(scoreList);
+      } else {
+        this.defaultValuesForFormValue();
+      }
+      this.prevFormValues = cloneDeep(this.formValues);
+    },
+
     errorHandler (e) {
       if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
@@ -187,7 +207,8 @@ export default {
     },
     async  submitGrades () {
       const details = this.transformGrade();
-      const { type } = this.$store.state.url;
+      // const { type } = this.$store.state.url;
+      const { type } = this;
       const data = {
         type, details,
       };
@@ -213,6 +234,54 @@ export default {
         });
       });
       return arrValues;
+    },
+
+    // structure of object formValue
+    // {
+    //   id,
+    //   title,
+    //   values: {
+    //     student_id1: score_rate1,
+    //     student_id2: score_rate2,
+    //   };
+    // }
+    normalizeData (scoreList) {
+      const transformed = scoreList.data.reduce((acc, curr) => {
+        const {
+          // eslint-disable-next-line camelcase
+          criteria_id, title, student_id, score,
+        } = curr;
+          // eslint-disable-next-line camelcase
+        const key = `${criteria_id}`;
+        if (!acc[key]) {
+          acc[key] = {
+            // eslint-disable-next-line camelcase
+            id: criteria_id,
+            title,
+            values: {},
+          };
+        }
+        // eslint-disable-next-line camelcase
+        acc[key].values[student_id] = score || 0;
+        return acc;
+      }, {});
+      const result = Object.values(transformed).map(({ id, title, values }) => ({
+        id,
+        title,
+        values,
+      }));
+      this.formValues = result;
+    },
+    defaultValuesForFormValue () {
+      const object = {};
+      this.list_students.forEach((student) => {
+        object[student.id] = 0;
+      });
+      this.formValues = this.criteria.map((criterion) => ({
+        id: criterion.criteria_id,
+        title: criterion.title,
+        values: cloneDeep(object),
+      }));
     },
   },
 };

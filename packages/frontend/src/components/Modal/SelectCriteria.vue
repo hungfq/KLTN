@@ -307,6 +307,18 @@ export default {
       loading.value = false;
     };
 
+    const autoFillScoreRate = () => {
+      const { length } = itemsSelectedScore.value;
+      if (length !== 0) {
+        const value = Math.trunc(100 / length);
+        const filledValue = itemsSelectedScore.value.map((item) => ({
+          ...item,
+          score_rate: value,
+        }));
+        itemsSelectedScore.value = filledValue;
+      }
+    };
+
     const continuePage = () => {
       const mergedArray = itemsSelected.value.map((item) => {
         const prevItem = itemsPrevSelected.value.find((prev) => prev.id === item.id);
@@ -314,6 +326,9 @@ export default {
       });
 
       itemsSelectedScore.value = cloneDeep(mergedArray);
+      const equalPrevSelected = JSON.stringify(itemsSelectedScore.value) === JSON.stringify(itemsPrevSelected.value);
+      if (!equalPrevSelected) autoFillScoreRate();
+
       currentPage.value = 1;
     };
     const checkTotalEqual100Percent = computed(() => {
