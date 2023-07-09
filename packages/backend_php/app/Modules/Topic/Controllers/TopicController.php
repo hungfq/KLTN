@@ -19,6 +19,7 @@ use App\Modules\Topic\Actions\TopicStudentShowGradeAction;
 use App\Modules\Topic\Actions\TopicStudentShowResultAction;
 use App\Modules\Topic\Actions\TopicStudentUnRegisterAction;
 use App\Modules\Topic\Actions\TopicUpdateAction;
+use App\Modules\Topic\Actions\TopicUpdateMultiAction;
 use App\Modules\Topic\Actions\TopicUpdateStudentAction;
 use App\Modules\Topic\Actions\TopicViewAction;
 use App\Modules\Topic\Actions\TopicViewGradeAction;
@@ -32,6 +33,7 @@ use App\Modules\Topic\Validators\TopicImportValidator;
 use App\Modules\Topic\Validators\TopicMarkValidator;
 use App\Modules\Topic\Validators\TopicSetGradeValidator;
 use App\Modules\Topic\Validators\TopicStoreValidator;
+use App\Modules\Topic\Validators\TopicUpdateMultiValidator;
 use App\Modules\Topic\Validators\TopicUpdateStudentValidator;
 use App\Modules\Topic\Validators\TopicUpdateValidator;
 use Illuminate\Support\Collection;
@@ -247,7 +249,6 @@ class TopicController extends ApiController
         });
 
         return $this->responseSuccess();
-
     }
 
     public function viewStudentGrade($id, TopicStudentShowGradeAction $action, TopicStudentShowGradeTransformer $transformer)
@@ -263,5 +264,18 @@ class TopicController extends ApiController
         }
 
         return $this->response->paginator($results, $transformer);
+    }
+
+    public function updateMulti(TopicUpdateMultiValidator $validator, TopicUpdateMultiAction $action)
+    {
+        $validator->validate($this->request->all());
+
+        DB::transaction(function () use ($action, $validator) {
+            $action->handle(
+                $validator->toDTO()
+            );
+        });
+
+        return $this->responseSuccess();
     }
 }
