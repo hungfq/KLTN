@@ -176,8 +176,9 @@ export default class ScheduleApi {
   }
 
   static async exportExcel (token, id) {
+    const timestamp = Date.now();
     const res = await axios.get(
-      `/schedule/${id}/export`,
+      `/schedule/${id}/export?t=${timestamp}`,
       {
         headers: {
           authorization: `bearer ${token}`,
@@ -201,8 +202,9 @@ export default class ScheduleApi {
   }
 
   static async exportGradeExcel (token, id) {
+    const timestamp = Date.now();
     const res = await axios.get(
-      `/schedule/${id}/grade/export?export_type=`,
+      `/schedule/${id}/grade/export?t=${timestamp}`,
       {
         headers: {
           authorization: `bearer ${token}`,
