@@ -86,7 +86,7 @@
                 class="flex flex-col w-[350px]"
               >
                 <div class="font-semibold my-2">
-                  Thời gian phê duyệt đề tài
+                  Thời gian phê duyệt đề tài hướng dẫn
                 </div>
                 <litepie-datepicker
                   v-model="approveTime"
@@ -120,11 +120,11 @@
                 class="flex flex-col w-[350px]"
               >
                 <div class="font-semibold my-2">
-                  Thời gian chấm điểm đề tài
+                  Thời gian phê duyệt đề tài ra hội đồng
                 </div>
                 <litepie-datepicker
-                  v-model="markTime"
-                  placeholder="Khoảng thời gian chấm điểm đề tài"
+                  v-model="workTime"
+                  placeholder="Khoảng thời gian đăng ký đề tài"
                   separator=" đến "
                   :formatter="formatter"
                   i18n="vi"
@@ -136,11 +136,11 @@
                 class="flex flex-col w-[350px]"
               >
                 <div class="font-semibold my-2">
-                  Thời gian làm đề tài
+                  Thời gian chấm điểm đề tài
                 </div>
                 <litepie-datepicker
-                  v-model="workTime"
-                  placeholder="Khoảng thời gian làm đề tài"
+                  v-model="markTime"
+                  placeholder="Khoảng thời gian chấm điểm đề tài"
                   separator=" đến "
                   :formatter="formatter"
                   i18n="vi"
@@ -149,7 +149,7 @@
                 />
               </div> -->
             </div>
-            <!-- <div class="flex space-x-4">
+            <div class="flex space-x-4">
               <div
                 class="flex flex-col w-[350px]"
               >
@@ -166,7 +166,7 @@
                   :options="options"
                 />
               </div>
-            </div> -->
+            </div>
           </div>
           <div
             v-if="page===3 || isView"
@@ -277,7 +277,7 @@
                       class="w-4 h-4 mt-1 mr-2"
                       style="background-color: #FF6666;"
                     />
-                    <div>Thời gian phê duyệt</div>
+                    <div>Thời gian phê duyệt hướng dẫn</div>
                   </div>
                 </div>
                 <div class="ml-5">
@@ -287,6 +287,13 @@
                       style="background-color: #339933;"
                     />
                     <div>Thời gian đăng ký</div>
+                  </div>
+                  <div class="flex item-center">
+                    <div
+                      class="w-4 h-4 mt-1 mr-2"
+                      style="background-color: #FF6666;"
+                    />
+                    <div>Thời gian phê duyệt ra hội đồng</div>
                   </div>
                   <div class="flex item-center">
                     <div
@@ -568,7 +575,7 @@ export default {
         myEndDate: this.formatToMinute(this.endApproveDate),
         ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
           id: 'approve-time', // ... and a unique "id" property
-          label: 'Chấp thuận',
+          label: 'Chấp thuận hướng dẫn',
           style: { // arbitrary CSS styling for your bar
             background: '#FF6666',
             borderRadius: '5px',
@@ -579,6 +586,24 @@ export default {
           },
         },
       };
+
+      const barWork = {
+        myBeginDate: this.formatToMinute(this.startDate),
+        myEndDate: this.formatToMinute(this.deadline),
+        ganttBarConfig: { // each bar must have a nested ganttBarConfig object ...
+          id: 'work-time', // ... and a unique "id" property
+          label: 'Phê duyệt ra hội đồng',
+          style: { // arbitrary CSS styling for your bar
+            background: '#8724b9',
+            borderRadius: '5px',
+            color: 'black',
+            height: '100px',
+            'overflow-wrap': 'normal',
+            'word-break': 'normal',
+          },
+        },
+      };
+
       const barMark = {
         myBeginDate: this.formatToMinute(this.mark_start),
         myEndDate: this.formatToMinute(this.mark_end),
@@ -595,7 +620,7 @@ export default {
           },
         },
       };
-      return [barProposal, barRegister, barApprove, barMark];
+      return [barProposal, barRegister, barApprove, barWork, barMark];
     },
     date () {
       return new Date(this.startDate);
@@ -624,8 +649,8 @@ export default {
           this.name = schedule.name;
           this.description = schedule.description;
           this.code = schedule.code;
-          // this.startDate = this.formatDate(schedule.startDate);
-          // this.deadline = this.formatDate(schedule.deadline);
+          this.startDate = this.formatDate(schedule.startDate);
+          this.deadline = this.formatDate(schedule.deadline);
           this.startProposalDate = this.formatDate(schedule.startProposalDate);
           this.endProposalDate = this.formatDate(schedule.endProposalDate);
           this.startApproveDate = this.formatDate(schedule.startApproveDate);
@@ -678,14 +703,15 @@ export default {
       const {
         name, description, startProposalDate,
         endProposalDate, startRegisterDate, endRegisterDate, startApproveDate,
+        startDate, deadline,
         // eslint-disable-next-line camelcase
         endApproveDate, students, code, mark_start, mark_end,
       } = this;
       const value = {
         name,
         description,
-        // startDate: this.convertToUTC(startDate).format(),
-        // deadline: this.convertToUTC(deadline).format(),
+        startDate: this.convertToUTC(startDate).format(),
+        deadline: this.convertToUTC(deadline).format(),
         startProposalDate: this.convertToUTC(startProposalDate).format(),
         endProposalDate: this.convertToUTC(endProposalDate).format(),
         startRegisterDate: this.convertToUTC(startRegisterDate).format(),
@@ -719,7 +745,6 @@ export default {
           }
         }
       } catch (e) {
-        console.log('🚀 ~ file: FormScheduleV2.vue:745 ~ handleAddScheduleAdmin ~ e:', e);
         this.loading = false;
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
@@ -776,8 +801,20 @@ export default {
         this.$toast.error('Ngày bắt đầu đăng kí đề tài phải nhỏ hơn ngày kết thúc đăng ký đề tài ');
         return false;
       }
-      if (this.compareDate(this.endRegisterDate, this.mark_start)) {
-        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
+      // if (this.compareDate(this.endRegisterDate, this.mark_start)) {
+      //   this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
+      //   return false;
+      // }
+      if (this.compareDate(this.endRegisterDate, this.startDate)) {
+        this.$toast.error('Ngày kết thúc đăng ký đề tài phải nhỏ hơn ngày bắt đầu phê duyệt đề tài ra hội đồng ');
+        return false;
+      }
+      if (this.compareDate(this.startDate, this.deadline)) {
+        this.$toast.error('Ngày bắt đầu phê duyệt đề tài ra hội đồng phải nhỏ hơn ngày kết thúc phê duyệt đề tài ra hội đồng ');
+        return false;
+      }
+      if (this.compareDate(this.deadline, this.mark_start)) {
+        this.$toast.error('Ngày kết thúc phê duyệt đề tài ra hội đồng nhỏ hơn ngày bắt đầu chấm điểm đề tài ');
         return false;
       }
       if (this.compareDate(this.mark_start, this.mark_end)) {
