@@ -14,11 +14,12 @@
         <td></td>
         <td></td>
         <td></td>
+        <td></td>
         <td colspan="4" style="text-align: right;"><i>{{ $locationTime }}</i></td>
     </tr>
     <tr></tr>
     <tr>
-        <td colspan="17" style="text-align: center; font-weight: bold;">DANH SÁCH ĐIỂM
+        <td colspan="18" style="text-align: center; font-weight: bold;">DANH SÁCH ĐIỂM
             {{ mb_strtoupper(data_get($schedule, 'name', '') . ' (' .data_get($schedule, 'code', '') . ')') }}
         </td>
     </tr>
@@ -43,6 +44,9 @@
         </td>
         <td rowspan="2" style="font-weight: bold; text-align: center; vertical-align: center; border: 1px solid black;">
             Tên đề tài
+        </td>
+        <td rowspan="2" style="font-weight: bold; text-align: center; vertical-align: center; border: 1px solid black;">
+            Điểm trung bình
         </td>
         <td colspan="3" style="font-weight: bold; text-align: center; vertical-align: center; border: 1px solid black;">
             Giảng viên hướng dẫn
@@ -76,6 +80,16 @@
         @php
             $count = $topic->students->count();
             $students = $topic->students;
+            $averageGrade = null;
+            if (isset($topic->lecturer_grade)
+                && isset($topic->critical_grade)
+                && isset($topic->committee_president_grade)
+                && isset($topic->committee_secretary_grade)) {
+                $averageGrade = ((int)$topic->lecturer_grade
+                        + (int)$topic->critical_grade
+                        + (int)$topic->committee_president_grade
+                        + (int)$topic->committee_secretary_grade) / 4;
+        }
         @endphp
 
         @foreach($students as $studentIndex => $student)
@@ -87,6 +101,8 @@
                     <td style="vertical-align: center; border: 1px solid black;">{{ data_get($student, 'name') }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'code') }}</td>
+                    <td style="vertical-align: center; border: 1px solid black;"
+                        rowspan="{{$count}}">{{ $averageGrade }}</td>
                     <td style="vertical-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'title') }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
