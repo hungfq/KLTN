@@ -4,15 +4,18 @@ namespace App\Modules\Task\Actions;
 
 use App\Entities\Task;
 use App\Entities\TaskComment;
+use App\Entities\User;
 use App\Exceptions\UserException;
 use App\Libraries\Socket;
 use App\Modules\Task\DTO\TaskCommentAddDTO;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class TaskCommentAddAction
 {
     public TaskCommentAddDTO $dto;
     public $task;
+    public $userAddNotify = [];
 
     /***
      * @param TaskCommentAddDTO $dto
@@ -23,7 +26,8 @@ class TaskCommentAddAction
         $this->dto = $dto;
 
         $this->checkData()
-            ->createComment();
+            ->createComment()
+            ->addNotification();
     }
 
     protected function checkData()
@@ -51,6 +55,34 @@ class TaskCommentAddAction
             $ids = $ids->toArray();
         }
         Socket::sendUpdateTaskInfoRequest($ids, $this->task->id);
+
+        $this->userAddNotify = $ids;
+
+        return $this;
+    }
+
+    protected function addNotification()
+    {
+        if (($key = array_search(Auth::id(), $this->userAddNotify)) !== false) {
+            unset($this->userAddNotify[$key]);
+        }
+
+        $title = data_get($this->task, 'title');
+        $users = User::query()
+            ->whereIn('id', $this->userAddNotify)
+            ->get();
+
+        if($users) {
+            $users->each(function ($user) use ($title) {
+                $data = [
+                    'title' => 'CÓ BÌNH LUẬN MỚI',
+                    'message' => "Nhiệm vụ: \"$title\" có bình luận mới",
+                ];
+                $user->notifications()->create($data);
+                Socket::sendUpdateNotificationRequest([data_get($user, 'id')], $data);
+            });
+        }
+
         return $this;
     }
 }
