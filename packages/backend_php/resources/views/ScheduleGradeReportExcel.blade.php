@@ -85,10 +85,10 @@
                 && isset($topic->critical_grade)
                 && isset($topic->committee_president_grade)
                 && isset($topic->committee_secretary_grade)) {
-                $averageGrade = ((int)$topic->lecturer_grade
+                $averageGrade = number_format(((int)$topic->lecturer_grade
                         + (int)$topic->critical_grade
                         + (int)$topic->committee_president_grade
-                        + (int)$topic->committee_secretary_grade) / 4;
+                        + (int)$topic->committee_secretary_grade) / 4, 2);
         }
         @endphp
 
