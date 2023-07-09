@@ -132,6 +132,13 @@ class TopicViewAction
             $query->whereIn('topics.schedule_id', $dto->schedule_ids);
         }
 
+        if ($dto->none_critical_or) {
+            $query->where(function ($q) use ($dto) {
+                $q->whereNull('topics.critical_id')
+                    ->orWhere('topics.critical_id', $dto->none_critical_or);
+            });
+        }
+
         Helpers::sortBuilder($query, $dto->toArray(), [
             'created_by_name' => 'uc.name',
             'updated_by_name' => 'uu.name',
