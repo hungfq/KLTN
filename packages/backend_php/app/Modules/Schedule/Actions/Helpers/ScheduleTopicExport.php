@@ -21,7 +21,7 @@ class ScheduleTopicExport implements FromView, WithColumnWidths, ShouldAutoSize
             'A' => 10,
             'B' => 10,
             'C' => 25,
-            'D' => 10,
+            'D' => 15,
             'E' => 50,
             'F' => 10,
             'G' => 25,
