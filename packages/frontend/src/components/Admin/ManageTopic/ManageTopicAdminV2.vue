@@ -30,6 +30,12 @@
     <div class="flex mt-4 mr-4">
       <div class="mr-2">
         <ButtonAddItem
+          :title="'Cập nhật GVPB cho đề tài'"
+          @handle-import="handleShowCriticalTopicImport"
+        />
+      </div>
+      <div class="mr-2">
+        <ButtonAddItem
           :title="'Thêm đề tài'"
           @handle-import="$store.dispatch('url/updateSection', 'topic-import')"
         />
@@ -143,6 +149,12 @@
     v-model="showDownloadModal"
     :topic-id="topicDownloadId"
   />
+  <AddCriticalTopicModal
+    v-model="showCriticalTopic"
+    :list-schedule-select-raw="listScheduleSelect"
+    :list-lecturer-select-raw="listLecturerSelect"
+    :selected-schedule="selectSchedule"
+  />
 </template>
 
 <script>
@@ -163,6 +175,7 @@ import SelectStudent from '../../Modal/SelectStudent.vue';
 import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
 import ButtonAddItem from '../../common/ButtonAddItem.vue';
 import ViewFile from '../../Modal/ViewFile.vue';
+import AddCriticalTopicModal from '../../Modal/AddCriticalTopic.vue';
 
 export default {
   name: 'ManageTopicAdmin',
@@ -175,6 +188,7 @@ export default {
     ButtonAddItem,
     SearchInput,
     ViewFile,
+    AddCriticalTopicModal,
   },
   setup () {
     const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
@@ -192,6 +206,7 @@ export default {
     const topicStudentId = ref(0);
     const topicStudentLimit = ref(3);
     const showDownloadModal = ref(false);
+    const showCriticalTopic = ref(false);
     const topicDownloadId = ref(false);
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
@@ -342,6 +357,10 @@ export default {
       topicDownloadId.value = id;
     };
 
+    const handleShowCriticalTopicImport = () => {
+      showCriticalTopic.value = true;
+    };
+
     return {
       headers,
       items,
@@ -374,6 +393,8 @@ export default {
       searchVal,
       topicStudentLimit,
       topicDownloadId,
+      showCriticalTopic,
+      handleShowCriticalTopicImport,
     };
   },
   computed: {
