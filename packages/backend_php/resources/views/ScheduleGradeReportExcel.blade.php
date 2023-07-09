@@ -102,9 +102,9 @@
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'code') }}</td>
                     <td style="vertical-align: center; border: 1px solid black;"
-                        rowspan="{{$count}}">{{ $averageGrade }}</td>
-                    <td style="vertical-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'title') }}</td>
+                    <td style="vertical-align: center; border: 1px solid black;"
+                        rowspan="{{$count}}">{{ $averageGrade }}</td>
                     <td style="vertical-align: center; text-align: center; border: 1px solid black;"
                         rowspan="{{$count}}">{{ data_get($topic, 'lecturer.code') }}</td>
                     <td style="vertical-align: center; border: 1px solid black;"
