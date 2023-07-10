@@ -20,6 +20,11 @@ $api->group([
         'uses' => 'TopicController@store',
     ]);
 
+    $api->put('/multi', [
+        'as' => '',
+        'uses' => 'TopicController@updateMulti',
+    ]);
+
     $api->group(['prefix' => '{id:[0-9]+}'], function ($api) {
 
         $api->get('/', [

@@ -60,7 +60,11 @@ class TopicViewAction
 
         if ($dto->is_lecturer_approve) {
             $query->where('lecturer_id', Auth::id())
-                ->whereNull('lecturer_approved');
+                ->whereNull('lecturer_approved')
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('start_date', '<=', $now)
+                        ->where('end_date', '>=', $now);
+                });
         }
 
         if ($dto->is_critical) {
@@ -69,7 +73,11 @@ class TopicViewAction
 
         if ($dto->is_critical_approve) {
             $query->where('topics.critical_id', Auth::id())
-                ->whereNull('critical_approved');
+                ->whereNull('critical_approved')
+                ->whereHas('schedule', function ($q) use ($now) {
+                    $q->where('start_date', '<=', $now)
+                        ->where('end_date', '>=', $now);
+                });
         }
 
         if ($dto->as_least_lecturer_approve) {
@@ -122,6 +130,13 @@ class TopicViewAction
 
         if ($dto->schedule_ids) {
             $query->whereIn('topics.schedule_id', $dto->schedule_ids);
+        }
+
+        if ($dto->none_critical_or) {
+            $query->where(function ($q) use ($dto) {
+                $q->whereNull('topics.critical_id')
+                    ->orWhere('topics.critical_id', $dto->none_critical_or);
+            })->where('topics.lecturer_id', '<>', $dto->none_critical_or);
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [

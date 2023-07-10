@@ -82,7 +82,7 @@
             size="2xl"
             class="cursor-pointer"
             :icon="['fas', 'file-export']"
-            @click="getLink(item._id)"
+            @click="getLink(item)"
           />
         </div>
       </div>
@@ -477,9 +477,10 @@ export default {
       await this.$store.dispatch('url/updateSection', 'schedule-update');
       await this.$store.dispatch('url/updateId', id);
     },
-    getLink (id) {
+    getLink (item) {
+      const timestamp = Date.now();
       axios
-        .get(`${this.BASE_API_URL}/api/v2/schedule/${id}/topic/export`, {
+        .get(`${this.BASE_API_URL}/api/v2/schedule/${item._id}/topic/export?t=${timestamp}`, {
           headers: {
             authorization: `bearer ${this.token}`,
           },
@@ -491,7 +492,13 @@ export default {
           });
           const a = document.createElement('a');
           a.href = url;
-          const filename = 'Baocao.xlsx';
+          let name = item.name ? item.name : '';
+          name = name.replaceAll(' ', '_');
+          const code = item.code ? item.code : '';
+          let filename = 'Baocao.xlsx';
+          if (code) {
+            filename = `${code}:${name}.xlsx`;
+          }
           a.setAttribute('download', filename);
           document.body.appendChild(a);
           a.click();

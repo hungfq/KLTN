@@ -21,14 +21,15 @@ class ScheduleGradeExport implements FromView, WithColumnWidths, ShouldAutoSize
             'A' => 10,
             'B' => 10,
             'C' => 25,
-            'D' => 10,
-            'E' => 50,
-            'F' => 10,
-            'G' => 25,
-            'H' => 10,
+            'D' => 15,
+            'E' => 60,
+            'F' => 20,
+            'G' => 10,
+            'H' => 25,
             'I' => 10,
-            'J' => 25,
-            'K' => 10,
+            'J' => 10,
+            'K' => 25,
+            'L' => 10,
         ];
     }
 
