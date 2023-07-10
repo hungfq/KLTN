@@ -105,7 +105,11 @@ export default class TopicApi {
     let url = urlWithPagination('/topic', options);
     if (criticalId) url += `&criticalId=${criticalId}`;
     if (scheduleId) url += `&scheduleId=${scheduleId}`;
-    const res = await axios.get(url, {
+    // replace all ? to &
+    const result = url.replaceAll('?', '&');
+    // change the first & to ?
+    const finalUrl = result.replace('&', '?');
+    const res = await axios.get(finalUrl, {
       headers: {
         authorization: `bearer ${token}`,
       },
@@ -427,6 +431,32 @@ export default class TopicApi {
 
   static async importStudentToTopic (token, id, students) {
     const res = await axios.put(`/topic/${id}/student`, students, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data.data;
+  }
+
+  static async listTopicToAddCritical (token, options, scheduleId, criticalId) {
+    let url = urlWithPagination(`/topic?none_critical_or=${criticalId}`, options);
+    if (scheduleId) url += `&scheduleId=${scheduleId}`;
+    const res = await axios.get(url, {
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+      baseURL: apiDest,
+    });
+    return res.data;
+  }
+
+  static async importCriticalToTopic (token, criticalId, scheduleId, topicIds ) {
+    const res = await axios.put('/topic/multi', {
+      critical_id: criticalId,
+      topic_ids: topicIds,
+      schedule_id: scheduleId,
+    }, {
       headers: {
         authorization: `bearer ${token}`,
       },

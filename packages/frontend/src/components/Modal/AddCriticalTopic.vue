@@ -34,9 +34,9 @@
         </div>
         <!-- Modal body -->
         <div class="flex flex-col">
-          <div class="px-6 py-2 h-96 flex flex-col justify-center items-center">
-            <div class="w-full m-2">
-              <div class="my-2 font-semibold">
+          <div class="px-2 py-2 flex items-center">
+            <div class="w-full px-2">
+              <div class="my-1 font-semibold">
                 Chọn đợt đăng ký
               </div>
               <Multiselect
@@ -51,8 +51,8 @@
                 @change="selectHandlerSchedule"
               />
             </div>
-            <div class="w-full m-2">
-              <div class="my-2 font-semibold">
+            <div class="w-full px-2">
+              <div class="my-1 font-semibold">
                 Chọn giáo viên phản biện cho đề tài
               </div>
               <Multiselect
@@ -68,7 +68,7 @@
               />
             </div>
           </div>
-          <div
+          <!-- <div
             class="my-4 w-[300px] mx-auto mt-2"
           >
             <ul class="steps">
@@ -82,28 +82,32 @@
                 {{ step.label }}
               </li>
             </ul>
+          </div> -->
+          <div class="mx-4">
+            <EasyDataTable
+              v-model:items-selected="listTopicsSelected"
+              v-model:server-options="serverOptions"
+              :server-items-length="serverItemsLength"
+              show-index
+              :headers="headers"
+              :items="topics"
+              :loading="loading"
+              :rows-items="rowItems"
+            >
+              <template #empty-message>
+                <div class="text-center text-gray-500">
+                  Không có đề tài trống giáo viên phản biện duyệt vào đợt này!
+                </div>
+              </template>
+            </EasyDataTable>
           </div>
-          <!-- <EasyDataTable
-            show-index
-            :headers="headers"
-            :items="listTopics"
-            body-text-direction="center"
-            header-text-direction="center"
-            buttons-pagination="false"
-            hide-footer
-          >
-            <template #empty-message>
-              <div class="text-center text-gray-500">
-                Không có dữ liệu
-              </div>
-            </template>
-          </EasyDataTable> -->
           <div class="flex justify-end">
             <button
+              :disabled="checkSameValue"
               class="btn btn-primary m-2"
-              @click="close"
+              @click="handleImportCriticalTopic"
             >
-              Đóng
+              Lưu lựa chọn
             </button>
           </div>
         </div>
@@ -112,37 +116,173 @@
   </vue-final-modal>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+// import { mapGetters } from 'vuex';
 import Multiselect from '@vueform/multiselect';
+import {
+  ref, watch, onMounted, computed,
+} from 'vue';
+import { mapState, mapGetters, useStore } from 'vuex';
+import { useToast } from 'vue-toast-notification';
+import { cloneDeep } from 'lodash';
+import ButtonImport from '../common/ButtonImport.vue';
+import TopicApi from '../../utils/api/topic';
+import CommitteeApi from '../../utils/api/committee';
+// import UploadButton from '../UploadButton.vue';
+// import ButtonDownloadTemplate from '../../common/ButtonDownloadTemplate.vue';
+import LoadingProcess from '../common/Loading.vue';
 
 export default {
   name: 'InfoModal',
   components: {
     Multiselect,
+    LoadingProcess,
   },
   inheritAttrs: false,
   props: {
     listScheduleSelectRaw: [],
     listLecturerSelectRaw: [],
-    selectedSchedule: null,
+    selectedSchedule: 0,
   },
-  data () {
-    return {
-      selectLecturer: null,
-      selectSchedule: null,
-      listScheduleSelect: [],
-      listLecturerSelect: [],
-      listTopics: [],
-      headers: [
-        { text: 'Mã số', value: 'code', sortable: true },
-        { text: 'Tên đề tài ', value: 'title', sortable: true },
-        { text: 'Giảng viên hướng dẫn', value: 'lecturer' },
-      ],
-      steps: [
-        { label: 'Chọn giảng viên và và đợt', page: 1 },
-        { label: 'Chọn đề tài', page: 2 },
-      ],
+  setup (props) {
+    const BASE_API_URL = ref(import.meta.env.BASE_API_URL || 'http://localhost:8001');
+    const store = useStore();
+    const loading = ref(false);
+    const itemsSelected = ref([]);
+    const serverItemsLength = ref(0);
+    const rowItems = [10, 20, 50];
+    const topics = ref([]);
+    const selectSchedule = ref(0);
+    const selectLecturer = ref(0);
+    const showSelectStudent = ref(false);
+    const selectStudentScheduleId = ref(null);
+    const listTopicsSelected = ref([]);
+    const criticalId = ref(0);
+    const currentCommittee = ref(null);
+    const listScheduleSelect = ref([]);
+    const listLecturerSelect = ref([]);
+    const data = ref([]);
+    const headers = [
+      { text: 'Mã số', value: 'code', sortable: true },
+      { text: 'Tên đề tài ', value: 'title', sortable: true },
+      { text: 'Giảng viên hướng dẫn', value: 'lecturerId.name' },
+      { text: 'Đợt đăng ký', value: 'scheduleId.code' },
+    ];
+    const items = [];
+    const serverOptions = ref({
       page: 1,
+      rowsPerPage: 10,
+      sortBy: 'updated_at',
+      sortType: 'desc',
+    });
+    const token = store.getters['auth/token'];
+    const modulePage = computed(() => store.getters['url/module']);
+    const $toast = useToast();
+    const errorHandler = (e) => {
+      if (e.response.data.error.code === 400) $toast.error(e.response.data.error.message);
+      else { $toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
+    };
+
+    const loadToServer = async (options) => {
+      loading.value = true;
+      try {
+        const response = await TopicApi.listTopicToAddCritical(token, options, selectSchedule.value, selectLecturer.value);
+        const topicByCritical = await TopicApi.listAllTopicsByCriticalAndScheduleId(token, selectLecturer.value, selectSchedule.value);
+        listTopicsSelected.value = topicByCritical.data;
+        itemsSelected.value = cloneDeep(topicByCritical.data);
+        topics.value = response.data;
+        store.state.topic.listTopics = topics.value;
+        serverItemsLength.value = response.meta.pagination.total;
+      } catch (e) {
+        errorHandler(e);
+      }
+      loading.value = false;
+    };
+
+    watch(serverOptions, async (value) => { await loadToServer(value); }, { deep: true });
+    watch(modulePage, async () => { await loadToServer(serverOptions.value); });
+    const showConfirmModal = ref(false);
+
+    const selectHandlerSchedule = async (value) => {
+      selectSchedule.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        errorHandler(e);
+      }
+    };
+
+    const selectHandlerLecturer = async (value) => {
+      selectLecturer.value = value;
+      try {
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        errorHandler(e);
+      }
+    };
+
+    const handleShow = async () => {
+      listLecturerSelect.value = [...props.listLecturerSelectRaw];
+      listScheduleSelect.value = [...props.listScheduleSelectRaw];
+      listScheduleSelect.value.shift();
+      listLecturerSelect.value.shift();
+      // default value
+      selectSchedule.value = props.selectedSchedule;
+      if (!selectSchedule.value && listLecturerSelect.value.length > 0) {
+        selectSchedule.value = listLecturerSelect.value[0].value;
+      }
+      if (listLecturerSelect.value.length > 0) {
+        selectLecturer.value = listLecturerSelect.value[0].value;
+      }
+      await loadToServer(serverOptions.value);
+    };
+
+    const handleImportCriticalTopic = async () => {
+      const topicIds = listTopicsSelected.value.map((t) => t._id);
+      try {
+        loading.value = true;
+        await TopicApi.importCriticalToTopic(token, selectLecturer.value, selectSchedule.value, topicIds);
+        $toast.success('Đã thêm giáo viên phản biện cho đề tài thành công!');
+        await loadToServer(serverOptions.value);
+      } catch (e) {
+        errorHandler(e);
+      } finally {
+        loading.value = false;
+      }
+    };
+    const checkSameValue = computed(() => {
+      const preIds = itemsSelected.value.map((item) => item._id);
+      const afterIds = listTopicsSelected.value.map((item) => item._id);
+      if (preIds.length !== afterIds.length) {
+        return false;
+      }
+      preIds.sort();
+      afterIds.sort();
+      return JSON.stringify(preIds) === JSON.stringify(afterIds);
+    });
+    return {
+      headers,
+      items,
+      itemsSelected,
+      loading,
+      serverOptions,
+      topics,
+      serverItemsLength,
+      selectStudentScheduleId,
+      rowItems,
+      modulePage,
+      showConfirmModal,
+      listTopicsSelected,
+      selectSchedule,
+      selectLecturer,
+      BASE_API_URL,
+      showSelectStudent,
+      selectHandlerSchedule,
+      selectHandlerLecturer,
+      listScheduleSelect,
+      listLecturerSelect,
+      handleShow,
+      handleImportCriticalTopic,
+      checkSameValue,
     };
   },
   computed: {
@@ -154,28 +294,6 @@ export default {
     ]),
   },
   methods: {
-    async handleShow () {
-      this.listLecturerSelect = [...this.listLecturerSelectRaw];
-      this.listScheduleSelect = [...this.listScheduleSelectRaw];
-      this.listScheduleSelect.shift();
-      this.listLecturerSelect.shift();
-      // default value
-      this.selectSchedule = this.selectedSchedule;
-      if (!this.selectSchedule && this.listLecturerSelect.length > 0) {
-        this.selectSchedule = this.listLecturerSelect[0].value;
-      }
-      if (this.listLecturerSelect.length > 0) {
-        this.selectLecturer = this.listLecturerSelect[0].value;
-      }
-    },
-
-    selectHandlerLecturer (value) {
-      this.selectLecturer = value;
-    },
-
-    selectHandlerSchedule (value) {
-      this.selectSchedule = value;
-    },
   },
 };
 </script>

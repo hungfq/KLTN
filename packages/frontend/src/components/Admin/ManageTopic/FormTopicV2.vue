@@ -289,7 +289,7 @@ export default {
       title: '',
       code: '',
       description: '',
-      limit: '',
+      limit: 3,
       lecturerId: '',
       criticalLecturerId: '',
       studentIds: [],
