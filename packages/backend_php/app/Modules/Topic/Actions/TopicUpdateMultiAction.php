@@ -2,6 +2,7 @@
 
 namespace App\Modules\Topic\Actions;
 
+use App\Entities\Schedule;
 use App\Entities\Topic;
 use App\Entities\User;
 use App\Exceptions\UserException;
@@ -39,11 +40,24 @@ class TopicUpdateMultiAction
             throw new UserException('GVPB không tồn tại trong hệ thống!', 400);
         }
 
+        $schedule = Schedule::find($this->dto->schedule_id);
+        if (!$schedule) {
+//            throw new UserException("Schedule not found!");
+            throw new UserException('Đợt đăng ký không tồn tại trong hệ thống!', 400);
+        }
+
         return $this;
     }
 
     protected function updateTopics()
     {
+        Topic::query()
+            ->where('critical_id', $this->dto->critical_id)
+            ->where('schedule_id', $this->dto->schedule_id)
+            ->update([
+                'critical_id' => null,
+            ]);
+
         Topic::query()
             ->whereIn('id', $this->dto->topic_ids)
             ->update([

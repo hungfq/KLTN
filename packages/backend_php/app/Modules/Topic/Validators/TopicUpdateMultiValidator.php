@@ -10,6 +10,7 @@ class TopicUpdateMultiValidator extends AbstractValidator
     public function rules($params = [])
     {
         return [
+            'schedule_id' => 'required',
             'critical_id' => 'required',
             'topic_ids' => 'required|array',
         ];
