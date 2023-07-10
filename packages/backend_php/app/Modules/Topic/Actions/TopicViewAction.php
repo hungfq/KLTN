@@ -136,7 +136,7 @@ class TopicViewAction
             $query->where(function ($q) use ($dto) {
                 $q->whereNull('topics.critical_id')
                     ->orWhere('topics.critical_id', $dto->none_critical_or);
-            });
+            })->where('topics.lecturer_id', '<>', $dto->none_critical_or);
         }
 
         Helpers::sortBuilder($query, $dto->toArray(), [
