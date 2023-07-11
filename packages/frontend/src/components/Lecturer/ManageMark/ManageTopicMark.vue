@@ -60,7 +60,6 @@
             @keydown.space.enter="search"
           />
           <EasyDataTable
-            v-model:items-selected="itemsSelected"
             v-model:server-options="serverOptions"
             :server-items-length="serverItemsLength"
             show-index

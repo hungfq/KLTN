@@ -50,7 +50,6 @@
             @keydown.space.enter="search"
           />
           <EasyDataTable
-            v-model:items-selected="itemsSelected"
             v-model:server-options="serverOptions"
             :server-items-length="serverItemsLength"
             show-index
@@ -63,6 +62,19 @@
             <template #empty-message>
               <div class="text-center text-gray-500">
                 Không có dữ liệu
+              </div>
+            </template>
+            <template #item-list_students="item">
+              <div class-="flex flex-col">
+                <ul>
+                  <li
+                    v-for="student in item.list_students"
+                    :key="`${student._id}`"
+                    class="list-decimal"
+                  >
+                    {{ student.code }} : {{ student.name }}
+                  </li>
+                </ul>
               </div>
             </template>
             <template #item-operation="item">
@@ -149,7 +161,7 @@ export default {
     const headers = [
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
-      { text: 'Sinh viên', value: 'students' },
+      { text: 'Sinh viên', value: 'list_students' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -267,6 +279,7 @@ export default {
         lecturer: topic.lecturerId.name || '',
         students: topic.students || [],
         scheduleId: topic.scheduleId?._id || null,
+        list_students: topic.list_students || [],
       }));
     });
 

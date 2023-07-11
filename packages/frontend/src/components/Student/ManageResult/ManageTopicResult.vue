@@ -74,15 +74,15 @@
               <div class="flex flex-col md:flex-row md:items-center">
                 <div class="w-1/2 py-2">
                   <LineItem
-                    :title="'Điểm của giáo viên hướng dẫn:'"
-                    :content="currentTopic.advisorLecturerGrade || 0"
+                    :title="'Điểm của đề tài:'"
+                    :content="!!currentTopic.average_grade ? currentTopic.average_grade : 'Chưa có điểm'"
                   />
-                  <LineItem
+                  <!-- <LineItem
                     :title="'Điểm của giáo viên phản biện:'"
                     :content="currentTopic.criticalLecturerGrade || 0"
-                  />
+                  /> -->
                 </div>
-                <div class="w-1/2">
+                <!-- <div class="w-1/2">
                   <LineItem
                     :title="'Điểm của chủ tịch hội đồng:'"
                     :content="currentTopic.committeePresidentGrade || 0"
@@ -91,7 +91,7 @@
                     :title="'Điểm của thư ký hội đồng:'"
                     :content="currentTopic.committeeSecretaryGrade || 0"
                   />
-                </div>
+                </div> -->
               </div>
             </BodyAndShadow>
           </div>
@@ -103,10 +103,10 @@
               <div class="px-4 py-3 h-24">
                 <ol class="list-decimal pl-4">
                   <li
-                    v-for="student in currentTopic.students"
+                    v-for="student in currentTopic.list_students"
                     :key="student"
                   >
-                    {{ student }}
+                    {{ student.code }}: {{ student.name }}
                   </li>
                 </ol>
               </div>
