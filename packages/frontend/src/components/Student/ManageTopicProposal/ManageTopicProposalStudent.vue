@@ -51,7 +51,6 @@
           @keydown.space.enter="search"
         />
         <EasyDataTable
-          v-model:items-selected="itemsSelected"
           v-model:server-options="serverOptions"
           header-text-direction="center"
           body-text-direction="center"
