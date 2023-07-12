@@ -56,7 +56,7 @@
           @click="openSelectFile = !openSelectFile"
         >Tải lên tệp báo cáo</label>
         <div
-          class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-[600px]"
+          class="dropdown-content menu p-2 shadow-lg border-solid border-2 bg-base-100 rounded-box w-[600px]"
         >
           <UploadFile />
         </div>
