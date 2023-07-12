@@ -24,7 +24,9 @@
     {{--    </tr>--}}
     <tr></tr>
     <tr>
-        <td colspan="2" height="30" style="text-align: center;">Mã học phần: <br/> GRPR471979</td>
+        <td colspan="2" height="30" style="text-align: center;">
+{{--            Mã học phần: <br/> GRPR471979--}}
+        </td>
     </tr>
     <tr></tr>
     <tr>
