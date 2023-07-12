@@ -26,7 +26,7 @@
                 :name="field.name"
                 :type="field.type"
                 :placeholder="field.label"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :rules="field.rules"
                 :disabled="checkDisabled(field.isDisabled)"
               />
@@ -37,7 +37,7 @@
                 :rules="field.rules"
                 :name="field.name"
                 :placeholder="field.label"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :disabled="checkDisabled(field.isDisabled)"
                 as="textarea"
               />
@@ -48,7 +48,7 @@
                 data-theme="light"
                 :name="field.name"
                 :rules="field.rules"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :disabled="checkDisabled(field.isDisabled)"
                 as="select"
               >
@@ -90,7 +90,7 @@
                 :name="field.name"
                 :type="field.type"
                 :placeholder="field.label"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :rules="field.rules"
                 :disabled="checkDisabled(field.isDisabled)"
               />
@@ -102,7 +102,7 @@
                 :rules="field.rules"
                 :name="field.name"
                 :placeholder="field.label"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :disabled="checkDisabled(field.isDisabled)"
               />
 
@@ -113,7 +113,7 @@
                 data-theme="light"
                 :name="field.name"
                 :rules="field.rules"
-                class="input input-bordered pr-2"
+                class="input input-bordered pr-2 disabled:text-gray-700"
                 :disabled="checkDisabled(field.isDisabled)"
                 as="select"
               >
