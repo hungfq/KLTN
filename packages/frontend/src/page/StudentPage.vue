@@ -7,7 +7,7 @@
         :list-items="listItems"
         :list-tasks="listTasks"
       />
-      <div class="flex flex-col">
+      <div class="flex flex-col min-h-screen">
         <HeaderBarVue
           :username="userName"
         />
@@ -20,6 +20,7 @@
                 v-if="section==='topic_result-list'"
               />
             </template>
+            <TopicPage v-if="module === 'topic'" />
           </template>
           <template v-if="isTask">
             <TaskDraggableVue />
@@ -42,26 +43,24 @@ import ErrorModalVue from '../components/Modal/ErrorModal.vue';
 import ManageBarStudentVue from '../components/common/ManageBar.vue';
 import HeaderBarVue from '../components/Admin/HeaderBar.vue';
 import TaskDraggableVue from '../components/Lecturer/TaskDraggable.vue';
-import TaskBarTopicVue from '../components/Student/TaskBarTopic.vue';
-import LeftMiniBarVue from '../components/common/LeftMiniBar.vue';
 
 import TopicRegisterPage from '../components/Student/ManageRegister/TopicRegisterPage.vue';
 import TopicProposalPage from '../components/Student/ManageTopicProposal/TopicProposalBody.vue';
 import ManageTopicResult from '../components/Student/ManageResult/ManageTopicResult.vue';
+import TopicPage from '../components/Student/ManageTopic/ManageTopic.vue';
 import TopicApi from '../utils/api/topic';
 
 export default {
   name: 'StudentPage',
   components: {
     ErrorModalVue,
-    LeftMiniBarVue,
     ManageBarStudentVue,
     HeaderBarVue,
     TaskDraggableVue,
-    TaskBarTopicVue,
     TopicRegisterPage,
     TopicProposalPage,
     ManageTopicResult,
+    TopicPage,
   },
   props: {
   },
@@ -73,6 +72,7 @@ export default {
         { id: 'topic_proposal', value: 'Đề xuất đề tài', icon: 'fa-solid fa-book' },
         { id: 'topic_register', value: 'Đăng ký đề tài', icon: 'fa-solid fa-user-check' },
         { id: 'topic_result', value: 'Kiểm tra kết quả', icon: 'fa-solid fa-bullseye' },
+        { id: 'topic', value: 'Tra cứu đề tài', icon: 'fa-solid fa-search' },
       ],
       listTasks: [],
     };
