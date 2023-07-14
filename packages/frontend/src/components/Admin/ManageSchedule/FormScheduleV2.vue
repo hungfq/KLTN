@@ -291,7 +291,7 @@
                   <div class="flex item-center">
                     <div
                       class="w-4 h-4 mt-1 mr-2"
-                      style="background-color: #FF6666;"
+                      style="background-color: #8724b9;"
                     />
                     <div>Thời gian phê duyệt ra hội đồng</div>
                   </div>

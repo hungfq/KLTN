@@ -74,6 +74,16 @@ class TopicProposalApproveAction
             ];
             $student->notifications()->create($data);
             Socket::sendUpdateNotificationRequest([data_get($student, 'id')], $data);
+
+            $dataEmail = [
+                'topic' => $this->topicProposal,
+                'student' => $student,
+            ];
+
+            event(new SendEmailEvent([
+                'email' => data_get($student, 'email'),
+                'email_body' => new EmailForQueuing('ĐỀ TÀI HƯƠNG DẪN DƯỢC DUYỆT', $dataEmail, 'MailProposalApproveToStudent'),
+            ]));
         });
 
         return $this;

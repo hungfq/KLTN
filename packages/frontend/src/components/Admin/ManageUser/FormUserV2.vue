@@ -61,14 +61,14 @@ export default {
           name: 'code',
           label: 'Mã',
           type: 'text',
-          rules: 'required|equalLength:8',
+          rules: 'required',
         },
         {
           name: 'email',
           label: 'Email:',
           type: 'email',
           rules: 'required|email',
-          isDisabled: true,
+          // isDisabled: true,
         },
         {
           name: 'gender',

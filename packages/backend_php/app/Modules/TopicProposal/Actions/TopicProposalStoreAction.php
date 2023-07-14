@@ -76,7 +76,7 @@ class TopicProposalStoreAction
     {
         if ($this->lecturer) {
             $data = [
-                'title' => 'YÊU CẦU HƯỚNG DẪN',
+                'title' => '',
                 'message' => "Bạn được yêu cầu hướng dẫn trong một đề tài.",
             ];
             $this->lecturer->notifications()->create($data);
@@ -87,7 +87,7 @@ class TopicProposalStoreAction
             ];
             event(new SendEmailEvent([
                 'email' => data_get($this->lecturer, 'email'),
-                'email_body' => new EmailForQueuing('YÊU CẦU HƯỚNG DẪN', $dataEmail, 'MailLecturerProposal'),
+                'email_body' => new EmailForQueuing('SINH VIÊN ĐỀ XUẤT ĐỀ TÀI', $dataEmail, 'MailLecturerProposal'),
             ]));
         }
     }
