@@ -4,7 +4,7 @@
   <template v-if="(isAuthenticated && userRole === 'ADMIN') && listItems">
     <div class="flex h-full">
       <ManageBarVue :list-items="listItems" />
-      <div class="flex flex-col">
+      <div class="flex flex-col min-h-screen">
         <HeaderBarVue :username="userName" />
         <div class="bg-white border rounded-2 overflow-y-auto">
           <BodyUserPage

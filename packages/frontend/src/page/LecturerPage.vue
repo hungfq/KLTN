@@ -8,7 +8,7 @@
         :list-items="listItems"
         :list-schedules="listScheduleTopicTask"
       />
-      <div class="flex flex-col">
+      <div class="flex flex-col min-h-screen">
         <HeaderBarVue
           :username="userName"
         />
