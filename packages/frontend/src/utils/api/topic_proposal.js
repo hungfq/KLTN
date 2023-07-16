@@ -32,7 +32,34 @@ export default class TopicProposalApi {
   }
 
   static async addTopicProposal (token, value) {
-    const res = await axios.post('/topic-proposal/', value, {
+    const {
+      title,
+      limit,
+      description,
+      deadline,
+      students,
+      lecturerId,
+      scheduleId,
+      status,
+      file,
+    } = value;
+    const formData = new FormData();
+
+    formData.append('title', title);
+    formData.append('limit', limit);
+    formData.append('description', description);
+    formData.append('deadline', deadline);
+    formData.append('lecturerId', lecturerId);
+    formData.append('scheduleId', scheduleId);
+    formData.append('status', status);
+    formData.append('files[0]', file);
+    console.log('🚀 ~ file: topic_proposal.js:56 ~ TopicProposalApi ~ addTopicProposal ~ file:', file);
+    // console.log('🚀 ~ file: topic_proposal.js:56 ~ TopicProposalApi ~ addTopicProposal ~ file[0]:', file[0]);
+
+    for (let i = 0; i < students.length; i += 1) {
+      formData.append(`students[${i}]`, students[i]);
+    }
+    const res = await axios.post('/topic-proposal/', formData, {
       headers: {
         authorization: `bearer ${token}`,
       },

@@ -81,6 +81,41 @@
                 </div>
               </div>
             </div>
+            <div class="flex">
+              <div
+                class="w-[400px] !mx-8 mt-4"
+              >
+                <div class="mt-1">
+                  <VueFileAgent
+                    ref="profilePicRef"
+                    v-model="profilePic"
+                    class="profile-pic-upload-block"
+                    :multiple="false"
+                    :deletable="false"
+                    :meta="false"
+                    :compact="true"
+                    :accept="'image/*,.zip,.rar,.doc,.docx,.ods,.pdf'"
+                    :help-text="'Thêm tệp vào đây'"
+                    :error-text="{
+                      type: 'Chỉ chấp nhận file ảnh, tệp nén, tài liệu và pdf',
+                    }"
+                    @select="onSelect($event)"
+                  />
+                </div>
+              </div>
+              <div
+                class="w-[400px] !mx-8 mt-4"
+              >
+                <button
+                  type="button"
+                  class="btn"
+                  :class="[uploaded ? 'btn-danger' : 'btn-secondary']"
+                  @click="removePic()"
+                >
+                  Xóa tệp tin đã tải lên
+                </button>
+              </div>
+            </div>
           </template>
           <template v-if="page===2 || isView">
             <div class="flex flex-col">
@@ -227,6 +262,7 @@ export default {
         { text: 'Tên ', value: 'name', sortable: true },
         { text: 'Email', value: 'email' },
       ],
+      profilePic: {},
     };
   },
   computed: {
@@ -282,6 +318,25 @@ export default {
     this.loading = false;
   },
   methods: {
+    removePic () {
+      this.$refs.profilePicRef.$data.fileRecords = [];
+    },
+    upload () {
+
+      // const self = this;
+      // this.$refs.profilePicRef.upload(this.uploadUrl, this.uploadHeaders, [this.profilePic]).then(() => {
+      //   self.uploaded = true;
+      //   setTimeout(() => {
+      //     // self.profilePic.progress(0);
+      //   }, 500);
+      // });
+    },
+    onSelect (fileRecords) {
+      // console.log('onSelect', );
+      this.profilePic = fileRecords[0].file;
+      console.log('🚀 ~ file: FormTopicProposal.vue:337 ~ onSelect ~ fileRecords:', fileRecords[0].file);
+      this.uploaded = false;
+    },
     chooseStudent () {
       this.showSelectStudent = true;
     },
@@ -304,7 +359,7 @@ export default {
       });
     },
     errorHandler (e) {
-      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      if (e.response?.data?.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
 
@@ -317,15 +372,19 @@ export default {
     async handleAddTopicAdmin () {
       this.loading = true;
       const { studentIds, scheduleId } = this;
+      // console.log(this.profilePic);
+      // console.log('🚀 ~ file: FormTopicProposal.vue:386 ~ handleAddTopicAdmin ~ value.studentIds:', studentIds);
+      const students = studentIds.map((item) => (item));
       const value = {
         title: this.title,
         limit: this.limit,
         description: this.description,
         deadline: this.deadline,
-        students: studentIds,
+        students,
         lecturerId: this.lecturerId,
         scheduleId,
         status: 'LECTURER',
+        file: this.profilePic,
       };
       try {
         if (value.lecturerId !== '' && !!value.lecturerId) {
@@ -350,6 +409,8 @@ export default {
       } catch (e) {
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      } finally {
+        this.loading = false;
       }
     },
     check () {
@@ -401,4 +462,26 @@ export default {
 .vue3-easy-data-table {
   width: 600px !important;
 }
+
+#profile-pic-demo .drop-help-text {
+    display: none;
+  }
+  #profile-pic-demo .is-drag-over .drop-help-text {
+    display: block;
+  }
+  #profile-pic-demo .profile-pic-upload-block {
+    border: 2px dashed transparent;
+    padding: 20px;
+    padding-top: 0;
+  }
+
+  #profile-pic-demo .is-drag-over.profile-pic-upload-block {
+    border-color: #AAA;
+  }
+  #profile-pic-demo .vue-file-agent {
+    float: left;
+    margin: 0 15px 5px 0;
+    border: 0;
+    box-shadow: none;
+  }
 </style>
