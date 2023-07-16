@@ -41,7 +41,7 @@ export default class TopicProposalApi {
       lecturerId,
       scheduleId,
       status,
-      file,
+      files,
     } = value;
     const formData = new FormData();
 
@@ -52,12 +52,12 @@ export default class TopicProposalApi {
     formData.append('lecturerId', lecturerId);
     formData.append('scheduleId', scheduleId);
     formData.append('status', status);
-    formData.append('files[0]', file);
-    console.log('🚀 ~ file: topic_proposal.js:56 ~ TopicProposalApi ~ addTopicProposal ~ file:', file);
-    // console.log('🚀 ~ file: topic_proposal.js:56 ~ TopicProposalApi ~ addTopicProposal ~ file[0]:', file[0]);
 
     for (let i = 0; i < students.length; i += 1) {
       formData.append(`students[${i}]`, students[i]);
+    }
+    for (let i = 0; i < files.length; i += 1) {
+      formData.append(`files[${i}]`, files[i].file);
     }
     const res = await axios.post('/topic-proposal/', formData, {
       headers: {

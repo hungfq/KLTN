@@ -107,6 +107,19 @@
                 </div>
               </div>
             </template>
+            <template #item-file="item">
+              <div
+                class="tooltip tooltip-bottom"
+                data-tip="Tải báo cáo"
+              >
+                <font-awesome-icon
+                  class="cursor-pointer"
+                  :icon="['fas', 'cloud-download']"
+                  size="2xl"
+                  @click="handleShowDownloadModal(item._id)"
+                />
+              </div>
+            </template>
           </EasyDataTable>
         </div>
       </div>
@@ -122,6 +135,11 @@
     </template>
     <div>Bạn có xác nhận từ chối hướng dẫn này không?</div>
   </ConfirmModal>
+  <ViewFile
+    v-model="showDownloadModal"
+    :topic-id="viewTopicId"
+    :type="'TOPIC_PROPOSAL'"
+  />
 </template>
 <script>
 // import { mapState, mapGetters } from 'vuex';
@@ -140,6 +158,7 @@ import ScheduleApi from '../../../utils/api/schedule';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
 import Multiselect from '@vueform/multiselect';
+import ViewFile from '../../Modal/ViewFile.vue';
 
 export default {
   name: 'ManageTopicLecturer',
@@ -148,12 +167,15 @@ export default {
     ConfirmModal,
     Multiselect,
     LoadingProcess,
+    ViewFile,
   },
   setup () {
     const loading = ref(true);
     const store = useStore();
     const itemsSelected = ref([]);
     const serverItemsLength = ref(0);
+    const viewTopicId = ref(0);
+    const showDownloadModal = ref(false);
     const rowItems = [10, 20, 50];
     // Init value
     const topics = ref([]);
@@ -162,6 +184,7 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh viên', value: 'list_students' },
+      { text: 'Tệp tin', value: 'file' },
       { text: 'Hành động', value: 'operation' },
     ];
 
@@ -301,6 +324,11 @@ export default {
       }
     };
 
+    const handleShowDownloadModal = (id) => {
+      showDownloadModal.value = true;
+      viewTopicId.value = id;
+    };
+
     return {
       headers,
       items,
@@ -327,6 +355,9 @@ export default {
       isInApproveTime,
       listScheduleSelect,
       selectHandlerSchedule,
+      viewTopicId,
+      showDownloadModal,
+      handleShowDownloadModal,
 
     };
   },

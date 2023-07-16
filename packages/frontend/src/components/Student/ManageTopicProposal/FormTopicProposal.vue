@@ -81,40 +81,17 @@
                 </div>
               </div>
             </div>
-            <div class="flex">
-              <div
-                class="w-[400px] !mx-8 mt-4"
-              >
-                <div class="mt-1">
-                  <VueFileAgent
-                    ref="profilePicRef"
-                    v-model="profilePic"
-                    class="profile-pic-upload-block"
-                    :multiple="false"
-                    :deletable="false"
-                    :meta="false"
-                    :compact="true"
-                    :accept="'image/*,.zip,.rar,.doc,.docx,.ods,.pdf'"
-                    :help-text="'Thêm tệp vào đây'"
-                    :error-text="{
-                      type: 'Chỉ chấp nhận file ảnh, tệp nén, tài liệu và pdf',
-                    }"
-                    @select="onSelect($event)"
-                  />
-                </div>
-              </div>
-              <div
-                class="w-[400px] !mx-8 mt-4"
-              >
-                <button
-                  type="button"
-                  class="btn"
-                  :class="[uploaded ? 'btn-danger' : 'btn-secondary']"
-                  @click="removePic()"
-                >
-                  Xóa tệp tin đã tải lên
-                </button>
-              </div>
+            <div class="flex flex-col">
+              <ViewFileUploadProposal
+                v-if="id && (isView || isUpdate)"
+                :topic-id="id"
+                :is-view="isView"
+              />
+              <UploadFileProposal
+                v-if="!isView && !isUpdate"
+                ref="fileUpload"
+                v-model="fileUpload"
+              />
             </div>
           </template>
           <template v-if="page===2 || isView">
@@ -122,7 +99,7 @@
               <div class="font-bold my-4">
                 Danh sách sinh viên đã chọn
               </div>
-              <div class="overflow-x-auto w-[600px]">
+              <div class="overflow-x-auto w-[860px]">
                 <EasyDataTable
                   show-index
                   :headers="headers"
@@ -225,6 +202,8 @@ import { mapGetters } from 'vuex';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import UploadFileProposal from '../../Modal/UploadFileProposal.vue';
+import ViewFileUploadProposal from './ViewFileUploadProposal.vue';
 
 export default {
   name: 'FormTopicProposal',
@@ -232,9 +211,12 @@ export default {
     Multiselect,
     LoadingProcess,
     SelectStudent,
+    UploadFileProposal,
+    ViewFileUploadProposal,
   },
   props: {
   },
+  emits: ['update:modelValue'],
   data () {
     return {
       title: '',
@@ -258,11 +240,16 @@ export default {
       showSelectStudent: false,
       selectStudentScheduleId: null,
       headers: [
-        { text: 'Mã số', value: 'code', sortable: true },
-        { text: 'Tên ', value: 'name', sortable: true },
-        { text: 'Email', value: 'email' },
+        {
+          text: 'Mã số', value: 'code', sortable: true, width: 100,
+        },
+        {
+          text: 'Tên ', value: 'name', sortable: true, width: 350,
+        },
+        { text: 'Email', value: 'email', width: 350 },
       ],
       profilePic: {},
+      fileUpload: [],
     };
   },
   computed: {
@@ -321,22 +308,6 @@ export default {
     removePic () {
       this.$refs.profilePicRef.$data.fileRecords = [];
     },
-    upload () {
-
-      // const self = this;
-      // this.$refs.profilePicRef.upload(this.uploadUrl, this.uploadHeaders, [this.profilePic]).then(() => {
-      //   self.uploaded = true;
-      //   setTimeout(() => {
-      //     // self.profilePic.progress(0);
-      //   }, 500);
-      // });
-    },
-    onSelect (fileRecords) {
-      // console.log('onSelect', );
-      this.profilePic = fileRecords[0].file;
-      console.log('🚀 ~ file: FormTopicProposal.vue:337 ~ onSelect ~ fileRecords:', fileRecords[0].file);
-      this.uploaded = false;
-    },
     chooseStudent () {
       this.showSelectStudent = true;
     },
@@ -372,8 +343,6 @@ export default {
     async handleAddTopicAdmin () {
       this.loading = true;
       const { studentIds, scheduleId } = this;
-      // console.log(this.profilePic);
-      // console.log('🚀 ~ file: FormTopicProposal.vue:386 ~ handleAddTopicAdmin ~ value.studentIds:', studentIds);
       const students = studentIds.map((item) => (item));
       const value = {
         title: this.title,
@@ -384,7 +353,7 @@ export default {
         lecturerId: this.lecturerId,
         scheduleId,
         status: 'LECTURER',
-        file: this.profilePic,
+        files: this.fileUpload,
       };
       try {
         if (value.lecturerId !== '' && !!value.lecturerId) {
@@ -460,28 +429,6 @@ export default {
 </style>
 <style scoped>
 .vue3-easy-data-table {
-  width: 600px !important;
+  width: 860px !important;
 }
-
-#profile-pic-demo .drop-help-text {
-    display: none;
-  }
-  #profile-pic-demo .is-drag-over .drop-help-text {
-    display: block;
-  }
-  #profile-pic-demo .profile-pic-upload-block {
-    border: 2px dashed transparent;
-    padding: 20px;
-    padding-top: 0;
-  }
-
-  #profile-pic-demo .is-drag-over.profile-pic-upload-block {
-    border-color: #AAA;
-  }
-  #profile-pic-demo .vue-file-agent {
-    float: left;
-    margin: 0 15px 5px 0;
-    border: 0;
-    box-shadow: none;
-  }
 </style>
