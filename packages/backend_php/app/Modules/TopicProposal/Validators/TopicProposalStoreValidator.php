@@ -19,7 +19,7 @@ class TopicProposalStoreValidator extends AbstractValidator
 
             'students' => 'nullable|array',
             'files' => 'nullable|array',
-            'files.*.file' => 'required|file|max:100000',
+            'files.*' => 'required|file|max:100000',
         ];
     }
 

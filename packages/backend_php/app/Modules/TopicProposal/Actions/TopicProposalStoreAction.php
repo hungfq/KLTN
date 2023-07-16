@@ -80,7 +80,7 @@ class TopicProposalStoreAction
     protected function storeFileIfExist()
     {
         foreach ($this->dto->files as $index => $input) {
-            $file = request()->file("files.$index.file");
+            $file = request()->file("files.$index");
 
             $params['file_name'] = $file->getClientOriginalName();
             $params['file_extension'] = $file->getClientOriginalExtension();

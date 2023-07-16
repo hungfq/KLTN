@@ -15,7 +15,7 @@ class CreateTopicProposalsTable extends Migration
     {
         Schema::create('topic_proposals', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 15)->nullable();
+            $table->string('code', 50)->nullable();
             $table->string('title', 200);
             $table->text('description')->nullable();
             $table->tinyInteger('limit');
