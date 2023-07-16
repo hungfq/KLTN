@@ -103,7 +103,12 @@ class DocumentRepo
             return false;
         }
 
-        return Document::whereIn('id', $params)->delete();
+        $documents = Document::whereIn('id', $params)->get();
+        foreach ($documents as $document) {
+            Storage::delete($document->path);
+        }
+
+        Document::whereIn('id', $params)->delete();
     }
 
     public function downloadFromOwner($params)
