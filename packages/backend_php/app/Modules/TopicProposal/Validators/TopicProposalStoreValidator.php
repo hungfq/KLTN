@@ -18,6 +18,8 @@ class TopicProposalStoreValidator extends AbstractValidator
             'lecturerId' => 'nullable',
 
             'students' => 'nullable|array',
+            'files' => 'nullable|array',
+            'files.*.file' => 'required|file|max:100000',
         ];
     }
 

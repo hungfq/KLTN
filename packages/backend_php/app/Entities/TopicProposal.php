@@ -32,7 +32,7 @@ class TopicProposal extends BaseSoftModel
 
     public static function generateTopicCode($schedule)
     {
-        $defaultNum = data_get($schedule, 'code') . "-001";
+        $defaultNum = sprintf('%s-PP-%04d', data_get($schedule, 'code'), 1);
 
         $topic = DB::table(TopicProposal::getTableName())
             ->where('schedule_id', data_get($schedule, 'id'))
@@ -47,6 +47,6 @@ class TopicProposal extends BaseSoftModel
         $arr = explode('-', $topic->code);
         $lastNum = (int)$arr[count($arr) - 1];
 
-        return sprintf('%s-%03d', data_get($schedule, 'code'), $lastNum + 1);
+        return sprintf('%s-PP-%04d', data_get($schedule, 'code'), $lastNum + 1);
     }
 }
