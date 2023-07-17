@@ -93,12 +93,17 @@ import { mapState, mapGetters } from 'vuex';
 import { saveAs } from 'file-saver';
 import DocumentApi from '../../utils/api/document';
 import TopicApi from '../../utils/api/topic';
+import TopicProposalApi from '../../utils/api/topic_proposal';
 
 export default {
   components: {
   },
   props: {
     topicId: null,
+    type: {
+      type: String,
+      default: 'TOPIC',
+    },
   },
   data () {
     return {
@@ -130,8 +135,14 @@ export default {
   },
   methods: {
     async handleShow (topicId) {
+      this.items = [];
       if (this.topicId) {
-        this.topic = await TopicApi.getTopic(this.token, this.topicId);
+        if (this.type === 'TOPIC_PROPOSAL') {
+          this.topic = await TopicProposalApi.getTopicProposal(this.token, this.topicId);
+        } else {
+          this.topic = await TopicApi.getTopic(this.token, this.topicId);
+          console.log('🚀 ~ file: ViewFile.vue:143 ~ handleShow ~ this.topic:', this.topic);
+        }
       }
       this.fetch();
     },

@@ -15,6 +15,7 @@ class TopicProposalStoreDTO extends FlexibleDataTransferObject
     public $lecturer_id;
     public $status;
     public $students;
+    public $files;
 
     public static function fromRequest($request = null)
     {
@@ -29,6 +30,7 @@ class TopicProposalStoreDTO extends FlexibleDataTransferObject
             'lecturer_id' => $request->input('lecturerId'),
             'status' => $request->input('status') ?? TopicProposal::STATUS_LECTURER_PENDING,
             'students' => $request->input('students'),
+            'files' => $request->input('files') ?? [],
         ]);
     }
 }

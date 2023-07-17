@@ -81,13 +81,25 @@
                 </div>
               </div>
             </div>
+            <div class="flex flex-col">
+              <ViewFileUploadProposal
+                v-if="id && (isView || isUpdate)"
+                :topic-id="id"
+                :is-view="isView"
+              />
+              <UploadFileProposal
+                v-if="!isView && !isUpdate"
+                ref="fileUpload"
+                v-model="fileUpload"
+              />
+            </div>
           </template>
           <template v-if="page===2 || isView">
             <div class="flex flex-col">
               <div class="font-bold my-4">
                 Danh sách sinh viên đã chọn
               </div>
-              <div class="overflow-x-auto w-[600px]">
+              <div class="overflow-x-auto w-[860px]">
                 <EasyDataTable
                   show-index
                   :headers="headers"
@@ -190,6 +202,8 @@ import { mapGetters } from 'vuex';
 import TopicProposalApi from '../../../utils/api/topic_proposal';
 import LoadingProcess from '../../common/Loading.vue';
 import SelectStudent from '../../Modal/SelectStudent.vue';
+import UploadFileProposal from '../../Modal/UploadFileProposal.vue';
+import ViewFileUploadProposal from './ViewFileUploadProposal.vue';
 
 export default {
   name: 'FormTopicProposal',
@@ -197,9 +211,12 @@ export default {
     Multiselect,
     LoadingProcess,
     SelectStudent,
+    UploadFileProposal,
+    ViewFileUploadProposal,
   },
   props: {
   },
+  emits: ['update:modelValue'],
   data () {
     return {
       title: '',
@@ -223,10 +240,16 @@ export default {
       showSelectStudent: false,
       selectStudentScheduleId: null,
       headers: [
-        { text: 'Mã số', value: 'code', sortable: true },
-        { text: 'Tên ', value: 'name', sortable: true },
-        { text: 'Email', value: 'email' },
+        {
+          text: 'Mã số', value: 'code', sortable: true, width: 100,
+        },
+        {
+          text: 'Tên ', value: 'name', sortable: true, width: 350,
+        },
+        { text: 'Email', value: 'email', width: 350 },
       ],
+      profilePic: {},
+      fileUpload: [],
     };
   },
   computed: {
@@ -282,6 +305,9 @@ export default {
     this.loading = false;
   },
   methods: {
+    removePic () {
+      this.$refs.profilePicRef.$data.fileRecords = [];
+    },
     chooseStudent () {
       this.showSelectStudent = true;
     },
@@ -304,7 +330,7 @@ export default {
       });
     },
     errorHandler (e) {
-      if (e.response.data.error.code === 400) this.$toast.error(e.response.data.error.message);
+      if (e.response?.data?.error.code === 400) this.$toast.error(e.response.data.error.message);
       else { this.$toast.error('Có lỗi xảy ra, vui lòng liên hệ quản trị để kiểm tra.'); }
     },
 
@@ -317,15 +343,17 @@ export default {
     async handleAddTopicAdmin () {
       this.loading = true;
       const { studentIds, scheduleId } = this;
+      const students = studentIds.map((item) => (item));
       const value = {
         title: this.title,
         limit: this.limit,
         description: this.description,
         deadline: this.deadline,
-        students: studentIds,
+        students,
         lecturerId: this.lecturerId,
         scheduleId,
         status: 'LECTURER',
+        files: this.fileUpload,
       };
       try {
         if (value.lecturerId !== '' && !!value.lecturerId) {
@@ -350,6 +378,8 @@ export default {
       } catch (e) {
         this.errorHandler(e);
         // this.$toast.error('Đã có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu!');
+      } finally {
+        this.loading = false;
       }
     },
     check () {
@@ -399,6 +429,6 @@ export default {
 </style>
 <style scoped>
 .vue3-easy-data-table {
-  width: 600px !important;
+  width: 860px !important;
 }
 </style>

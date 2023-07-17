@@ -34,7 +34,7 @@ import {
   faLeftRight, faAnglesRight, faBan, faCheck, faBullseye, faEye, faPeopleGroup, faFileExport, faUserGraduate, faShieldHalved,
   faCirclePlus, faCalendarDays, faPersonChalkboard, faBook, faCrown, faPenToSquare, faListCheck, faScaleBalanced,
   faBell, faRightToBracket, faArrowLeft, faUserCheck, faDiagramPredecessor, faFileImport, faDownload, faPaperPlane, faFileArrowDown,
-  faCloudDownload,
+  faCloudDownload, faSearchLocation, faSearch
 } from '@fortawesome/free-solid-svg-icons';
 import Vue3Sanitize from 'vue-3-sanitize';
 
@@ -73,6 +73,8 @@ library.add(
   faPaperPlane,
   faFileArrowDown,
   faCloudDownload,
+  faSearchLocation,
+  faSearch,
 );
 
 const app = createApp(App);

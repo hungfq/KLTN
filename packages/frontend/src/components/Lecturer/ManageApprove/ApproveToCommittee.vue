@@ -98,30 +98,6 @@
                   @click="handleRemoveTopic(item._id)"
                 />
               </div>
-              <!-- <div class="m-1 cursor-pointer rounded">
-                <button
-                  class=" btn btn-primary w-36 py-1"
-                  @click="editItem(item._id)"
-                >
-                  <span class="font-semibold pr-2">Phê duyệt</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'check']"
-                  />
-                </button>
-              </div>
-              <div class="m-1 cursor-pointer rounded">
-                <button
-                  class="btn btn-warning w-36"
-                  @click="handleRemoveTopic(item._id)"
-                >
-                  <span class="font-semibold pr-2 cursor-pointer">Từ chối</span>
-                  <font-awesome-icon
-                    size="xl"
-                    :icon="['fas', 'ban']"
-                  />
-                </button>
-              </div> -->
             </div>
           </template>
         </EasyDataTable>
@@ -190,6 +166,7 @@ export default {
       { text: 'Mã số', value: 'code', sortable: true },
       { text: 'Tên đề tài ', value: 'title', sortable: true },
       { text: 'Sinh viên', value: 'students' },
+      { text: 'Tệp tin', value: 'file' },
       { text: 'Hành động', value: 'operation' },
     ];
 

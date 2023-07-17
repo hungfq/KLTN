@@ -2,6 +2,7 @@
 
 namespace App\Modules\TopicProposal\Actions;
 
+use App\Entities\Document;
 use App\Entities\Role;
 use App\Entities\Schedule;
 use App\Entities\TopicProposal;
@@ -11,9 +12,12 @@ use App\Exceptions\UserException;
 use App\Libraries\Socket;
 use App\Mail\EmailForQueuing;
 use App\Modules\TopicProposal\DTO\TopicProposalStoreDTO;
+use Illuminate\Support\Facades\Storage;
 
 class TopicProposalStoreAction
 {
+    const SOURCE_UPLOAD = 'documents';
+
     public TopicProposalStoreDTO $dto;
     public $topic;
     public $studentIds;
@@ -29,6 +33,7 @@ class TopicProposalStoreAction
 
         $this->checkData()
             ->createTopic()
+            ->storeFileIfExist()
             ->addNotification();
     }
 
@@ -69,6 +74,28 @@ class TopicProposalStoreAction
         $this->topic = TopicProposal::create($this->dto->all());
         $this->topic->students()->sync($this->studentIds);
         $this->topic->save();
+        return $this;
+    }
+
+    protected function storeFileIfExist()
+    {
+        foreach ($this->dto->files as $index => $input) {
+            $file = request()->file("files.$index");
+
+            $params['file_name'] = $file->getClientOriginalName();
+            $params['file_extension'] = $file->getClientOriginalExtension();
+            $params['type'] = $file->getMimeType();
+            $params['size'] = $file->getSize();
+            $params['owner'] = $this->dto->code;
+
+            $uploadPath = env('DOC_PREFIX_ENV',
+                    'local') . DIRECTORY_SEPARATOR . self::SOURCE_UPLOAD . DIRECTORY_SEPARATOR . $params['owner'];
+            $fileName = uniqid(time()) . '_' . $params['file_name'];
+            $params['path'] = Storage::putFileAs($uploadPath, $file, $fileName);
+
+            Document::create($params);
+        }
+
         return $this;
     }
 

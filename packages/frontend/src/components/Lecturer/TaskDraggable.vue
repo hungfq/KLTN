@@ -40,13 +40,6 @@
           :options="options"
         />
       </div>
-      <!-- <button
-        v-if="!showStatistic"
-        class="btn btn-primary mx-2"
-        @click="addTaskHandler"
-      >
-        Tải lên tệp báo cáo
-      </button> -->
       <div
         class="dropdown dropdown-bottom dropdown-end  mx-2"
         :class="openSelectFile ? 'dropdown-open' : ''"
